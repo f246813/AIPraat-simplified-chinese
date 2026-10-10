@@ -84,6 +84,13 @@ html[data-pane-resizing=true] .sidebar{transition:none}
 ::highlight(transcript-search){background:color-mix(in srgb,var(--accent) 26%,transparent);color:inherit}
 ::highlight(transcript-search-active){background:var(--accent);color:#fff}
 
+/* Keep user messages against the right edge, with readable left-aligned text. */
+.message.user{flex-direction:row-reverse}
+.message.user .message-content{flex:0 1 auto;display:flex;flex-direction:column;align-items:flex-end}
+.message.user .prose{border-radius:13px 0 13px 13px;text-align:left}
+.message.user .attachment-list{justify-content:flex-end;max-width:100%}
+.message.user .message-actions{justify-content:flex-end;max-width:100%}
+
 .settings-discard-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 
 /* PI-Desktop overlays.css: search input owns no focus outline. */
