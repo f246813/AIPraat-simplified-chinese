@@ -7,6 +7,7 @@
 #include "Editor.h"
 #include "praat_script.h"
 #include "praat_python.h"
+#include "praat_python_workspace.h"
 #include "Preferences.h"
 #include "melder_sysenv.h"
 #include "melder_progress.h"
@@ -38,7 +39,7 @@ static std::filesystem::path get_process_workspace () {
 #else
 	pid_t pid = getpid ();
 #endif
-	return std::filesystem::temp_directory_path () / ("praat_py_workspace_" + std::to_string (pid));
+	return praat_python_workspaceRoot () / ("praat_py_workspace_" + std::to_string (pid));
 }
 
 static bool handlePythonOutputLine (

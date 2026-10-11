@@ -142,7 +142,7 @@ export function SessionSidebar({store, expanded, onToggle, width, maxWidth, onPr
       </section>))}</section>
       {!rows.length&&<p className="sidebar-session-empty">{query?'没有匹配记录':'暂无会话，创建一个开始探索'}</p>}
     </>}</div>
-    <div className="sidebar-bottom"><button className="task-entry" title="后台任务" aria-label="后台任务" onClick={onTasks}><LoaderCircle size={17}/>{expanded&&'后台任务'}<span className="task-count">{tasks.length}</span></button><button className="settings-entry" title="设置" aria-label="打开设置" onClick={onSettings}><Settings size={20}/>{expanded&&'设置'}</button>{expanded&&<small className="sidebar-footnote">本地工作空间 · 证据优先</small>}</div>
+    <div className="sidebar-bottom"><button className="task-entry" title="后台任务" aria-label="后台任务" onClick={onTasks}><LoaderCircle size={17}/>{expanded&&'后台任务'}<span className="task-count">{tasks.length}</span></button><button className="settings-entry" title="设置" aria-label="打开设置" onClick={onSettings}><Settings size={20}/>{expanded&&'设置'}</button></div>
     {expanded&&<SidebarResizer width={width} maxWidth={maxWidth} onPreview={onPreviewWidth} onCommit={onCommitWidth} onCollapse={onToggle}/>}
     {organization.dialogs}
     {expanded&&hover.card&&<SessionHoverCard store={store} card={hover.card} keepVisible={hover.keepVisible} scheduleHide={hover.scheduleHide} onOpen={()=>{const id=hover.card!.session.id;hover.hide();void store.select(id).catch(store.report);}}/>}

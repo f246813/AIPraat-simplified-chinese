@@ -100,6 +100,11 @@ class AnalysisState:
     session_id: str = ''
     task_id: str = ''
     context_epoch: int = 0
+    workflow: Any = None  # None keeps the archived Tk workflow compatible.
+    workflow_override: str = ''
+    results: list[dict] = field(default_factory=list)
+    measurement_content: str = ''
+    on_results: Any = field(default=None, repr=False)
 
     def __post_init__(self):
         if not self.deliveries:
@@ -113,7 +118,8 @@ class AnalysisState:
 
     def failed(self, problem: str, reason: str, *, permanent: bool = False) -> None:
         self.failures[problem] = self.failures.get(problem, 0) + 1
-        if permanent or self.failures[problem] >= 2:
+        repair_limit = self.workflow.l1_repair_limit if self.workflow is not None else 1
+        if permanent or self.failures[problem] > repair_limit:
             self.reason = reason
             raise BranchExit(reason)
         self.event('L1', reason + '；允许一次有区别的纠正')
@@ -143,7 +149,9 @@ class AnalysisState:
                               audio_observations=copy.deepcopy(self.audio_observations),
                               previous_report=self.report, previous_coverage=copy.deepcopy(self.coverage),
                               reason=self.reason, continuation_mode=mode,
-                              budget=copy.deepcopy(self.budget), direction=direction, continuation=True)
+                              budget=copy.deepcopy(self.budget), direction=direction, continuation=True,
+                              workflow=self.workflow, workflow_override=mode,
+                              attempts=copy.deepcopy(self.attempts), material_metadata=copy.deepcopy(self.material_metadata))
         state.visible_prompt = ('继续分析原始任务：' + self.goal + '\n沿用原目标材料和成功测量，重点：'
                                 + direction + '。仅补充必要分析，交代新增证据与缺口。')
         state.events = [{'mode':'continue', 'reason':state.visible_prompt}]

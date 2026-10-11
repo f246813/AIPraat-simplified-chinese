@@ -64,9 +64,11 @@ class ModernStore:
                 # replace an already recorded origin or write the legacy database.
                 db.execute('UPDATE sessions SET project_path=? WHERE project_path IS NULL AND connection_id=?',(self.project_path,'local'))
             # Restart means no task is resumed. Preserve partial text and delivery facts.
+            # 除了 running，还要收掉 queued / cancelling：它们同样不会有人继续跑，
+            # 留在库里会被当成正常助手回合回灌进下一轮历史（2026-10-07）。
             for mid, payload in db.execute('SELECT id,payload FROM messages').fetchall():
                 message = json.loads(payload)
-                if message.get('status') == 'running':
+                if message.get('status') in {'running', 'queued', 'cancelling'}:
                     message['status'] = 'interrupted'
                     message['content'] += '\n\n[桌面进程已中断；未恢复或重放任何工具操作]'
                     db.execute('UPDATE messages SET payload=? WHERE id=?', (self.encode(message), mid))
@@ -81,12 +83,21 @@ class ModernStore:
 
     @contextmanager
     def connect(self):
-        db = sqlite3.connect(self.path, timeout=15)
+        # timeout 是等锁的上限：以前 15 秒 + 重试，持 guard 的写操作要 21 秒才失败，
+        # 期间前端的轮询一直卡着（2026-10-07 实测）。缩短到 5 秒并给出可读的错误。
+        try:
+            db = sqlite3.connect(self.path, timeout=5)
+        except sqlite3.OperationalError as error:
+            raise ValueError(f'会话库暂时不可写（{error}）；请稍后重试。') from error
         db.execute('PRAGMA foreign_keys=ON')
         db.row_factory = sqlite3.Row
         try:
             with db:
                 yield db
+        except sqlite3.OperationalError as error:
+            if 'locked' in str(error).lower() or 'busy' in str(error).lower():
+                raise ValueError('会话库正被另一个操作占用；请稍后重试。') from error
+            raise
         finally:
             db.close()
 
@@ -133,6 +144,19 @@ class ModernStore:
         with self.connect() as db:
             db.execute('INSERT INTO sessions(id,title,created,updated,project_path) VALUES (?,?,?,?,?)', (sid, self.clean(str(title)[:100]), stamp, stamp, self.project_path))
         return self.get(sid)['session']
+
+    def discard_empty_sessions(self, session_ids):
+        """Discard unused window-created sessions, preserving drafts and history."""
+        with self.connect() as db:
+            db.executemany('''
+                DELETE FROM sessions
+                WHERE id=? AND title='新会话' AND draft='' AND summary=''
+                  AND NOT EXISTS (SELECT 1 FROM messages WHERE session=sessions.id)
+                  AND NOT EXISTS (SELECT 1 FROM evidence WHERE session=sessions.id)
+                  AND NOT EXISTS (SELECT 1 FROM model_events WHERE session=sessions.id)
+                  AND NOT EXISTS (SELECT 1 FROM session_pins WHERE session=sessions.id)
+                  AND NOT EXISTS (SELECT 1 FROM history_metadata WHERE session=sessions.id)
+            ''', ((sid,) for sid in session_ids))
 
     def writable(self, sid):
         if not isinstance(sid, str) or sid.startswith('legacy:'):
@@ -241,8 +265,48 @@ class ModernStore:
 
     def save_evidence(self, sid, task_id, payload):
         self.writable(sid)
+        payload = self.bounded_evidence(payload)
         with self.connect() as db:
-            db.execute('INSERT INTO evidence(session,task,payload) VALUES (?,?,?)', (sid, task_id, self.encode(payload)))
+            row = db.execute('SELECT seq FROM evidence WHERE session=? AND task=? ORDER BY seq DESC LIMIT 1', (sid, task_id)).fetchone()
+            if row:
+                db.execute('UPDATE evidence SET payload=? WHERE seq=?', (self.encode(payload), row[0]))
+            else:
+                db.execute('INSERT INTO evidence(session,task,payload) VALUES (?,?,?)', (sid, task_id, self.encode(payload)))
+
+    #: 单条证据记录的上限。正常情况下测量行只有几十字，这条上限是给「自定义脚本把几万行
+    #: 输出塞进结果文件」那种失控情况兜底的：以前一条 4 MB 的记录会在持 self.guard 时
+    #: 写库并整份回读（2026-10-07 复查）。超限就截断并标明，原始文件仍在任务目录里。
+    EVIDENCE_PAYLOAD_LIMIT = 1_000_000
+    EVIDENCE_ROW_LIMIT = 4000
+
+    def bounded_evidence(self, payload):
+        if not isinstance(payload, dict):
+            return payload
+        text = self.encode(payload)
+        if len(text) <= self.EVIDENCE_PAYLOAD_LIMIT:
+            return payload
+        trimmed = dict(payload)
+        for key in ('attempts', 'evidence'):
+            items = trimmed.get(key)
+            if not isinstance(items, list):
+                continue
+            trimmed[key] = [
+                {**item,
+                 'rows': ['【过长输出已截断，完整结果在任务目录里】'] if len(self.encode(item.get('rows') or [])) > self.EVIDENCE_ROW_LIMIT
+                 else item.get('rows', [])}
+                if isinstance(item, dict) else item
+                for item in items
+            ]
+        trimmed['truncated'] = True
+        return trimmed
+
+    def task_evidence(self, sid, task_id):
+        self.writable(sid)
+        with self.connect() as db:
+            row = db.execute('SELECT payload FROM evidence WHERE session=? AND task=? ORDER BY seq DESC LIMIT 1', (sid, task_id)).fetchone()
+        if row is None:
+            raise ValueError('原任务没有可复用的证据记录')
+        return json.loads(row[0])
 
     def context(self, sid):
         self.writable(sid)

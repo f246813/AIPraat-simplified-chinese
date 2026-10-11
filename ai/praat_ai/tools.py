@@ -16,6 +16,7 @@ Free-form scripts remain available as a validated fallback.
 from __future__ import annotations
 
 import json
+import math
 import re
 import uuid
 from dataclasses import dataclass
@@ -272,14 +273,27 @@ def parse_object_context(text: str) -> tuple[ObjectRow, ...]:
         parts = [part.strip() for part in line.split("\t")]
         if len(parts) < 4 or not parts[0].isdigit():
             continue
+        # 名字里可能有制表符（Praat 允许）：从右边判断尾部是 selected 还是
+        # selected+sel_start+sel_end，多出来的列属于名字，不能整行错位
+        # （错位会把 selected 读成 sel_start，对象变成"未选中"）。
+        tail = 1
+        if len(parts) >= 6 and parts[-3] in ("0", "1"):
+            try:
+                for piece in (parts[-2], parts[-1]):
+                    if piece:
+                        float(piece)
+                tail = 3
+            except ValueError:
+                tail = 1
+        name = "\t".join(parts[2:len(parts) - tail])
         rows.append(
             ObjectRow(
                 id=int(parts[0]),
                 class_name=parts[1],
-                name=parts[2],
-                selected=parts[3] == "1",
-                selection_start=_optional_seconds(parts, 4),
-                selection_end=_optional_seconds(parts, 5),
+                name=name,
+                selected=parts[len(parts) - tail] == "1",
+                selection_start=_optional_seconds(parts, len(parts) - 2) if tail == 3 else None,
+                selection_end=_optional_seconds(parts, len(parts) - 1) if tail == 3 else None,
             )
         )
     return tuple(rows)
@@ -289,9 +303,11 @@ def _optional_seconds(parts: list[str], index: int) -> float | None:
     if len(parts) <= index or not parts[index]:
         return None
     try:
-        return float(parts[index])
+        value = float(parts[index])
     except ValueError:
         return None
+    # nan/inf 会一路写进脚本（``tmin = nan``），这里直接当没有圈选。
+    return value if math.isfinite(value) else None
 
 
 def praat_text(value: Any) -> str:
@@ -340,6 +356,89 @@ def _integer(
     if abs(number - rounded) > 1e-6:
         raise ToolError(f"参数 {key} 必须是整数。")
     return rounded
+
+
+#: 基频上下限在所有工具里共用一套界限（以前 pitch/vot/measure 各有一套，同一句话
+#: 会因为模型选了不同工具而成功或失败）。与 measures.tsv 的 @@ settings 保持一致。
+PITCH_FLOOR_BOUNDS = (10.0, 2000.0)
+PITCH_CEILING_BOUNDS = (20.0, 5000.0)
+#: 范围端点的同义写法：说明书写过 finish，代码却只读 to/end（2026-10-07 实测：
+#: ``from`` + ``finish`` 会静默变成整段测量）。
+RANGE_START_KEYS = ("from", "start")
+RANGE_END_KEYS = ("to", "end", "finish")
+
+
+def _coerce_number(value: Any) -> float | None:
+    """能当成有限数就返回它，否则 ``None``（不抛异常，供同义写法比较用）。"""
+
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if math.isfinite(number) else None
+
+
+def _range_argument(
+    arguments: Mapping[str, Any],
+    keys: Sequence[str],
+    default: Any = None,
+) -> Any:
+    """按同义写法取一个范围端点；同时给了互相矛盾的写法就报错。"""
+
+    given = [(key, arguments[key]) for key in keys
+             if key in arguments and arguments[key] not in (None, "")]
+    if not given:
+        return default
+    first_key, first = given[0]
+    first_number = _coerce_number(first)
+    for key, value in given[1:]:
+        other = _coerce_number(value)
+        if first_number is None or other is None or abs(first_number - other) > 1e-9:
+            raise ToolError(f"{first_key} 与 {key} 给了互相矛盾的范围，请只保留一个。")
+    return first
+
+
+def _range_pair(arguments: Mapping[str, Any]) -> tuple[Any, Any]:
+    """范围端点 ``(起点, 终点)``，支持 from/start 与 to/end/finish，并检查顺序。
+
+    顺序以前只在 Praat 脚本里 ``exitScript``，等于白跑一次投递；所有用范围的地方
+    都在这里统一拒绝（2026-10-07）。
+    """
+
+    start = _range_argument(arguments, RANGE_START_KEYS)
+    end = _range_argument(arguments, RANGE_END_KEYS)
+    first, second = _coerce_number(start), _coerce_number(end)
+    if first is not None and second is not None and first > second:
+        raise ToolError(f"起点必须早于终点（现在 from={first:g}、to={second:g}）。")
+    return start, end
+
+
+def _pitch_band(arguments: Mapping[str, Any], *, floor_default: float = 75.0,
+                ceiling_default: float = 600.0, with_ceiling: bool = True) -> tuple[float, float | None]:
+    """统一的基频上下限：同一套界限 + 下限必须小于上限。"""
+
+    floor = _number(arguments, "pitch_floor", floor_default, *PITCH_FLOOR_BOUNDS)
+    ceiling = (_number(arguments, "pitch_ceiling", ceiling_default, *PITCH_CEILING_BOUNDS)
+               if with_ceiling else None)
+    if ceiling is not None and floor >= ceiling:
+        raise ToolError("pitch_floor（基频下限）必须小于 pitch_ceiling（基频上限）。")
+    return floor, ceiling
+
+
+def _named_target(context: "ToolContext", arguments: Mapping[str, Any], action: str) -> "ObjectRow":
+    """破坏性操作（删除/重命名）要一个**明确**的目标。
+
+    ``ToolContext.default_object`` 在没有选中对象时会退回对象列表的最后一行；对
+    ``duration`` 这类只读工具只是不精确，对删除/重命名就是误删（2026-10-07 实测：
+    什么都没选中时 ``remove_object`` 渲染出 ``selectObject: 3`` 删掉一个 Intensity）。
+    """
+
+    requested = arguments.get("object")
+    if requested in (None, ""):
+        selected = [row for row in context.objects if row.selected]
+        if len(selected) != 1:
+            raise ToolError(f"{action}需要明确的目标：请先在 Praat 里选中唯一对象，或给出编号/名称。")
+    return context.resolve_object(requested)
 
 
 def _query_times(
@@ -603,8 +702,7 @@ def _build_pitch(arguments: Mapping[str, Any], context: ToolContext) -> str:
     temporary = row.class_name != "Pitch"
     lines = [f"selectObject: {row.id}", "duration = Get total duration"]
     if temporary:
-        floor = _number(arguments, "pitch_floor", 75.0, 20.0, 1000.0)
-        ceiling = _number(arguments, "pitch_ceiling", 600.0, 50.0, 2000.0)
+        floor, ceiling = _pitch_band(arguments)
         lines.extend(
             [
                 f"To Pitch: 0, {floor:.6f}, {ceiling:.6f}",
@@ -715,8 +813,7 @@ def _build_pitch_statistics(
     lines = [f"selectObject: {row.id}", "duration = Get total duration"]
     lines.extend(_range_lines(arguments, row))
     if temporary:
-        floor = _number(arguments, "pitch_floor", 75.0, 20.0, 1000.0)
-        ceiling = _number(arguments, "pitch_ceiling", 600.0, 50.0, 2000.0)
+        floor, ceiling = _pitch_band(arguments)
         lines.extend(
             [
                 f"To Pitch: 0, {floor:.6f}, {ceiling:.6f}",
@@ -986,8 +1083,7 @@ def _selection_range(
     selection = row.selection
     if selection is None:
         return None
-    start = arguments.get("from", arguments.get("start", None))
-    end = arguments.get("to", arguments.get("end", None))
+    start, end = _range_pair(arguments)
     if start in (None, "") and end in (None, ""):
         return selection
     if _echoes_editor_selection(start, end, selection):
@@ -1018,14 +1114,16 @@ def _range_lines(
         lines.append(_range_note(selection))
     else:
         lines.append('rangeNote$ = ""')
-        if arguments.get("from", arguments.get("start", None)) not in (None, ""):
-            lines.append(
-                f"tmin = {_number({'from': arguments.get('from', arguments.get('start'))}, 'from', 0.0, 0.0, 36000.0):.6f}"
-            )
-        if arguments.get("to", arguments.get("end", None)) not in (None, ""):
-            lines.append(
-                f"tmax = {_number({'to': arguments.get('to', arguments.get('end'))}, 'to', 0.0, 0.0, 36000.0):.6f}"
-            )
+        start, end = _range_pair(arguments)
+        start = _number({"from": start}, "from", 0.0, 0.0, 36000.0) if start not in (None, "") else None
+        end = _number({"to": end}, "to", 0.0, 0.0, 36000.0) if end not in (None, "") else None
+        if start is not None and end is not None and start > end:
+            # 以前只在 Praat 脚本里 exitScript，白跑一次投递；在 Python 层就说清楚范围反了。
+            raise ToolError(f"起点必须早于终点（现在 from={start:g}、to={end:g}）。")
+        if start is not None:
+            lines.append(f"tmin = {start:.6f}")
+        if end is not None:
+            lines.append(f"tmax = {end:.6f}")
     lines.extend(_clamp_range_lines())
     return lines
 
@@ -1100,12 +1198,20 @@ def _build_harmonicity_statistics(
         "谐噪比分析需要 Sound 或 Harmonicity 对象",
     )
     temporary = row.class_name != "Harmonicity"
+    # 谐噪比的基频下限就是 measures.tsv 里的 harmonicity_floor（20–1000 Hz）；以前写死 75，
+    # 用户说「用 40 Hz 下限」也没用（2026-10-07 实测）。这里用它的界限，并在越界时说清楚。
+    try:
+        floor = _number(arguments, "pitch_floor", 75.0, 20.0, 1000.0)
+    except ToolError as error:
+        raise ToolError(
+            "谐噪比分析的基频下限（harmonicity_floor，参数名 pitch_floor）"
+            "必须在 20 与 1000 Hz 之间。") from error
     lines = [f"selectObject: {row.id}", "duration = Get total duration"]
     lines.extend(_range_lines(arguments, row))
     if temporary:
         lines.extend(
             [
-                "To Harmonicity (cc): 0.01, 75, 0.1, 1",
+                f"To Harmonicity (cc): 0.01, {floor:g}, 0.1, 1",
                 f"Rename: {quote(TEMPORARY_OBJECT_NAME)}",
             ]
         )
@@ -1354,10 +1460,10 @@ def _build_textgrid_set_interval(
     tier = _tier_number(arguments)
     # from/to 与 start/end 作为时间参数别名，按相同优先级读取。
     start = _number(
-        {"start": arguments.get("start", arguments.get("from"))},
+        {"start": _range_argument(arguments, RANGE_START_KEYS)},
         "start", 0.0, 0.0, 36000.0,
     )
-    raw_end = arguments.get("end", arguments.get("to", arguments.get("finish", None)))
+    raw_end = _range_argument(arguments, RANGE_END_KEYS)
     if raw_end in (None, ""):
         # 「把这一段标成 x」：结束时间没给时用编辑器里圈出来的选区。
         selection = _selection_range(arguments, row)
@@ -1699,9 +1805,8 @@ def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
         arguments.get("object"), ANALYSIS_SOUND_CLASSES, "自动检测 VOT 需要一个 Sound 对象"
     )
     burst_db = _number(arguments, "burst_db", 6.0, 3.0, 30.0)
-    pitch_floor = _number(arguments, "pitch_floor", 75.0, 40.0, 500.0)
-    start_arg = arguments.get("from", arguments.get("start", None))
-    end_arg = arguments.get("to", arguments.get("end", None))
+    pitch_floor, _ = _pitch_band(arguments, with_ceiling=False)
+    start_arg, end_arg = _range_pair(arguments)
     editor_selection = row.selection
     # 模型常把编辑器里的圈选原样抄进 from/to；数值对得上就还按圈选报，
     # 否则回话里会丢掉「这段范围是用户自己在波形上圈的」这个出处。
@@ -1754,9 +1859,6 @@ def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
             "else",
             *note_lines,
             # ① 爆破（释放瞬态）：带通到 2–8 kHz 再求强度包络的最陡上升沿
-            f"selectObject: {row.id}",
-            f'To Harmonicity (cc): 0.002, {pitch_floor:.6f}, 0.1, 1.0',
-            'hnrId = selected ("Harmonicity")',
             f"selectObject: {row.id}",
             "Filter (pass Hann band): 2000, 8000, 100",
             'hfSound = selected ("Sound")',
@@ -2016,7 +2118,7 @@ def _build_play(arguments: Mapping[str, Any], context: ToolContext) -> str:
 
 
 def _build_rename(arguments: Mapping[str, Any], context: ToolContext) -> str:
-    row = context.resolve_object(arguments.get("object"))
+    row = _named_target(context, arguments, "重命名")
     new_name = str(arguments.get("new_name", "") or "").strip()
     if not new_name:
         raise ToolError("重命名需要 new_name 参数。")
@@ -2029,7 +2131,7 @@ def _build_rename(arguments: Mapping[str, Any], context: ToolContext) -> str:
 
 
 def _build_remove(arguments: Mapping[str, Any], context: ToolContext) -> str:
-    row = context.resolve_object(arguments.get("object"))
+    row = _named_target(context, arguments, "删除")
     lines = [
         f"selectObject: {row.id}",
         "Remove",
@@ -2117,10 +2219,10 @@ def _build_extract_part(arguments: Mapping[str, Any], context: ToolContext) -> s
         arguments.get("object"), SOUND_CLASSES, "只有声音对象可以截取片段"
     )
     start = _number(
-        {"start": arguments.get("start", arguments.get("from"))},
+        {"start": _range_argument(arguments, RANGE_START_KEYS)},
         "start", 0.0, 0.0, 36000.0,
     )
-    raw_end = arguments.get("end", arguments.get("to", arguments.get("finish", None)))
+    raw_end = _range_argument(arguments, RANGE_END_KEYS)
     if raw_end in (None, ""):
         # 「把这段截出来」：结束时间没给时用编辑器里圈出来的选区。
         selection = _selection_range(arguments, row)
@@ -2182,7 +2284,9 @@ def _build_read_file(arguments: Mapping[str, Any], context: ToolContext) -> str:
     raw = raw.strip('"')
     if not raw:
         raise ToolError("需要给出要读取的文件路径（path），例如 D:/in/a.wav。")
-    path = praat_path(Path(raw))
+    # 只转义一次：praat_path() 已经处理过引号，再交给 quote() 会变成 """"q""""，
+    # Praat 解出来的路径就不是用户给的那个了（2026-10-07 实测）。
+    path = str(Path(raw)).replace("\\", "/")
     lines = [
         f"if not fileReadable ({quote(path)})",
         f"exitScript: {quote('找不到要读取的文件：' + path + '（请检查路径是否存在）')}",
@@ -2303,8 +2407,7 @@ def _build_spectral_emphasis(
     )
     multiplier = _number(arguments, "multiplier", 1.5, 0.1, 10.0)
     smoothing = _number(arguments, "smoothing", 20.0, 0.1, 5000.0)
-    floor = _number(arguments, "pitch_floor", 75.0, 20.0, 1000.0)
-    ceiling = _number(arguments, "pitch_ceiling", 600.0, 50.0, 2000.0)
+    floor, ceiling = _pitch_band(arguments)
     lines = [
         f"selectObject: {row.id}",
         "duration = Get total duration",
@@ -2321,8 +2424,15 @@ def _build_spectral_emphasis(
         "else",
         f"cutoff = meanPitch * {multiplier:.6f}",
         f"Filter (pass Hann band): 0, cutoff, {smoothing:.6f}",
+        # Filter 会新建一个 "<名字>_band" 的 Sound 并选中它。以前用裸 Remove 删「当前选中」，
+        # 一旦选择状态不是它就会留下副本或误删（2026-10-07 实测：对象列表里多出一个副本）。
+        # 这里显式记下它，并且绝不删原对象。
+        'filteredId = selected ("Sound")',
         "filtered = Get intensity (dB)",
-        "Remove",
+        f"if filteredId <> 0 and filteredId <> {row.id}",
+        "    selectObject: filteredId",
+        "    Remove",
+        "endif",
         f"selectObject: {row.id}",
         "emphasis = intensity - filtered",
         _write_result(
@@ -2357,6 +2467,10 @@ def _build_hl_ratio(arguments: Mapping[str, Any], context: ToolContext) -> str:
     low_to = _number(arguments, "low_to", 4000.0, 1.0, 96000.0)
     high_from = _number(arguments, "high_from", 4000.0, 1.0, 96000.0)
     high_to = _number(arguments, "high_to", 8000.0, 2.0, 96000.0)
+    if low_from >= low_to:
+        raise ToolError("低频段的起点必须小于终点（默认 0–4000 Hz）。")
+    if high_from >= high_to:
+        raise ToolError("高频段的起点必须小于终点（默认 4000–8000 Hz）。")
     if low_to > high_from:
         raise ToolError("低频段上限不能高于高频段下限（默认 0–4000 与 4000–8000 Hz）。")
     temporary = row.class_name != "Spectrum"
@@ -2411,6 +2525,10 @@ def _build_hammarberg_index(
     high_from = _number(arguments, "high_from", 2000.0, 1.0, 96000.0)
     high_to = _number(arguments, "high_to", 5000.0, 2.0, 96000.0)
     bandwidth = _number(arguments, "bandwidth", 100.0, 1.0, 1000.0)
+    if low_from >= low_to:
+        raise ToolError("低频段的起点必须小于终点（默认 0–2000 Hz）。")
+    if high_from >= high_to:
+        raise ToolError("高频段的起点必须小于终点（默认 2000–5000 Hz）。")
     temporary = row.class_name != "Ltas"
     lines = [f"selectObject: {row.id}"]
     if temporary:
@@ -2454,8 +2572,7 @@ def _build_pitch_peak_latency(
         "基频峰值延迟需要 Sound 或 Pitch 对象",
     )
     temporary = row.class_name != "Pitch"
-    floor = _number(arguments, "pitch_floor", 75.0, 20.0, 1000.0)
-    ceiling = _number(arguments, "pitch_ceiling", 600.0, 50.0, 2000.0)
+    floor, ceiling = _pitch_band(arguments)
     lines = [f"selectObject: {row.id}", "duration = Get total duration"]
     lines.extend(_range_lines(arguments, row))
     if temporary:
@@ -2585,7 +2702,7 @@ def _build_intensity_slope(arguments: Mapping[str, Any], context: ToolContext) -
     if method not in {"local", "global", "局部", "整体"}:
         raise ToolError("method 只能是 local（局部）或 global（整体）。")
     local = method in {"local", "局部"}
-    pitch_floor = _number(arguments, "pitch_floor", 100.0, 20.0, 1000.0)
+    pitch_floor, _ = _pitch_band(arguments, floor_default=100.0, with_ceiling=False)
     time_step = _number(arguments, "time_step", 0.001, 0.0001, 1.0)
     lines = [f"selectObject: {row.id}", "duration = Get total duration"]
     extracted = ""
@@ -2608,9 +2725,7 @@ def _build_intensity_slope(arguments: Mapping[str, Any], context: ToolContext) -
         extracted = "extractedId"
     else:
         # Intensity / Pitch 这类对象没有「取片段」命令：只能整段算，别假装能按范围算。
-        if arguments.get("from", arguments.get("start", None)) not in (None, "") or arguments.get(
-            "to", arguments.get("end", None)
-        ) not in (None, ""):
+        if any(value not in (None, "") for value in _range_pair(arguments)):
             raise ToolError(
                 "对已经提取出来的 Intensity 对象只能整段算斜率；"
                 "要按时间范围算，请直接对声音对象用这个工具。"
@@ -2626,6 +2741,15 @@ def _build_intensity_slope(arguments: Mapping[str, Any], context: ToolContext) -
             'matrixId = selected ("Matrix")',
             "colsNum = Get number of columns",
             "timeStep = Get column distance",
+            # 静音/空录音上算出来的 0 dB/s 没有实际意义，先说清楚再给数字。
+            'flatNote$ = ""',
+            "if colsNum > 1",
+            "    maxEl = Get maximum",
+            "    minEl = Get minimum",
+            "    if maxEl - minEl < 0.5",
+            '        flatNote$ = "——整段几乎没有强度变化；如果是静音或空录音，这个数值没有实际意义。"',
+            "    endif",
+            "endif",
         ]
     )
     if local:
@@ -2644,6 +2768,7 @@ def _build_intensity_slope(arguments: Mapping[str, Any], context: ToolContext) -
                     quote(" 个点，步长 "),
                     "fixed$ (timeStep, 6)",
                     quote(" 秒）"),
+                    "flatNote$",
                     "rangeNote$",
                 ],
             ),
@@ -2665,6 +2790,7 @@ def _build_intensity_slope(arguments: Mapping[str, Any], context: ToolContext) -
                     quote(" dB → "),
                     "fixed$ (lastEl, 2)",
                     quote(" dB）"),
+                    "flatNote$",
                     "rangeNote$",
                 ],
             ),
@@ -2782,7 +2908,15 @@ def _measure_names(arguments: Mapping[str, Any]) -> list[str]:
 
 def _measure_entries(arguments: Mapping[str, Any]) -> list[measures.Entry]:
     table = measures.load_table()
+    raw = arguments.get("parameter", arguments.get("parameters"))
     entries: list[measures.Entry] = []
+    # 整串先当**一个**参数试一次：这样 "jitter local"、"第 1 共振峰" 这类带空格的常见
+    # 说法不会被按空格切开（2026-10-07 实测：切开后变成「不认识参数「jitter」」）。
+    if isinstance(raw, str) and raw.strip():
+        try:
+            return [table.find(raw)]
+        except KeyError:
+            pass
     for name in _measure_names(arguments):
         try:
             entries.append(table.find(name))
@@ -2795,7 +2929,7 @@ def _measure_entries(arguments: Mapping[str, Any]) -> list[measures.Entry]:
 
 
 def _measure_settings(
-    arguments: Mapping[str, Any], table: measures.Table
+    arguments: Mapping[str, Any], table: measures.Table, entries: Sequence[measures.Entry] = ()
 ) -> dict[str, int | float]:
     """按表里的 ``@@ settings`` 取值：默认值在表里，模型可以用同名参数覆盖。"""
 
@@ -2823,6 +2957,20 @@ def _measure_settings(
     if isinstance(floor, (int, float)) and isinstance(ceiling, (int, float)):
         if floor >= ceiling:
             raise ToolError("pitch_floor（基频下限）必须小于 pitch_ceiling（基频上限）。")
+    # 用户说「用 40 Hz 下限算谐噪比」时填的是 pitch_floor；谐噪比的派生用的是
+    # harmonicity_floor，两张表分开写着，以前这句话会被静默忽略（2026-10-07 实测）。
+    # 只有这次真的要求 hnr 时才折算，免得把纯基频测量的 pitch_floor 也拿去卡谐噪比界限。
+    needs_harmonicity = any("harmonicity" in measures.source_keys(entry.source) for entry in entries)
+    if (needs_harmonicity and arguments.get("pitch_floor") not in (None, "")
+            and arguments.get("harmonicity_floor") in (None, "")):
+        setting = table.settings["harmonicity_floor"]
+        candidate = float(values["pitch_floor"])
+        if not float(setting.minimum) <= candidate <= float(setting.maximum):
+            raise ToolError(
+                f"谐噪比分析的基频下限（harmonicity_floor）必须在 {setting.minimum} 与 "
+                f"{setting.maximum} 之间；pitch_floor={candidate:g} 超出这个范围，"
+                "请直接指定 harmonicity_floor。")
+        values["harmonicity_floor"] = candidate
     return values
 
 
@@ -2939,7 +3087,7 @@ def _build_measure(arguments: Mapping[str, Any], context: ToolContext) -> str:
             )
         variables[alias] = str(row.id)
 
-    settings = _measure_settings(arguments, table)
+    settings = _measure_settings(arguments, table, entries)
     unit_literal = _unit_literal(arguments, "hertz")
     unit_text = _unit_display(arguments, "hertz").strip()
     created = _measure_plan(table, entries, variables)
@@ -3020,18 +3168,14 @@ def _build_measure(arguments: Mapping[str, Any], context: ToolContext) -> str:
         )
         lines.append("endif")
 
-    for entry in editor_only:
-        lines.append(
-            _write_result(
-                context,
-                [
-                    quote(
-                        f"{entry.label}：这个参数只能在 Praat 的编辑器里查"
-                        f"（{entry.command}），对象列表里没有对应命令。"
-                    )
-                ],
-            )
-        )
+    # 编辑器专属参数不能在对象列表里算：以前这里写一行中文说明就算「调用成功」，
+    # 报告阶段会把它当成一次有结果的测量（2026-10-07）。执行前拒绝，并指出替代做法。
+    if editor_only:
+        labels = "、".join(f"{entry.parameter}（{entry.label}）" for entry in editor_only)
+        raise ToolError(
+            f"{labels}只能在 Praat 的编辑器里查（Voice report），对象列表没有对应命令；"
+            "请在 Praat 里打开声音 → View & Edit → Voice report，或改用可计算的参数"
+            "（例如 hnr、local_jitter、cpps）。")
 
     for key in reversed(created):
         lines.append(f"selectObject: {key}Id")
@@ -3288,7 +3432,7 @@ TOOLS: tuple[Tool, ...] = (
     Tool(
         name="harmonicity_statistics",
         summary="统计谐噪比 HNR（Harmonicity，dB）：平均值和最高值。要「谐噪比」时用这个。",
-        signature="from、to（秒，默认整个对象）、object（可选）",
+        signature="from、to（秒，默认整个对象）、pitch_floor（基频下限 Hz，默认 75）、object（可选）",
         build=_build_harmonicity_statistics,
     ),
     Tool(
@@ -3619,6 +3763,7 @@ TOOL_PARAMETERS: dict[str, dict[str, Any]] = {
         "properties": {
             "from": _seconds_arg("起点（秒），不填就是整个对象"),
             "to": _seconds_arg("终点（秒），不填就是整个对象"),
+            "pitch_floor": _number_arg("谐噪比分析的基频下限 Hz，默认 75"),
             "object": _object_arg(),
         },
         "required": [],
@@ -4092,6 +4237,27 @@ def praat_literal(text: str) -> str:
     return '"' + text.replace('"', '""') + '"'
 
 
+def validate_script_source_types(script: str, context: ToolContext) -> None:
+    """Reject the reproduced To Pitch mismatch when its source is known."""
+    selected_classes = [row.class_name for row in context.objects if row.selected]
+    for line in script.splitlines():
+        select_match = re.match(r'\s*selectObject\s*:\s*(.*?)\s*$', line, re.I)
+        legacy_match = re.match(r'\s*select\s+([^\n]+)$', line, re.I)
+        if select_match or legacy_match:
+            literal = (select_match or legacy_match).group(1).strip().strip('"')
+            try:
+                selected_classes = [context.resolve_object(literal).class_name]
+            except ToolError:
+                selected_classes = None
+        elif re.match(r'\s*(?:\w+\s*=\s*)?To Pitch(?:\s*\([^)]*\))?\s*:', line, re.I):
+            if selected_classes is not None and any(cls != 'Sound' for cls in selected_classes):
+                raise ToolError('To Pitch 转换需要 Sound；当前脚本选中对象类型不适用，未投递。')
+            selected_classes = ['Pitch']
+        elif re.match(r'\s*(?:\w+\s*=\s*)?(?:To |Create |Extract |Copy\s*:|Read )', line, re.I) or re.match(r'\s*(?:plusObject|minusObject|plus |minus )', line, re.I):
+            # A newly produced or variable selection is not an original row.
+            selected_classes = None
+
+
 def neutralize_info_commands(script: str, result_path: Path | str) -> str:
     """将 Info 输出命令改写为结果文件输出，保留可见字面内容；printtab 与 clearinfo 用说明注释替代。"""
 
@@ -4134,6 +4300,7 @@ def render(
         raise ToolError("模型没有选择工具。")
     if name == CUSTOM_SCRIPT_TOOL:
         script = validate_script(custom_script)
+        validate_script_source_types(script, context)
         script = neutralize_info_commands(script, context.result_path)
         return _assemble(script.rstrip("\n").splitlines(), context)
     tool = TOOL_MAP.get(name)
@@ -4141,7 +4308,67 @@ def render(
         raise ToolError(f"未知工具：{name}")
     if arguments is not None and not isinstance(arguments, Mapping):
         raise ToolError("arguments 必须是 JSON 对象。")
-    return tool.build(arguments or {}, context)
+    args = dict(arguments or {})
+    _reject_unsupported_arguments(name, args)
+    return tool.build(args, context)
+
+
+#: 应用自己塞进去的作用域标记，不是模型参数。
+_INTERNAL_ARGUMENTS = frozenset({"_whole_object"})
+#: 各工具 build 函数真正会读、但不在自己 schema 里的同义写法（见 build 函数里的
+#: ``_range_argument`` / ``_new_name`` / ``_query_times`` 等取值处）。
+ALIAS_ARGUMENTS: dict[str, frozenset[str]] = {
+    "extract_part": frozenset({"start", "end", "from", "to", "finish"}),
+    "textgrid_set_interval": frozenset({"start", "end", "from", "to", "finish", "label", "text"}),
+    "textgrid_insert_boundary": frozenset({"time", "at"}),
+    "rename_object": frozenset({"name"}),
+    "duplicate_object": frozenset({"new_name"}),
+    "read_file": frozenset({"file"}),
+    "save_sound": frozenset({"file"}),
+    "measure": frozenset({"parameters", "start", "end", "finish"}),
+    "pitch": frozenset({"times", "start", "end", "finish"}),
+    "intensity": frozenset({"times", "start", "end", "finish"}),
+    "formant_frequency": frozenset({"times", "formants"}),
+    "formant_bandwidth": frozenset({"times", "formants"}),
+    "concatenate_sounds": frozenset({"objects", "other"}),
+    "vot": frozenset({"onset", "start", "end", "finish", "tier_number"}),
+    "custom_script": frozenset({"script"}),
+}
+#: 这些工具按定义只作用于整个对象：给了范围参数就是听不懂用户要什么，
+#: 与其静默按整段测（2026-10-07 实测：一个**正确**的范围被无声丢掉），不如说清楚。
+WHOLE_OBJECT_ONLY = frozenset({
+    "duration", "object_info", "spectral_emphasis", "hl_ratio", "hammarberg_index",
+    "spectrogram", "resample_sound", "save_sound",
+})
+
+
+def _reject_unsupported_arguments(name: str, arguments: dict[str, Any]) -> None:
+    """执行前挡下「参数名不认识」和「这个工具不吃范围」。
+
+    所有工具的 schema 都没有 ``additionalProperties: false``，未知键会被 build 忽略：
+    用户说的单位、范围、上下限就这样消失了（2026-10-07 实测：``pitch_flor``、
+    ``spectral_emphasis`` 的 ``from``/``to`` 都是静默丢弃）。
+    """
+
+    schema = TOOL_PARAMETERS.get(name) or {}
+    properties = set(schema.get("properties") or {})
+    # 「只作用于整个对象」的工具先给可照做的说明，再谈参数名（否则用户看到的是
+    # 「参数名不认识：from、to」，不知道该改成 extract_part）。
+    if name in WHOLE_OBJECT_ONLY:
+        given = [key for key in (*RANGE_START_KEYS, *RANGE_END_KEYS)
+                 if arguments.get(key) not in (None, "")]
+        if given:
+            raise ToolError(
+                f"{name} 只能对整个对象做，不接受 {'、'.join(given)}。"
+                "要只看一段，请先用 extract_part 截取那段，再对它测量。")
+    allowed = properties | set(ALIAS_ARGUMENTS.get(name, ())) | set(_INTERNAL_ARGUMENTS)
+    # 有范围端点的工具一律收全部同义写法，免得模型写 finish 就被判成参数名不认识。
+    if properties & {"from", "to", "start", "end"}:
+        allowed |= set(RANGE_START_KEYS) | set(RANGE_END_KEYS)
+    unknown = sorted(key for key in arguments if key not in allowed)
+    if unknown:
+        shown = "、".join(sorted(properties))
+        raise ToolError(f"参数名不认识：{'、'.join(unknown)}。{name} 可用参数：{shown}。")
 
 
 def describe_script(script: str, *, maximum_lines: int = 14) -> str:

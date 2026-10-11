@@ -56,7 +56,7 @@ with tempfile.TemporaryDirectory() as temporary:
             wait('document.querySelector("[aria-label=展开会话侧栏]")');click('[aria-label=展开会话侧栏]')
             wait(exists('[data-session-id="legacy:old"]'))
             context('.sidebar-origin-group:has([data-session-id="legacy:old"]) .sidebar-time-group-header')
-            assert js('Array.from(document.querySelectorAll("[role=menuitem]")).map(el=>el.textContent)')==['删除分区及其内容','仅删除分区','全部归档']
+            assert js('Array.from(document.querySelectorAll("[role=menuitem]")).map(el=>el.textContent)')==['仅删除分区','删除分区内所有内容','全部归档','删除分区及其内容']
             text_button('仅删除分区','menuitem');wait('document.querySelector("[aria-label=确认仅删除分区]")');click('[aria-label=确认仅删除分区]')
             wait('!'+exists('dialog.modal[open]'))
             assert app.store.get(detached)['session']['timeGroupDetached']
@@ -79,12 +79,12 @@ with tempfile.TemporaryDirectory() as temporary:
             wait('!'+exists('[data-session-id="legacy:old"]'))
             passed('readonly-session-deletes-through-existing-confirmation')
             context('.sidebar-origin-group:has([data-session-id='+json.dumps(opened)+']) .sidebar-time-group-header')
-            text_button('删除分区及其内容','menuitem');wait('document.querySelector("[aria-label=确认删除分区及其内容]")');click('[aria-label=确认删除分区及其内容]')
+            text_button('删除分区内所有内容','menuitem');wait('document.querySelector("[aria-label=确认删除分区内所有内容]")');click('[aria-label=确认删除分区内所有内容]')
             wait('!'+exists('[data-session-id="'+opened+'"]'))
             assert {s['id'] for s in app.store.sessions()}=={detached,keep}
             assert legacy.read_bytes()==original
             assert not app.tasks
-            passed('delete-group-only-target-members-and-preserves-legacy-source')
+            passed('clear-group-only-target-members-and-preserves-legacy-source')
             result.update(passed=True,userAgent=js('navigator.userAgent'))
         except Exception as error:result.update(passed=False,error=repr(error),page=js('document.body.innerText'))
         finally:window.destroy()

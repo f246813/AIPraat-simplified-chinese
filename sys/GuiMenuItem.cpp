@@ -17,6 +17,7 @@
  */
 
 #include "GuiP.h"
+#include <unordered_map>
 #if gtk
 	#include <gdk/gdkkeysyms.h>
 #endif
@@ -41,6 +42,100 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 #endif
 
 #if motif
+	namespace {
+		struct StatusDot { GuiObject widget; int colour; HWND popup = nullptr; };
+		std::unordered_map<ULONG_PTR, StatusDot> statusDots;
+		HMENU activeStatusMenu = nullptr;
+		HWND activeStatusPopup = nullptr;
+		constexpr UINT_PTR statusPopupSubclass = 0xA176;
+		constexpr UINT statusPopupRedrawDot = WM_APP + 0x177;
+
+		void drawStatusDot (HWND popup, HDC dc, const StatusDot &dot) {
+			if (dot.colour < 1 || dot.colour > 3)
+				return;
+			const HMENU menu = dot.widget -> nat.entry.handle;
+			for (int position = 0; position < GetMenuItemCount (menu); position ++) {
+				if (GetMenuItemID (menu, position) != dot.widget -> nat.entry.id)
+					continue;
+				RECT row { };
+				if (! GetMenuItemRect (dot.widget -> shell -> window, menu, position, &row))
+					return;
+				MapWindowPoints (nullptr, popup, (POINT *) &row, 2);
+				const UINT dpi = GetDpiForWindow (popup);
+				const int diameter = MulDiv (10, dpi, 96);
+				const int inset = MulDiv (16, dpi, 96);
+				const int x = row.right - inset - diameter;
+				const int y = (row.top + row.bottom - diameter) / 2;
+				const COLORREF colours [] { RGB (128,128,128), RGB (220,38,38), RGB (234,179,8), RGB (22,163,74) };
+				const int saved = SaveDC (dc);
+				IntersectClipRect (dc, row.left, row.top, row.right, row.bottom);
+				HBRUSH brush = CreateSolidBrush (colours [dot.colour]);
+				SelectObject (dc, brush); SelectObject (dc, GetStockObject (NULL_PEN));
+				Ellipse (dc, x, y, x + diameter, y + diameter);
+				RestoreDC (dc, saved); DeleteObject (brush);
+				return;
+			}
+		}
+
+		LRESULT CALLBACK statusPopupProc (HWND window, UINT message, WPARAM wParam, LPARAM lParam,
+			UINT_PTR id, DWORD_PTR reference)
+		{
+			const LRESULT result = DefSubclassProc (window, message, wParam, lParam);
+			const auto dot = statusDots.find (reference);
+			if ((message == WM_PAINT || message == statusPopupRedrawDot) && dot != statusDots.end ()) {
+				HDC dc = GetDC (window);
+				drawStatusDot (window, dc, dot -> second);
+				ReleaseDC (window, dc);
+			} else if (message == WM_PRINTCLIENT && dot != statusDots.end ()) {
+				drawStatusDot (window, (HDC) wParam, dot -> second);
+			} else if (message == WM_NCDESTROY) {
+				if (dot != statusDots.end ())
+					dot -> second.popup = nullptr;
+				RemoveWindowSubclass (window, statusPopupProc, id);
+			}
+			return result;
+		}
+	}
+	void _GuiWinMenuItem_beginStatusPopup (HMENU menu) {
+		activeStatusMenu = menu;
+		activeStatusPopup = nullptr;
+	}
+	void _GuiWinMenuItem_attachStatusPopup (HWND popup) {
+		activeStatusPopup = popup;
+		for (auto &entry : statusDots) {
+			auto &dot = entry.second;
+			if (dot.widget -> nat.entry.handle == activeStatusMenu && dot.popup != popup &&
+				SetWindowSubclass (popup, statusPopupProc, statusPopupSubclass, entry.first))
+			{
+				dot.popup = popup;
+				InvalidateRect (popup, nullptr, FALSE);
+			}
+		}
+	}
+	void _GuiWinMenuItem_endStatusPopup (HMENU menu) {
+		for (auto &entry : statusDots) {
+			auto &dot = entry.second;
+			if (dot.widget -> nat.entry.handle == menu) {
+				if (IsWindow (dot.popup))
+					RemoveWindowSubclass (dot.popup, statusPopupProc, statusPopupSubclass);
+				dot.popup = nullptr;
+			}
+		}
+		if (menu == activeStatusMenu) {
+			activeStatusMenu = nullptr;
+			activeStatusPopup = nullptr;
+		}
+	}
+	void _GuiWinMenuItem_refreshStatusPopup () {
+		// Native selection already paints the row. Queue ONLY the dot after it;
+		// invalidating the popup here repaints every row on hover and flickers.
+		for (const auto &entry : statusDots) {
+			const auto &dot = entry.second;
+			if (dot.colour && dot.widget -> nat.entry.handle == activeStatusMenu && IsWindow (dot.popup))
+				PostMessageW (dot.popup, statusPopupRedrawDot, 0, 0);
+		}
+	}
+
 	void _GuiWinMenuItem_setText (GuiObject me) {
 		int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
 		static MelderString title;
@@ -72,7 +167,11 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 				modifiers & _motif_SHIFT_MASK ? U"Shift+" : nullptr, keyString
 			);
 		}
-		ModifyMenu (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | MF_STRING, my nat.entry.id, Melder_peek32toW (title.string));
+		// Update the string alone: preserve state, owner-draw type and item data during refresh.
+		MENUITEMINFOW item { }; item.cbSize = sizeof (item);
+		item.fMask = MIIM_STRING;
+		item.dwTypeData = (wchar_t *) Melder_peek32toW (title.string);
+		SetMenuItemInfoW (my nat.entry.handle, (UINT) my nat.entry.id, FALSE, &item);
 	}
 #endif
 
@@ -102,6 +201,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 	static void _guiMotifMenuItem_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
 		iam (GuiMenuItem);
+		statusDots.erase ((ULONG_PTR) widget);
 		forget (me);
 	}
 	static void _guiMotifMenuItem_activateCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
@@ -468,11 +568,37 @@ void GuiMenuItem_setText (GuiMenuItem me, conststring32 text) {
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my d_widget))), Melder_peek32to8 (text));
 	#elif motif
+		if (str32equ (my d_widget -> name.get (), text))
+			return;
 		my d_widget -> name = Melder_dup (text);
 		_GuiWinMenuItem_setText (my d_widget);
 	#elif cocoa
 		GuiCocoaMenuItem *item = (GuiCocoaMenuItem *) my d_widget;
 		[item   setTitle: (NSString *) Melder_peek32toCfstring (text)];
+	#endif
+}
+
+void GuiMenuItem_setStatusDot (GuiMenuItem me, int colour) {
+	#if motif
+		GuiObject widget = my d_widget;
+		const auto existing = statusDots.find ((ULONG_PTR) widget);
+		if (existing != statusDots.end () && colour == existing -> second.colour)
+			return;
+		// Keep the status row registered in API/unknown mode as well, so opening
+		// a cached native popup always repaints it without an old dot.
+		if (colour < 1 || colour > 3)
+			colour = 0;
+		if (existing != statusDots.end ()) {
+			existing -> second.colour = colour;
+			if (IsWindow (existing -> second.popup))
+				InvalidateRect (existing -> second.popup, nullptr, FALSE);
+			return;
+		}
+		statusDots [(ULONG_PTR) widget] = { widget, colour };
+		if (widget -> nat.entry.handle == activeStatusMenu && IsWindow (activeStatusPopup))
+			_GuiWinMenuItem_attachStatusPopup (activeStatusPopup);
+	#else
+		(void) me; (void) colour;
 	#endif
 }
 

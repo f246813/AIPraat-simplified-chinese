@@ -8,6 +8,7 @@ from __future__ import annotations
 import asyncio
 import copy
 import json
+from pathlib import Path
 import re
 import threading
 import os
@@ -34,6 +35,8 @@ from .report_guards import (mask_rejected_numbers, rejected_values, report_conte
                             report_guard_instructions, validate_report)
 from .session_context import PhaseContext, native_history, evidence_projection
 from . import cloud_metrics, skill_registry
+from .workflow_policy import (finish_locally, measurement_complete, publish_results, wants_explanation,
+                              valid_measurement_rows)
 
 
 class Coverage(BaseModel):
@@ -48,6 +51,9 @@ class AnalysisReport(BaseModel):
     coverage: list[Coverage]
 
 
+#: 注意：这段指令处在 2048 token 那条窄上下文路径的临界点上——多一句「测量不需要音频输入」
+#: 就会把报告请求挤掉（test_cloud_escape.test_low_context_reserves_report 钉的边界）。
+#: 因此「已有证据却声称没有音频所以测不了」由 report_guards 的 report.input_claim_conflict 拦。
 REPORT_INSTRUCTIONS = (
     '\n独立报告，无执行工具。逐项解释 original_goal，给出依据、限制、下一步，不能仅有统计表。'
     'coverage.item 原样对应 deliveries；缺口列 audio/measurement/reference。'
@@ -137,6 +143,10 @@ def blocked_attempts(state, limit: int = _MAX_BLOCKED_ATTEMPTS):
 
 
 def planner_system(config, goal: str = '') -> str:
+    # 这里刻意不加「测量不需要音频输入」那句话：窄上下文（2048）路径上多一句话就会
+    # 把报告请求挤掉（test_cloud_escape.test_low_context_reserves_report 钉的边界）。
+    # 同一句话放在报告指令里（REPORT_INSTRUCTIONS），外加报告守卫的
+    # ``report.input_claim_conflict``：已经有测量证据却声称「没有音频所以测不了」会被拦。
     return qwen.planner_instructions(config.qwen) + skill_registry.catalog('planner')
 
 
@@ -148,9 +158,9 @@ def report_instructions(config, state) -> str:
     """固定报告规则和技能目录；条件指导由任务技能追加到用户历史尾部。"""
 
     text = qwen.analysis_instructions(config.qwen) + REPORT_INSTRUCTIONS
-    # Guard conditional is fixed on the wire; task guidance goes at the tail.
-    text += ('\n测量数值逐行引[E编号]，同对象/范围/量名/单位。quantity_refs第N项=E编号.qN；'
-             '推导用{{calc:E1.q1/E2.q1*100|%}}。音调须有走向证据，平均值不足；无测量不填录音数值。')
+    # 数值写法的硬要求只有一处来源（report_guard_instructions），例子与习惯做法放
+    # skill=notation，避免提示词和守卫各写一份规则慢慢漂移。
+    text += report_guard_instructions(state)
     text += '\n文件名使用时注明“根据文件名推测”，用户说明优先；不作测量/词典/音频证据。'
     text += skill_registry.catalog('report')
     return text
@@ -180,7 +190,7 @@ def user_facts(state, limit: int = 3) -> list[str]:
 
 def report_context(state, *, audio=False, preserve=False):
     rows = tools.parse_object_context(state.context_text)
-    target = [{'id':row.id, 'class':row.class_name, 'name':row.name, 'selection':row.selection}
+    target = [{'id':row.id, 'class':row.class_name, 'name':row.name, 'editor_selection':row.selection}
               for row in rows if row.selected][:20] if rows else state.context_text[:1200]
     context = {
         'original_goal':state.goal, 'deliveries':state.deliveries, 'direction':state.direction,
@@ -193,6 +203,20 @@ def report_context(state, *, audio=False, preserve=False):
         'visible_dialogue':[dict(item) for item in state.dialogue_context] if state.mode == 'L4' else [],
     }
     context.update(report_context_data(state))
+    if state.evidence:
+        from .workflow_policy import measurement_scope
+        from .tool_guards import StrictContext
+        scopes = {}
+        for index, evidence in enumerate(state.evidence, 1):
+            try:
+                source = StrictContext(tools.parse_object_context(evidence.source or state.context_text), Path('result'), Path('state'))
+                row = source.resolve_object(evidence.arguments.get('object'))
+                scopes[f'E{index}'] = measurement_scope(evidence.tool, evidence.arguments, row)
+            except tools.ToolError:
+                scopes[f'E{index}'] = dict(kind='unresolved')
+        context['measurement_scopes'] = scopes
+        context['scope_guidance'] = ('editor_selection 和 evidence.source 是编辑器快照；测量范围以工具显式参数及结果行优先。'
+                                     'query_points 的 requested_times 是对象时间轴上的请求时刻，不受编辑器选区限制；如工具夹取时间，以结果行注明的实际时刻为准。')
     if state.audio_observations and state.previous_report == state.audio_observations[-1]['analysis']:
         context['previous_report'] = ''
         context['previous_report_source'] = 'audio_observations 最后一项（同一报告，避免重复）'
@@ -201,7 +225,7 @@ def report_context(state, *, audio=False, preserve=False):
         context['user_facts'] = facts
     if preserve:
         context.update(
-            target_material=[{'id':row.id, 'class':row.class_name, 'name':row.name, 'selection':row.selection}
+            target_material=[{'id':row.id, 'class':row.class_name, 'name':row.name, 'editor_selection':row.selection}
                              for row in rows if row.selected] if rows else state.context_text,
             previous_report=state.previous_report,
             previous_coverage=copy.deepcopy(state.previous_coverage),
@@ -261,6 +285,9 @@ def minimum_continuation_tokens(config, state, *, mode='', direction=''):
 def entry_mode(goal: str, context_text: str, *, audio_requested: bool = False) -> str:
     if audio_requested:
         return 'L3'
+    # Explicit concept-only requests may mention the recording to exclude it.
+    if dialogue_kind(goal) == 'concept':
+        return 'L4'
     # Pure concept discussion must not require a running Praat or its snapshot.
     concept = re.search(r'(什么是|如何理解|原理|解释一下|练习方法|一般来说|理论|科普|你好|hello|谢谢)', goal, re.I)
     material = re.search(r'(选中|选区|录音|这个声音|当前|测量|读取|打开|删除|创建|保存|截取|分析.*(?:音|对象))', goal)
@@ -270,7 +297,12 @@ def entry_mode(goal: str, context_text: str, *, audio_requested: bool = False) -
 
 
 def wants_audio(goal: str) -> bool:
-    return bool(re.search(r'(直接.*(?:听|音频|录音)|听(?:一下|一听|这)|原始(?:音频|录音)|听感)', goal))
+    # 「直接」和音频词必须在同一小段里（≤6 字）。以前写的是 ``直接.*(?:听|音频|录音)``，
+    # 其中 ``.*`` 能跨句跨段匹配：一段既说「请直接问我」又说「这次录音」的长指令会被判成
+    # 「要直接听录音」，整轮跳到 L3/报告阶段，一次工具都不执行（2026-10-07 实测 L15：
+     # 只有 1 次报告请求、0 次规划请求、0 次工具调用）。
+    return bool(re.search(r'直接(?:听|用|分析原始)|直接.{0,6}(?:听|音频|录音)|'
+                          r'听(?:一下|一听|这)|原始(?:音频|录音)|听感', goal))
 
 
 #: 守卫没核上的数值，在保留的草稿里换成这个占位符：正文能留，没测过的数字不能当实测。
@@ -286,16 +318,71 @@ def rescued_report(draft: str, detail: str, values=(), *, state=None) -> str:
     if not text:
         return ''
     text = mask_rejected_numbers(text, values, UNVERIFIED_NUMBER, state=state)
-    reason = mask_rejected_numbers(' '.join(str(detail or '').split())[:400], values, UNVERIFIED_NUMBER)
+    reason = mask_rejected_numbers(' '.join(str(detail or '').split())[:400], values, UNVERIFIED_NUMBER).rstrip('。；; ')
     text += ('\n\n（这份回答没有通过自动数值核对：' + reason
              + '。上面保留的是模型已经写好的内容，其中没通过核对的数值已标成 '
              + UNVERIFIED_NUMBER + '；请按这条提示核对引用的数值和范围。）')
     return _CALC_PLACEHOLDER.sub('[未通过核对的推导式]', text)
 
 
+def repaired_report(report, detail: str, state, guard_state):
+    """守卫第二次拒了同一份报告：遮掉没核上的数值后照样交付，不再丢掉整份回答。
+
+    2026-10-07 实测：报告守卫连拒两次时，``guard_report`` 抛
+    ``UnexpectedModelBehavior('Exceeded maximum output retries (1)')``，工作流分支再把
+    已经写好的正文塞进 ``state.metrics['unverified_draft']``——而那份草稿全库没有读取方。
+    结果是 22 次真实提问里有 12 次只剩测量表加一句英文内部错误。守卫该管的仍然是
+    「没测过的数字不能当结论」，不是「这份回答不合格就不给」：数值遮成
+    :data:`UNVERIFIED_NUMBER`、结论保留、末尾说明原因，比丢掉整份回答有用。
+
+    找不到可保留的正文（模型只写了那几个数）时返回 ``None``，由调用方回退到阶段记录。
+    """
+
+    values = list(state.metrics.get('rejected_values') or [])
+    if detail:
+        values.extend(rejected_values(str(detail)))
+    values = list(dict.fromkeys(value for value in values if value))
+    draft = str(getattr(report, 'analysis', '') or '')
+    if not draft.strip():
+        return None
+    masked = rescued_report(draft, detail, values, state=guard_state)
+    if not masked:
+        return None
+    # 遮掉已知的那几处之后，同一行里可能还留着同类数字（模型常把推导值写两遍）。
+    # 这里是最后一次交付机会，所以再自检几轮：守卫指出哪一处就继续遮哪一处，
+    # 最多 4 轮，保证交付的正文里不残留没核对上的数值。
+    coverage_source = report
+    for _ in range(4):
+        probe = report.model_copy(update={'analysis': masked}) if hasattr(report, 'model_copy') else None
+        if probe is None:
+            break
+        try:
+            masked = validate_report(guard_state, probe).analysis
+            break
+        except ModelRetry as error:
+            more = [value for value in rejected_values(str(error)) if value not in values]
+            if not more:
+                break
+            values.extend(more)
+            masked = mask_rejected_numbers(masked, more, UNVERIFIED_NUMBER, state=guard_state)
+        except Exception:  # noqa: BLE001 - 其他闸门不靠遮数值解决，直接交付现有正文
+            break
+    coverage = []
+    for item in getattr(coverage_source, 'coverage', []) or []:
+        if hasattr(item, 'model_copy'):
+            explanation = mask_rejected_numbers(item.explanation, values, UNVERIFIED_NUMBER, state=guard_state)
+            item = item.model_copy(update={'explanation': explanation})
+        coverage.append(item)
+    state.metrics['report_repaired'] = len(values) or 1
+    note_guard(state, 'repair', 'report.delivered_with_masks')
+    if hasattr(report, 'model_copy'):
+        return report.model_copy(update={'analysis': masked, 'coverage': coverage})
+    report.analysis = masked
+    return report
+
+
 #: 模型漏报某个交付项时补的说明。
 COVERAGE_FILL_EXPLANATION = '模型没有逐项交代这一项；已保留现有证据与诊断，缺什么见缺口说明。'
-
 
 def repair_coverage(deliveries, coverage):
     """按 deliveries 整理 coverage：缺项补为 partial，多余项移除，正文保留。"""
@@ -391,6 +478,9 @@ class CloudSession:
         state.metrics.setdefault('effective_thinking_level', config.api.thinking_level)
         self.response_ids = set()
         self.phase = 'planner'
+        self.l2_deadline = None
+        self.l2_request_start = 0
+        self.l2_active = False
         if config.api.token_mode is not None:
             self.state.budget.reasoning_tokens = 0  # New reply cap is total output, not body + hidden reserve.
             self.body_target = min(self.body_target, config.api.plan_max_tokens)
@@ -453,6 +543,8 @@ class CloudSession:
     def check(self):
         if self.cancel.is_set():
             raise asyncio.CancelledError()
+        if self.l2_active and time.monotonic() >= self.l2_deadline:
+            raise BranchExit('L2 阶段时间上限已用完')
 
     def reject_output_limit(self, detail):
         """服务端拒绝输出上限时，先减少推理预留，再考虑减少正文额度，使总输出上限可被接受。"""
@@ -596,7 +688,7 @@ class CloudSession:
     async def _drive_run(self, agent, prompt, *, tool_phase=False, on_text=None, allow_output_retry=True,
                          pending_attempt=0, logical_request=None):
         context = self.state.phase_contexts[self.phase]
-        async with agent.iter(prompt, message_history=context.messages, model_settings=self.settings, usage=self.usage,
+        async with agent.iter(prompt, message_history=context.messages, model_settings=lambda _: self.settings, usage=self.usage,
                               usage_limits=self.limits) as run:
             node = run.next_node
             while not Agent.is_end_node(node):
@@ -631,6 +723,15 @@ class CloudSession:
                         for message in messages for part in message.parts)
                     for attempt in range(pending_attempt, 2):
                         self.check()
+                        if self.l2_active:
+                            if self.state.requests - self.l2_request_start >= self.state.workflow.l2_request_limit:
+                                raise BranchExit('L2 实际请求上限已用完')
+                            remaining = self.l2_deadline - time.monotonic()
+                            if remaining <= 0:
+                                raise BranchExit('L2 阶段时间上限已用完')
+                            self.settings['timeout'] = min(self.config.api.request_timeout_sec, remaining)
+                        if self.state.requests >= self.state.budget.request_limit:
+                            raise BranchExit('本轮模型请求总预算已用完')
                         self.state.requests += 1
                         request_started = time.monotonic()
                         correction = any(isinstance(p, RetryPromptPart) for p in node.request.parts)
@@ -717,23 +818,42 @@ class CloudSession:
                     tools_node = Agent.is_call_tools_node(node)
                     node = await run.next(node)
                     if tools_node and not Agent.is_end_node(node):
-                        context.messages = copy.deepcopy(run.all_messages())
+                        paired = run.all_messages()
+                        if Agent.is_model_request_node(node) and not any(m is node.request for m in paired):
+                            paired = [*paired, node.request]
+                        context.messages = copy.deepcopy(paired)
                         if tool_phase:
                             self.state.finish_round()
+                            if self.state.workflow is not None:
+                                publish_results(self.state)
+                                if self.state.reason:
+                                    context.complete = True
+                                    return ''
+                                response = next((m for m in reversed(context.messages) if isinstance(m, ModelResponse)), None)
+                                calls = [p for p in response.parts if isinstance(p, ToolCallPart)] if response else []
+                                if measurement_complete(self.state, calls=calls):
+                                    # The SDK has already saved every executed call/return pair.
+                                    # Stop before the pending announcement request is sent.
+                                    context.complete = True
+                                    self.state.metrics['planner_completed_locally'] = True
+                                    return ''
             context.messages = copy.deepcopy(run.all_messages())
             context.complete = True
             return run.result.output
 
     def phase_context(self, phase, instruction):
         self.phase = phase
+        # Legacy reports carry budgeted dialogue excerpts in report_context.
+        # Seeding full native history here bypasses that budget a second time.
+        baseline = [] if phase == 'report' and self.config.api.token_mode is None else self.state.dialogue_context
         context = self.state.phase_contexts.get(phase)
         if context is None:
             context = self.state.phase_context if phase == 'dialogue' else None
-            context = context or PhaseContext(messages=native_history(self.state.dialogue_context),
+            context = context or PhaseContext(messages=native_history(baseline),
                                               epoch=self.state.context_epoch)
             self.state.phase_contexts[phase] = context
         context.configure(instruction, self.config.api.model + self.config.api.base_url,
-                          baseline=self.state.dialogue_context)
+                          baseline=baseline)
         skill_registry.load(context, phase, self.state) if phase in {'planner', 'report'} else None
         return context
 
@@ -802,16 +922,29 @@ class CloudSession:
                 if earlier and earlier not in reason:
                     reason = reason + '；上一条失败原因：' + earlier
                 self.state.reason = reason
+                if self.state.workflow is not None:
+                    publish_results(self.state)
                 self.state.event('L2', '停止投递：' + reason)
                 raise BranchExit(reason)
             if step.ok:
                 # Empty outputs and diagnostic text are not measurement evidence.
-                if step.results:
+                valid = (self.state.workflow is None or tools.is_mutating(name)
+                         or valid_measurement_rows(name, step.results))
+                if step.results and valid:
                     evidence = Evidence(name, dict(arguments), list(step.results), self.state.context_text,
                                         'operation' if tools.is_mutating(name) else 'measurement')
                     self.state.add_evidence(evidence)
                 if self.state.mode == 'L1':
                     self.event('L0', '有限纠正成功，继续专用执行')
+                if self.state.workflow is not None:
+                    if not valid:
+                        self.state.attempts[-1]['result_valid'] = False
+                        self.state.reason = '工具已执行，但没有目标所需的有效测量值'
+                        self.tool_running = False
+                        publish_results(self.state)
+                        return {'status':'failed', 'result_valid':False, 'rows':step.results,
+                                'reason':self.state.reason, 'source':'Praat/已注册专业工具'}
+                    publish_results(self.state)
                 self.tool_running = False
                 self.check()
                 return {'status':'success', 'rows':step.results, 'source':'Praat/已注册专业工具'}
@@ -821,6 +954,8 @@ class CloudSession:
                 '缺少', '未安装', '没有可用', '未知工具', '不支持', 'not installed', 'dependency', 'unavailable'))
             permanent = permanent or '不可用' in step.observation
             note_guard(self.state, 'block', 'execution.' + problem)
+            if self.state.workflow is not None:
+                publish_results(self.state)
             self.state.failed(problem, step.observation, permanent=permanent)
             raise ModelRetry(step.observation + '；只允许一次有依据且有区别的修正')
 
@@ -828,6 +963,9 @@ class CloudSession:
                                 json_schema=function['parameters'], sequential=True)
 
     async def execute(self):
+        if self.state.workflow is not None and not self.state.workflow.l0_enabled:
+            self.state.reason = '工作流程已关闭专用工具执行'
+            return
         self.event('L0', '按原始目标执行专用工具')
         if self.schemas is None: self.schemas = tools.tool_schemas()
         guards = ToolGuards(self)
@@ -855,7 +993,7 @@ class CloudSession:
 
     def should_escalate_audio(self):
         state = self.state
-        if (state.continuation or state.mode != 'L2' or self.config.api.limit_tokens
+        if (state.continuation or state.mode != 'L2' or (state.workflow.l3_mode != 'auto' if state.workflow is not None else self.config.api.limit_tokens)
                 or not self.config.api.audio_input_enabled or self.materials is None
                 or self.materials.closed or self.cancel.is_set()
                 or state.requests > state.budget.request_limit - 2):
@@ -870,15 +1008,97 @@ class CloudSession:
                 return True
         return False
 
+    def should_start_audio(self):
+        state = self.state
+        return bool(state.workflow is not None and state.workflow.l3_mode == 'auto'
+                    and state.reason and not state.evidence and wants_explanation(state.goal)
+                    and self.config.api.audio_input_enabled and self.materials is not None
+                    and not self.materials.closed and self.materials.audio_path
+                    and self.materials.audio_path.is_file() and not self.cancel.is_set())
+
+    def allowed(self, mode):
+        policy = self.state.workflow
+        if policy is None:
+            return True
+        override = self.state.workflow_override == mode
+        if mode == 'L0':
+            return policy.l0_enabled
+        if mode == 'L2':
+            # Only proven completion can omit interpretation in on-demand mode.
+            # A keyword miss must not turn an unanswered goal into raw tool rows.
+            return override or policy.l2_mode == 'always' or (policy.l2_mode == 'on_demand' and
+                (wants_explanation(self.state.goal) or not measurement_complete(self.state)))
+        if mode == 'L3':
+            return override or policy.l3_mode == 'auto' or (policy.l3_mode == 'manual' and wants_audio(self.state.direction or self.state.goal))
+        return policy.l4_enabled
+
     async def report(self, *, force_audio=False, allow_escalation=True):
+        state = self.state
+        if state.workflow is None:
+            return await self._report(force_audio=force_audio, allow_escalation=allow_escalation)
+        mode = 'L3' if force_audio else state.mode
+        if not self.allowed(mode):
+            state.reason = state.reason or f'工作流程未启用 {mode}；可用的本次动作由宿主提供'
+            finish_locally(state)
+            return
+        if mode != 'L2':
+            return await self._report(force_audio=force_audio, allow_escalation=False)
+        if self.l2_deadline is None:
+            self.l2_deadline = time.monotonic() + state.workflow.l2_deadline_sec
+            self.l2_request_start = state.requests
+        from .dialogue_policy import force_high
+        level = self.config.api.thinking_level
+        if state.workflow.l2_detail == 'brief' and not force_high(self.config.api):
+            level = 'off'
+        # A brief evidence explanation has its own short deadline. Do not spend
+        # it on the planner's hidden reasoning, or reserve those tokens again.
+        previous_settings = copy.deepcopy(self.settings)
+        previous_reasoning = state.budget.reasoning_tokens
+        previous_body, previous_cap = self.body_target, self.output_cap
+        self.settings.pop('openai_reasoning_effort', None)
+        for key in ('enable_thinking', 'thinking_budget'):
+            self.settings.get('extra_body', {}).pop(key, None)
+        self.set_thinking(level)
+        state.budget.reasoning_tokens = reasoning_reserve(level)
+        self.set_body_tokens(self.body_target)
+        state.metrics['report_thinking_level'] = level
+        self.l2_active = True
+        started = time.monotonic()
+        try:
+            await asyncio.wait_for(self._report(force_audio=False, allow_escalation=False),
+                                   timeout=max(0.001, self.l2_deadline - time.monotonic()))
+            self.check()
+            if state.on_results:
+                state.on_results(state)  # Includes verified explanation before the deadline.
+            self.check()
+        except (TimeoutError, BranchExit) as error:
+            state.reason = str(error) or 'L2 阶段时间上限已用完'
+            state.metrics['report_verified'] = False
+            finish_locally(state)
+        finally:
+            self.l2_active = False
+            self.settings = previous_settings
+            state.budget.reasoning_tokens = previous_reasoning
+            self.body_target, self.output_cap = previous_body, previous_cap
+            state.metrics['l2_seconds'] = time.monotonic() - started
+            state.metrics['l2_requests'] = state.requests - self.l2_request_start
+        # Only a proven evidence gap may enable automatic raw-material analysis.
+        if state.metrics.get('report_verified') and allow_escalation and self.should_escalate_audio():
+            state.previous_report, state.previous_coverage = state.report, state.coverage
+            await self.report(force_audio=True, allow_escalation=False)
+
+    async def _report(self, *, force_audio=False, allow_escalation=True):
         self.check()
         state = self.state
         original_mode = state.mode
         audio_candidate = (force_audio or original_mode == 'L3' or (
-            not state.continuation and original_mode != 'L4' and not self.config.api.limit_tokens and state.reason))
+            not state.continuation and original_mode != 'L4' and state.workflow is None and not self.config.api.limit_tokens and state.reason))
         audio = None
         if audio_candidate and self.config.api.audio_input_enabled:
             try:
+                if (state.workflow is not None and not state.workflow.l0_enabled
+                        and (self.materials is None or self.materials.audio_path is None)):
+                    raise BranchExit('L0 已关闭，不能通过音频分析导出 Praat 材料')
                 if self.prepare_audio is not None:
                     await asyncio.to_thread(self.prepare_audio)
                 if self.materials is not None:
@@ -892,10 +1112,14 @@ class CloudSession:
             self.settings.setdefault('extra_body', {})['modalities'] = ['text']
             self.event('L3', '输入原目标临时音频；模型定性分析与专业测量分别注明来源')
         else:
-            mode = 'L4' if original_mode == 'L4' or (not state.continuation and not self.config.api.limit_tokens
+            mode = 'L4' if original_mode == 'L4' or (state.workflow is None and not state.continuation and not self.config.api.limit_tokens
                                                    and not state.evidence and state.reason) else 'L2'
+            if state.workflow is not None and original_mode == 'L3':
+                state.mode = 'L2'
+                await self.report(allow_escalation=False)
+                return
             self.event(mode, '重建独立分析上下文，解释原始目标及证据缺口')
-        state.can_continue = bool(state.reason or self.config.api.limit_tokens)
+        state.can_continue = bool(state.reason or (self.config.api.limit_tokens if state.workflow is None else state.evidence))
         modern = self.config.api.token_mode is not None
         context = report_context(state, audio=audio is not None, preserve=modern)
         instruction = report_instructions(self.config, state)
@@ -903,9 +1127,10 @@ class CloudSession:
         # A capability rejection discards only this unverified audio run. The
         # completed text chain before it remains available for the redirect.
         report_baseline = copy.deepcopy(phase_context.messages) if audio else None
-        # Formal dialogue already exists as native roles. Don't inject it again.
-        context.pop('visible_dialogue', None)
-        context.pop('user_facts', None)
+        if modern:
+            # Formal dialogue already exists as native roles. Don't inject it again.
+            context.pop('visible_dialogue', None)
+            context.pop('user_facts', None)
         goal = context.pop('original_goal')
         if state.historical_evidence:
             context['historical_evidence'] = evidence_projection(state.historical_evidence)
@@ -914,9 +1139,18 @@ class CloudSession:
         context['original_goal'] = goal
         if not modern:
             # Existing legacy excerpt behavior stays confined to legacy entry.
-            context = json.loads(compact_report_context({**context, 'original_goal':goal, 'visible_dialogue':[]},
+            context = json.loads(compact_report_context(context,
                                   max(100, state.budget.context_tokens - state.budget.reserve -
                                       qwen.estimate_tokens(instruction) - 250)))
+        if state.workflow is not None:
+            context['explanation_detail'] = state.workflow.l2_detail
+            context['coverage_guidance'] = ('coverage 必须逐项对应 deliveries；item 逐字复制完整交付项，包括否定词和标点，不能概括或另起标题。'
+                                            '只请求指定范围的测量时，已取得该范围的有效值即可完成该项；未要求的听感、音素或音调分析不构成该项缺口。')
+            if state.workflow.l2_detail == 'brief':
+                context['brief_guidance'] = ('简短解释：正文约 200–300 字，逐项回应目标，已有测量结果另行展示。'
+                                            '只引用回答所必需的实测值，保留结果中的量名、单位和精度；不扩写典型频率范围等无关数值。'
+                                            '工具已直接给出 VOT 等结果时，引用该结果并解释不确定性即可，不重复代入数字计算或换算公式。'
+                                            '缺证据则简述缺口，不猜测音素、音调或选区身份。')
         prompt = json.dumps(phase_context.delta(context), ensure_ascii=False)
         guard_state = copy.copy(state)
         guard_state.evidence = [Evidence(**item) for item in context['evidence']]
@@ -941,7 +1175,12 @@ class CloudSession:
                 state.metrics.setdefault('rejected_values', []).extend(rejected_values(str(error)))
                 report_rejections += 1
                 if report_rejections > 1:
-                    # A resumed SDK run must not reset the single output retry.
+                    # 第二次仍不过：保留正文、遮掉没核上的数值，不再丢掉整份回答
+                    # （2026-10-07：实测 22 次提问里有 12 次因为这里抛异常而只剩
+                    # 测量表 + 一句英文内部错误）。真的没有正文可留时才回退。
+                    repaired = repaired_report(output, str(error), state, guard_state)
+                    if repaired is not None:
+                        return repaired
                     from pydantic_ai.exceptions import UnexpectedModelBehavior
                     raise UnexpectedModelBehavior('Exceeded maximum output retries (1)') from error
                 raise
@@ -970,15 +1209,18 @@ class CloudSession:
 
         try:
             result = await self.drive(agent, [prompt, BinaryContent(audio, media_type='audio/wav')] if audio else prompt)
+            repaired = bool(state.metrics.get('report_repaired', 0))
             state.report = result.analysis
-            state.metrics['report_verified'] = True
+            # 遮过数值再交付的正文不算「核对通过」：界面与后续轮次都要看得出这一点。
+            state.metrics['report_verified'] = not repaired
             state.coverage = [item.model_dump() for item in result.coverage]
             state.metrics.pop('rejected_report', None)
             state.metrics.pop('rejected_coverage', None)
             state.metrics.pop('rejected_values', None)
-            state.status = 'complete' if all(item.status == 'complete' for item in result.coverage) else 'partial'
+            state.status = 'partial' if repaired else (
+                'complete' if all(item.status == 'complete' for item in result.coverage) else 'partial')
             state.can_continue = state.can_continue or state.status != 'complete'
-            if audio is not None:
+            if audio is not None and not repaired:
                 state.audio_report_completed = True
                 state.audio_observations.append({'kind':'model_audio', 'model':self.config.api.model,
                                                 'source':self.materials.provenance(), 'analysis':result.analysis})
@@ -1004,6 +1246,13 @@ class CloudSession:
                     except OSError as save_error:
                         self.progress('能力纠正未保存：' + str(save_error))
                 # One redirected report on the same budget, without audio.
+                if state.workflow is not None and not self.allowed('L2'):
+                    state.reason = detail
+                    finish_locally(state)
+                    return
+                if state.workflow is not None:
+                    await self.report(allow_escalation=False)
+                    return
                 try:
                     result = await self.drive(agent, prompt.replace('"audio_input": true', '"audio_input": false'))
                     state.report, state.coverage = result.analysis, [item.model_dump() for item in result.coverage]
@@ -1028,6 +1277,21 @@ class CloudSession:
             if force_audio and state.previous_report:
                 state.report, state.coverage = state.previous_report, state.previous_coverage
                 state.report += '\n\n补充音频分析未完成：' + detail
+            elif state.workflow is not None and rescued:
+                # 已经写好的正文要交给用户：遮掉没核上的数值并说明原因，状态记为
+                # partial。以前这里只留测量表、把草稿塞进没人读的
+                # metrics['unverified_draft']（2026-10-07 实测：22 次提问里 12 次如此）。
+                state.report = rescued
+                state.metrics['report_repaired'] = len(values) or 1
+                state.metrics['route_reason'] = 'report_repaired'
+                state.coverage = rejected_coverage or [
+                    dict(item=item, status='partial',
+                         explanation='模型正文已保留；其中没通过核对的数值已明确标注')
+                    for item in state.deliveries]
+                note_guard(state, 'repair', 'report.delivered_with_masks')
+                state.can_continue = state.can_continue or bool(state.evidence)
+            elif state.workflow is not None:
+                finish_locally(state)
             elif rescued:
                 # 守卫拒的是核不上来源的数字，不是整份回答：保留草稿并说明原因，
                 # 不再用「本轮仅交付阶段记录」把用户已经拿到的结论换掉。
@@ -1053,9 +1317,17 @@ class CloudSession:
             # 「云端最大回复 token」预算压着；这里不再有写死的 2048。
             self.set_body_tokens(self.config.api.dialogue_max_tokens)
         instruction = dialogue_instructions(self.config)
-        self.phase_context('dialogue', instruction)
+        context = self.phase_context('dialogue', instruction)
         prompt = self.state.goal
-        self.event('chat', '普通对话直接回复' if kind == 'conversation' else '概念解释直接回复')
+        if kind == 'advice' and self.state.historical_evidence:
+            prior = context.delta({'historical_evidence': evidence_projection(self.state.historical_evidence)})
+            if prior:
+                prompt = ('已有专业证据与投递事实（历史记录，非本轮新测量）：'
+                          + json.dumps(prior, ensure_ascii=False)
+                          + '\n复用现有证据回答练习问题，不重跑测量；区分一般方法与具体录音结论，'
+                            '证据不足时不要把单项结果当成整体发音诊断。\n本轮用户目标：' + self.state.goal)
+        self.event('chat', '普通对话直接回复' if kind == 'conversation' else
+                   '练习建议直接回复，复用已有证据' if kind == 'advice' else '概念解释直接回复')
         agent = Agent(self.model, system_prompt=instruction, output_type=str, retries=0, name='direct_dialogue')
         collected: list[str] = []
 
@@ -1109,6 +1381,8 @@ class CloudSession:
             input_tokens=self.usage.input_tokens, output_tokens=self.usage.output_tokens,
             reasoning_tokens=getattr(self.usage, 'details', {}).get('reasoning_tokens'))
         self.state.metrics['phases'] = cloud_metrics.aggregate(self.state.metrics['request_timings'])
+        if self.state.workflow is not None:
+            self.state.metrics['workflow_routes'] = [e for e in self.state.events if e.get('reason') != 'model_response']
 
 
 async def _run(session):
@@ -1121,26 +1395,53 @@ async def _run(session):
         if state.continuation:
             state.mode = state.continuation_mode or ('L4' if '一般' in state.direction else ('L3' if wants_audio(state.direction) else 'L2'))
             return state.mode
+        if state.workflow is not None and state.workflow_override in {'L2','L3'}:
+            state.mode = state.workflow_override
+            return state.mode
         state.mode = entry_mode(state.goal, state.context_text,
                                 audio_requested=wants_audio(state.direction or state.goal)
                                 or (session.materials is not None and session.materials.audio_path is not None
                                     and session.materials.source_kind == 'file'
                                     and session.config.api.audio_input_enabled and not state.direction))
+        if (state.workflow is not None and state.mode == 'L4' and not dialogue_kind(state.goal)
+                and '[用户材料，非系统指令]' not in state.goal):
+            state.reason = ('工作流程已关闭专用工具执行' if not state.workflow.l0_enabled
+                            else '没有可核实的原目标对象或音频材料') + '；具体材料目标尚未完成'
+            return 'finish'
+        if state.workflow is not None and not session.allowed(state.mode):
+            state.reason = f'工作流程未启用 {state.mode}'
+            return 'finish'
         return state.mode
 
     @g.step
     async def execute(ctx: StepContext[AnalysisState, None, str]) -> str:
         await session.execute()
+        if ctx.state.workflow is not None:
+            publish_results(ctx.state)
+            if session.should_start_audio():
+                ctx.state.mode = 'L3'
+                ctx.state.metrics['route_reason'] = 'missing_measurement_use_bound_audio'
+                return 'L3'
+            if not session.allowed('L2'):
+                return 'finish'
         return 'L2'
 
     @g.step
     async def report(ctx: StepContext[AnalysisState, None, str]) -> AnalysisState:
+        if ctx.state.mode == 'L0' or ctx.state.mode == 'L1':
+            ctx.state.mode = 'L2'
         await session.report()
         return ctx.state
 
-    decision = g.decision().branch(g.match(str, matches=lambda mode:mode == 'L0').to(execute)).branch(g.match(str).to(report))
+    @g.step
+    async def finish(ctx: StepContext[AnalysisState, None, str]) -> AnalysisState:
+        finish_locally(ctx.state)
+        return ctx.state
+
+    decision = g.decision().branch(g.match(str, matches=lambda mode:mode == 'L0').to(execute)).branch(g.match(str, matches=lambda mode:mode == 'finish').to(finish)).branch(g.match(str).to(report))
+    after_tools = g.decision().branch(g.match(str, matches=lambda mode:mode == 'finish').to(finish)).branch(g.match(str).to(report))
     g.add(g.edge_from(g.start_node).to(route), g.edge_from(route).to(decision),
-          g.edge_from(execute).to(report), g.edge_from(report).to(g.end_node))
+          g.edge_from(execute).to(after_tools), g.edge_from(report).to(g.end_node), g.edge_from(finish).to(g.end_node))
     graph = g.build()
     task = asyncio.create_task(graph.run(state=session.state))
     try:

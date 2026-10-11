@@ -17,7 +17,7 @@ from typing import Any
 from pydantic_ai import ModelRetry
 
 from .escape_policy import note_guard
-from .tools import parse_object_context
+from .tools import SOUND_CLASSES, parse_object_context
 
 
 #: 算不出来的推导式在正文里换成这个：不把内部语法漏给用户，也不因为一句推导丢掉整份报告。
@@ -35,11 +35,13 @@ def _block(state: Any, rule: str, message: str) -> None:
     raise ModelRetry(message)
 
 
-_N = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?"
+_N = (r"[-+]?(?:\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d*)?|\.\d+)"
+      r"(?:[eE][-+]?\d+)?")
 _NUMBER = re.compile(r"(?<![A-Za-z0-9_.])" + _N + r"(?![A-Za-z0-9_.])")
 _UNIT = re.compile(
     r"\s*(kHz|Hz(?:\s*/\s*(?:s|秒))?|半音\s*/\s*(?:s|秒)|"
-    r"milliseconds?|seconds?|msec|sec|ms|s|毫秒|秒|dB|Pa|%|％|倍|半音|八度)(?![A-Za-z])",
+    r"milliseconds?|seconds?|msec|sec|ms|s|毫秒|秒|dB|Pa|%|％|倍|半音|八度|"
+    r"赫兹|帕|分贝)(?![A-Za-z])",
     re.I,
 )
 _RANGE = re.compile(
@@ -47,9 +49,48 @@ _RANGE = re.compile(
     r"(?P<b>" + _N + r")\s*(?P<ub>milliseconds?|seconds?|msec|sec|ms|s|毫秒|秒)(?![A-Za-z])",
     re.I,
 )
+_VALUE_RANGE = re.compile(
+    r'(?P<a>' + _N + r')\s*(?P<ua>kHz|Hz|dB|%|％)?\s*[–—~～至到-]\s*'
+    r'(?P<b>' + _N + r')\s*(?P<ub>kHz|Hz|dB|%|％)(?![A-Za-z])', re.I)
+#: ``[0.446194, 0.66158] 秒``：模型很常这样写编辑器圈选。它和「0.446194–0.66158 秒」
+#: 是同一个范围，只是写法不同；不认它就会把一个**正确**的范围当成孤立数字
+#: （2026-10-07 实测：报告因此连吃两次拒绝，正文里留下 ``[[未通过核对的数值], 0.66158]``）。
+_RANGE_PAIR = re.compile(
+    r'[\[［(（]\s*(?P<a>' + _N + r')\s*[,，、]\s*(?P<b>' + _N + r')\s*[\]］)）]\s*'
+    r'(?P<u>milliseconds?|seconds?|msec|sec|ms|s|毫秒|秒)?', re.I)
+
+
+def _range_parts(text, tool=''):
+    parts = {span: (role, unit) for match in _RANGE.finditer(text)
+             for span, role, unit in ((match.span('a'), 'range.start', match['ua'] or match['ub']),
+                                     (match.span('b'), 'range.end', match['ub']))}
+    # Frequency/level bands inherit the trailing unit, but are not time scopes
+    # or individual pitch measurements. Keep both bounds typed for validation.
+    for match in _VALUE_RANGE.finditer(text):
+        prefix = text[:match.start()]
+        category = ''
+        if not re.search(r'频带|频段|通带|高频带|band', prefix[-60:], re.I):
+            for label in reversed(re.split(r'[，,；;：:=＝]', prefix)):
+                role = _role(label, tool)
+                candidate = role.rsplit('.', 1)[0]
+                if candidate in {'pitch', 'intensity'} or candidate.startswith('formant.'):
+                    category = candidate
+                    break
+        start_role, end_role = ((category + '.min', category + '.max') if category
+                                else ('value_range.start', 'value_range.end'))
+        parts[match.span('a')] = (start_role, match['ua'] or match['ub'])
+        parts[match.span('b')] = (end_role, match['ub'])
+    # ``[a, b] 秒`` 与 ``a–b 秒`` 是同一个范围；括号外带单位时两个端点都算这个单位。
+    for match in _RANGE_PAIR.finditer(text):
+        unit = match['u'] or ''
+        parts[match.span('a')] = ('range.start', unit)
+        parts[match.span('b')] = ('range.end', unit)
+    return parts
+
+
 _CITATION = re.compile(r"\[E(\d+)\]")
 _OBJECT_IDENTIFIER = re.compile(
-    r'(?:对象\s*[:：]?\s*|(?<![A-Za-z0-9_])(?:object|id)\s*[:：]?\s*|#\s*)(\d+)(?![\d.])', re.I)
+    r'(?:(?:对象|编号)\s*[:：]?\s*|(?<![A-Za-z0-9_])(?:object|id)\s*[:：]?\s*|#\s*)(\d+)(?![\d.])', re.I)
 _CALC = re.compile(r"\{\{calc:([^{}|]+)\|([^{}|]+)\}\}")
 _REF = re.compile(r"\b(E\d+)\.q([1-9]\d*)\b")
 _GENERAL = re.compile(r"一般知识|一般原理|概念说明|概念解释|通用知识|示例[（(]非本录音[）)]|general knowledge", re.I)
@@ -94,12 +135,15 @@ class Record:
 def _unit(raw: str) -> tuple[str, float, tuple[int, int, str]]:
     """Frequency and time are independent dimensions; other units are named."""
     key = re.sub(r'\s+', '', raw).lower().replace('％', '%')
+    key = {'赫兹': 'hz', '千赫': 'khz', '帕': 'pa', '分贝': 'db'}.get(key, key)
     if key in {'s', 'sec', 'second', 'seconds', '秒'}:
         return 's', 1.0, (0, 1, '')
     if key in {'ms', 'msec', 'millisecond', 'milliseconds', '毫秒'}:
         return 'ms', .001, (0, 1, '')
     if key in {'hz', 'khz'}:
         return 'kHz' if key == 'khz' else 'Hz', 1000.0 if key == 'khz' else 1.0, (1, 0, '')
+    if key in {'pa'}:
+        return 'Pa', 1.0, (0, 0, 'Pa')
     if key in {'hz/s', 'hz/秒'}:
         return 'Hz/s', 1.0, (1, -1, '')
     if key in {'半音/s', '半音/秒'}:
@@ -114,6 +158,65 @@ def _precision(text: str) -> float:
     mantissa, _, exponent = text.lower().partition('e')
     decimals = len(mantissa.split('.')[1]) if '.' in mantissa else 0
     return .5 * 10 ** ((int(exponent) if exponent else 0) - decimals)
+
+
+#: 全角数字/句点/逗号：模型偶尔会写 ``８１．５５８``，以前整段核对直接跳过它。
+_FULLWIDTH = str.maketrans('０１２３４５６７８９．，％', '0123456789.,%')
+
+_CN_DIGITS = {'零': 0, '〇': 0, '一': 1, '壹': 1, '二': 2, '两': 2, '贰': 2, '三': 3, '叁': 3,
+              '四': 4, '肆': 4, '五': 5, '伍': 5, '六': 6, '陆': 6, '七': 7, '柒': 7,
+              '八': 8, '捌': 8, '九': 9, '玖': 9}
+_CN_UNITS = {'十': 10, '拾': 10, '百': 100, '佰': 100, '千': 1000, '仟': 1000}
+_CN_NUMBER = re.compile(r'[零〇一壹二两贰三叁四肆五伍六陆七柒八捌九玖十拾百佰千仟点]{2,}')
+
+
+def _chinese_number(text: str) -> float | None:
+    """``八十一`` → 81、``一点五`` → 1.5、``二百五十`` → 250；解析不了返回 ``None``。
+
+    中文数字以前完全不核对（2026-10-07 实测：``平均基频约八十一点六赫兹`` 直接通过），
+    编造的数字只要写成中文就能躲过守卫。这里只处理到千位和一位小数——报告里够用，
+    超出的形式按解析不了处理（仍会被当成可疑数值拦下）。
+    """
+
+    if '点' in text:
+        whole, _, fraction = text.partition('点')
+        base = _chinese_number(whole) if whole else 0.0
+        digits = [_CN_DIGITS.get(char) for char in fraction]
+        if base is None or not digits or any(digit is None for digit in digits):
+            return None
+        return base + float('0.' + ''.join(str(digit) for digit in digits))
+    total = 0
+    section = 0
+    digit = None
+    for char in text:
+        if char in _CN_DIGITS:
+            digit = _CN_DIGITS[char]
+        elif char in _CN_UNITS:
+            unit = _CN_UNITS[char]
+            section += (digit if digit is not None else 1) * unit
+            digit = None
+        else:
+            return None
+    total += section + (digit or 0)
+    return float(total)
+
+
+def _normalize_claim(text: str) -> str:
+    """把全角数字写法归一成 ASCII，其余照旧。"""
+
+    return text.translate(_FULLWIDTH)
+
+
+def _number_candidates(raw: str) -> list[str]:
+    """一个数值文本的可能读法：``81,558`` 既可能是千分位也可能是小数逗号。
+
+    两种读法都试：只有能对上真实测量才会通过，所以放宽读法不会放过编造的数字
+    （2026-10-07 实测：``平均基频 81,558 Hz`` 被拆成 81 + 558，整行判成未核对）。
+    """
+
+    if ',' not in raw:
+        return [raw]
+    return [raw.replace(',', ''), raw.replace(',', '.')]
 
 
 def _role(prefix: str, tool: str = '') -> str:
@@ -171,10 +274,7 @@ def _role(prefix: str, tool: str = '') -> str:
 def _quantities(eid: str, evidence: Any) -> list[Quantity]:
     result: list[Quantity] = []
     for row_number, row in enumerate(evidence.rows, 1):
-        ranges = list(_RANGE.finditer(row))
-        range_parts = {span: (role, unit) for match in ranges
-                       for span, role, unit in ((match.span('a'), 'range.start', match['ua'] or match['ub']),
-                                                (match.span('b'), 'range.end', match['ub']))}
+        range_parts = _range_parts(row, evidence.tool)
         for match in _NUMBER.finditer(row):
             if re.match(r'\s*共振峰', row[match.end():]) or re.search(r'第\s*$', row[:match.start()]):
                 continue
@@ -268,16 +368,20 @@ def report_guard_instructions(state: Any) -> str:
         return '\n没有测量时不填录音数值或下音调结论；一般知识明确标注，缺证据就说明。'
     return ('\n量化陈述逐行引[E编号]，须同对象、范围、量名、单位；一般知识明确标注。'
             'quantity_refs第N项即E编号.qN。推导用{{calc:E1.q1/E2.q1*100|%}}，仅真实输入和四则，程序写算式结果。'
-            '具体录音音调结论须同目标且有定义值的走向证据，平均值不足。')
+            '具体录音音调结论须同目标且有定义值的走向证据，平均值不足。'
+            '逐字引用、单位换算、选区范围、一般知识的写法与例子见 skill=notation。')
 
 
 def _same_value(value: float, text: str, unit: str, quantity: Quantity) -> bool:
     _, scale, dimension = _unit(unit)
     _, source_scale, source_dimension = _unit(quantity.unit)
-    if dimension != source_dimension:
+    # 范围端点允许省略单位：``[0.446194, 0.66158]`` 没写「秒」，两个端点仍然指同一段时间，
+    # 而且这里仍然要求数值本身在容差内相等，不会因此放过别的量。
+    unitless_range = unit == '' and quantity.role.startswith('range.')
+    if dimension != source_dimension and not unitless_range:
         return False
     # Omitted units do not silently turn Hz into dimensionless numbers.
-    if unit == '' and quantity.unit != '':
+    if unit == '' and quantity.unit != '' and not unitless_range:
         return False
     tolerance = _precision(text) * scale + _precision(quantity.text) * source_scale + 1e-10
     return abs(value * scale - quantity.value * source_scale) <= tolerance
@@ -330,6 +434,11 @@ def _line_targets(state: Any, text: str, records: dict[str, Record]) -> set[str]
             explicit.add(record.target)
     if explicit:
         return explicit
+    cited = {records[f'E{eid}'].target for eid in _CITATION.findall(text)
+             if f'E{eid}' in records and records[f'E{eid}'].target is not None}
+    if cited and not any(row.selected and row.class_name in SOUND_CLASSES
+                         for row in parse_object_context(state.context_text)):
+        return cited  # Evidence retains its Sound even when Praat selected a derived object.
     return {str(row.id) for row in parse_object_context(state.context_text) if row.selected}
 
 
@@ -354,7 +463,10 @@ def _whole_ranges(state: Any, records: dict[str, Record]) -> dict[str, tuple[flo
 def _identifier_number(cleaned: str, match: re.Match[str], targets: set[str]) -> bool:
     """这个数字是编号/标签而不是量值吗（Markdown 序号、对象编号、共振峰序号）。"""
 
-    if re.match(r'^\s*(?:#{1,6}\s*)?$', cleaned[:match.start()]) and re.match(r'[.)、]\s', cleaned[match.end():]):
+    # _NUMBER accepts a trailing decimal dot, so Markdown "1." is matched
+    # including its punctuation. Identify the marker from the line instead.
+    ordinal = re.match(r'^\s*(?:#{1,6}\s*)?(\d+)[.)、](?=\s)', cleaned)
+    if ordinal and match.start() == ordinal.start(1) and match.end() <= ordinal.end():
         return True
     if any(item.span(1) == match.span() and item[1] in targets
            for item in _OBJECT_IDENTIFIER.finditer(cleaned)):
@@ -364,7 +476,42 @@ def _identifier_number(cleaned: str, match: re.Match[str], targets: set[str]) ->
     return False
 
 
-def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record]):
+#: 句内明确标注的「一般知识」。标注文字本身常含「非本次测量」这类词，不能拿它当
+#: 实测主张的证据——否则提示词里承诺的「一般知识明确标注」这条出口永远走不通。
+_MARKED_GENERAL = re.compile(
+    r'[（(][^）)]{0,24}(?:一般知识|通用知识|常见范围|general knowledge)[^）)]{0,24}[）)]|'
+    r'(?:一般知识|通用知识|general knowledge)\s*[:：]', re.I)
+
+
+def _marked_general(clause: str) -> bool:
+    if not _MARKED_GENERAL.search(clause):
+        return False
+    probe = _MARKED_GENERAL.sub('', clause)
+    return not _SPECIFIC.search(probe) and not _CITATION.search(probe)
+
+
+def _verbatim_line(line: str) -> bool:
+    """这一行是在**抄工具输出**，不是在给录音下断言。
+
+    代码块里 ``mean_pitch = 81.558``、赋值式的 ``pitch = 220.0`` 都属于逐字引用：省略单位
+    是正常的，前提是数值和某条证据**唯一**对得上（见 :func:`_numeric_claim_sources`）。
+    这和「平均基频是 220。」那种不带单位的实测主张不同，后者仍然要拦。
+    """
+
+    stripped = line.strip()
+    if stripped.startswith('```'):
+        return True
+    return bool(re.match(r'^\s*(?:[-*]\s*)?[A-Za-z_][A-Za-z0-9_.]*\s*[:=]\s*[-+]?[\d.]', stripped))
+
+
+def _same_numeric_value(value: float, text: str, quantity: Quantity) -> bool:
+    """忽略单位是否写出，只比数值（逐字引用用）。"""
+
+    _, source_scale, _ = _unit(quantity.unit)
+    return abs(value - quantity.value * source_scale) <= _precision(text) * source_scale + 1e-10
+
+
+def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record], *, verbatim: bool = False):
     """核对行中数值并返回命中证据 ID。返回 (sources, failure)，失败含规则、消息及需要遮蔽的数值/单位跨度。调用方决定阻断或补引用，共用同一匹配引擎。"""
 
     cites = [f'E{x}' for x in _CITATION.findall(line)]
@@ -376,6 +523,8 @@ def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record]):
     sources: list[str] = []
     for clause_match in re.finditer(r'[^；;。\n]+', line):
         clause = clause_match[0]
+        if _marked_general(clause):
+            continue
         clause_cites = [f'E{x}' for x in _CITATION.findall(clause)] or cites
         # 漏写引证时按「同对象的所有证据」核对，命中的证据由调用方补进正文：引证是守卫
         # 自己的记账方式，不该要求模型逐行照抄格式，更不该因为漏写就判成编造数据。
@@ -398,9 +547,7 @@ def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record]):
             if not available and clause_cites and re.search(r'平均|均值|统计|数值|mean|average', clause, re.I):
                 return sources, ('report.range_whole_partial', '整段量化陈述不能引用局部分段值；请保留真实范围或取得整段测量。')
         ranges = list(_RANGE.finditer(clause))
-        range_parts = {span: (role, unit) for match in ranges
-                       for span, role, unit in ((match.span('a'), 'range.start', match['ua'] or match['ub']),
-                                                (match.span('b'), 'range.end', match['ub']))}
+        range_parts = _range_parts(clause)
         if len(ranges) == 1:
             match = ranges[0]
             start = float(match['a']) * _unit(match['ua'] or match['ub'])[1]
@@ -409,6 +556,7 @@ def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record]):
                          abs(r.interval[0] - start) <= _precision(match['a']) * _unit(match['ua'] or match['ub'])[1] + .0005 and
                          abs(r.interval[1] - end) <= _precision(match['b']) * _unit(match['ub'])[1] + .0005]
         cleaned = _CITATION.sub(lambda m: ' ' * len(m[0]), clause)
+        cleaned = _normalize_claim(cleaned)
         for match in _NUMBER.finditer(cleaned):
             if _identifier_number(cleaned, match, targets):
                 continue
@@ -417,18 +565,51 @@ def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record]):
             role = _role(cleaned[:match.start()])
             if match.span() in range_parts:
                 role, unit = range_parts[match.span()]
-            value = float(match[0])
             # 声明侧没点名量名（只有「爆破」「浊音起始」这类出处标签）时按「同对象 +
             # 同范围 + 同量纲 + 同数值」核对；点名了量名的仍走严格规则（F1 不能冒充
             # 平均基频）。_free_label 见上。
-            hit = [record for record in available
-                   if any((_roles_match(role, q.role) or _free_label(role))
-                          and _same_value(value, match[0], unit, q) for q in record.quantities)]
+            hit, value = [], None
+            for candidate in _number_candidates(match[0]):
+                value = float(candidate)
+                hit = [record for record in available
+                       if any((_roles_match(role, q.role) or _free_label(role))
+                              and _same_value(value, candidate, unit, q) for q in record.quantities)]
+                if hit:
+                    break
+            if not hit and verbatim and unit == '':
+                # 逐字引用可以不带单位，但必须唯一对上一条证据，否则仍然按未核对处理。
+                candidates = {(record.id, q.ref) for record in available for q in record.quantities
+                              if _same_numeric_value(value, match[0], q)}
+                if len({ref for _, ref in candidates}) == 1:
+                    hit = [record for record in available
+                           if any((record.id, q.ref) in candidates for q in record.quantities)]
             if not hit:
                 return sources, ('report.number_unmatched',
                                  f'数值“{match[0]} {unit}”未匹配同对象/范围/量名的测量。逐行引证；推导用calc占位式，缺测量就说明。',
                                  (clause_match.start() + match.start(),
                                   clause_match.start() + (unit_match.end() if unit_match else match.end())))
+            for record in hit:
+                if record.id not in sources:
+                    sources.append(record.id)
+        # 中文数字：写成「二百五十赫兹」的编造数值以前完全躲过核对。
+        for match in _CN_NUMBER.finditer(cleaned):
+            unit_match = _UNIT.match(cleaned, match.end())
+            if not unit_match:
+                continue            # 只有跟着单位才当数值主张，普通中文里的「三方面」不算
+            value = _chinese_number(match[0])
+            if value is None:
+                continue
+            unit = unit_match[1]
+            role = _role(cleaned[:match.start()])
+            hit = [record for record in available
+                   if any((_roles_match(role, q.role) or _free_label(role))
+                          and _same_value(value, f'{value:g}', unit, q) for q in record.quantities)]
+            if not hit:
+                return sources, ('report.number_unmatched',
+                                 f'数值“{match[0]} {unit}”未匹配同对象/范围/量名的测量。'
+                                 '请用阿拉伯数字并逐行引证；推导用calc占位式。',
+                                 (clause_match.start() + match.start(),
+                                  clause_match.start() + unit_match.end()))
             for record in hit:
                 if record.id not in sources:
                     sources.append(record.id)
@@ -484,8 +665,8 @@ def mask_rejected_numbers(text: str, values, marker: str, *, state=None) -> str:
     return ''.join(out)
 
 
-def _check_numeric_line(state: Any, line: str, records: dict[str, Record]) -> None:
-    _, failure = _numeric_claim_sources(state, line, records)
+def _check_numeric_line(state: Any, line: str, records: dict[str, Record], *, verbatim: bool = False) -> None:
+    _, failure = _numeric_claim_sources(state, line, records, verbatim=verbatim)
     if failure:
         _block(state, failure[0], failure[1])
 
@@ -524,10 +705,22 @@ def _trajectory(records: list[Record], directional: bool, whole_ranges: dict[str
     return False
 
 
-def _check_prosody_line(state: Any, line: str, records: dict[str, Record]) -> None:
+def _check_prosody_line(state: Any, line: str, records: dict[str, Record]) -> str:
+    """音调/走向结论缺走向证据时**标注**这一行，不再拦下整份报告。
+
+    这条规则拦的是「判断」而不是「数值」，2026-10-06 的文档就把它列为「本来该退回提示词、
+    只是历史事故先留着观察」；现在有了真实触发率：用户历史 28 轮 + 真机 30 轮里
+    ``report.prosody_untraced`` **一次都没触发**，而同期的数值规则触发了 7 次。
+    按那条文档自己写的判据（触发率低 → 降为可见提醒），这里改成在结论旁边写明
+    「缺少同目标的走向证据」，规则本身留在 skill=prosody 与报告指令里。
+    """
+
+    if not _PROSODY.search(line):
+        return line
     cites = [f'E{x}' for x in _CITATION.findall(line)]
     targets = _line_targets(state, line, records)
     whole_ranges = _whole_ranges(state, records)
+    annotated = False
     for clause in re.split(r'[，,；;。！？!?]|(?:但|然而|不过)', line):
         claims = list(_PROSODY.finditer(clause))
         if not claims:
@@ -543,8 +736,12 @@ def _check_prosody_line(state: Any, line: str, records: dict[str, Record]) -> No
                           (not targets or records[eid].target in targets)]
             directional = bool(re.search(r'上升|下降|升高|降低|升调|降调|rising|falling', claim[0], re.I))
             if not _trajectory(applicable, directional, whole_ranges):
-                _block(state, 'report.prosody_untraced',
-                       '具体录音的音调/走向结论缺同目标且有定义值的走向引证；补分段基频、起终点或适用斜率，或明确不能判断。')
+                annotated = True
+    if not annotated:
+        return line
+    state.metrics['prosody_unverified'] = state.metrics.get('prosody_unverified', 0) + 1
+    note_guard(state, 'repair', 'report.prosody_unverified')
+    return line.rstrip() + '（该音调/走向结论缺少同目标的走向证据，未核对）'
 
 
 def _dim_operation(left: tuple[int, int, str], right: tuple[int, int, str], divide: bool = False) -> tuple[int, int, str]:
@@ -704,14 +901,20 @@ def _validate_text(state: Any, text: str, records: dict[str, Record]) -> str:
         if '{{calc:' in masked:
             masked = masked.replace('{{calc:', UNVERIFIED_CALC)
     in_general = False
+    in_fence = False
     for line in masked.splitlines():
         if re.match(r'^\s*#{1,6}\s', line):
             in_general = bool(_GENERAL.search(line))
+        if line.strip().startswith('```'):
+            in_fence = not in_fence
+            continue
         if _general(line, in_general, records):
             continue
         # Suggested future parameters/counts are not claims of measurements.
         if _ADVICE.search(line) and not _SPECIFIC.search(line) and not _CITATION.search(line):
-            _check_prosody_line(state, line, records)
+            checked = _check_prosody_line(state, line, records)
+            if checked != line:
+                masked = masked.replace(line, checked)
             continue
         # Calculation citations remain visible to prosody validation, while its
         # deterministic numbers bypass a second check against raw measurements.
@@ -719,11 +922,30 @@ def _validate_text(state: Any, text: str, records: dict[str, Record]) -> str:
         for index, rendered in enumerate(replacements):
             token = '\ue000' + chr(0xE100 + index) + '\ue001'
             evidence_line = evidence_line.replace(token, ' '.join(m[0] for m in _CITATION.finditer(rendered)))
-        _check_numeric_line(state, evidence_line, records)
-        _check_prosody_line(state, evidence_line, records)
+        _check_numeric_line(state, evidence_line, records, verbatim=in_fence or _verbatim_line(line))
+        checked = _check_prosody_line(state, evidence_line, records)
+        if checked != evidence_line:
+            # 只把追加的标注接回 masked 的那一行：evidence_line 里的 calc 占位式已经被
+            # 引证替换过，整行替换会把程序算出来的结果弄丢（2026-10-07 自查发现）。
+            masked = masked.replace(line, line.rstrip() + checked[len(evidence_line):])
     for index, rendered in enumerate(replacements):
         masked = masked.replace('\ue000' + chr(0xE100 + index) + '\ue001', rendered)
     return masked
+
+
+#: 「没有音频输入所以测不了」：测量是 Praat 对对象做的，不需要把音频发给模型。
+#: 2026-10-07 实测：一轮里已经测到 10 行数据，报告仍以 ``audio_input=false，无法执行测量``
+#: 收尾，而且因为不含任何数字，数值核对一句话都没拦——整份「零测量报告」照样算通过。
+_NO_INPUT_CLAIM = re.compile(
+    r'未提供音频|没有收到音频|未收到任何音频|没有音频输入|未提供任何音频|无音频输入|'
+    r'audio_input\s*(?:为|=|是|is)\s*`?false|无法执行(?:任何)?测量|无法进行(?:任何)?测量|'
+    r'无法完成(?:任何)?测量', re.I)
+
+#: 目标上下文里关于「用户提到的对象不存在」的提示（cloud_workflow.target_context 写的）。
+_MISSING_OBJECT_NOTE = re.compile(r'^#\s*用户提到但这些对象不在当前 Praat 对象列表里：(.+?)；', re.M)
+#: 回答里必须出现的「不存在」判定词（只说了一遍名字不算交代）。
+_MISSING_DENIAL = re.compile(r'不存在|找不到|未找到|没有找到|不在(?:当前|对象)|没有这个对象|'
+                             r'未加载|没有该对象|does not exist|not found', re.I)
 
 
 def validate_report(state: Any, report: Any) -> Any:
@@ -734,6 +956,31 @@ def validate_report(state: Any, report: Any) -> Any:
     labels are identifiers and are not reinterpreted as measurement claims.
     """
     records = _records(state)
+    analysis_text = str(getattr(report, 'analysis', '') or '')
+    measured = [eid for eid, record in records.items() if record.quantities]
+    context_text = str(getattr(state, 'context_text', '') or '')
+    has_sound = any(row.class_name in SOUND_CLASSES for row in parse_object_context(context_text))
+    # 已经有测量、或者对象列表里明明有声音对象时，不能用「没有音频输入」当不做测量的理由。
+    if (measured or has_sound) and _NO_INPUT_CLAIM.search(analysis_text) and not _CITATION.search(analysis_text):
+        reason = ('本轮已经有测量证据（' + '、'.join(f'[{eid}]' for eid in measured) + '）；'
+                  if measured else '对象列表里有可测量的声音对象；')
+        _block(state, 'report.input_claim_conflict',
+               reason + '测量由 Praat 对对象执行，不需要把音频发给模型，'
+               '所以不能声称没有输入或无法测量。请执行测量并引用结果，'
+               '或者说明工具到底为什么失败。')
+    # 用户点名的对象不存在时，回答里必须说出来；不能拿「没有音频输入」搪塞过去
+    # （2026-10-07 实测：对象名不存在被答成「未收到音频」）。
+    for match in _MISSING_OBJECT_NOTE.finditer(context_text):
+        names = [piece.strip() for piece in re.split(r'[、,，]', match[1]) if piece.strip()]
+        if not names:
+            continue
+        named = any(name.strip('「」') in analysis_text for name in names)
+        denied = bool(_MISSING_DENIAL.search(analysis_text))
+        if not (named and denied):
+            _block(state, 'report.missing_object_unmentioned',
+                   '用户提到的对象（' + '、'.join(names) + '）不在当前 Praat 对象列表里；'
+                   '回答里必须点名说明它不存在（找不到/未找到/不在列表），'
+                   '不能改用别的对象，也不能用「没有音频输入」代替。')
     analysis = _validate_text(state, report.analysis, records)
     coverage = []
     for entry in report.coverage:

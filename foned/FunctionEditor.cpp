@@ -23,6 +23,7 @@
 #include "FunctionArea.h"
 #include <algorithm>
 #include <exception>
+#include <unordered_map>
 #include "PraatAiControl.h"
 
 Thing_implement_pureVirtual (FunctionEditor, Editor, 0);
@@ -71,14 +72,12 @@ namespace {
 		if (me -> aiFrontendStatusItem)
 			GuiMenuItem_setText (me -> aiFrontendStatusItem, statusLine. string);
 
-		bool vramIsLow = false;
-		autoMelderString vramLine;
-		conststring32 vramText = PraatAiControl_getVramText (& vramIsLow);
-		if (vramIsLow)
-			MelderString_append (& vramLine, praat_translate (U"low VRAM: "));
-		MelderString_append (& vramLine, vramText);
-		if (me -> aiVramStatusItem)
-			GuiMenuItem_setText (me -> aiVramStatusItem, vramLine. string);
+		if (me -> aiVramStatusItem) {
+			const int warning = PraatAiControl_getVramWarning ();
+			GuiThing_setSensitive (me -> aiVramStatusItem, PraatAiControl_isLocalFrontend ());
+			GuiMenuItem_setText (me -> aiVramStatusItem, warning ? U"显存预警" : U"显存预警：不可用");
+			GuiMenuItem_setStatusDot (me -> aiVramStatusItem, warning);
+		}
 
 	}
 
@@ -135,6 +134,12 @@ namespace {
 		});
 	}
 
+	static void aiSpeechDictionariesCallback (Thing /* boss */, GuiMenuItemEvent /* event */) {
+		runAiMenuAction (praat_translate (U"Manage speech dictionaries and models"), [] {
+			PraatAiControl_manageSpeechDictionaries ();
+		});
+	}
+
 	static void aiFrontendStartCallback (Thing boss, GuiMenuItemEvent /* event */) {
 		FunctionEditor me = reinterpret_cast <FunctionEditor> (boss);
 		runAiMenuAction (praat_translate (U"Start frontend"), [me] {
@@ -167,6 +172,14 @@ namespace {
 		});
 	}
 
+	static void aiPathSettingsCallback (Thing boss, GuiMenuItemEvent /* event */) {
+		FunctionEditor me = reinterpret_cast <FunctionEditor> (boss);
+		runAiMenuAction (praat_translate (U"Path configuration"), [me] {
+			PraatAiControl_configurePaths ();
+			updateAiToolbarStatus (me);
+		});
+	}
+
 	static void aiRunCallback (Thing boss, GuiMenuItemEvent /* event */) {
 		FunctionEditor me = reinterpret_cast <FunctionEditor> (boss);
 		runAiMenuAction (praat_translate (U"Run AI tutor"), [me] {
@@ -174,13 +187,15 @@ namespace {
 			updateAiToolbarStatus (me);
 		});
 	}
+	static void aiAnkiCallback (Thing /* boss */, GuiMenuItemEvent /* event */) {
+		runAiMenuAction (praat_translate (U"Anki integration..."), [] { PraatAiControl_openAnkiIntegration (); });
+	}
 
-	void aiStatusTimerCallback (XtPointer closure, XtIntervalId * /* id */) {
-		FunctionEditor me = static_cast <FunctionEditor> (closure);
-		if (! me || ! me -> aiFrontendMenu)
-			return;
-		updateAiToolbarStatus (me);
-		me -> aiStatusTimer = XtAddTimeOut (2000, aiStatusTimerCallback, me);
+	std::unordered_map<UINT_PTR, FunctionEditor> aiStatusEditors;
+	void CALLBACK aiStatusTimerCallback (HWND, UINT, UINT_PTR timer, DWORD) {
+		const auto editor = aiStatusEditors.find (timer);
+		if (editor != aiStatusEditors.end () && editor -> second -> aiFrontendMenu)
+			updateAiToolbarStatus (editor -> second);
 	}
 
 	void createAiMenus (FunctionEditor me) {
@@ -204,17 +219,22 @@ namespace {
 			aiAlignmentWav2vec2Callback, me
 		);
 
+		GuiMenu_addSeparator (alignmentMenu);
+		GuiMenu_addItem (
+			alignmentMenu, U"Manage speech dictionaries and models", 0, aiSpeechDictionariesCallback, me
+		);
+
 		me -> aiFrontendMenu = GuiMenu_createInWindow (
 			window, U"Frontend", 0
 		);
 		me -> aiModelStatusItem = GuiMenu_addItem (
-			me -> aiFrontendMenu, U"Model: unavailable", GuiMenu_INSENSITIVE, nullptr, nullptr
+			me -> aiFrontendMenu, U"Model: unavailable", 0, nullptr, nullptr
 		);
 		me -> aiFrontendStatusItem = GuiMenu_addItem (
-			me -> aiFrontendMenu, U"Status: stopped", GuiMenu_INSENSITIVE, nullptr, nullptr
+			me -> aiFrontendMenu, U"Status: stopped", 0, nullptr, nullptr
 		);
 		me -> aiVramStatusItem = GuiMenu_addItem (
-			me -> aiFrontendMenu, U"VRAM: unavailable", GuiMenu_INSENSITIVE, nullptr, nullptr
+			me -> aiFrontendMenu, U"显存预警：不可用", GuiMenu_INSENSITIVE, nullptr, nullptr
 		);
 		GuiMenu_addSeparator (me -> aiFrontendMenu);
 		GuiMenu_addItem (
@@ -227,6 +247,10 @@ namespace {
 		GuiMenu_addItem (
 			me -> aiFrontendMenu, U"Add model path...", 0, aiFrontendAddModelCallback, me
 		);
+		GuiMenu_addItem (me -> aiFrontendMenu, U"Anki integration...", 0, aiAnkiCallback, me);
+		GuiMenu_addItem (
+			me -> aiFrontendMenu, U"Path configuration...", 0, aiPathSettingsCallback, me
+		);
 		GuiMenu_addItem (
 			me -> aiFrontendMenu, U"API settings...", 0, aiApiSettingsCallback, me
 		);
@@ -235,12 +259,16 @@ namespace {
 			me -> aiFrontendMenu, U"Run AI tutor", 0, aiRunCallback, me
 		);
 		updateAiToolbarStatus (me);
-		me -> aiStatusTimer = XtAddTimeOut (2000, aiStatusTimerCallback, me);
+		// A Windows timer also runs in menu loops; Xt intervals here were seconds, not ms.
+		me -> aiStatusTimer = SetTimer (nullptr, 0, 2000, aiStatusTimerCallback);
+		if (me -> aiStatusTimer)
+			aiStatusEditors [me -> aiStatusTimer] = me;
 	}
 
 	void destroyAiToolbar (FunctionEditor me) {
 		if (me -> aiStatusTimer) {
-			XtRemoveTimeOut (me -> aiStatusTimer);
+			KillTimer (nullptr, me -> aiStatusTimer);
+			aiStatusEditors.erase (me -> aiStatusTimer);
 			me -> aiStatusTimer = 0;
 		}
 	}
@@ -1912,7 +1940,8 @@ static void gui_drawingarea_cb_mouse (FunctionEditor me, GuiDrawingArea_MouseEve
 
 void structFunctionEditor :: v_createChildren () {
 	int x = BUTTON_X;
-	const int contentTop = Machine_getMenuBarBottom ();
+	const int aiToolbarTop = Machine_getMenuBarBottom ();
+	const int contentTop = aiToolbarTop;
 
 	/*
 		Create zoom buttons.
@@ -1931,14 +1960,12 @@ void structFunctionEditor :: v_createChildren () {
 	x += BUTTON_WIDTH + BUTTON_SPACING;
 	GuiButton_createShown (our windowForm, x, x + BUTTON_WIDTH, -4 - Gui_PUSHBUTTON_HEIGHT, -4,
 		U"bak", gui_button_cb_zoomBack, this, 0);
-	x += BUTTON_WIDTH + BUTTON_SPACING;
-	our v_createExtraToolbarButtons (x, BUTTON_WIDTH, BUTTON_SPACING);
 
 	/*
 		Create scroll bar.
 	*/
 	our scrollBar = GuiScrollBar_createShown (our windowForm,
-		x, -80 - BUTTON_SPACING, -4 - Gui_PUSHBUTTON_HEIGHT, 0,
+		x += BUTTON_WIDTH + BUTTON_SPACING, -80 - BUTTON_SPACING, -4 - Gui_PUSHBUTTON_HEIGHT, 0,
 		1, maximumScrollBarValue, 1, maximumScrollBarValue - 1, 1, 1,
 		gui_cb_scroll, this, GuiScrollBar_HORIZONTAL);
 

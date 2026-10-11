@@ -1028,6 +1028,7 @@ static void praat_exit (int exit_code) {
 		#endif
 
 		trace (U"save the preferences");
+		PraatAiControl_applyPathSettings ();
 		Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // refuse to write the preferences if the locale is wrong (even if tracing is on)
 		Preferences_write_i (& prefsFile7);
 		if (Melder_appVersion() < 8000) {   // allow the concurrent use of Praat 6 and 7, until Praat 8
@@ -1548,8 +1549,9 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			"runtime/commands/chat_command_*.praat"（见 praat_ai/sendpraat.py）。
 		*/
 		bool fromChatFrontend = false;
+		autostring32 messageText;
 		try {
-			autostring32 messageText = MelderFile_readText (& messageFile);
+			messageText = MelderFile_readText (& messageFile);
 			fromChatFrontend = messageText && (
 				str32str (messageText. get(), U"praat-ai") != nullptr ||
 				str32str (messageText. get(), U"chat_command_") != nullptr
@@ -1584,6 +1586,8 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			前端也能读取当前 Praat 实例的对象上下文。
 		*/
 		PraatAiControl_refreshChatContext (true);   // 强制写一次：前端的规划完全依赖这份列表
+		if (fromChatFrontend)
+			PraatAiControl_completeChatScriptRequest (messageText ? messageText. get() : U"");
 		return 0;
 	}
 	#if 0

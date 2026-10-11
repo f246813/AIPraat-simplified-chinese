@@ -305,6 +305,14 @@ def deliver(
     return True, ""
 
 
+def command_lock():
+    """Hold across delivery AND acknowledgement, shared by Anki and AI."""
+    from .service_lock import service_transition_lock
+    path = message_file_path()
+    directory = path.parent if path else Path(__file__).resolve().parents[1] / 'runtime'
+    return service_transition_lock(directory / 'aipraat-command.lock', timeout=40)
+
+
 def cancel_pending(directory: Path | None = None) -> bool:
     """超时之后把消息文件换成空脚本，免得它被 Praat 稍后当成新指令执行。
 

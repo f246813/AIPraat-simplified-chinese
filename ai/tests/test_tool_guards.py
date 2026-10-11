@@ -19,12 +19,37 @@ CONTEXT = ('id\tclass\tname\tselected\tsel_start\tsel_end\n'
 
 
 class NativeHookTests(unittest.TestCase):
+    def test_negated_whole_request_allows_the_explicit_segment(self):
+        for goal in ('只统计对象 1 的 0.1–0.4 秒基频，不要统计整段。',
+                     'Measure object 1 from 0.1 to 0.4 seconds, not the whole recording.'):
+            with self.subTest(goal=goal):
+                _, actions, scripts, _ = self.run_case(
+                    [('pitch_statistics', {'object': 1, 'from': .1, 'to': .4})], goal=goal)
+                self.assertEqual(len(actions), 1)
+                self.assertIn('tmin = 0.100000', scripts[0])
+
+    def test_affirmed_whole_request_survives_a_negated_other_clause(self):
+        self.assertTrue(chat._whole_recording_request('不要只测选区，测量整段录音。'))
+        self.assertTrue(chat._whole_recording_request('先分析整段，然后不要重复分析整段。'))
+
+    def test_custom_script_pitch_conversion_rejects_harmonicity_before_dispatch(self):
+        context = CONTEXT + '9\tHarmonicity\thnr\t0\t\t\n'
+        _, actions, _, _ = self.run_case(
+            [('custom_script', {'script': 'selectObject: 9\nTo Pitch: 0.75, 75, 600'})],
+            goal='对 Harmonicity 对象 9 执行 To Pitch，不要换成 Sound。', context=context)
+        self.assertEqual(actions, [])
+
+    def test_custom_script_pitch_conversion_allows_a_real_sound(self):
+        _, actions, _, _ = self.run_case(
+            [('custom_script', {'script': 'selectObject: 1\nTo Pitch: 0.75, 75, 600'})])
+        self.assertEqual(len(actions), 1)
+
     def run_case(self, calls, *, goal='分析目标', evidence=(), executor=None,
-                 refresh=None, reports=(), coverage=None):
+                 refresh=None, reports=(), coverage=None, context=CONTEXT):
         cfg = AppConfig()
         cfg.api.model, cfg.api.base_url = 'test', 'https://test.invalid/v1'
         cfg.api.audio_input_enabled = False
-        state = AnalysisState(goal, CONTEXT, evidence=list(evidence))
+        state = AnalysisState(goal, context, evidence=list(evidence))
         pending, scripts, actions, report_calls = list(calls), [], [], []
         schemas = [schema for schema in tools.tool_schemas()
                    if schema['function']['name'] in {name for name, _ in calls}]

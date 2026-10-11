@@ -29,6 +29,109 @@ SELECTED_CONTEXT = (
 )
 
 
+class ArgumentContractTests(unittest.TestCase):
+    """参数契约：同义写法、未知键、「只对整段」和破坏性操作的明确目标。
+
+    2026-10-07 实测的这一组问题都是「静默做错事」：说明书里的 ``finish`` 从没被读过
+    （``from``+``finish`` 变成整段），未知键被忽略（单位/范围约束消失），
+    ``spectral_emphasis`` 的范围参数被无声丢掉，什么都没选中时 ``remove_object``
+    会删掉对象列表的最后一行。
+    """
+
+    def context(self, text=CONTEXT):
+        return tools.ToolContext(tools.parse_object_context(text), Path("result"), Path("state"))
+
+    def test_finish_alias_actually_bounds_the_range(self):
+        script = tools.render("pitch_statistics", {"from": 0.1, "finish": 0.7}, self.context())
+        self.assertIn("tmax = 0.700000", script)
+        self.assertIn("tmin = 0.100000", script)
+        script = tools.render("measure", {"parameter": "mean_pitch", "from": 0.1, "finish": 0.4},
+                              self.context())
+        self.assertIn("tmax = 0.400000", script)
+
+    def test_contradicting_range_aliases_are_rejected(self):
+        with self.assertRaises(tools.ToolError) as caught:
+            tools.render("pitch_statistics", {"from": 0.1, "to": 0.5, "finish": 0.7}, self.context())
+        self.assertIn("矛盾", str(caught.exception))
+
+    def test_reversed_range_is_rejected_before_dispatch(self):
+        with self.assertRaises(tools.ToolError) as caught:
+            tools.render("pitch_statistics", {"from": 1.0, "to": 0.5}, self.context())
+        self.assertIn("起点必须早于终点", str(caught.exception))
+        with self.assertRaises(tools.ToolError):
+            tools.render("vot", {"from": 2.0, "to": 1.0}, self.context())
+
+    def test_unknown_argument_names_are_reported(self):
+        with self.assertRaises(tools.ToolError) as caught:
+            tools.render("pitch_statistics", {"from": 0.1, "to": 0.4, "pitch_flor": 100}, self.context())
+        message = str(caught.exception)
+        self.assertIn("pitch_flor", message)
+        self.assertIn("pitch_floor", message)
+
+    def test_whole_object_tools_refuse_a_range_and_say_what_to_do(self):
+        for tool in ("spectral_emphasis", "hl_ratio", "hammarberg_index", "duration"):
+            with self.subTest(tool=tool):
+                with self.assertRaises(tools.ToolError) as caught:
+                    tools.render(tool, {"from": 0.1, "to": 0.4}, self.context())
+                self.assertIn("extract_part", str(caught.exception))
+
+    def test_pitch_band_bounds_are_the_same_everywhere(self):
+        for tool, args in (("pitch", {"pitch_ceiling": 3000}),
+                           ("pitch_statistics", {"pitch_ceiling": 3000}),
+                           ("measure", {"parameter": "mean_pitch", "pitch_ceiling": 3000}),
+                           ("pitch", {"pitch_floor": 15}),
+                           ("measure", {"parameter": "mean_pitch", "pitch_floor": 15})):
+            with self.subTest(tool=tool, args=args):
+                self.assertTrue(tools.render(tool, args, self.context()))
+
+    def test_inverted_pitch_band_is_rejected(self):
+        for tool, args in (("pitch", {"pitch_floor": 500, "pitch_ceiling": 100}),
+                           ("pitch_statistics", {"pitch_floor": 500, "pitch_ceiling": 100}),
+                           ("measure", {"parameter": "mean_pitch", "pitch_floor": 500,
+                                        "pitch_ceiling": 100})):
+            with self.subTest(tool=tool):
+                with self.assertRaises(tools.ToolError) as caught:
+                    tools.render(tool, args, self.context())
+                self.assertIn("必须小于", str(caught.exception))
+
+    def test_hnr_honours_the_requested_floor(self):
+        plain = tools.render("measure", {"parameter": "hnr"}, self.context())
+        lowered = tools.render("measure", {"parameter": "hnr", "pitch_floor": 40}, self.context())
+        self.assertIn("To Harmonicity (cc): 0.01, 75.000000", plain)
+        self.assertIn("To Harmonicity (cc): 0.01, 40.000000", lowered)
+
+    def test_inverted_frequency_bands_are_rejected(self):
+        with self.assertRaises(tools.ToolError) as caught:
+            tools.render("hl_ratio", {"low_from": 8000, "low_to": 100}, self.context())
+        self.assertIn("起点必须小于终点", str(caught.exception))
+        with self.assertRaises(tools.ToolError):
+            tools.render("hammarberg_index", {"high_from": 5000, "high_to": 2000}, self.context())
+
+    def test_destructive_tools_need_an_explicit_target(self):
+        unselected = self.context("id\tclass\tname\tselected\n1\tSound\tSound tone\t0\n"
+                                  "3\tIntensity\tIntensity tone\t0\n")
+        for tool, args in (("remove_object", {}), ("rename_object", {"new_name": "x"})):
+            with self.subTest(tool=tool):
+                with self.assertRaises(tools.ToolError) as caught:
+                    tools.render(tool, args, unselected)
+                self.assertIn("明确的目标", str(caught.exception))
+        # 唯一选中时照常工作。
+        self.assertIn("selectObject: 1", tools.render("remove_object", {}, self.context()))
+
+    def test_paths_are_escaped_exactly_once(self):
+        script = tools.render("read_file", {"path": 'D:/in/my "q".wav'}, self.context())
+        line = next(line for line in script.splitlines() if "Read from file" in line)
+        self.assertIn('"D:/in/my ""q"".wav"', line)
+        self.assertNotIn('""""', line)
+
+    def test_snapshot_survives_tabs_and_non_finite_selection(self):
+        rows = tools.parse_object_context("id\tclass\tname\tselected\n1\tSound\t新\t名字\t1\n")
+        self.assertEqual((rows[0].name, rows[0].selected), ("新\t名字", True))
+        nan_rows = tools.parse_object_context(
+            "id\tclass\tname\tselected\n1\tSound\tS\t1\tnan\tinf\n")
+        self.assertIsNone(nan_rows[0].selection)
+
+
 class ObjectContextTests(unittest.TestCase):
     def test_context_is_parsed(self) -> None:
         rows = tools.parse_object_context(CONTEXT)
@@ -84,6 +187,30 @@ class ScriptRenderingTests(unittest.TestCase):
 
     def render(self, name: str, **arguments: object) -> str:
         return tools.render(name, arguments, self.context)
+
+    def test_custom_pitch_conversion_rejects_known_harmonicity_source(self) -> None:
+        context = tools.ToolContext(
+            tools.parse_object_context(
+                "id\tclass\tname\tselected\n"
+                "1\tSound\tSound tone\t0\n"
+                "9\tHarmonicity\tHarmonicity tone\t1\n"
+            ),
+            self.context.result_path,
+            self.context.state_path,
+        )
+        for script in (
+            "selectObject: 9\nTo Pitch: 0, 75, 600",
+            "To Pitch: 0, 75, 600",
+        ):
+            with self.subTest(script=script), self.assertRaisesRegex(tools.ToolError, "Sound"):
+                tools.render(tools.CUSTOM_SCRIPT_TOOL, {}, context, custom_script=script)
+
+    def test_custom_pitch_conversion_accepts_explicit_sound_source(self) -> None:
+        script = tools.render(
+            tools.CUSTOM_SCRIPT_TOOL, {}, self.context,
+            custom_script="selectObject: 1\nTo Pitch: 0, 75, 600",
+        )
+        self.assertIn("To Pitch: 0, 75, 600", script)
 
     def test_formant_bandwidth_uses_object_id_and_double_quotes(self) -> None:
         script = self.render("formant_bandwidth", formant=2)

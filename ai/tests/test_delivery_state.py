@@ -146,6 +146,36 @@ class ReportContextTests(unittest.TestCase):
         self.assertIn('先用工具量出音高走向', self.guidance(config, AnalysisState('指出语调不足之处', CONTEXT), 'planner'))
         self.assertNotIn('先用工具量出音高走向', self.guidance(config, AnalysisState('直接听原始音频', CONTEXT), 'planner'))
 
+    def test_notation_skill_carries_number_writing_and_only_when_measured(self):
+        """数值写法从守卫的硬规则挪进 skill=notation：有测量才付这笔提示词开销。
+
+        2026-10-07：22 次真实提问里 12 次因为「推导没写成 calc 占位式」「一般知识没标注」
+        之类写法问题连吃两次拒绝，最后整份报告被换掉。写法属于提示词层，规则和例子交给
+        skill，守卫只在第一次拒一次、第二次改成遮数值交付。
+        """
+
+        from praat_ai.cloud_agent import AnalysisReport, Coverage, repaired_report
+        from praat_ai.escape_policy import Evidence
+        config = AppConfig()
+        empty = AnalysisState('测量当前声音平均基频', CONTEXT)
+        self.assertNotIn('skill=notation', self.guidance(config, empty))
+        measured = AnalysisState('测量当前声音平均基频', CONTEXT)
+        measured.evidence = [Evidence('pitch_statistics', {'object': 1}, ['基频统计（0.000–1.000 秒）：平均 220.000 Hz'], CONTEXT)]
+        text = self.guidance(config, measured)
+        self.assertIn('skill=notation', text)
+        self.assertIn('{{calc:', text)
+        self.assertIn('一般知识', text)
+        # 直接写出来的推导值会被遮掉，但正文和结论留下。
+        measured.metrics['rejected_values'] = ['0.215386 秒']
+        draft = AnalysisReport(analysis='该选段时长为 0.215386 秒，说明节奏稳定。\n报告依据已有记录，仍须核对范围。',
+                               coverage=[Coverage(item='测量当前声音平均基频', status='partial',
+                                                  explanation='已有解释和实际证据，仍应核对录音范围。')])
+        repaired = repaired_report(draft, '数值“0.215386 秒”未匹配同对象/范围/量名的测量。',
+                                   measured, measured)
+        self.assertNotIn('0.215386', repaired.analysis)
+        self.assertIn('说明节奏稳定', repaired.analysis)
+        self.assertTrue(measured.metrics['report_repaired'])
+
     def test_report_context_carries_the_users_own_words_about_themselves(self):
         """用户自述（说话人/录音条件）要随报告上下文一起给；没有自述时不加这个键。"""
 

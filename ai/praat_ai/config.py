@@ -5,7 +5,10 @@ import os
 from copy import deepcopy
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .workflow_policy import WorkflowPolicy
 
 
 @dataclass(slots=True)
@@ -162,6 +165,7 @@ class MfaAlignmentConfig:
 class Wav2Vec2AlignmentConfig:
     enabled: bool = False
     model: str = ""
+    models: list[str] = field(default_factory=list)
     device: str = "cuda"
     blank_token_id: int = 0
     sample_rate: int = 16000
@@ -188,10 +192,12 @@ class AppConfig:
     analysis: AnalysisConfig = field(default_factory=AnalysisConfig)
     alignment: AlignmentConfig = field(default_factory=AlignmentConfig)
     local_qwen: QwenConfig | None = field(default=None, repr=False)
+    workflow: WorkflowPolicy | None = field(default=None, repr=False)
 
     def to_dict(self) -> dict[str, Any]:
         values = asdict(self)
         values.pop("local_qwen", None)
+        values.pop("workflow", None)
         return values
 
 

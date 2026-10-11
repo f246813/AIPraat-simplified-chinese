@@ -201,6 +201,57 @@ class SpeechDictionaryTests(unittest.TestCase):
         self.assertEqual(mfa['acoustic_model'], 'legacy-model')
         self.assertEqual(mfa['acoustic_models'], ['legacy-model'])
 
+    def test_wav2vec2_directory_picker_select_remove_and_parameter_preservation(self):
+        first, second = self.root / '中文Wav2Vec2', self.root / '英语Wav2Vec2'
+        first.mkdir(); second.mkdir()
+        (first / 'config.json').write_text('{}', encoding='utf-8')
+        self.raw['alignment']['wav2vec2'] = {'model': str(first), 'enabled': True,
+            'device': 'cpu', 'blank_token_id': 3, 'token_map': {'a': 'A'}}
+        self.path.write_text(json.dumps(self.raw), encoding='utf-8')
+        app = DictionaryApplication(self.path)
+        app.window = Mock()
+        before = self.path.read_bytes()
+        self.assertEqual(app.rpc('wav2vec2_models.list', {})['models'][0]['path'], str(first))
+        app.window.create_file_dialog.return_value = None
+        webview = Mock()
+        with patch.dict('sys.modules', webview=webview):
+            app.rpc('wav2vec2_models.choose', {})
+            self.assertEqual(self.path.read_bytes(), before)
+            app.window.create_file_dialog.return_value = [str(second)]
+            self.assertEqual(len(app.rpc('wav2vec2_models.choose', {})['models']), 2)
+        app.window.create_file_dialog.assert_called_with(webview.FileDialog.FOLDER)
+        selected = app.rpc('wav2vec2_models.select', {'path': str(second)})
+        self.assertEqual([item['path'] for item in selected['models'] if item['active']], [str(second)])
+        loaded = load_config(self.path).alignment.wav2vec2
+        self.assertEqual(loaded.model, str(second))
+        self.assertEqual(loaded.models, [str(first), str(second)])
+        self.assertEqual(loaded.device, 'cpu')
+        app.rpc('wav2vec2_models.remove', {'path': str(second)})
+        self.assertEqual(load_config(self.path).alignment.wav2vec2.model, str(first))
+        self.assertEqual(app.rpc('wav2vec2_models.remove', {'path': str(first)})['models'], [])
+        self.assertTrue((first / 'config.json').is_file() and second.is_dir())
+        saved = json.loads(self.path.read_text(encoding='utf-8'))
+        self.assertEqual(saved['alignment']['mfa'], self.raw['alignment']['mfa'])
+        for key in ('enabled', 'device', 'blank_token_id', 'token_map'):
+            self.assertEqual(saved['alignment']['wav2vec2'][key], self.raw['alignment']['wav2vec2'][key])
+        self.assertEqual(saved['api'], self.raw['api'])
+        self.assertEqual(saved['custom'], self.raw['custom'])
+
+    def test_wav2vec2_rejects_files_and_missing_directories_without_saving(self):
+        app = DictionaryApplication(self.path)
+        app.window = Mock()
+        app.window.create_file_dialog.return_value = [str(self.first)]
+        before = self.path.read_bytes()
+        with patch.dict('sys.modules', webview=Mock()), self.assertRaises(ValueError):
+            app.rpc('wav2vec2_models.choose', {})
+        self.assertEqual(self.path.read_bytes(), before)
+        self.raw['alignment']['wav2vec2'] = {'model': str(self.root / 'missing')}
+        self.path.write_text(json.dumps(self.raw), encoding='utf-8')
+        self.assertFalse(app.rpc('wav2vec2_models.list', {})['models'][0]['exists'])
+        with self.assertRaises(ValueError):
+            app.rpc('wav2vec2_models.select', {'path': str(self.root / 'missing')})
+        self.assertEqual(app.rpc('wav2vec2_models.remove', {'path': str(self.root / 'missing')})['models'], [])
+
 
 if __name__ == '__main__':
     unittest.main()

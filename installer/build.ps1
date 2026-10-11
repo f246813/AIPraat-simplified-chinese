@@ -32,12 +32,12 @@ $files['AIPraat-使用说明.md'] = Join-Path $projectRoot 'installer\README.zh-
 $aiRoot = Join-Path $projectRoot 'ai'
 Get-ChildItem -LiteralPath $aiRoot -File | Where-Object {
     $_.Extension -eq '.py' -or $_.Name -match '^requirements.*\.txt$' -or
-    $_.Name -match '^(Download.*|Install.*)\.ps1$' -or $_.Name -eq 'README.zh-CN.md' -or $_.Name -eq 'request.example.json'
+    $_.Name -match '^(Download.*|Install.*)\.ps1$' -or $_.Name -eq 'README.zh-CN.md' -or $_.Name -eq 'Anki连接说明.md' -or $_.Name -eq 'request.example.json'
 } | ForEach-Object { $files['ai/' + $_.Name] = $_.FullName }
-foreach ($relative in @('praat_ai','plugin','tools','skills','third_party/pi-context','third_party/prompt-cache-skills')) {
+foreach ($relative in @('praat_ai','anki_addon','plugin','tools','skills','third_party/pi-context','third_party/prompt-cache-skills')) {
     $base = Join-Path $aiRoot $relative
     Get-ChildItem -LiteralPath $base -Recurse -File | Where-Object {
-        ($_.Extension -in @('.py','.tsv','.praat','.in','.ps1','.md') -or $_.Name -eq 'LICENSE') -and $_.FullName -notmatch '\\__pycache__\\'
+        ($_.Extension -in @('.py','.js','.tsv','.praat','.in','.ps1','.md') -or $_.Name -eq 'LICENSE') -and $_.FullName -notmatch '\\__pycache__\\'
     } | ForEach-Object {
         $name = $_.FullName.Substring($projectRoot.Length+1).Replace('\','/')
         $files[$name] = $_.FullName
@@ -98,7 +98,7 @@ $wizard = @('OutlineButton.cs','FilePathField.cs','AlignmentPathFields.cs','Pyth
 & $compiler @options '/target:winexe' "/out:$installer" "/resource:$zipPath,AIPraat.Payload.zip" $setupResource @common @wizard
 if ($LASTEXITCODE -ne 0) { throw "Installer compilation failed: $LASTEXITCODE" }
 $report = [ordered]@{
-    installer = $installer
+    installer = [IO.Path]::GetFileName($installer)
     size = (Get-Item -LiteralPath $installer).Length
     sha256 = Get-Sha256 -Path $installer
     praat_sha256 = $hashes['Praat.exe']

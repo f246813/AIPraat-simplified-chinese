@@ -7,7 +7,8 @@ from pathlib import Path
 from .session_context import PhaseContext
 
 ROOT = Path(__file__).resolve().parents[1] / 'skills'
-INDEX = (('prosody', '音调'), ('placement', '选段'), ('failure', '失败'))
+INDEX = (('prosody', '音调'), ('placement', '选段'), ('failure', '失败'),
+         ('notation', '数值写法'))
 
 
 def catalog(phase):
@@ -25,6 +26,9 @@ def load(context: PhaseContext, phase, state):
             selected.append('placement')
         if state.failures or blocked_attempts(state):
             selected.append('failure')
+        # 有测量才有数值写法问题；没有证据时把「不要填录音数值」交给固定提示词。
+        if state.evidence:
+            selected.append('notation')
     for key in selected:
         identity = f'{key}:1:{phase}'
         if identity not in context.loaded:

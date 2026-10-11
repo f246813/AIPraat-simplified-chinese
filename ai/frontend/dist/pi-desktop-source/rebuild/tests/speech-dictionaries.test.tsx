@@ -10,11 +10,36 @@ beforeEach(() => {
 });
 afterEach(() => {cleanup(); vi.unstubAllGlobals();});
 
+it('opens the Wav2Vec2 folder picker and selects a model through its own namespace', async () => {
+  const first = {name: '中文模型', path: 'C:/Wav2Vec2/中文模型', exists: true, active: true};
+  const second = {name: '英语模型', path: 'C:/Wav2Vec2/英语模型', exists: true, active: false};
+  const rpc = vi.fn().mockResolvedValueOnce(data)
+    .mockResolvedValueOnce({models: [first], theme: 'light'})
+    .mockResolvedValueOnce({models: [first, second], theme: 'light'})
+    .mockResolvedValueOnce({models: [{...first, active: false}, {...second, active: true}], theme: 'light'});
+  render(<SpeechDictionaries rpc={rpc}/>);
+  await screen.findByText('中文.dict');
+  fireEvent.click(screen.getByRole('button', {name: 'Wav2Vec2模型'}));
+  await screen.findByText(first.path);
+  expect(rpc).toHaveBeenLastCalledWith('wav2vec2_models.list', {});
+  expect(screen.getByRole('heading', {name: '管理Wav2Vec2声学模型'})).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', {name: '添加Wav2Vec2声学模型'}));
+  const row = await screen.findByRole('button', {name: /英语模型/});
+  expect(rpc).toHaveBeenLastCalledWith('wav2vec2_models.choose', {});
+  fireEvent.contextMenu(row, {clientX: 80, clientY: 100});
+  fireEvent.click(screen.getByRole('menuitem', {name: '选用该模型'}));
+  await waitFor(() => expect(row.classList.contains('is-active')).toBe(true));
+  expect(rpc).toHaveBeenLastCalledWith('wav2vec2_models.select', {path: second.path});
+  fireEvent.contextMenu(row, {clientX: 80, clientY: 100});
+  fireEvent.click(screen.getByRole('menuitem', {name: '删除'}));
+  expect(screen.getByText(/模型目录会保留在磁盘上/)).toBeTruthy();
+});
+
 it('loads configured paths and opens the native picker from the bottom action', async () => {
   const rpc = vi.fn().mockResolvedValue(data);
   render(<SpeechDictionaries rpc={rpc}/>);
   await screen.findByText('C:/词典/中文.dict');
-  fireEvent.click(screen.getByRole('button', {name: '添加语音词典'}));
+  fireEvent.click(screen.getByRole('button', {name: '添加MFA语音词典'}));
   await waitFor(() => expect(rpc).toHaveBeenCalledWith('dictionaries.choose', {}));
   expect(screen.getByText('中文.dict')).toBeTruthy();
 });
@@ -31,7 +56,7 @@ it('right-click deletion requires choosing delete; cancel leaves configuration i
   fireEvent.click(screen.getByRole('menuitem', {name: '删除'}));
   rpc.mockResolvedValue({dictionaries: [], theme: 'system'});
   fireEvent.click(screen.getByRole('button', {name: '删除'}));
-  await screen.findByText('尚未配置语音词典');
+  await screen.findByText('尚未配置MFA语音词典');
   expect(rpc).toHaveBeenLastCalledWith('dictionaries.remove', {path: data.dictionaries[0].path});
 });
 
@@ -39,7 +64,7 @@ it('shows picker errors and keeps the existing list', async () => {
   const rpc = vi.fn().mockResolvedValueOnce(data).mockRejectedValueOnce(new Error('文件不可读'));
   render(<SpeechDictionaries rpc={rpc}/>);
   await screen.findByText('中文.dict');
-  fireEvent.click(screen.getByRole('button', {name: '添加语音词典'}));
+  fireEvent.click(screen.getByRole('button', {name: '添加MFA语音词典'}));
   expect(await screen.findByRole('alert')).toBeTruthy();
   expect(screen.getByText('中文.dict')).toBeTruthy();
 });
@@ -92,12 +117,12 @@ it('switches the sidebar to acoustic models and uses their picker and current se
     .mockResolvedValueOnce({models: [{...first, active: false}, {...second, active: true}], theme: 'system'});
   render(<SpeechDictionaries rpc={rpc}/>);
   await screen.findByText('中文.dict');
-  expect(screen.getByRole('heading', {name: '管理语音词典与模型'})).toBeTruthy();
-  fireEvent.click(screen.getByRole('button', {name: '声学模型'}));
+  expect(screen.getByRole('heading', {name: '管理MFA语音词典'})).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', {name: 'MFA声学模型'}));
   const row = await screen.findByRole('button', {name: /英语声学.zip/});
   expect(screen.queryByText('中文.dict')).toBeNull();
   expect(rpc).toHaveBeenLastCalledWith('acoustic_models.list', {});
-  fireEvent.click(screen.getByRole('button', {name: '添加声学模型'}));
+  fireEvent.click(screen.getByRole('button', {name: '添加MFA声学模型'}));
   await waitFor(() => expect(rpc).toHaveBeenLastCalledWith('acoustic_models.choose', {}));
   fireEvent.contextMenu(row, {clientX: 80, clientY: 100});
   fireEvent.click(screen.getByRole('menuitem', {name: '选用该模型'}));
@@ -111,22 +136,22 @@ it('models share deletion confirmation and return to dictionaries through the si
   const rpc = vi.fn().mockResolvedValueOnce(data).mockResolvedValue({models: [model], theme: 'dark'});
   render(<SpeechDictionaries rpc={rpc}/>);
   await screen.findByText('中文.dict');
-  fireEvent.click(screen.getByRole('button', {name: '声学模型'}));
+  fireEvent.click(screen.getByRole('button', {name: 'MFA声学模型'}));
   const row = await screen.findByRole('button', {name: /中文声学.zip/});
   expect(document.documentElement.dataset.theme).toBe('dark');
   fireEvent.contextMenu(row, {clientX: 80, clientY: 100});
   fireEvent.click(screen.getByRole('menuitem', {name: '删除'}));
-  expect(screen.getByRole('dialog', {name: '删除声学模型'})).toBeTruthy();
+  expect(screen.getByRole('dialog', {name: '删除MFA声学模型'})).toBeTruthy();
   fireEvent.click(screen.getByRole('button', {name: '取消'}));
   expect(rpc).toHaveBeenCalledTimes(2);
   fireEvent.contextMenu(row, {clientX: 80, clientY: 100});
   fireEvent.click(screen.getByRole('menuitem', {name: '删除'}));
   rpc.mockResolvedValue({models: [], theme: 'dark'});
   fireEvent.click(screen.getByRole('button', {name: '删除'}));
-  await screen.findByText('尚未配置声学模型');
+  await screen.findByText('尚未配置MFA声学模型');
   expect(rpc).toHaveBeenLastCalledWith('acoustic_models.remove', {path: model.path});
   rpc.mockResolvedValue(data);
-  fireEvent.click(screen.getByRole('button', {name: '语音词典'}));
+  fireEvent.click(screen.getByRole('button', {name: 'MFA语音词典'}));
   await screen.findByText('中文.dict');
   expect(rpc).toHaveBeenLastCalledWith('dictionaries.list', {});
 });

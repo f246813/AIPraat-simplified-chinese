@@ -1,0 +1,37 @@
+import { test, expect } from '@playwright/test';
+import { join } from 'node:path';
+test('workflow page presets and custom policy save through host fixture',async({page})=>{
+  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/?demo=1');
+  await page.getByRole('button',{name:'打开设置'}).click();
+  await page.getByRole('button',{name:'工作流程',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'工作流程',exact:true})).toBeVisible();
+  await expect(page.getByLabel('工作流程预设')).toHaveValue('balanced');
+  await page.getByLabel('工作流程预设').selectOption('fast');
+  await expect(page.getByLabel('L2 证据解释')).toHaveValue('off');
+  await page.getByLabel('工作流程预设').selectOption('deep');
+  await expect(page.getByLabel('L2 阶段时间上限（秒）')).toHaveValue('60');
+  await expect(page.getByLabel('L2 实际请求上限')).toHaveValue('2');
+  await page.getByLabel('L0 专用工具执行').uncheck();
+  await expect(page.getByLabel('工作流程预设')).toHaveValue('custom');
+  await page.getByRole('button',{name:'保存更改'}).click();
+  await expect(page.getByText('设置已保存。',{exact:false})).toBeVisible();
+  await page.getByRole('button',{name:'返回聊天'}).click();
+  await page.getByRole('button',{name:'打开设置'}).click();
+  await page.getByRole('button',{name:'工作流程',exact:true}).click();
+  await expect(page.getByLabel('工作流程预设')).toHaveValue('custom');
+  await expect(page.getByLabel('L0 专用工具执行')).not.toBeChecked();
+  await page.screenshot({path:join(process.env.PI_SCRATCH_DIR || 'test-results','workflow-settings.png'),fullPage:true});
+  expect(errors).toEqual([]);
+});
+test('published result remains readable after explanation cancellation',async({page})=>{
+  await page.goto('/?demo=1&workflowResults=1');
+  await page.getByRole('button',{name:'展开会话侧栏'}).click();
+  await page.locator('[data-session-id="demo-1"] .session-select').click();
+  await expect(page.getByRole('region',{name:'已保存的工具结果'})).toBeVisible();
+  await expect(page.getByRole('region',{name:'已保存的工具结果'})).toContainText('1.250000 秒');
+  await expect(page.getByText('已取消后续解释。离线展示夹具。')).toBeVisible();
+  await page.getByRole('region',{name:'已保存的工具结果'}).getByText('duration · success · delivered').click();
+  await expect(page.getByRole('region',{name:'已保存的工具结果'})).toContainText('离线工具结果夹具');
+  await page.screenshot({path:join(process.env.PI_SCRATCH_DIR || 'test-results','workflow-results.png'),fullPage:true});
+});

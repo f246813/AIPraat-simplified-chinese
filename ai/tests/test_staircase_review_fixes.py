@@ -322,6 +322,33 @@ class ReviewFixTests(unittest.TestCase):
                 self.assertEqual(len(requests), 1, f'context={capacity}: {pending.reason}')
         self.assertGreater(accepted, 0)
 
+    def test_legacy_report_uses_budgeted_dialogue_excerpt_once(self):
+        state = AnalysisState('解释已有录音依据', CONTEXT, continuation=True, continuation_mode='L4',
+                              budget=Budget(context_tokens=4096, response_tokens=1500))
+        state.dialogue_context = [{'role':'user' if index % 2 == 0 else 'assistant',
+                                   'content':f'HISTORY-{index}：' + '证据' * 396} for index in range(4)]
+        self.cfg.api.limit_tokens = True
+        self.cfg.api.max_context_tokens, self.cfg.api.plan_max_tokens = 4096, 1500
+        requests = []
+        def respond(messages, info):
+            self.assertFalse(info.function_tools)
+            requests.append(messages)
+            return report(state.goal, missing='reference')
+        self.run_turn(state, respond)
+        self.assertEqual(len(requests), 1, state.reason)
+        self.assertTrue(state.metrics.get('report_verified'), state.reason)
+        parts = [p.content for m in requests[0] for p in m.parts
+                 if isinstance(p, UserPromptPart) and isinstance(p.content, str)]
+        payloads = [json.loads(part) for part in parts if part.startswith('{')]
+        excerpts = [item for payload in payloads for item in payload.get('visible_dialogue', [])]
+        self.assertEqual(len(excerpts), 4)
+        for original, excerpt in zip(state.dialogue_context, excerpts):
+            self.assertEqual(excerpt['role'], original['role'])
+            self.assertTrue(original['content'].startswith(excerpt['content']))
+            self.assertLess(len(excerpt['content']), len(original['content']))
+            self.assertNotIn(original['content'], parts)
+        self.assertEqual(state.dialogue_context[0]['content'], 'HISTORY-0：' + '证据' * 396)
+
     def window(self, state=None):
         window = chat.ChatWindow.__new__(chat.ChatWindow)
         window.config, window.messages, window.history = self.cfg, queue.Queue(), []

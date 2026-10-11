@@ -8,6 +8,11 @@ import { installScrollbarReveal } from './pi/scrollbar-reveal';
 async function main() {
   const cleanupScrollbars = installScrollbarReveal(document);
   if (import.meta.hot) import.meta.hot.dispose(cleanupScrollbars);
+  if (new URLSearchParams(location.search).get('window') === 'anki') {
+    const { AnkiIntegration } = await import('./AnkiIntegration');
+    createRoot(document.getElementById('root')!).render(<AnkiIntegration/>);
+    return;
+  }
   if (new URLSearchParams(location.search).get('window') === 'dictionaries') {
     const { SpeechDictionaries } = await import('./SpeechDictionaries');
     createRoot(document.getElementById('root')!).render(<SpeechDictionaries/>);

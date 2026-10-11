@@ -15,6 +15,36 @@ from test_dialogue_stream import config
 
 
 class PhaseContextTests(unittest.TestCase):
+    def test_legacy_report_budget_matches_final_http_dialogue_excerpt(self):
+        import json
+        from praat_ai.cloud_agent import run_cloud_turn
+        from praat_ai.escape_policy import Budget
+        cfg = config()
+        cfg.api.model = 'qwen3.8-omni-flash'  # This local endpoint returns SSE.
+        cfg.api.token_mode = None
+        cfg.api.limit_tokens = True
+        cfg.api.max_context_tokens, cfg.api.plan_max_tokens = 4096, 1500
+        cfg.api.audio_input_enabled = False
+        state = AnalysisState('解释已有录音依据', '', continuation=True, continuation_mode='L4',
+                              budget=Budget(context_tokens=4096, response_tokens=1500))
+        state.dialogue_context = [dict(role='user' if index % 2 == 0 else 'assistant',
+                                       content=f'HISTORY-{index}：' + '证据' * 396) for index in range(4)]
+        body = json.dumps(dict(analysis='针对原始目标，目前没有实际测量和录音听感，因此只能说明依据缺口，不能判断具体录音缺陷。',
+                               coverage=[]), ensure_ascii=False)
+        from openai import DefaultAsyncHttpxClient
+        with endpoint(chunk_delay=0, bodies=[body]) as (base, requests, _), patch('openai.DefaultAsyncHttpxClient',
+                side_effect=lambda **kw: DefaultAsyncHttpxClient(trust_env=False, **kw)):
+            cfg.api.base_url = base
+            run_cloud_turn(cfg, state, execute_action=lambda *_:self.fail('No Praat dispatch'), cancel=threading.Event())
+        self.assertTrue(state.metrics.get('report_verified'), state.reason)
+        self.assertEqual(len(requests), 1)
+        wire = json.dumps(requests[0]['messages'], ensure_ascii=False)
+        for item in state.dialogue_context:
+            self.assertNotIn(item['content'], wire)
+            self.assertIn(item['content'][:100], wire)
+        self.assertEqual(wire.count('HISTORY-'), 4)
+        self.assertEqual(state.metrics['request_timings'][0]['phase'], 'report')
+
     def test_static_rules_do_not_depend_on_goal_failures_or_evidence(self):
         cfg = config()
         self.assertEqual(planner_system(cfg, '测量时长'), planner_system(cfg, '比较标准音和语调'))

@@ -1,0 +1,10 @@
+.anki-integration{height:100vh;overflow:auto;max-width:960px;margin:auto;padding:24px 32px;color:var(--text);background:var(--bg)}
+.anki-integration h1{font-size:24px;margin:0 0 8px}.anki-integration h2{font-size:17px;margin:0 0 14px}
+.anki-integration section{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin:20px 0}
+.anki-integration .field{display:flex;flex-direction:column;gap:7px;margin:12px 0}.anki-integration input:not([type=radio]):not([type=checkbox]){min-width:0;width:100%}
+.anki-modes{display:flex;flex-wrap:wrap;gap:14px}.anki-modes label,.anki-integration label{font-size:14px}.anki-integration input[type=radio],.anki-integration input[type=checkbox]{margin-right:7px}
+.anki-integration label{text-align:left;align-items:flex-start}.anki-modes label{display:flex;flex-direction:row;align-items:center}
+.anki-integration input[type=radio],.anki-integration input[type=checkbox]{width:16px;height:16px;flex:none;padding:0;accent-color:var(--accent)}
+.anki-path{display:flex;gap:8px}.anki-path input{flex:1}.anki-path button{flex:none}.anki-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.anki-integration .muted{line-height:1.7;font-size:13px}.anki-result{padding:12px;border-radius:8px;background:var(--panel);overflow-wrap:anywhere}.anki-integration pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;background:var(--bg);font-size:12px}
+@media(max-width:700px){.anki-integration{padding:18px}.anki-grid{grid-template-columns:1fr;gap:0}}

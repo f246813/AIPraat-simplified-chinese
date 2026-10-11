@@ -340,7 +340,7 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, conststring3
 			my x = 1;
 			my y = 1;
 			my width = parent -> width - 17;   // exact fit: scroll bar (16) plus border (1)
-			my height = parent -> height - ( parent -> motiff.scrolledWindow.horizontalScrollbarPersistence == 0 ? 1 : 17 );
+			my height = parent -> height - ( parent -> motiff.scrolledWindow.isObjectActionArea ? 1 : 17 );
 			if (my widgetClass == xmTextWidgetClass) {
 				my width = 3000;
 				my height = 30000;
@@ -1274,7 +1274,8 @@ static void resizeWidget (GuiObject me, int dw, int dh) {
 		if (MEMBER (me, DrawingArea))
 			_GuiWinDrawingArea_shellResize (me);
 	}
-	if (MEMBER2 (me, Form, ScrolledWindow))
+	if (MEMBER2 (me, Form, ScrolledWindow) ||
+		( MEMBER (me, RowColumn) && str32equ (my name.get(), U"dynamicSubmenuBar") ))
 		for (child = my firstChild; child; child = child -> nextSibling) {
 			int cdx = 0, cdy = 0, cdw = 0, cdh = 0;
 			if (child -> widgetClass == xmShellWidgetClass) continue;
@@ -1566,7 +1567,8 @@ static void _motif_setValues (GuiObject me, va_list arg) {
 	}
 
 	if (attach) {
-		Melder_assert (MEMBER2 (my parent, Form, ScrolledWindow));
+		Melder_assert (MEMBER2 (my parent, Form, ScrolledWindow) ||
+			( MEMBER (my parent, RowColumn) && str32equ (my parent -> name.get(), U"dynamicSubmenuBar") ));
 		if (my leftAttachment == XmATTACH_FORM) {
 			my x = my leftOffset;
 			move = True;
@@ -1608,11 +1610,12 @@ static void _motif_setValues (GuiObject me, va_list arg) {
 		resizeWidget (me, my width - oldWidth, my height - oldHeight);
 	if (scrollset)
 		NativeScrollBar_set (me);
-	if (resize && my parent && MEMBER (my parent, ScrolledWindow))
+	if (resize && my parent && MEMBER (my parent, ScrolledWindow) &&
+		my parent -> motiff.scrolledWindow.isObjectActionArea)
 		_Gui_manageScrolledWindow (my parent);
 }
 
-void _Gui_manageScrolledWindow (GuiObject me) {
+static void _Gui_manageObjectActionArea (GuiObject me) {
 	int workWidth, workHeight;
 	GuiObject clipWindow, workWindow, horzBar = my motiff.scrolledWindow.horizontalBar, vertBar = my motiff.scrolledWindow.verticalBar;
 	Melder_assert (my widgetClass == xmScrolledWindowWidgetClass);
@@ -1710,6 +1713,69 @@ void _Gui_manageScrolledWindow (GuiObject me) {
 				XmNpageIncrement, std::max (1, clipWindow -> height - (CELL_HEIGHT - 1)), NULL);
 	}
 	my motiff.scrolledWindow.updatingScrollbarLayout = false;
+}
+
+void _Gui_manageScrolledWindow (GuiObject me) {
+	/* Other scrolled windows retain the stable early version's layout. */
+	if (my motiff.scrolledWindow.isObjectActionArea) {
+		_Gui_manageObjectActionArea (me);
+		return;
+	}
+	int workWidth, workHeight, horzAutomatic, vertAutomatic;
+	GuiObject clipWindow, workWindow, horzBar = my motiff.scrolledWindow.horizontalBar, vertBar = my motiff.scrolledWindow.verticalBar;
+	Melder_assert (my widgetClass == xmScrolledWindowWidgetClass);
+	clipWindow = my motiff.scrolledWindow.clipWindow;
+	workWindow = my motiff.scrolledWindow.workWindow;
+	if (clipWindow == NULL || horzBar == NULL || vertBar == NULL)
+		return;   // apparently during destruction of scrolled window
+	/*
+	 * We must find out if the scrolling policy of each bar is automatic.
+	 * Otherwise, we must not change them automatically.
+	 */
+	horzAutomatic = horzBar -> motiff.scrollBar.valueChangedCallbacks.pairs [0].proc == cb_scroll;
+	vertAutomatic = vertBar -> motiff.scrollBar.valueChangedCallbacks.pairs [0].proc == cb_scroll;
+	/*
+	 * If the work window has been unmanaged or destroyed, the automatic scroll bars should be empty and insensitive.
+	 */
+	if (workWindow == NULL || ! workWindow -> managed) {
+		if (horzAutomatic)
+			XtVaSetValues (horzBar, XmNmaximum, 100, XmNsliderSize, 100, XmNvalue, 0, XmNpageIncrement, 1, NULL);
+		if (vertAutomatic)
+			XtVaSetValues (vertBar, XmNmaximum, 100, XmNsliderSize, 100, XmNvalue, 0, XmNpageIncrement, 1, NULL);
+		return;
+	}
+	workWidth = workWindow -> width > 10 ? workWindow -> width : 10;
+	workHeight = workWindow -> height > 10 ? workWindow -> height : 10;
+	/*
+	 * If the scroll bar is automatic, the slider width is set to the visible height of the work window,
+	 * and the maximum is set to the entire height of the work window.
+	 * If the value becomes greater than the maximum minus the slider size,
+	 * the value is reduced and the work window is scrolled up (i.e. moved down).
+	 */
+	if (horzAutomatic) {
+		int maximum = workWidth;
+		int sliderSize = workWidth < clipWindow -> width ? workWidth : clipWindow -> width;
+		int value = horzBar -> value;
+		if (value > maximum - sliderSize) {
+			value = maximum - sliderSize;
+			workWindow -> x += horzBar -> value - value;
+			Native_move (workWindow, horzBar -> value - value, 0);
+		}
+		XtVaSetValues (horzBar, XmNmaximum, maximum, XmNsliderSize, sliderSize, XmNvalue, value,
+				XmNpageIncrement, clipWindow -> width - (CELL_HEIGHT - 1), NULL);
+	}
+	if (vertAutomatic) {   /* Automatic? */
+		int maximum = workHeight;
+		int sliderSize = workHeight < clipWindow -> height ? workHeight : clipWindow -> height;
+		int value = vertBar -> value;
+		if (value > maximum - sliderSize) {
+			value = maximum - sliderSize;
+			workWindow -> y += vertBar -> value - value;
+			Native_move (workWindow, 0, vertBar -> value - value);
+		}
+		XtVaSetValues (vertBar, XmNmaximum, maximum, XmNsliderSize, sliderSize, XmNvalue, value,
+				XmNpageIncrement, clipWindow -> height - (CELL_HEIGHT - 1), NULL);
+	}
 }
 
 static void _motif_manage (GuiObject me) {
@@ -2144,9 +2210,9 @@ void XtManageChild (GuiObject me) {
 		return;
 
 	if (MEMBER (me, ScrolledWindow)) {
-		if (my motiff.scrolledWindow.horizontalScrollbarPersistence == 2)
+		if (! my motiff.scrolledWindow.isObjectActionArea || my motiff.scrolledWindow.horizontalScrollbarPersistence == 2)
 			XtManageChild (my motiff.scrolledWindow.horizontalBar);
-		if (my motiff.scrolledWindow.verticalScrollbarPersistence == 2)
+		if (! my motiff.scrolledWindow.isObjectActionArea || my motiff.scrolledWindow.verticalScrollbarPersistence == 2)
 			XtManageChild (my motiff.scrolledWindow.verticalBar);
 		/*XtManageChild (my motiff.scrolledWindow.clipWindow);*/
 	}
@@ -3571,6 +3637,21 @@ static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LP
 		HANDLE_MSG (window, WM_CTLCOLORLISTBOX, on_ctlColorListBox);
 		case WM_CTLCOLORSCROLLBAR: return (LRESULT) theWinGuiBackgroundBrush ();
 		HANDLE_MSG (window, WM_ACTIVATE, on_activate);
+		case WM_INITMENUPOPUP:
+			_GuiWinMenuItem_beginStatusPopup ((HMENU) wParam);
+			break;
+		case WM_ENTERIDLE:
+			if (wParam == MSGF_MENU) {
+				_GuiWinMenuItem_attachStatusPopup ((HWND) lParam);
+				return 0;
+			}
+			break;
+		case WM_UNINITMENUPOPUP:
+			_GuiWinMenuItem_endStatusPopup ((HMENU) wParam);
+			break;
+		case WM_MENUSELECT:
+			_GuiWinMenuItem_refreshStatusPopup ();
+			break;
 		case WM_MEASUREITEM: {
 			MEASUREITEMSTRUCT *mis = (MEASUREITEMSTRUCT *) lParam;
 			if (mis && mis -> CtlType == ODT_LISTBOX) {

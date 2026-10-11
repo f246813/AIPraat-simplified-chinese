@@ -128,14 +128,22 @@ class ToolGuards:
         # These are application-owned scope flags, never model assertions.
         args.pop('_whole_object', None)
         properties = self.validators[name].schema.get('properties', {})
-        for primary, aliases in (('start', ('from',)), ('end', ('to', 'finish'))):
-            if primary in properties:
-                for alias in aliases:
-                    if primary not in args and alias in args:
-                        args[primary] = args[alias]
-                    if alias in args and primary in args and _number(args[primary]) != _number(args[alias]):
-                        raise tools.ToolError(f'{primary} 与 {alias} 的范围互相矛盾。')
-                    args.pop(alias, None)
+        # 范围端点的同义写法要**双向**折叠：原来只把 from→start 折过去，声明 from/to 的
+        # 工具收到 finish 时既没折叠也不报错，render 直接忽略它，静默按整段测量
+        # （2026-10-07 实测）。方向按「工具自己声明了哪一对」定：声明 start 的以
+        # start/end 为准，只声明 from 的以 from/to 为准；只往一个方向搬，避免来回倒。
+        # 同时声明两个键的工具（extract_part / textgrid_set_interval）以 start/end 为准。
+        pairs = (('start', ('from',)), ('end', ('to', 'finish'))) if 'start' in properties else (
+            ('from', ('start',)), ('to', ('end', 'finish')))
+        for primary, aliases in pairs:
+            for alias in aliases:
+                if alias not in args:
+                    continue
+                if primary not in args:
+                    args[primary] = args[alias]
+                elif _number(args[primary]) != _number(args[alias]):
+                    raise tools.ToolError(f'{primary} 与 {alias} 的范围互相矛盾。')
+                args.pop(alias, None)
         if 'parameter' in properties:
             # 归一到逗号串后 schema 才只看格式，逐个名字的合法性由参数表负责报中文清单。
             args['parameter'] = self.parameter(args.get('parameter'))
@@ -153,9 +161,19 @@ class ToolGuards:
             if key in args and args[key] not in (None, ''):
                 args[key] = context.resolve_object(args[key]).id
         allowed_names = _names(state)
+        required = set(self.validators[name].schema.get('required') or ())
         for key in ('name', 'new_name'):
-            if args.get(key) and str(args[key]).strip() not in allowed_names:
+            if not args.get(key):
+                continue
+            if str(args[key]).strip() in allowed_names:
+                continue
+            if key in required:
+                # 重命名这类工具：写错名字是用户可见的破坏性操作，必须用用户给的名字。
                 raise tools.ToolError(f'{key} 必须是用户明确提供的新名字；没有新名字时省略名称参数。')
+            # 名字可选的工具（截取片段、复制、生成频谱图…）只是给**新对象**起个名：
+            # 模型编一个无害的名字不该让整步失败（2026-10-07 实测：这正好卡住了
+            # 「先截取一段再测量」这条我们自己在错误信息里推荐的路径）。
+            args.pop(key, None)
         if name == tools.CUSTOM_SCRIPT_TOOL:
             args['script'] = self.script(str(args.get('script') or ''), context, allowed_names)
         elif name in tools.TOOL_MAP:
@@ -268,6 +286,7 @@ class ToolGuards:
             raise tools.ToolError('整段请求请使用内置工具明确范围；自由脚本无法核实是否偷偷使用旧选区。')
         if context.objects and not re.match(r'(?:selectObject\s*:|select\s+|Create\s+)', code[0], re.I):
             normalized = f'selectObject: {context.resolve_object().id}\n' + normalized
+        tools.validate_script_source_types(normalized, context)
         return normalized
 
     def key(self, name, args, source=None):
@@ -296,7 +315,10 @@ class ToolGuards:
         if state.tool_attempts > state.budget.tool_limit:
             raise BranchExit('本轮工具尝试总预算已用完')
         name = call.tool_name
-        if state.failures.get(name, 0) >= 2:
+        if state.workflow is not None and not state.workflow.l0_enabled:
+            raise BranchExit('工作流程已关闭专用工具执行')
+        repair_limit = state.workflow.l1_repair_limit if state.workflow is not None else 1
+        if state.failures.get(name, 0) > repair_limit:
             raise BranchExit('此前失败分支仍暂停：' + name + '；需要新依据才能重试')
         raw_signature = Evidence(name, args, [], state.context_text).signature
         if any(a.get('proposal_signature') == raw_signature and a.get('status') != 'success' for a in state.attempts):

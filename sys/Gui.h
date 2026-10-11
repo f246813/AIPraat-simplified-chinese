@@ -959,6 +959,7 @@ GuiMenuItem GuiMenu_addSeparator (GuiMenu menu);
 
 void GuiMenuItem_check (GuiMenuItem me, bool check);
 void GuiMenuItem_setText (GuiMenuItem me, conststring32 text);
+void GuiMenuItem_setStatusDot (GuiMenuItem me, int colour); // 0 none, 1 red, 2 yellow, 3 green
 
 /********** GuiOptionMenu **********/
 

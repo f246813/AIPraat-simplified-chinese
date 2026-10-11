@@ -71,10 +71,16 @@ class RangeAliasTests(unittest.TestCase):
         self.assert_time(script, "t1", 0.1)
         self.assert_time(script, "t2", 0.4)
 
-    def test_extract_part_prefers_start_over_from(self):
-        script = tools.render(
-            "extract_part", {"start": 0.3, "from": 0.9, "end": 0.6}, self.sound()
-        )
+    def test_extract_part_reports_contradicting_start_and_from(self):
+        """``start`` 与 ``from`` 给了不同的值就是自相矛盾：以前 start 静默胜出、from 被丢掉。
+
+        2026-10-07：别名折叠只在工具没声明另一个键时发生，声明过的键交给 build 做冲突检查。
+        """
+
+        with self.assertRaises(tools.ToolError) as caught:
+            tools.render("extract_part", {"start": 0.3, "from": 0.9, "end": 0.6}, self.sound())
+        self.assertIn("矛盾", str(caught.exception))
+        script = tools.render("extract_part", {"start": 0.3, "from": 0.3, "end": 0.6}, self.sound())
         self.assert_time(script, "t1", 0.3)
 
     # ---- textgrid_set_interval：必须是同一套别名 --------------------------

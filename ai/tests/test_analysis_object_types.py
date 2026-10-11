@@ -222,11 +222,23 @@ class AnalysisObjectTypeTests(unittest.TestCase):
         for name in ("pitch_statistics", "intensity_statistics", "formant_statistics", "harmonicity_statistics", "measure"):
             with self.subTest(tool=name):
                 context = self.context(tools.ObjectRow(1, "Sound", "tone", True))
-                arguments = {"start": 0.2, "end": 0.7, "parameter": "mean_pitch"}
+                # parameter 只有 measure 收：别的工具多给一个不认识的键现在会被明确拒绝
+                # （2026-10-07：未知参数键以前是静默忽略）。
+                arguments = {"start": 0.2, "end": 0.7}
+                if name == "measure":
+                    arguments["parameter"] = "mean_pitch"
                 self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
                                'assert selected () = 1\nselect all\nassert numberOfSelected () = 1\n')
                 result = context.result_path.read_text(encoding="utf-8-sig")
                 self.assertIn("0.200–0.700", result)
+
+    def test_unknown_arguments_are_refused_before_praat(self):
+        """同一个请求里多给一个别的工具才用的键，要在执行前说清楚。"""
+
+        context = self.context(tools.ObjectRow(1, "Sound", "tone", True))
+        with self.assertRaises(tools.ToolError) as caught:
+            tools.render("pitch_statistics", {"start": 0.2, "end": 0.7, "parameter": "mean_pitch"}, context)
+        self.assertIn("parameter", str(caught.exception))
 
     @unittest.skipUnless(PRAAT.is_file(), "isolated Praat executable is unavailable")
     def test_longsound_extract_and_info_use_real_supported_commands(self):
@@ -258,13 +270,16 @@ class AnalysisObjectTypeTests(unittest.TestCase):
     @unittest.skipUnless(PRAAT.is_file(), "isolated Praat executable is unavailable")
     def test_invalid_range_does_not_silently_measure_entire_sound(self):
         context = self.context(tools.ObjectRow(1, "Sound", "tone", True))
-        for start, end in ((0.7, 0.2), (2.0, 3.0)):
-            with self.subTest(start=start, end=end):
-                script = tools.render("pitch_statistics", {"from": start, "to": end}, context)
-                result = self.execute_praat(SOUND + "\n" + script)
-                self.assertNotEqual(result.returncode, 0)
-                self.assertFalse(context.state_path.exists())
-                self.assertFalse(context.result_path.exists())
+        # 起点晚于终点：2026-10-07 起在 Python 层就拒绝（以前要投递一次、由脚本 exitScript）。
+        with self.assertRaises(tools.ToolError) as caught:
+            tools.render("pitch_statistics", {"from": 0.7, "to": 0.2}, context)
+        self.assertIn("起点必须早于终点", str(caught.exception))
+        # 超出时长仍然留给 Praat 的钳制逻辑，但绝不能变成「按整段测量」。
+        script = tools.render("pitch_statistics", {"from": 2.0, "to": 3.0}, context)
+        result = self.execute_praat(SOUND + "\n" + script)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(context.state_path.exists())
+        self.assertFalse(context.result_path.exists())
 
     @unittest.skipUnless(PRAAT.is_file(), "isolated Praat executable is unavailable")
     def test_missing_import_aborts_before_querying_an_old_object(self):

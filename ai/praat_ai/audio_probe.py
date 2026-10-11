@@ -56,6 +56,7 @@ def probe_audio(config, root: Path, *, cancel=None, model=None):
     material.source, material.source_kind = '随机合成短音频，仅验证功能', 'synthetic'
     state = AnalysisState('音频基础功能验证', '', budget=Budget(config.api.max_context_tokens, 1000, request_limit=2))
     session = CloudSession(config, state, None, cancel or threading.Event(), None, model, [], material, None, None)
+    session.phase_context('audio_probe', '')
     session.settings.setdefault('extra_body', {})['modalities'] = ['text']
 
     async def run():

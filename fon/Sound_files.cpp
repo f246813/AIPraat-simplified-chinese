@@ -64,9 +64,16 @@ static void Sound_alawDecode (Sound me) {
 
 #include <time.h>
 #include "Sound.h"
+#if defined (_WIN32)
+#include "Sound_m4a_windows.h"
+#endif
 
 autoSound Sound_readFromSoundFile (MelderFile file) {
 	try {
+		#if defined (_WIN32)
+			if (Melder_endsWith_caseAware (MelderFile_name (file), U".m4a"))
+				return Sound_readM4aWindows (file);
+		#endif
 		autoMelderFile mfile = MelderFile_open (file);
 		int encoding;
 		double sampleRate;

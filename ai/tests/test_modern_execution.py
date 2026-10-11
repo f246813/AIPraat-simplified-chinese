@@ -98,11 +98,67 @@ class ModernExecutionTests(unittest.TestCase):
         self.assertEqual(result['evidence'][0]['rows'], self.rows)
         self.assertEqual(result['attempts'][0]['execution'], delivery.DELIVERED)
         self.assertEqual(result['metrics']['requests'], 0)
-        self.assertEqual([kind for kind, _ in self.events], ['activity', 'delta'])
+        self.assertEqual([kind for kind, _ in self.events], ['activity', 'results', 'delta'])
         self.assertEqual(self.events[0][1]['type'], 'tool')
         self.cloud.assert_not_called()
         self.dialogue.assert_not_called()
         self.assertEqual(self.runtimes, [])
+
+    def test_deterministic_statistics_and_forced_thinking_still_make_no_requests(self):
+        from praat_ai.workflow_policy import WorkflowPolicy
+        cfg=cloud_config();cfg.api.thinking_level='high';cfg.api.force_deep_thinking=True
+        cfg.workflow=WorkflowPolicy()
+        for goal,row,tool in [('测量当前声音平均基频','基频统计（0.200–0.500 秒）：平均 220.000 Hz','pitch_statistics'),
+                              ('测量当前声音平均强度','强度统计（0.200–0.500 秒）：平均 65.000 dB，最高 70.000 dB','intensity_statistics')]:
+            self.rows=[row]
+            result=self.run_task(goal,config=cfg)
+            self.assertEqual(result['status'],'complete',result)
+            self.assertEqual(result['metrics']['requests'],0)
+            self.assertEqual(result['evidence'][0]['tool'],tool)
+            self.assertEqual(result['attempts'][0]['arguments']['from'],.2)
+            self.assertEqual(result['attempts'][0]['arguments']['to'],.5)
+            self.assertTrue(result['results'][0]['quantities'])
+        self.cloud.assert_not_called();self.dialogue.assert_not_called()
+
+    def test_chat_policy_never_captures_praat_or_initializes_tool_graph(self):
+        from praat_ai.workflow_policy import WorkflowPolicy
+        cfg=cloud_config();cfg.workflow=WorkflowPolicy.for_preset('chat')
+        self.ids.side_effect=AssertionError('Pure chat must not inspect Praat')
+        target=self.executor.capture_workflow_target('聊聊声音',cfg.workflow)
+        self.assertEqual(target,'')
+        def reply(config,state,**kwargs):state.report='通用讨论';state.status='complete'
+        self.dialogue.side_effect=reply
+        result=self.run_task('聊聊声音',target=target,config=cfg)
+        self.assertEqual(result['status'],'complete')
+        self.assertEqual(self.sends,[]);self.cloud.assert_not_called()
+
+    def test_undefined_pitch_is_a_saved_result_without_success_evidence(self):
+        self.rows=['基频统计（0.200–0.500 秒）无法计算：该区间没有周期性声源']
+        result=self.run_task('测量当前声音平均基频')
+        self.assertEqual(result['status'],'partial')
+        self.assertEqual(result['evidence'],[])
+        self.assertFalse(result['attempts'][0]['result_valid'])
+        self.assertIn('无法计算',str(result['results']))
+        self.assertEqual(result['metrics']['requests'],0)
+
+    def test_followup_binds_evidence_and_never_remeasures_when_l2_globally_off(self):
+        from praat_ai.workflow_policy import WorkflowPolicy
+        cfg=cloud_config();cfg.workflow=WorkflowPolicy.for_preset('fast')
+        first=self.run_task(config=cfg)
+        self.cloud.side_effect=graph_turn
+        def response(messages,info):
+            self.assertFalse(info.function_tools)
+            return ModelResponse([TextPart(json.dumps(dict(analysis='原测量确认该对象的时长为 1.25 秒。本次复用原证据进行说明，没有重新测量原录音。',
+                coverage=[dict(item=first['goal'],status='complete',explanation='原结果与本次说明已交付')]),ensure_ascii=False))])
+        self.model_factory=lambda _:FunctionModel(response)
+        self.sends.clear()
+        result=self.executor.run(config=cfg,text='本次解释结果',history=[],target=first['target'],
+            cancel=threading.Event(),emit=lambda *_:None,continuation={**first,'mode':'L2'})
+        self.assertEqual(self.sends,[])
+        self.assertEqual(result['evidence'],first['evidence'])
+        self.assertEqual(result['metrics']['l2_requests'],1)
+        self.assertTrue(result['formal'],result)
+        self.assertEqual(cfg.workflow.preset,'fast')
 
     def test_submission_real_refresh_and_explicit_range(self):
         target = self.executor.capture_target('测量对象 2 的 0.1-0.3 秒')
@@ -137,9 +193,11 @@ class ModernExecutionTests(unittest.TestCase):
         with self.assertRaises(BranchExit):
             self.executor.capture_target('测量对象')
         other = m.ModernExecutor(self.root, self.root / 'other.json')
-        with self.assertRaisesRegex(BranchExit, 'blocked'):
+        # 投递状态不明时仍然不能发新脚本：核对 ping 也回不来，就继续挡住。
+        with self.assertRaisesRegex(BranchExit, '状态无法确认'):
             other.capture_target('测量对象')
-        self.assertEqual(len(self.sends), 1)
+        with self.assertRaisesRegex(BranchExit, 'blocked'):
+            m._gate(threading.Event())
         self.assertEqual(other.capture_target('你好'), '')
 
     def test_original_selection_and_range_never_follow_current(self):
@@ -168,7 +226,12 @@ class ModernExecutionTests(unittest.TestCase):
         self.assertFalse(step.ok)
         self.assertEqual(len(self.sends), 1)
 
-    def test_unknown_operation_blocks_later_tasks_even_after_close(self):
+    def test_unknown_operation_blocks_later_tasks_until_a_verified_ping(self):
+        """投递状态不明后：先挡住；一次成功的核对 ping 之后才允许继续。
+
+        2026-10-07：以前要重启桌面才能恢复，一次 25 秒超时就把整批验证锁死。
+        """
+
         target = self.executor.capture_target('测量对象')
         def unknown(script, cancel, outcome):
             outcome.append(delivery.DELIVERED)
@@ -176,14 +239,19 @@ class ModernExecutionTests(unittest.TestCase):
         self.send_behavior = unknown
         first = self.run_task(target=target)
         self.assertEqual(first['attempts'][0]['execution'], delivery.EXECUTION_UNKNOWN)
+        # 状态不明时严格闸门拦住一切新脚本。
+        with self.assertRaisesRegex(BranchExit, 'blocked'):
+            m._gate(threading.Event())
         count = len(self.sends)
         self.executor.close()
         other = m.ModernExecutor(self.root, self.root / 'other.json')
         second = other.run(config=cloud_config(), text='当前声音时长', history=[], target=target,
                            cancel=threading.Event(), emit=lambda *args:None)
-        self.assertEqual(second['attempts'][0]['execution'], delivery.EXECUTION_BLOCKED)
-        self.assertEqual(len(self.sends), count)
-        self.assertEqual(second['evidence'], [])
+        # 新任务先发核对 ping（成功即解除封锁），再照常执行——仍然不会「不明之后紧跟新脚本」。
+        self.assertEqual(self.sends[count][1], 'PING')
+        self.assertEqual(second['attempts'][0]['execution'], delivery.EXECUTION_UNKNOWN)
+        # 核对 ping 已经解除了上一次的封锁；现在的封锁来自这一轮**自己**那次不明投递。
+        self.assertEqual(m._POISON, 'execution unknown')
 
     def test_not_delivered_allows_distinct_followup(self):
         dispatcher = self.dispatcher()
@@ -504,8 +572,10 @@ class ModernExecutionTests(unittest.TestCase):
         self.assertEqual(dispatcher.attempts[-1]['refresh_deliveries'],
                          [delivery.DELIVERED, delivery.EXECUTION_UNKNOWN])
         count = len(self.sends)
+        # 状态不明之后：先核对（这里的核对 ping 又失败，所以仍然封锁），不发测量脚本。
         self.assertEqual(dispatcher.cloud_action('duration', {}, 3).execution, delivery.EXECUTION_BLOCKED)
-        self.assertEqual(len(self.sends), count)
+        self.assertGreater(len(self.sends), count)          # 只多了一次核对 ping
+        self.assertEqual(self.sends[count][1], 'PING')
 
     def test_graph_policy_refusals_emit_real_tool_activity(self):
         def analyse(config, state, **kwargs):
@@ -530,6 +600,204 @@ class ModernExecutionTests(unittest.TestCase):
             self.executor.capture_target('hello')
         with self.assertRaises(RuntimeError):
             self.run_task(text='hello', target='')
+
+    def cleanup_dispatcher(self):
+        dispatcher = self.dispatcher()
+        dispatcher.attempts = [
+            {'tool': 'extract_part', 'status': 'success', 'arguments': {},
+             'rows': ['已截取片段：片段（id 145）']},
+            {'tool': 'pitch_statistics', 'status': 'success',
+             'arguments': {'object': 145}, 'rows': ['平均基频 = 100 Hz']},
+        ]
+        TemporaryObjectCleanupTests.appear(dispatcher, 145)
+        self.fresh = CONTEXT + '145\tSound\t片段\t0\t\t\n'
+        return dispatcher
+
+    def test_cleanup_reconciles_real_snapshot_after_remove_with_or_without_marker(self):
+        for marker_received in (True, False):
+            with self.subTest(marker_received=marker_received):
+                dispatcher = self.cleanup_dispatcher()
+                def send(script, cancel, outcome):
+                    if 'Remove' in script:
+                        # Praat 的快照已变，dispatcher 的内存快照仍有 145。
+                        self.fresh = CONTEXT
+                        outcome.append(delivery.DELIVERED if marker_received
+                                       else delivery.EXECUTION_UNKNOWN)
+                        return marker_received, '' if marker_received else 'completion not confirmed'
+                    outcome.append(delivery.DELIVERED)
+                    return True, ''
+                self.send_behavior = send
+                self.assertEqual(dispatcher.cleanup_created_objects('测量片段的基频'), [145])
+                self.assertNotIn(145, {row.id for row in dispatcher.context.objects})
+                self.assertNotIn(145, {row.id for row in tools.parse_object_context(dispatcher.target)})
+                self.assertEqual(m._POISON, '')
+                self.assertEqual(self.sends[-1][1], 'PING')
+
+    def test_cleanup_does_not_report_objects_still_in_verified_snapshot(self):
+        dispatcher = self.cleanup_dispatcher()
+        self.assertEqual(dispatcher.cleanup_created_objects('测量片段的基频'), [])
+        self.assertIn(145, {row.id for row in dispatcher.context.objects})
+
+    def test_cleanup_failed_reconciliation_is_not_a_verified_empty_result(self):
+        dispatcher = self.cleanup_dispatcher()
+        def send(script, cancel, outcome):
+            if 'Remove' in script:
+                self.fresh = CONTEXT
+            outcome.append(delivery.EXECUTION_UNKNOWN)
+            return False, 'completion not confirmed'
+        self.send_behavior = send
+        with self.assertRaises(BranchExit):
+            dispatcher.cleanup_created_objects('测量片段的基频')
+        self.assertIn(145, {row.id for row in dispatcher.context.objects})
+
+    def test_cleanup_still_rejects_disappearance_of_original_objects(self):
+        dispatcher = self.cleanup_dispatcher()
+        self.fresh = CONTEXT.replace('2\tSound\ttwo\t0\t\t\n', '')
+        with self.assertRaisesRegex(BranchExit, '原对象 2'):
+            dispatcher.cleanup_created_objects('测量片段的基频')
+
+    def test_cleanup_metrics_record_candidates_and_verified_removals(self):
+        dispatcher = self.cleanup_dispatcher()
+        def analyse(config, state, **kwargs):
+            state.report, state.status = 'actual report', 'complete'
+        self.cloud.side_effect = analyse
+        def send(script, cancel, outcome):
+            if 'Remove' in script:
+                self.fresh = CONTEXT
+                outcome.append(delivery.EXECUTION_UNKNOWN)
+                return False, 'completion not confirmed'
+            outcome.append(delivery.DELIVERED)
+            return True, ''
+        self.send_behavior = send
+        with patch.object(m, '_Dispatcher', return_value=dispatcher):
+            result = self.run_task(text='分析目标', target=dispatcher.target)
+        self.assertEqual(result['metrics']['cleanup_candidates'], [145])
+        self.assertEqual(result['metrics']['cleaned_objects'], [145])
+
+    def test_cleanup_metrics_distinguish_no_candidates_from_cancelled(self):
+        result = self.run_task()
+        self.assertEqual(result['metrics']['cleanup_candidates'], [])
+        cancel = threading.Event()
+        cancel.set()
+        result = self.run_task(target=CONTEXT, cancel=cancel)
+        self.assertNotIn('cleanup_candidates', result['metrics'])
+
+    def test_cleanup_metrics_preserve_candidates_when_reconciliation_fails(self):
+        dispatcher = self.cleanup_dispatcher()
+        def analyse(config, state, **kwargs):
+            state.report, state.status = 'actual report', 'complete'
+        self.cloud.side_effect = analyse
+        def send(script, cancel, outcome):
+            if 'Remove' in script:
+                self.fresh = CONTEXT
+            outcome.append(delivery.EXECUTION_UNKNOWN)
+            return False, 'completion not confirmed'
+        self.send_behavior = send
+        with patch.object(m, '_Dispatcher', return_value=dispatcher):
+            result = self.run_task(text='分析目标', target=dispatcher.target)
+        self.assertEqual(result['metrics']['cleanup_candidates'], [145])
+        self.assertNotIn('cleaned_objects', result['metrics'])
+        self.assertIn('completion not confirmed', result['metrics']['cleanup_errors'][0])
+        self.assertTrue(any('清理结果未能确认' in item.get('text', '')
+                            for item in result['activities']))
+
+
+class TemporaryObjectCleanupTests(unittest.TestCase):
+    """模型为「只看这一段」自建的对象，测量完要收掉。
+
+    2026-10-07 实测：一轮 `extract_part` 截出的片段留在对象列表里，下一轮的基频统计
+    顺手把它的时长也量了。用户明确要求创建的对象不能动。
+    """
+
+    def dispatcher(self, attempts):
+        from praat_ai.modern_execution import _Dispatcher
+        target = 'id\tclass\tname\tselected\tsel_start\tsel_end\n1\tSound\ttone\t1\t\t\n'
+        dispatcher = _Dispatcher(target, threading.Event(), lambda *a, **k: None, Path('.'))
+        dispatcher.attempts = attempts
+        return dispatcher
+
+    @staticmethod
+    def appear(dispatcher, identifier, name='片段'):
+        """模拟 ensure()：新建的对象出现在后续快照里，但不在任务开始时的原始列表里。"""
+
+        from dataclasses import replace
+        row = tools.ObjectRow(identifier, 'Sound', name, False)
+        dispatcher.context = replace(dispatcher.context,
+                                     objects=dispatcher.context.objects + (row,))
+        return dispatcher
+
+    def test_only_intermediate_objects_are_collected(self):
+        dispatcher = self.dispatcher([
+            {'tool': 'extract_part', 'status': 'success', 'arguments': {'start': 0.1, 'end': 0.4},
+             'rows': ['已截取片段：片段（id 145），区间 0.100–0.400 秒，共 0.300 秒']},
+            {'tool': 'spectral_emphasis', 'status': 'success', 'arguments': {'object': 145},
+             'rows': ['谱强调 = 0.9 dB']},
+            # 另一个新建对象没有被后续测量用到：它不是「临时中间对象」，不动。
+            {'tool': 'create_sound', 'status': 'success', 'arguments': {},
+             'rows': ['已创建300.0 Hz 纯音：新建声音（id 146），时长 1.000 秒']},
+        ])
+        self.assertEqual(dispatcher.created_ids(), [145])
+
+    def test_goal_that_asks_for_the_object_keeps_it(self):
+        dispatcher = self.dispatcher([
+            {'tool': 'extract_part', 'status': 'success', 'arguments': {},
+             'rows': ['已截取片段：片段（id 145），区间 0.100–0.400 秒']},
+            {'tool': 'pitch_statistics', 'status': 'success', 'arguments': {'object': 145},
+             'rows': ['基频统计（0.100–0.400 秒）：平均 100.0 Hz']},
+        ])
+        self.assertEqual(dispatcher.created_ids(), [145])
+        self.assertEqual(dispatcher.cleanup_created_objects('把 0.1 到 0.4 秒截取出来'), [])
+
+    def test_cleanup_removes_the_fragment_and_updates_the_snapshot(self):
+        dispatcher = self.dispatcher([
+            {'tool': 'extract_part', 'status': 'success', 'arguments': {},
+             'rows': ['已截取片段：片段（id 145），区间 0.100–0.400 秒']},
+            {'tool': 'pitch_statistics', 'status': 'success', 'arguments': {'object': 145},
+             'rows': ['基频统计（0.100–0.400 秒）：平均 100.0 Hz']},
+        ])
+        sent = []
+
+        def execute(script):
+            sent.append(script)
+            # 真机上这条 Remove 会让对象从快照里消失；清理逻辑以快照为准。
+            from dataclasses import replace as _replace
+            dispatcher.context = _replace(dispatcher.context, objects=tuple(
+                row for row in dispatcher.context.objects if row.id != 145))
+            return True, [], ''
+
+        dispatcher.execute = execute
+        dispatcher.ensure = lambda **kwargs: True
+        self.appear(dispatcher, 145)
+        removed = dispatcher.cleanup_created_objects('测量这一段 0.1 到 0.4 秒的平均基频（只算这一段）')
+        self.assertEqual(removed, [145])
+        self.assertTrue(any('selectObject: 145' in script and 'Remove' in script for script in sent))
+        self.assertNotIn(145, {row.id for row in dispatcher.context.objects})
+
+
+    def test_cleanup_reports_removal_even_when_the_marker_is_lost(self):
+        """Praat 慢到拿不到完成标记，但脚本已经删掉了对象：以快照为准如实记账。"""
+
+        dispatcher = self.dispatcher([
+            {'tool': 'extract_part', 'status': 'success', 'arguments': {},
+             'rows': ['已截取片段：片段（id 145），区间 0.100–0.400 秒']},
+            {'tool': 'pitch_statistics', 'status': 'success', 'arguments': {'object': 145},
+             'rows': ['基频统计（0.100–0.400 秒）：平均 100.0 Hz']},
+        ])
+        self.appear(dispatcher, 145)
+
+        def execute(script):
+            # 模拟「脚本执行了，但完成标记没等到」。
+            from dataclasses import replace as _replace
+            dispatcher.context = _replace(dispatcher.context, objects=tuple(
+                row for row in dispatcher.context.objects if row.id != 145))
+            return False, [], 'completion not confirmed'
+
+        def ensure(**kwargs):
+            return True
+
+        dispatcher.execute = execute
+        dispatcher.ensure = ensure
+        self.assertEqual(dispatcher.cleanup_created_objects('测量这一段 0.1 到 0.4 秒的平均基频'), [145])
 
 
 if __name__ == '__main__':

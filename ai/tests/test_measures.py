@@ -165,7 +165,7 @@ class MeasureRenderingTests(unittest.TestCase):
 
     def test_unknown_parameter_names_are_reported(self) -> None:
         with self.assertRaises(tools.ToolError) as caught:
-            self.render(parameter="平均基频")
+            self.render(parameter="sqrt_cpps")
         self.assertIn("mean_pitch", str(caught.exception))
 
     def test_measure_needs_a_sound_or_a_known_derived_object(self) -> None:
@@ -207,11 +207,33 @@ class MeasureRenderingTests(unittest.TestCase):
             self.render(parameter=["mean_pitch", "hl_ratio"])
         self.assertIn("hl_ratio", str(caught.exception))
 
-    def test_editor_only_parameters_explain_themselves(self) -> None:
-        script = self.render(parameter="mean_autocorrelation")
-        self.assertIn("appendFileLine", script)
-        self.assertIn("编辑器", script)
-        self.assertNotIn("value =", script)
+    def test_editor_only_parameters_are_rejected_with_a_way_out(self) -> None:
+        """编辑器专属参数不能在对象列表里算：以前写一行说明就算「成功测量」。
+
+        2026-10-07：报告阶段会把那行中文说明当成一次有结果的测量，所以改成执行前拒绝，
+        并指出改用什么参数。
+        """
+
+        with self.assertRaises(tools.ToolError) as caught:
+            self.render(parameter="mean_autocorrelation")
+        message = str(caught.exception)
+        self.assertIn("编辑器", message)
+        self.assertIn("hnr", message)
+
+    def test_common_parameter_aliases_resolve(self) -> None:
+        """用户/模型常说的名字要能对上规范名（以前只认精确名）。"""
+
+        for alias, canonical in (("F0", "mean_pitch"), ("jitter local", "local_jitter"),
+                                 ("CPPS", "cpps"), ("第 1 共振峰", "f1"),
+                                 ("谐噪比", "hnr"), ("最高强度", "maximum_intensity")):
+            with self.subTest(alias=alias):
+                script = self.render(parameter=alias)
+                self.assertIn("chat_state.txt", script)
+                self.assertEqual(measures.load_table().canonical(alias), canonical)
+        # 有歧义的说法不猜：还是按未知参数报错并列出可用参数。
+        with self.assertRaises(tools.ToolError) as caught:
+            self.render(parameter="共振峰")
+        self.assertIn("f1", str(caught.exception))
 
     def test_range_and_editor_selection_are_reported(self) -> None:
         base = Path(self.directory.name)
@@ -270,7 +292,11 @@ class MeasureRenderingTests(unittest.TestCase):
         self.assertIn("value = totalValue / countValue", script)
 
     def test_every_parameter_renders(self) -> None:
+        editor_only = {entry.parameter for entry in measures.load_table().entries
+                       if entry.kind == 'editor'}
         for parameter in measures.load_table().parameters():
+            if parameter in editor_only:
+                continue    # 编辑器专属参数在执行前被拒绝，见上面那条用例
             with self.subTest(parameter=parameter):
                 script = self.render(parameter=parameter)
                 self.assertIn("chat_state.txt", script)

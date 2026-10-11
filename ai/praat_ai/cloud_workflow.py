@@ -71,16 +71,32 @@ def target_context(goal: str, text: str) -> str:
     named = {row.id for row in rows if any(label and label in goal for label in (
         '"' + row.name + '"', '“' + row.name + '”', row.class_name + ' ' + row.name))}
     targets = identifiers | named
-    if targets and not targets <= {row.id for row in rows}:
+    known = {row.id for row in rows}
+    missing_ids = sorted(targets - known)
+    # 名字也对一遍：用户说「名为 my_recording.wav 的对象」时，以前既没有提示，
+    # 模型只能自己猜（2026-07-10 实测它答成「未收到音频」）。这里把不存在的名字也记下来。
+    quoted = {name.strip() for name in re.findall(r'[“"「\']([^”"」\']{1,60})[”"」\']', goal) if name.strip()}
+    quoted |= {name.strip() for name in re.findall(
+        r'(?:名为|名字(?:是|叫|为)|叫作|叫做|named?)\s*([^\s，,。；;的]{1,60})', goal, re.I) if name.strip()}
+    missing_names = sorted(name for name in quoted
+                           if not any(name == row.name or name in row.name_variants() for row in rows))
+    if missing_ids and not (targets - set(missing_ids)):
+        # 一个都不存在：仍然硬拒，绝不替换成当前选中对象（对象选错=结论全错）。
         raise BranchExit('明确指定的原目标不在对象快照中，未替换为当前选择')
+    targets -= set(missing_ids)
+    note = ''
+    if missing_ids or missing_names:
+        parts = [str(item) for item in missing_ids] + [f'「{name}」' for name in missing_names]
+        note = ('# 用户提到但这些对象不在当前 Praat 对象列表里：' + '、'.join(parts)
+                + '；只能就现有对象测量，并在回答里明确说明它们不存在，不要改用别的对象。')
     selection = explicit_range(goal)
     if not targets and not selection:
-        return text
+        return text + ('\n' + note if note else '')
     selected_ids = targets or {row.id for row in rows if row.selected}
     bound = [replace(row, selected=row.id in selected_ids,
                      selection_start=selection[0] if selection and row.id in selected_ids else row.selection_start,
                      selection_end=selection[1] if selection and row.id in selected_ids else row.selection_end) for row in rows]
-    return object_context_text(bound, text)
+    return object_context_text(bound, text + ('\n' + note if note else ''))
 
 
 def process_cloud(window, text: str):

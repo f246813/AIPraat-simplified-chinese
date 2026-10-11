@@ -98,7 +98,7 @@ class GuiControlBlockValueChangedCallbacks {
 			struct {
 				GuiObject horizontalBar, verticalBar, clipWindow, workWindow;
 				int horizontalScrollbarPersistence, verticalScrollbarPersistence;
-				bool updatingScrollbarLayout;
+				bool isObjectActionArea, updatingScrollbarLayout;
 			} scrolledWindow;
 			struct { bool active, isDialog, canFullScreen;
 				uinteger lowAccelerators [8]; XtCallbackProc goAwayCallback; XtPointer goAwayClosure; } shell;
@@ -183,6 +183,10 @@ class GuiControlBlockValueChangedCallbacks {
 
 	/********** GuiMenuItem.cpp **********/
 	void _GuiWinMenuItem_setText (GuiObject widget);
+	void _GuiWinMenuItem_beginStatusPopup (HMENU menu);
+	void _GuiWinMenuItem_attachStatusPopup (HWND popup);
+	void _GuiWinMenuItem_endStatusPopup (HMENU menu);
+	void _GuiWinMenuItem_refreshStatusPopup ();
 
 	/********** GuiRadioButton.cpp **********/
 	void _GuiWinRadioButton_destroy (GuiObject widget);

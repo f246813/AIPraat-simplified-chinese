@@ -248,7 +248,10 @@ export class ChatStore {
   async cancel(id: string) { const task = this.running(id); if (task) await this.rpc('tasks.cancel', {taskId: task.id}); }
   async save(settings: Partial<Settings>) {
     const result = await this.rpc('settings.save', {settings});
-    this.update({...this.state, boot: this.state.boot ? {...this.state.boot, settings: result} : undefined}); return result;
+    this.update({...this.state, boot: this.state.boot ? {...this.state.boot, settings: result} : undefined});
+    // The host rechecks material availability and model capabilities for visible actions.
+    if (this.state.selected) await this.load(this.state.selected).catch(this.report);
+    return result;
   }
   start() { if (!this.stopped) return; this.stopped = false; void this.poll(); }
   stop() { this.stopped = true; clearTimeout(this.timer); for (const id of this.views.keys()) this.flushView(id); }

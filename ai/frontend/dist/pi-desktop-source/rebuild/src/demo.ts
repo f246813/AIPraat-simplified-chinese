@@ -1,3 +1,4 @@
+import { workflowPresets } from './WorkflowSettings';
 // Explicit browser-only development/test fixtures. Never selected as a host fallback.
 import { activeTask, type Attachment, type Bootstrap, type HistorySection, type HostEvent, type Message, type Methods, type Rpc, type Session, type Task } from './types';
 export function createDemoAdapter(): Rpc {
@@ -15,6 +16,7 @@ export function createDemoAdapter(): Rpc {
   // change height above, one to hold as the reading anchor.
   messages['demo-history'][39].activities = [{id:'fixture-early-thinking',type:'thinking',text:'较早折叠夹具：位于锚定行上方，用来制造标题上方的高度变化。\n\n第二段让折叠高度差足够明显。',status:'complete'}];
   messages['demo-history'][59].activities = [{id:'fixture-mid-thinking',type:'thinking',text:'中段折叠夹具：用于验证展开锚定与长历史导航，不是真实模型思考。\n\n第二段让折叠高度差足够明显，便于断言读数位置是否被保持。',status:'complete'}];
+  if (new URLSearchParams(window.location.search).get('workflowResults') === '1') messages['demo-1'] = [{id:'workflow-result',role:'assistant',taskId:'workflow-fixture',status:'cancelled',content:'已取消后续解释。离线展示夹具。',result_content:'fixture 总时长 = 1.250000 秒',results:[{id:'fixture-result',tool:'duration',arguments:{object:1},rows:['fixture 总时长 = 1.250000 秒'],status:'success',execution:'delivered',source:'离线工具结果夹具',evidence_ref:0,range:{},reason:'夹具'}]}];
   const tasks = new Map<string,Task>(); const events: HostEvent[] = []; const attachments = new Map<string, Attachment>(); const previews = new Map<string,string>();
   const pinnedId='01984de2-8f74-7c91-a3b2-5c5e937cf318';
   const sections:HistorySection[]=[{id:pinnedId,name:'置顶',appearance:null,builtin:true}];
@@ -33,7 +35,7 @@ export function createDemoAdapter(): Rpc {
     if(archived&&members.some(s=>[...tasks.values()].some(t=>t.sessionId===s.id&&activeTask(t))))throw new Error('运行中的会话不能归档');
     members.forEach(s=>s.archived=archived);return organization();
   };
-  const boot: Bootstrap = {sessions,settings:{api:{enabled:false,locked:false,label:'',base_url:'',model:'',has_api_key:true,request_timeout_sec:120,stop_local_service:true,use_world_knowledge:true,audio_input_enabled:false,token_mode:'auto'},local:{base_url:'http://127.0.0.1:8000/v1',model:'browser-fixture',token_mode:'manual',max_context_tokens:32768,plan_max_tokens:4096},preferences:{theme:'system',font_size:15,send_key:'enter',smooth_stream:true,sidebar_width:272,conversation_width:850},analysis:{default_error_threshold:1.25,minimum_error_duration_sec:0.04,maximum_errors_per_phone:3},alignment:{backend:'auto',agreement_threshold_sec:0.04,minimum_confidence:0.45,mfa:{enabled:false,executable:'mfa',beam:10,retry_beam:40}}},tasks:[],host:{name:'浏览器测试夹具',version:'1',cloudAllowed:false},providers:[],models:[]};
+  const boot: Bootstrap = {sessions,settings:{workflow:{...workflowPresets.balanced},api:{enabled:false,locked:false,label:'',base_url:'',model:'',has_api_key:true,request_timeout_sec:120,stop_local_service:true,use_world_knowledge:true,audio_input_enabled:false,token_mode:'auto'},local:{base_url:'http://127.0.0.1:8000/v1',model:'browser-fixture',token_mode:'manual',max_context_tokens:32768,plan_max_tokens:4096},preferences:{theme:'system',font_size:15,send_key:'enter',smooth_stream:true,sidebar_width:272,conversation_width:850},analysis:{default_error_threshold:1.25,minimum_error_duration_sec:0.04,maximum_errors_per_phone:3},alignment:{backend:'auto',agreement_threshold_sec:0.04,minimum_confidence:0.45,mfa:{enabled:false,executable:'mfa',beam:10,retry_beam:40}}},tasks:[],host:{name:'浏览器测试夹具',version:'1',cloudAllowed:false},providers:[],models:[]};
   const emit = (task: Task, type: HostEvent['type'], payload: unknown) => events.push({seq:++seq,sessionId:task.sessionId,taskId:task.id,type,payload:structuredClone(payload)});
   return (async (method: keyof Methods, params: any) => {
     if (window.pywebview) throw new Error('测试适配器已禁用：检测到桌面宿主，请移除 demo 参数并刷新');
@@ -107,7 +109,7 @@ export function createDemoAdapter(): Rpc {
       case 'events.poll': return {events:structuredClone(events.filter(e => e.seq > params.after)),cursor:seq};
       case 'settings.get': return structuredClone(boot.settings);
       case 'settings.save': {
-        for (const section of ['api','local','preferences','analysis','alignment'] as const) {
+        for (const section of ['api','local','preferences','analysis','alignment','workflow'] as const) {
           if (params.settings[section]) boot.settings[section] = {...boot.settings[section], ...structuredClone(params.settings[section])};
         }
         boot.settings.api.api_key=''; boot.settings.local.api_key=''; return structuredClone(boot.settings);

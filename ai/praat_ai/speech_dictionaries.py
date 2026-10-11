@@ -16,6 +16,8 @@ def path_key(value):
 
 
 class DictionaryService:
+    section_key = 'mfa'
+    directory = False
     active_key = 'dictionary_path'
     paths_key = 'dictionary_paths'
     result_key = 'dictionaries'
@@ -29,7 +31,7 @@ class DictionaryService:
         return json.loads(self.path.read_text(encoding='utf-8-sig')) if self.path.is_file() else {}
 
     def _paths(self, raw):
-        mfa = raw.get('alignment', {}).get('mfa', {})
+        mfa = raw.get('alignment', {}).get(self.section_key, {})
         values = [mfa.get(self.active_key, ''), *mfa.get(self.paths_key, [])]
         result, seen = [], set()
         for value in values:
@@ -42,12 +44,15 @@ class DictionaryService:
         return result
 
     def _result(self, raw):
-        active = raw.get('alignment', {}).get('mfa', {}).get(self.active_key, '')
+        active = raw.get('alignment', {}).get(self.section_key, {}).get(self.active_key, '')
         return {self.result_key: [dict(path=value, name=Path(value).name,
-                                      exists=Path(value).is_file(),
+                                      exists=self._exists(value),
                                       active=bool(active) and path_key(value) == path_key(active))
                                   for value in self._paths(raw)],
                 'theme': raw.get('modern', {}).get('preferences', {}).get('theme', 'system')}
+
+    def _exists(self, value):
+        return Path(value).is_dir() if self.directory else Path(value).is_file()
 
     def list(self):
         return self._result(self._read())
@@ -57,7 +62,7 @@ class DictionaryService:
         with service_transition_lock(Path(str(self.path) + '.lock')):
             raw = self._read()
             paths = self._paths(raw)
-            mfa = raw.setdefault('alignment', {}).setdefault('mfa', {})
+            mfa = raw.setdefault('alignment', {}).setdefault(self.section_key, {})
             update(paths, mfa)
             mfa[self.paths_key] = paths
             temporary = None
@@ -75,8 +80,8 @@ class DictionaryService:
     def add(self, values):
         values = [str(Path(value).expanduser().resolve()) for value in values]
         for value in values:
-            if not Path(value).is_file():
-                raise ValueError(self.label + '文件不存在：' + value)
+            if not self._exists(value):
+                raise ValueError(self.label + ('目录' if self.directory else '文件') + '不存在：' + value)
         if not values:
             return self.list()
 
@@ -97,8 +102,8 @@ class DictionaryService:
             selected = next((path for path in paths if path_key(path) == key), None)
             if selected is None:
                 raise ValueError('该' + self.label + '尚未配置，请先添加。')
-            if not Path(selected).is_file():
-                raise ValueError(self.label + '文件不存在：' + selected)
+            if not self._exists(selected):
+                raise ValueError(self.label + ('目录' if self.directory else '文件') + '不存在：' + selected)
             mfa[self.active_key] = selected
         return self._change(update)
 
@@ -121,17 +126,28 @@ class AcousticModelService(DictionaryService):
     file_filter = 'MFA 声学模型 (*.zip)'
 
 
+class Wav2Vec2ModelService(DictionaryService):
+    section_key = 'wav2vec2'
+    directory = True
+    active_key = 'model'
+    paths_key = 'models'
+    result_key = 'models'
+    label = 'Wav2Vec2声学模型'
+
+
 class DictionaryApplication:
     def __init__(self, config_path):
         self._service = DictionaryService(config_path)
         self._models = AcousticModelService(config_path)
+        self._wav2vec2 = Wav2Vec2ModelService(config_path)
         self.window = None
         self._guard = threading.Lock()
 
     def rpc(self, method, params):
         with self._guard:
             namespace, _, action = method.partition('.')
-            service = {'dictionaries': self._service, 'acoustic_models': self._models}.get(namespace)
+            service = {'dictionaries': self._service, 'acoustic_models': self._models,
+                       'wav2vec2_models': self._wav2vec2}.get(namespace)
             if service is None:
                 raise ValueError('未知的词典与模型管理操作')
             if action == 'list':
@@ -142,8 +158,11 @@ class DictionaryApplication:
                 return service.select(params['path'])
             if action == 'choose':
                 import webview
-                paths = self.window.create_file_dialog(webview.FileDialog.OPEN, allow_multiple=True,
-                    file_types=(service.file_filter, '所有文件 (*.*)')) or []
+                if service.directory:
+                    paths = self.window.create_file_dialog(webview.FileDialog.FOLDER) or []
+                else:
+                    paths = self.window.create_file_dialog(webview.FileDialog.OPEN, allow_multiple=True,
+                        file_types=(service.file_filter, '所有文件 (*.*)')) or []
                 return service.add(paths)
             raise ValueError('未知的词典与模型管理操作')
 

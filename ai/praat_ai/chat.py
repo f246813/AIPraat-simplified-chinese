@@ -302,9 +302,10 @@ def _clear_result_files() -> None:
 
 def _blocked_reason() -> str:
     return (
-        f"Praat 在 {EXECUTION_TIMEOUT_SEC:.0f} 秒内没有执行这个脚本。"
-        "常见原因：Praat 里有没关掉的对话框或错误提示、编辑器正在播放/被"
-        "模态窗口挡住。关掉那些窗口后再发一次即可。"
+        f"Praat 在 {EXECUTION_TIMEOUT_SEC:.0f} 秒内没有执行这个脚本，"
+        "也可能已经跑完但完成标记没能写回来。常见原因：Praat 里有没关掉的对话框或"
+        "错误提示、编辑器正在播放或被模态窗口挡住。关掉那些窗口后再发一次即可；"
+        "下一次请求会先做一次显式核对，不会把上一次的结果算到新请求上。"
     )
 
 
@@ -482,15 +483,21 @@ ANALYSIS_PREPARATION_TOOLS = frozenset({
 def _whole_recording_request(user_text: str) -> bool:
     """用户这句话是不是要求对**整段**对象做分析（而不是编辑器里圈出来的那一小段）。"""
 
-    return bool(
-        re.search(
+    for match in re.finditer(
             r"整段|整个(?:声音|语音|音频|录音|波形)"
             r"|全部(?:声音|语音|音频)"
             r"|(?:the\s+)?(?:whole|entire|full)\s+(?:sound|audio|recording|utterance|file)",
             user_text,
             re.I,
-        )
-    )
+        ):
+        # Negation belongs to this clause, not another requested operation.
+        prefix = re.split(r'[，,。；;！？!?\n]', user_text[:match.start()])[-1]
+        negated = re.search(
+            r'(?:不要|不用|不必|无需|别|而不是|而非|不是|并非|不需要).{0,24}$'
+            r'|\b(?:not|do not|don[\'’]t|instead of|rather than)\b.{0,40}$', prefix, re.I)
+        if not negated:
+            return True
+    return False
 
 
 def _request_context(text: str, user_text: str) -> str:
@@ -1266,6 +1273,20 @@ def _send_script(
     process_id: int | None = None,
     outcome: list[str] | None = None,
 ) -> tuple[bool, str]:
+    with sendpraat.command_lock():
+        return _send_script_unlocked(executable, script, request_id=request_id,
+                                     cancel=cancel, process_id=process_id, outcome=outcome)
+
+
+def _send_script_unlocked(
+    executable: str,
+    script: str,
+    *,
+    request_id: str = "",
+    cancel: threading.Event | None = None,
+    process_id: int | None = None,
+    outcome: list[str] | None = None,
+) -> tuple[bool, str]:
     """Hand the script to the running Praat and wait for its result files.
 
     默认走 :mod:`praat_ai.sendpraat`：自己写 ``Message.txt`` 再发 ``WM_APP``。
@@ -1367,7 +1388,10 @@ def _read_results() -> list[str]:
     if not path.is_file():
         return []
     try:
-        text = path.read_text(encoding="utf-8")
+        # 按 errors='replace' 读（和 _read_failure 一致）：结果文件里混进一个坏字节时，
+        # UnicodeDecodeError 不是 OSError，会穿过 _send 的 except 把已经确认的投递事实
+        # 一起丢掉（2026-10-07 实测：一个 0xFF 就让「已投递成功」变成无法归因的失败）。
+        text = path.read_text(encoding="utf-8", errors="replace")
     except OSError:
         return []
     return [line.strip() for line in text.splitlines() if line.strip()]

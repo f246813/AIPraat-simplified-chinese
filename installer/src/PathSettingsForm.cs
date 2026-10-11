@@ -51,7 +51,7 @@ namespace AIPraat.Setup
             FilePathField.Add(fields,python,"Python 环境（必需）","选择环境中的 python.exe",0,"PythonPath","Python 解释器|python.exe|可执行文件|*.exe",tips);
             FilePathField.Add(fields,llama,"llama.cpp（可选）","选择 llama-server.exe，可留空",79,"LlamaServerPath","llama-server|llama-server.exe|可执行文件|*.exe",tips);
             FilePathField.Add(fields,mmproj,"视觉投影（可选）","选择与模型匹配的 mmproj .gguf，可留空",158,"MmprojPath","GGUF 视觉投影|*.gguf",tips);
-            alignmentFields.Add(fields,237,tips,false);
+            alignmentFields.Add(fields,237,tips,false,false);
             var validation=new Panel {Dock=DockStyle.Fill};layout.Controls.Add(validation,0,2);
             note.Location=new Point(0,4);note.Size=new Size(820,46);note.Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right;validation.Controls.Add(note);
             setup.Location=new Point(0,52);validation.Controls.Add(setup);setup.LinkClicked+=(s,e)=>ConfigurePython();

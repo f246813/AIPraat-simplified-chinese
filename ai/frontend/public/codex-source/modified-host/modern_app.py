@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import base64
 import copy
+import hashlib
 import json
 import mimetypes
 import threading
@@ -20,6 +21,24 @@ from . import modern_budget as budget
 from .model_capabilities import safe_error
 
 ACTIVE = {'running', 'queued', 'cancelling'}
+#: 一次 events.poll 最多返回多少条事件（见 ModernApplication.poll）。
+POLL_EVENT_LIMIT = 400
+#: RPC 参数的中文名：缺参数时不能把裸 KeyError（``'sessionId'``）抛给前端。
+PARAM_LABELS = {'sessionId': '会话标识', 'taskId': '任务标识', 'title': '标题',
+                'text': '消息内容', 'sourceTaskId': '原任务标识', 'mode': '动作',
+                'settings': '设置内容', 'kind': '测试类型', 'data': '附件内容',
+                'name': '附件名', 'url': '链接地址', 'attachmentId': '附件标识',
+                'sectionId': '分区标识', 'settingsId': '设置标识'}
+
+
+def param(params, key, *, default=...):
+    """取 RPC 参数；缺失就报中文错误，不把 ``KeyError('sessionId')`` 漏给前端。"""
+
+    if key in params:
+        return params[key]
+    if default is not ...:
+        return default
+    raise ValueError(f'缺少{ PARAM_LABELS.get(key, key) }（{key}）')
 
 
 class LocalResources:
@@ -129,8 +148,14 @@ class Attachments:
         if not isinstance(aid, str) or len(aid) != 32 or any(c not in '0123456789abcdef' for c in aid):
             raise ValueError('附件标识无效')
         with self.guard:
-            meta = json.loads((self.root / (aid + '.meta')).read_text(encoding='utf-8'))
+            meta_path = self.root / (aid + '.meta')
+            if not meta_path.is_file():
+                # 以前这里直接把 FileNotFoundError 抛给前端，里面带着绝对路径。
+                raise ValueError('这个附件已经不存在了；请重新选择文件。')
+            meta = json.loads(meta_path.read_text(encoding='utf-8'))
             path = self.root / (aid + Path(meta['name']).suffix.lower())
+            if not path.is_file():
+                raise ValueError('这个附件已经不存在了；请重新选择文件。')
             if path.is_symlink() or (hasattr(path, 'is_junction') and path.is_junction()) or path.resolve().parent != self.root.resolve():
                 raise ValueError('附件路径无效')
             return {**meta, 'path': str(path)}
@@ -169,6 +194,7 @@ class ModernApplication:
         self.closed = False
         self.window = None
         self.navigation_id = ''
+        self._created_sessions = set()
 
     def event(self, task, kind, payload):
         with self.guard:
@@ -177,7 +203,7 @@ class ModernApplication:
                                     type=kind, payload=self.store.clean(copy.deepcopy(payload))))
 
     def public_task(self, task):
-        return {k: task[k] for k in ('id', 'sessionId', 'status', 'model', 'created')}
+        return {k: task[k] for k in ('id', 'sessionId', 'status', 'model', 'created', 'workflow') if k in task}
 
     def bootstrap(self):
         from .api_settings import PROVIDERS
@@ -197,6 +223,17 @@ class ModernApplication:
                     for task in self.tasks.values()
                     if task['sessionId'] == sid and task['status'] in ACTIVE}
             result['messages'] = [live.get(message['id'], message) for message in result['messages']]
+            actionable = [m for m in result['messages'] if m.get('followup_actions') and m.get('taskId')]
+            if actionable:
+                from .workflow_policy import WorkflowPolicy
+                cfg = self.settings.candidate()
+                for message in actionable:
+                    try:
+                        record = self.store.task_evidence(sid, message['taskId'])
+                        cfg.workflow = WorkflowPolicy.validate(record.get('metrics', {}).get('workflow_policy'))
+                        message['followup_actions'] = self.followup_actions(cfg, record) if cfg.api.enabled else []
+                    except (OSError, ValueError):
+                        message['followup_actions'] = []
             result['cursor'] = self.cursor
             return result
 
@@ -247,10 +284,30 @@ class ModernApplication:
         incoming = (settings or {}).get('api' if cfg.api.enabled else 'local', {})
         return budget.prepare(cfg, explicit_window='max_context_tokens' in raw_section or 'max_context_tokens' in incoming)
 
-    def submit(self, sid, text, attachment_ids=()):
+    def submit(self, sid, text, attachment_ids=(), *, continuation=None):
         text = str(text).strip()
         if not text or len(text) > 100000:
             raise ValueError('请输入 1–100000 字符')
+        # 目标捕获要在 PRAAT_LOCK 下等 Praat 回应，上限 EXECUTION_TIMEOUT_SEC（25 秒）。
+        # 以前整段都在 self.guard 里，期间 events.poll（前端 220ms 心跳）一起被挡住，
+        # 界面会显示成断线（2026-10-07）。所以先在 guard 外把配置、历史和目标都备好，
+        # 再进 guard 只做需要原子性的检查与登记；并发提交仍由 guard 内的 ACTIVE 检查挡住。
+        cfg = self.prepared()
+        values = [self.attachments.resolve(aid) for aid in attachment_ids]
+        if len(values) > 8 or sum(a['size'] for a in values) > Attachments.LIMIT:
+            raise ValueError('每轮最多 8 个附件、总计 20 MiB')
+        history, evidence = self.store.context(sid)
+        from .workflow_policy import explicit_action, WorkflowPolicy
+        if cfg.api.enabled and continuation is None and explicit_action(text) == 'L2' and evidence:
+            prior = evidence[-1]
+            if prior.get('evidence') and prior.get('goal'):
+                continuation = {**prior, 'mode':'L2'}
+        if continuation:
+            cfg.workflow = WorkflowPolicy.validate(continuation['metrics']['workflow_policy'])
+            target = continuation['target']
+        else:
+            target = (self.executor.capture_workflow_target(text, cfg.workflow)
+                      if cfg.api.enabled and hasattr(self.executor, 'capture_workflow_target') else self.executor.capture_target(text))
         with self.guard:
             if self.closed:
                 raise RuntimeError('桌面服务正在关闭')
@@ -261,14 +318,10 @@ class ModernApplication:
                 raise ValueError('本会话已有任务；请等待完成或取消，其他会话仍可提交')
             if sum(t['status'] in ACTIVE for t in self.tasks.values()) >= 8:
                 raise ValueError('最多 8 个后台任务，请等待已有任务')
-            cfg = self.prepared()
-            values = [self.attachments.resolve(aid) for aid in attachment_ids]
-            if len(values) > 8 or sum(a['size'] for a in values) > Attachments.LIMIT:
-                raise ValueError('每轮最多 8 个附件、总计 20 MiB')
             self.store.cleaner.secrets = tuple(v for v in set(self.store.cleaner.secrets) | {cfg.api.api_key, cfg.qwen.api_key} if v and v != 'EMPTY')
-            target = self.executor.capture_target(text)
-            history, evidence = self.store.context(sid)
             task = dict(id=identity(), sessionId=sid, status='running', model=cfg.qwen.model, created=now(), cancel=threading.Event())
+            task['continuation'] = continuation
+            task['workflow'] = asdict(cfg.workflow)
             message = dict(id=identity(), role='assistant', content='', status='running', taskId=task['id'], activities=[])
             task['message'] = message
             self.tasks[task['id']] = task
@@ -297,6 +350,18 @@ class ModernApplication:
                 if kind == 'delta':
                     message['content'] += str(payload.get('text', ''))
                     self.event(task, 'delta', dict(messageId=message['id'], text=payload.get('text', '')))
+                elif kind == 'results':
+                    record = self.store.clean(payload)
+                    message['result_content'] = record.pop('content')
+                    explanation = record.pop('verified_explanation', '')
+                    if explanation:
+                        message['content'] = explanation
+                        message['analysis_content'] = explanation
+                    message['results'] = record['results']
+                    self.store.save_evidence(sid, task['id'], record)
+                    # Durable facts precede the visible event and any explanation request.
+                    self.store.put_message(sid, message)
+                    self.event(task, 'message', message)
                 elif kind == 'activity':
                     activity = self.store.clean(payload)
                     activity.setdefault('id', identity())
@@ -312,6 +377,7 @@ class ModernApplication:
         try:
             def execute():
                 nonlocal history
+                task_metrics = dict(session_id=sid, task_id=task['id'], context_epoch=self.store.context_epoch(sid))
                 material_input, material_bytes = text, 0
                 for attachment in attachments:
                     if attachment['mime'].startswith('text/') or attachment['mime'] == 'application/json':
@@ -320,10 +386,21 @@ class ModernApplication:
                         if material_bytes > 1024 * 1024:
                             raise ValueError('文本附件总量须不超过 1 MiB')
                         material_input += '\n用户附件 ' + attachment['name'] + ':\n' + data.decode('utf-8-sig')
-                history = budget.compact(self.store, sid, cfg, history, evidence, material_input, target, cancel=cancel, emit=emit)
-                if evidence:
+                from .dialogue_policy import dialogue_kind, direct_measurement
+                phase = 'dialogue' if not attachments and dialogue_kind(text) else 'planner'
+                deterministic = not attachments and direct_measurement(text, statistics=True)
+                runtime = (self.executor.session_runtime(sid) if cfg.api.enabled and not deterministic
+                           and not task.get('continuation') and hasattr(self.executor, 'session_runtime') else None)
+                # Duration fast path still makes zero model calls, including summaries.
+                if not deterministic and not task.get('continuation'):
+                    history = budget.compact(self.store, sid, cfg, history, evidence, material_input, target,
+                                             cancel=cancel, emit=emit, phase=phase, runtime=runtime, metrics=task_metrics)
+                if evidence and not cfg.api.enabled:
                     history = [*history, dict(role='user', content='历史专业证据与投递事实（保留来源/原范围；不能当作本轮新测量，不能重放操作）：\n' + json.dumps(evidence, ensure_ascii=False))]
-                return self.executor.run(config=cfg, text=text, history=history, target=target, cancel=cancel, emit=emit, attachments=attachments)
+                extra = dict(session_id=sid, task_id=task['id'], phase_context=self.store.model_context(sid, 'dialogue'),
+                             context_epoch=self.store.context_epoch(sid), historical_evidence=evidence,
+                             task_metrics=task_metrics, continuation=task.get('continuation')) if cfg.api.enabled else {}
+                return self.executor.run(config=cfg, text=text, history=history, target=target, cancel=cancel, emit=emit, attachments=attachments, **extra)
             if not cfg.api.enabled:
                 with self.local.lease(cfg, cancel, emit):
                     result = execute()
@@ -332,11 +409,21 @@ class ModernApplication:
                     self.local.request_stop()
                 result = execute()
             message['content'] = result.get('content', message['content'])
+            for key in ('results', 'result_content', 'analysis_content'):
+                if key in result:
+                    message[key] = result[key]
+            message['followup_actions'] = self.followup_actions(cfg, result) if cfg.api.enabled else []
             message['status'] = result.get('status', 'complete')
+            message['formal_content'] = result.get('formal_content', message['content'])
+            message['formal'] = result.get('formal', message['status'] == 'complete')
             # UI cancellation does not rewrite the separate execution facts.
             if cancel.is_set():
                 message['status'] = 'cancelled'
-            self.store.save_evidence(sid, task['id'], {k: result[k] for k in ('evidence', 'attempts', 'target', 'metrics') if k in result})
+                message['formal'] = False
+            self.store.save_evidence(sid, task['id'], {k: result[k] for k in ('evidence', 'attempts', 'target', 'metrics', 'material_metadata', 'goal', 'deliveries', 'results') if k in result})
+            for phase, context in result.get('model_contexts', {}).items():
+                status = 'complete' if context.complete and message['formal'] and not cancel.is_set() else 'incomplete'
+                self.store.save_model_context(sid, task['id'], phase, context, status=status)
         except Exception as error:
             message['status'] = 'cancelled' if cancel.is_set() else 'failed'
             message['content'] += '\n\n' + safe_error(error, cfg.qwen.api_key)
@@ -351,12 +438,53 @@ class ModernApplication:
                 self.event(task, 'message', message)
                 self.event(task, 'task', self.public_task(task))
 
+    def followup_actions(self, cfg, record):
+        actions = []
+        if record.get('evidence'):
+            actions.append('L2')  # Explicit one-shot explanation works even when globally off.
+        metadata = record.get('material_metadata', {})
+        source = metadata.get('recording_source', '')
+        from .model_capabilities import config_identity
+        actual_audio = bool(record.get('metrics', {}).get('audio_received')
+                            and record['metrics'].get('capability_identity') == config_identity(cfg.api))
+        available = False
+        if cfg.api.audio_input_enabled and (cfg.api.audio_input_source in {'preset','verified'} or actual_audio) and source:
+            try:
+                available = (Path(source).is_file() and Path(source).stat().st_size <= Attachments.LIMIT
+                             and hashlib.sha256(Path(source).read_bytes()).hexdigest() == metadata.get('source_sha256'))
+            except OSError:
+                pass
+        if available:
+            actions.append('L3')
+        if cfg.workflow.l4_enabled:
+            actions.append('L4')
+        return actions
+
+    def followup(self, sid, source_task, mode):
+        if mode not in {'L2','L3','L4'}:
+            raise ValueError('本次动作必须是 L2/L3/L4')
+        with self.guard:
+            record = self.store.task_evidence(sid, source_task)
+            cfg = self.prepared()
+            if not cfg.api.enabled:
+                raise ValueError('本次继续动作适用于云端 API；当前启用的是本地模型')
+            from .workflow_policy import WorkflowPolicy
+            cfg.workflow = WorkflowPolicy.validate(record.get('metrics', {}).get('workflow_policy'))
+            if mode not in self.followup_actions(cfg, record):
+                raise ValueError('原证据、材料或当前模型能力不支持此动作')
+            if not record.get('goal'):
+                raise ValueError('旧任务没有原目标绑定；请明确提出新目标')
+            record['mode'] = mode
+            return self.submit(sid, {'L2':'本次解释结果','L3':'本次分析原材料','L4':'基于这些结果进行通用讨论'}[mode], continuation=record)
+
     def cancel(self, task_id):
         with self.guard:
             task = self.tasks.get(task_id)
             if task is None:
                 raise ValueError('任务不存在')
-            if task['status'] in ACTIVE:
+            # 重复取消要幂等：已经在 cancelling 的任务不再发一次事件（2026-10-07 实测
+            # 连续三次取消会往事件流里塞三条同样的 task 事件）。
+            if task['status'] in {'running', 'queued'}:
                 task['cancel'].set()
                 task['status'] = 'cancelling'
                 self.event(task, 'task', self.public_task(task))
@@ -368,9 +496,20 @@ class ModernApplication:
             navigation = model_settings_request(self.navigation_id)
             if navigation:
                 self.navigation_id = navigation['id']
-            after = int(after)
+            try:
+                after = int(after)
+            except (TypeError, ValueError):
+                raise ValueError('events.poll 的 after 必须是整数游标') from None
             reset = after > self.cursor or bool(self.events and after < self.events[0]['seq'] - 1)
-            result = dict(events=[e for e in self.events if e['seq'] > after], cursor=self.cursor, reset=reset)
+            pending = [e for e in self.events if e['seq'] > after]
+            # 单次返回量要封顶：events 最多留 4000 条，一次全量序列化约 2 MB，
+            # 前端 220ms 一次轮询会把这 2 MB 反复搬过 WebView2 桥（2026-10-07）。
+            # 截断时游标跟着最后一条返回的事件走，客户端下一次轮询自然续上。
+            if len(pending) > POLL_EVENT_LIMIT:
+                reset = True
+                pending = pending[:POLL_EVENT_LIMIT]
+            cursor = pending[-1]['seq'] if pending else min(after, self.cursor)
+            result = dict(events=pending, cursor=cursor, reset=reset)
             if navigation:
                 result['navigation'] = navigation
             return result
@@ -407,9 +546,22 @@ class ModernApplication:
             for task in active:
                 task['cancel'].set()
                 task['message']['status'] = 'interrupted'
-                self.store.put_message(task['sessionId'], task['message'])
+                try:
+                    self.store.put_message(task['sessionId'], task['message'])
+                except (OSError, ValueError) as error:
+                    # 退出时库里写不进去（临时目录已删、库被占用）不该让 close() 崩掉：
+                    # 之前这里会抛出 sqlite3.OperationalError，现在是中文 ValueError。
+                    self.store_last_error = str(error)
+            if self._created_sessions:
+                try:
+                    self.store.discard_empty_sessions(self._created_sessions)
+                    self._created_sessions.clear()
+                except (OSError, ValueError) as error:
+                    self.store_last_error = str(error)
         for task in active:
-            task['thread'].join(timeout=2)
+            thread = task.get('thread')
+            if thread is not None:
+                thread.join(timeout=2)
         self.local.request_stop()
         if hasattr(self.executor, 'close'):
             self.executor.close()
@@ -458,31 +610,37 @@ class ModernApplication:
         try:
             if method == 'bootstrap': return self.bootstrap()
             if method == 'sessions.create':
-                with self.guard:return self.store.organization.create_session(params.get('title', '新会话'),params.get('sectionId'))
-            if method == 'sessions.get': return self.get_session(params['sessionId'])
-            if method == 'sessions.context': return self.context_status(params['sessionId'], params.get('text', ''), params.get('attachmentIds', []))
+                with self.guard:
+                    session = self.store.organization.create_session(params.get('title', '新会话'),params.get('sectionId'))
+                    self._created_sessions.add(session['id'])
+                    return session
+            if method == 'sessions.get': return self.get_session(param(params, 'sessionId'))
+            if method == 'sessions.context': return self.context_status(param(params, 'sessionId'), params.get('text', ''), params.get('attachmentIds', []))
             if method == 'sessions.rename':
-                self.store.rename(params['sessionId'], params['title']); return dict(ok=True)
+                self.store.rename(param(params, 'sessionId'), param(params, 'title')); return dict(ok=True)
             if method == 'sessions.delete':
                 with self.guard:
-                    if any(t['sessionId'] == params['sessionId'] and t['status'] in ACTIVE for t in self.tasks.values()):
+                    if any(t['sessionId'] == param(params, 'sessionId') and t['status'] in ACTIVE for t in self.tasks.values()):
                         raise ValueError('运行中的会话不能删除')
-                    self.store.delete(params['sessionId'])
+                    self.store.delete(param(params, 'sessionId'))
+                    if hasattr(self.executor, 'release_session'):
+                        self.executor.release_session(param(params, 'sessionId'))
                 return dict(ok=True)
             if method == 'sessions.view':
-                self.store.view(params['sessionId'], draft=params.get('draft'), scroll=params.get('scroll'), anchor=params.get('anchor')); return dict(ok=True)
-            if method == 'tasks.submit': return self.submit(params['sessionId'], params['text'], params.get('attachmentIds', []))
-            if method == 'tasks.cancel': return self.cancel(params['taskId'])
+                self.store.view(param(params, 'sessionId'), draft=params.get('draft'), scroll=params.get('scroll'), anchor=params.get('anchor')); return dict(ok=True)
+            if method == 'tasks.followup': return self.followup(param(params, 'sessionId'), param(params, 'sourceTaskId'), param(params, 'mode'))
+            if method == 'tasks.submit': return self.submit(param(params, 'sessionId'), param(params, 'text'), params.get('attachmentIds', []))
+            if method == 'tasks.cancel': return self.cancel(param(params, 'taskId'))
             if method == 'events.poll': return self.poll(params.get('after', 0))
             if method == 'settings.get': return self.settings.get()
-            if method == 'settings.save': return self.settings.save(params['settings'])
-            if method == 'settings.test': return self.test_connection(params['kind'], params['settings'])
+            if method == 'settings.save': return self.settings.save(param(params, 'settings'))
+            if method == 'settings.test': return self.test_connection(param(params, 'kind'), param(params, 'settings'))
             if method == 'attachments.import':
-                raw = str(params['data'])
+                raw = str(param(params, 'data'))
                 if len(raw) > Attachments.LIMIT * 4 // 3 + 4:
                     raise ValueError('附件过大')
-                return self.attachments.import_bytes(params['name'], base64.b64decode(raw, validate=True))
-            if method == 'attachments.preview': return self.attachments.preview(params['attachmentId'])
+                return self.attachments.import_bytes(param(params, 'name'), base64.b64decode(raw, validate=True))
+            if method == 'attachments.preview': return self.attachments.preview(param(params, 'attachmentId'))
             if method == 'attachments.choose':
                 if self.window is None: raise RuntimeError('原生文件选择器需要桌面宿主')
                 import webview
@@ -494,7 +652,7 @@ class ModernApplication:
                     result.append(self.attachments.import_bytes(path.name, path.read_bytes()))
                 return result
             if method == 'links.open':
-                url = str(params['url'])
+                url = str(param(params, 'url'))
                 assert_endpoint(url, allow_cloud=True)
                 if self.window is None or not self.window.create_confirmation_dialog('打开外部链接', url):
                     return dict(ok=False)

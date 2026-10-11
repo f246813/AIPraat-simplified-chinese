@@ -23,13 +23,60 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
 
 TABLE_PATH = Path(__file__).with_name("measures.tsv")
 
-#: 一张表里的五个小节，以及每节自己的列。
+#: 用户/模型实际会说的参数名 → 表里的规范名。以前只认精确名，于是「F0」「jitter local」
+#: 「共振峰」这类再常见的说法也被判成不认识（2026-10-07 实测）。这里只收**无歧义**的写法：
+#: 「共振峰」这种既可能指 F1 也可能指全部的说法不进表，仍然按未知参数报错。
+PARAMETER_ALIASES: dict[str, str] = {
+    "f0": "mean_pitch", "基频": "mean_pitch", "平均基频": "mean_pitch",
+    "pitch": "mean_pitch", "meanpitch": "mean_pitch",
+    "最低基频": "minimum_pitch", "最小基频": "minimum_pitch", "minpitch": "minimum_pitch",
+    "最高基频": "maximum_pitch", "最大基频": "maximum_pitch", "maxpitch": "maximum_pitch",
+    "基频中位数": "median_pitch", "中位基频": "median_pitch",
+    "基频标准差": "sd_pitch", "基频标准偏差": "sd_pitch",
+    "基频斜率": "pitch_slope", "音高斜率": "pitch_slope",
+    "平均强度": "mean_intensity", "强度": "mean_intensity",
+    "最低强度": "minimum_intensity", "最高强度": "maximum_intensity",
+    "强度中位数": "median_intensity", "强度标准差": "sd_intensity",
+    "谐噪比": "hnr", "信噪比": "hnr", "harmonicity": "hnr",
+    "jitter": "local_jitter", "jitterlocal": "local_jitter", "localjitter": "local_jitter",
+    "局部基频微扰": "local_jitter", "基频微扰": "local_jitter",
+    "shimmer": "local_shimmer_percent", "shimmerlocal": "local_shimmer_percent",
+    "局部振幅微扰": "local_shimmer_percent", "振幅微扰": "local_shimmer_percent",
+    "shimmerapq3": "apq3_shimmer", "apq3": "apq3_shimmer",
+    "cpp": "cpps", "倒谱峰突出": "cpps", "倒谱峰值": "cpps",
+    "有效值": "rms", "均方根": "rms",
+    "峰值幅度": "peak_amplitude", "平均幅度": "mean_amplitude",
+    "第一共振峰": "f1", "第1共振峰": "f1", "第二共振峰": "f2", "第2共振峰": "f2",
+    "第三共振峰": "f3", "第3共振峰": "f3",
+    "第一共振峰带宽": "b1", "第二共振峰带宽": "b2", "第三共振峰带宽": "b3",
+    "频谱重心": "centre_of_gravity", "重心": "centre_of_gravity",
+    "偏度": "skewness", "峰度": "kurtosis",
+    "高强度频率比": "hl_ratio", "hl": "hl_ratio",
+    "hammarberg": "hammarberg_index", "hammarberg指数": "hammarberg_index",
+    "频谱强调": "spectral_emphasis", "谱强调": "spectral_emphasis",
+    "基频峰值延迟": "pitch_peak_latency", "峰值因子": "peak_to_average_amplitude",
+    "强度斜率": "intensity_slope_global", "局部强度斜率": "intensity_slope_local",
+}
+
+
+def canonical_parameter(parameter: str) -> str:
+    """把常见写法归一到表里的规范名；不认识就原样返回（由调用方报错并列出可用参数）。"""
+
+    raw = (parameter or "").strip()
+    if not raw:
+        return raw
+    key = re.sub(r"[\s_\-]+", "", raw).casefold()
+    return PARAMETER_ALIASES.get(key, raw)
+
+
+
 COLUMNS: dict[str, tuple[str, ...]] = {
     "settings": ("key", "value", "min", "max", "kind", "note"),
     "derivations": ("key", "source", "command", "note"),
@@ -105,11 +152,16 @@ class Table:
         return [entry.parameter for entry in self.entries]
 
     def find(self, parameter: str) -> Entry:
-        name = (parameter or "").strip()
+        name = canonical_parameter(parameter)
         for entry in self.entries:
-            if entry.parameter == name:
+            if entry.parameter == name or entry.parameter.casefold() == name.casefold():
                 return entry
         raise KeyError(name)
+
+    def canonical(self, parameter: str) -> str:
+        """规范名（解析不了就抛 ``KeyError``）——给「别名表是否生效」这类断言用。"""
+
+        return self.find(parameter).parameter
 
     def queries(self) -> tuple[Entry, ...]:
         return tuple(entry for entry in self.entries if entry.kind == "query")

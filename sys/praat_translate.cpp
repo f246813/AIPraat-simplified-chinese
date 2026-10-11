@@ -3,6 +3,8 @@
 #include <string>
 
 static const std::unordered_map<std::u32string, std::u32string> g_translation_map = {
+	{ U"Anki integration...", U"Anki 连接…" },
+	{ U"Open Anki audio...", U"打开 Anki 音频…" },
 	{ U"   # self = the value of the colth point", U"   # self = \u7b2c col \u4e2a\u70b9\u7684\u503c" },
 	{ U"   # self = the value of the colth point, in Pascal", U"   # self = \u7b2c col \u4e2a\u70b9\u7684\u503c\uff08\u5355\u4f4d\uff1a\u5e15\u65af\u5361 Pa\uff09" },
 	{ U"   # self = the value of the colth point, in dB", U"   # self = \u7b2c col \u4e2a\u70b9\u7684\u503c\uff08\u5355\u4f4d\uff1a\u5206\u8d1d dB\uff09" },
@@ -413,6 +415,8 @@ static const std::unordered_map<std::u32string, std::u32string> g_translation_ma
 	{ U"Add menu command", U"\u6dfb\u52a0\u83dc\u5355\u547d\u4ee4" },
 	{ U"Add menu command...", U"\u6dfb\u52a0\u83dc\u5355\u547d\u4ee4..." },
 { U"Add model path...", U"\u6dfb\u52a0\u6a21\u578b\u8def\u5f84..." },
+{ U"Path configuration", U"\u8def\u5f84\u914d\u7f6e" },
+{ U"Path configuration...", U"\u8def\u5f84\u914d\u7f6e..." },
 { U"API settings", U"API \u914d\u7f6e" },
 { U"API settings...", U"API \u914d\u7f6e..." },
 	{ U"Add new word...", U"\u6dfb\u52a0\u65b0\u5355\u8bcd..." },
@@ -2058,6 +2062,7 @@ static const std::unordered_map<std::u32string, std::u32string> g_translation_ma
 	{ U"MSpline(x) = c[1] M[1](x) + c[2] M[1](x) + ... c[n] M[n](x)", U"M \u6837\u6761(x) = c[1] M[1](x) + c[2] M[1](x) + ... c[n] M[n](x)" },
 	{ U"Magenta", U"\u54c1\u7ea2" },
 	{ U"Mahalanobis distance", U"\u9a6c\u6c0f\u8ddd\u79bb" },
+	{ U"Manage speech dictionaries and models", U"\u7ba1\u7406\u8bed\u97f3\u8bcd\u5178\u4e0e\u6a21\u578b" },
 	{ U"Manipulate -", U"\u64cd\u4f5c -" },
 	{ U"Manipulation help", U"\u64cd\u7eb5\u5bf9\u8c61\u5e2e\u52a9" },
 	{ U"Mann-Whitney test", U"Mann-Whitney \u68c0\u9a8c" },

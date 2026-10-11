@@ -2,7 +2,7 @@ import unittest
 
 from pydantic_ai import ModelRetry
 
-from praat_ai.cloud_agent import AnalysisReport, Coverage
+from praat_ai.cloud_agent import AnalysisReport, Coverage, UNVERIFIED_NUMBER
 from praat_ai.escape_policy import AnalysisState, Evidence
 from praat_ai.report_guards import (UNVERIFIED_CALC, report_context_data, report_guard_instructions,
                                     validate_report)
@@ -27,15 +27,28 @@ def pitch(mean=220, start=0, end=1, obj=1):
 
 
 class ReportGuardsTests(unittest.TestCase):
+    def test_vot_frequency_band_range_keeps_units_and_does_not_become_pitch(self):
+        state=self.state(evidence('vot', ['VOT 估计值 = 0.0050 秒：爆破 0.168 秒（高频带 2–8 kHz 能量升 17.3 dB）→ 浊音起始 0.173 秒'], **{'from':.1,'to':.4}))
+        self.accepts(state,'VOT 估计值为 0.0050 秒；爆破检测依据高频带 2–8 kHz 的能量上升 17.3 dB。[E1]')
+        self.accepts(state,'检测使用的高频带为 2000–8000 Hz。[E1]')
+        self.rejects(state,'检测使用的高频带为 4–8 kHz。[E1]')
+        self.rejects(state,'平均基频为 2 kHz。[E1]')
+
+    def test_pitch_min_max_range_can_summarize_separate_extrema(self):
+        state=self.state(pitch(220))
+        self.accepts(state,'平均基频 220 Hz，基频范围 200–240 Hz。[E1]')
+        self.rejects(state,'平均基频 220 Hz，基频范围 180–240 Hz。[E1]')
+        self.rejects(state,'强度范围 200–240 Hz。[E1]')
+
     def test_vot_report_accepts_known_id_colon_but_rejects_unknown_id(self):
         context = 'id\tclass\tname\tselected\n1\tSound\tSound あなた\t1\n'
         item = Evidence('vot', {'object':1, 'from':0.446194, 'to':0.66158},
                         ['VOT 估计值 = 0.0380 秒（38.0 毫秒）：爆破 0.551 秒 → 浊音起始 0.589 秒'], context)
-        for label in ('ID: 1', 'id：1', '对象 1', 'object: 1'):
+        for label in ('ID: 1', 'id：1', '对象 1', 'object: 1', '编号 1'):
             with self.subTest(label=label):
                 state = AnalysisState('分析录音', context, evidence=[item])
                 self.accepts(state, f'本次分析针对对象 Sound あなた（{label}）。\nVOT 估计值为 38.0 毫秒。[E1]')
-        for label in ('ID: 99', 'id：99', 'object: 99'):
+        for label in ('ID: 99', 'id：99', 'object: 99', '编号 99'):
             with self.subTest(label=label):
                 state = AnalysisState('分析录音', context, evidence=[item])
                 self.rejects(state, f'本次分析针对对象 Sound あなた（{label}）。')
@@ -51,6 +64,18 @@ class ReportGuardsTests(unittest.TestCase):
     def rejects(self, state, text):
         with self.assertRaises(ModelRetry):
             self.accepts(state, text)
+
+    def annotated(self, state, text):
+        """走向结论缺证据时不再拦整份报告，而是在那一行后面写明未核对。
+
+        2026-10-07：真实触发率为 0（用户历史 28 轮 + 真机 30 轮），按 2026-10-06 文档
+        自己写的判据从闸门降为可见提醒；规则仍在 skill=prosody 与报告指令里。
+        """
+
+        result = self.accepts(state, text)
+        self.assertIn('缺少同目标的走向证据', result.analysis)
+        self.assertIn('report.prosody_unverified', state.metrics.get('guard_repairs', {}))
+        return result
 
     def test_context_indexes_have_roles_without_duplicate_values(self):
         state = self.state(pitch())
@@ -105,6 +130,89 @@ class ReportGuardsTests(unittest.TestCase):
         # 漏写引证不再是编造：守卫自己把数字落在哪条证据上写进正文。
         self.assertIn('[E1]', self.accepts(self.state(item), '爆破 0.551 秒。').analysis)
 
+    def test_verbatim_code_block_quote_may_omit_the_unit(self):
+        """代码块/赋值式是在抄工具输出：省略单位可以，但数值必须唯一对得上证据。
+
+        2026-10-07 实测：模型把工具输出原样放进代码块（``mean_pitch = 81.558``），
+        守卫因为「没写单位」把它判成未核对；抄输出不是对录音下断言，不该按实测主张处理。
+        """
+
+        result = self.accepts(self.state(pitch(220)), '```\nmean_pitch = 220.000\n```')
+        self.assertIn('220.000', result.analysis)
+        self.accepts(self.state(pitch(220)), 'pitch = 220.0')
+        # 编造的代码块数值仍然拦：没有任何证据能唯一对上它。
+        self.rejects(self.state(pitch(220)), '```\nmean_pitch = 999.900\n```')
+        # 不带单位的**实测主张**仍然要拦，逐字引用不等于「是 220 Hz」。
+        self.rejects(self.state(pitch(220)), '平均基频是 220。')
+
+    def test_inline_general_knowledge_marker_is_a_real_escape_hatch(self):
+        """提示词承诺「一般知识明确标注」，标注就得真的管用。
+
+        2026-10-07 实测：``（一般知识，非本次测量）成年男性典型基频范围为 85–180 Hz``
+        仍然被拦——因为标注文字里的「本次」命中了「指名本次录音」的判定。但从
+        「一般知识」标签里读出实测主张本来就不成立；真正点名本录音的句子照旧要拦。
+        """
+
+        state = self.state(pitch(220))
+        self.accepts(state, '（一般知识，非本次测量）成年男性典型基频范围为 85–180 Hz。')
+        self.accepts(state, '一般知识：成年男性典型基频范围约 85–180 Hz。')
+        # 用「一般知识」当挡箭牌把录音数值说成实测，仍然拦。
+        self.rejects(self.state(), '一般知识：本录音的平均基频为 220 Hz。')
+        self.rejects(self.state(pitch(220)), '（一般知识）本段实测平均基频为 300 Hz。[E1]')
+
+    def test_locale_and_chinese_number_forms_are_checked(self):
+        """千分位/小数逗号、全角数字、中文数字都要按数值核对。
+
+        2026-10-07 实测：``81,558 Hz`` 被拆成 81 和 558 判成未核对；``８１．５５８``
+        整段跳过核对；``平均基频约八十一点六赫兹`` 更是完全不看——编造的数字只要写成
+        中文或全角就能躲过守卫。
+        """
+
+        state = self.state(pitch(220))
+        self.accepts(state, '平均基频 220,000 Hz。[E1]')      # 小数逗号读法 = 220.000
+        self.accepts(state, '平均基频 ２２０．０ Hz。[E1]')     # 全角数字
+        self.accepts(state, '平均基频约为二百二十赫兹。')        # 中文数字（与实测一致）
+        self.rejects(self.state(pitch(220)), '平均基频约为二百五十赫兹。')
+        self.rejects(self.state(pitch(220)), '平均基频 220,900 Hz。[E1]')
+
+    def test_no_input_claim_is_rejected_when_the_recording_is_measurable(self):
+        """「没有音频输入所以不能测量」不能当结论：测量由 Praat 对对象执行。
+
+        2026-10-07 实测：一轮里已经测到 10 行数据、报告仍以 audio_input=false 收尾；
+        另一轮完全没有测量，却把「对象列表里有 Sound」说成无法测量。
+        """
+
+        from praat_ai.cloud_agent import AnalysisReport, Coverage
+        measured = self.state(pitch(220))
+        self.rejects(measured, '由于 audio_input=false，未提供音频输入，无法执行任何测量。')
+        # 没有测量、但对象列表里有可测量的声音对象，同样不能说「测不了」。
+        with_sound = AnalysisState('测量当前声音平均基频', CONTEXT)
+        with self.assertRaises(ModelRetry):
+            validate_report(with_sound, AnalysisReport(
+                analysis='系统显示 audio_input 为 false，因此无法进行任何声学测量，结果缺失。',
+                coverage=[Coverage(item='分析录音', status='missing',
+                                   explanation='没有音频输入因此无法测量这一项')]))
+        # 引用了证据的报告不受影响。
+        self.accepts(measured, '已有测量：平均基频 220 Hz [E1]。本轮未听原始音频，属正常。')
+
+    def test_missing_object_must_be_named_as_missing(self):
+        """用户点名的对象不存在时，回答要明说找不到，而不是换个理由搪塞。"""
+
+        from praat_ai.cloud_agent import AnalysisReport, Coverage
+        state = AnalysisState('测量名为 my_recording.wav 的对象的平均基频', CONTEXT)
+        state.context_text = CONTEXT + ('# 用户提到但这些对象不在当前 Praat 对象列表里：'
+                                        '「my_recording.wav」；只能就现有对象测量，'
+                                        '并在回答里明确说明它们不存在，不要改用别的对象。\n')
+        text = '本次没有取得 my_recording.wav 的数值，任务尚未完成。'
+        with self.assertRaises(ModelRetry) as caught:
+            validate_report(state, AnalysisReport(
+                analysis=text + '\n报告依据已有记录，范围外的声音特征仍需相应测量。',
+                coverage=[Coverage(item='测量平均基频', status='missing',
+                                   explanation='没有音频输入因此无法测量这一项')]))
+        self.assertIn('report.missing_object_unmentioned', str(state.metrics['guard_blocks']))
+        # 说清了「找不到」就通过。
+        self.accepts(state, '对象「my_recording.wav」不在当前对象列表里，找不到，无法测量。')
+
     def test_numeric_object_and_range_must_match(self):
         self.rejects(self.state(pitch(obj=2)), '本段平均基频为 220 Hz。[E1]')
         self.accepts(self.state(pitch(obj=2)), '对象 2 other 的平均基频为 220 Hz。[E1]')
@@ -118,9 +226,9 @@ class ReportGuardsTests(unittest.TestCase):
         state = self.state(pitch())
         self.rejects(state, '平均基频是 300 Hz。[E1]')
         self.assertEqual(state.metrics['guard_blocks'], {'report.number_unmatched': 1})
-        self.rejects(state, '本段音高下降。[E1]')
-        self.assertEqual(state.metrics['guard_blocks'],
-                         {'report.number_unmatched': 1, 'report.prosody_untraced': 1})
+        # 走向结论缺证据现在是可见提醒（repair），不再占阻断名额。
+        self.annotated(state, '本段音高下降。[E1]')
+        self.assertEqual(state.metrics['guard_blocks'], {'report.number_unmatched': 1})
         self.rejects(state, '对象 99 的平均基频为 220 Hz。[E1]')
         self.assertEqual(state.metrics['guard_blocks']['report.object_unknown'], 1)
 
@@ -135,37 +243,37 @@ class ReportGuardsTests(unittest.TestCase):
                      '只有全段平均值，无法判断这段语调是否平淡。',
                      '平均值不代表音高下降，需要先取得分段测量。'):
             self.accepts(self.state(), text)
-        self.rejects(self.state(), '不能判断平板型，但这段音高下降。')
-        self.rejects(self.state(), '这段不是平板型，而是头高型。')
+        self.annotated(self.state(), '不能判断平板型，但这段音高下降。')
+        self.annotated(self.state(), '这段不是平板型，而是头高型。')
 
     def test_mean_alone_cannot_support_prosody(self):
-        self.rejects(self.state(pitch()), '平均基频 220 Hz，所以本段是平板型。[E1]')
-        self.rejects(self.state(pitch()), '这段音高下降。[E1]')
+        self.annotated(self.state(pitch()), '平均基频 220 Hz，所以本段是平板型。[E1]')
+        self.annotated(self.state(pitch()), '这段音高下降。[E1]')
         self.accepts(self.state(pitch()), '平均基频为 220 Hz，仍不能判断平板型，需要走向测量。[E1]')
 
     def test_defined_slope_supports_variability_but_absolute_slope_not_direction(self):
         slope = evidence('measure', ['基频平均绝对斜率 = 1.00 Hz/s'], parameters=['pitch_slope'])
         self.accepts(self.state(slope), '基频平均绝对斜率为 1 Hz/s，本段语调平坦；局部情况仍须核对。[E1]')
-        self.rejects(self.state(slope), '本段音高下降。[E1]')
+        self.annotated(self.state(slope), '本段音高下降。[E1]')
         octave_free = evidence('measure', ['不含倍频跳变的基频斜率 = 1.00 半音/s'], parameters=['pitch_slope_octave_free'])
         self.accepts(self.state(octave_free), '不含倍频跳变的基频斜率为 1 半音/s，本段语调平坦。[E1]')
-        self.rejects(self.state(octave_free), '本段音高下降。[E1]')
+        self.annotated(self.state(octave_free), '本段音高下降。[E1]')
 
     def test_defined_start_end_pair_same_target_and_range(self):
         start = evidence('measure', ['起点基频（0.000–1.000 秒）= 240.00 Hz'], parameters=['pitch_start'], **{'from': 0, 'to': 1})
         end = evidence('measure', ['终点基频（0.000–1.000 秒）= 200.00 Hz'], parameters=['pitch_end'], **{'from': 0, 'to': 1})
         self.accepts(self.state(start, end), '本段音高下降；起终点测量可支持整体趋势，局部轨迹仍要核对。[E1] [E2]')
-        self.rejects(self.state(start), '本段音高下降。[E1]')
+        self.annotated(self.state(start), '本段音高下降。[E1]')
         other = evidence('measure', end.rows, obj=2, parameters=['pitch_end'], **{'from': 0, 'to': 1})
-        self.rejects(self.state(start, other), '本段音高下降。[E1] [E2]')
+        self.annotated(self.state(start, other), '本段音高下降。[E1] [E2]')
         different_range = evidence('measure', ['终点基频（1.000–2.000 秒）= 200.00 Hz'], parameters=['pitch_end'], **{'from': 1, 'to': 2})
-        self.rejects(self.state(start, different_range), '本段音高下降。[E1] [E2]')
+        self.annotated(self.state(start, different_range), '本段音高下降。[E1] [E2]')
 
     def test_defined_ordered_segments_support_trajectory(self):
         self.accepts(self.state(pitch(240, 0, .5), pitch(200, .5, 1)),
                      '本段音高下降，分段平均值显示前后差异，但音调分类仍须结合对齐。[E1] [E2]')
-        self.rejects(self.state(pitch(240, 0, 1), pitch(200, 0, 1)), '本段音高下降。[E1] [E2]')
-        self.rejects(self.state(pitch(240, 0, .5), pitch(200, .5, 1, obj=2)), '本段音高下降。[E1] [E2]')
+        self.annotated(self.state(pitch(240, 0, 1), pitch(200, 0, 1)), '本段音高下降。[E1] [E2]')
+        self.annotated(self.state(pitch(240, 0, .5), pitch(200, .5, 1, obj=2)), '本段音高下降。[E1] [E2]')
 
     def test_undefined_irrelevant_and_nonmeasurement_do_not_support_prosody(self):
         undefined = evidence('measure', ['起点基频（0.000–1.000 秒）无法计算：这一段里没有可用的数据',
@@ -175,7 +283,8 @@ class ReportGuardsTests(unittest.TestCase):
         intensity = evidence('measure', ['强度斜率 = 1.00 dB'], parameters=['mean_intensity'])
         audio = Evidence('listen', {}, ['基频斜率 = 1.00 Hz/s'], CONTEXT, kind='audio')
         for item in (undefined, undefined_slope, intensity, audio, pitch(obj=2)):
-            self.rejects(self.state(item), '这段语调平坦。[E1]')
+            self.annotated(self.state(item), '这段语调平坦。[E1]')
+        # 数值仍然照拦：说「起点基频为 0 Hz」而证据里那一行是 undefined。
         self.rejects(self.state(undefined), '起点基频为 0 Hz。[E1]')
 
     def test_deterministic_transparent_percentage_derivation(self):
@@ -222,7 +331,7 @@ class ReportGuardsTests(unittest.TestCase):
         state = self.state(pitch(240, 0, .1), pitch(200, .9, 1),
                            evidence('duration', ['target 总时长 = 1.000000 秒']))
         state.goal = '分析整段录音语调'
-        self.rejects(state, '整段录音音高下降。[E1] [E2]')
+        self.annotated(state, '整段录音音高下降。[E1] [E2]')
         state.evidence[:2] = [pitch(240, 0, .5), pitch(200, .5, 1)]
         self.accepts(state, '整段录音音高下降；分段测量只支持整体趋势。[E1] [E2]')
 
@@ -252,6 +361,81 @@ class ReportGuardsTests(unittest.TestCase):
         self.rejects(state, '整段平均基频为 220 Hz。[E1]')
         self.rejects(state, '整段平均基频为 {{calc:E1.q3|Hz}}。')
         self.accepts(state, '在 0.200–0.400 秒的平均基频为 220 Hz。[E1]')
+
+
+class RepairedDeliveryTests(unittest.TestCase):
+    """第二次仍不过时交付遮过数值的正文，而不是丢掉整份回答。
+
+    2026-10-07 实测：报告守卫连拒两次会抛 ``UnexpectedModelBehavior('Exceeded maximum
+    output retries (1)')``，工作流分支再把正文塞进没人读的 ``unverified_draft``——22 次
+    真实提问里 12 次只剩测量表加一句英文内部错误。守卫管的是「没测过的数字不能当结论」，
+    不是「这份回答不合格就不给」。
+    """
+
+    def setUp(self):
+        self.state = AnalysisState('分析录音', CONTEXT, evidence=[pitch()])
+
+    def test_second_rejection_keeps_prose_and_masks_both_rounds_values(self):
+        from praat_ai.cloud_agent import repaired_report
+        self.state.metrics['rejected_values'] = ['300 Hz']
+        draft = report('平均基频是 300 Hz。该选段时长为 0.215386 秒，说明节奏稳定。')
+        repaired = repaired_report(draft, '数值“0.215386 秒”未匹配同对象/范围/量名的测量。',
+                                   self.state, self.state)
+        self.assertIsNotNone(repaired)
+        self.assertNotIn('300 Hz', repaired.analysis)
+        self.assertNotIn('0.215386', repaired.analysis)
+        self.assertIn(UNVERIFIED_NUMBER, repaired.analysis)
+        self.assertIn('说明节奏稳定', repaired.analysis)   # 正文和结论留着
+        self.assertIn('没有通过自动数值核对', repaired.analysis)
+        self.assertTrue(self.state.metrics['report_repaired'])
+        self.assertEqual(self.state.metrics['guard_repairs']['report.delivered_with_masks'], 1)
+
+    def test_masked_number_survives_as_unverified_marker_not_as_measurement(self):
+        from praat_ai.cloud_agent import repaired_report
+        draft = report('本段平均基频为 300 Hz，最低 200 Hz，说明节奏稳定。')
+        repaired = repaired_report(draft, '数值“300 Hz”未匹配同对象/范围/量名的测量。',
+                                   self.state, self.state)
+        body, _, note = repaired.analysis.partition('（这份回答没有通过自动数值核对')
+        self.assertNotIn('300 Hz', repaired.analysis)
+        self.assertIn('最低 200 Hz', body)              # 核对通过的实测值原样保留
+        self.assertEqual(body.count(UNVERIFIED_NUMBER), 1)
+        self.assertIn('说明节奏稳定', body)
+        self.assertIn('请按这条提示核对引用的数值和范围', note)
+
+    def test_bracket_pair_of_selection_bounds_is_a_range_not_a_stray_number(self):
+        """``[0.446194, 0.66158] 秒`` 和 ``0.446194–0.66158 秒`` 是同一个范围。
+
+        2026-10-07 实测：模型用括号对写编辑器圈选，守卫不认这种写法，把一个**正确**的范围
+        当成孤立数字连拒两次，最后正文里留下 ``[[未通过核对的数值], 0.66158]``。
+        """
+
+        state = AnalysisState('测量选中这段录音的平均基频', CONTEXT,
+                              evidence=[pitch(mean=220, start=0.446194, end=0.66158)])
+        for text in ('编辑器圈选区间为 [0.446194, 0.66158] 秒。[E1]',
+                     '编辑器圈选区间为 0.446194–0.66158 秒。[E1]',
+                     '编辑器圈选区间为 [0.446194, 0.66158]。[E1]'):
+            with self.subTest(text=text):
+                validate_report(state, report(text))
+
+    def test_repair_masks_every_number_the_guard_still_objects_to(self):
+        from praat_ai.cloud_agent import repaired_report
+        state = AnalysisState('分析录音语调', CONTEXT, evidence=[pitch()])
+        draft = report('本段平均基频为 300 Hz，比基线高 80 Hz，说明节奏稳定。')
+        repaired = repaired_report(draft, '数值“300 Hz”未匹配同对象/范围/量名的测量。', state, state)
+        body, _, note = repaired.analysis.partition('（这份回答没有通过自动数值核对')
+        self.assertNotIn('300 Hz', repaired.analysis)
+        self.assertNotIn('80 Hz', repaired.analysis)
+        self.assertEqual(body.count(UNVERIFIED_NUMBER), 2)
+        self.assertIn('说明节奏稳定', body)
+        self.assertIn('请按这条提示核对引用的数值和范围', note)
+
+    def test_repaired_delivery_needs_prose_to_rescue(self):
+        from praat_ai.cloud_agent import repaired_report
+        empty = AnalysisReport(analysis='\n' * 40,
+                               coverage=[Coverage(item='分析录音', status='partial',
+                                                  explanation='没有可保留的解释性正文内容')])
+        self.assertIsNone(repaired_report(empty, '数值“300 Hz”未匹配。', self.state, self.state))
+        self.assertNotIn('report_repaired', self.state.metrics)
 
 
 if __name__ == '__main__':

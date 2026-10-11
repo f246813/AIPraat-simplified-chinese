@@ -13,6 +13,7 @@ from urllib.parse import urlsplit
 from .config import ApiConfig, QwenConfig, load_config, apply_api_to_qwen
 from .model_capabilities import initialize_audio
 from .service_lock import service_transition_lock
+from .workflow_policy import WorkflowPolicy
 
 PREFERENCES = dict(theme='system', font_size=15, send_key='enter', smooth_stream=True, sidebar_width=272, conversation_width=850, sidebar_sort='recent', sidebar_grouping='project')
 # Window partition sizes are layout preferences, not model parameters: they are
@@ -81,7 +82,8 @@ class SettingsService:
             # Diagnostic responses could contain credentials; never expose raw records.
             api.pop('audio_test_result', None)
             return dict(api=api, local=local, preferences={**PREFERENCES, **raw.get('modern', {}).get('preferences', {})},
-                        analysis=asdict(config.analysis), alignment=asdict(config.alignment))
+                        analysis=asdict(config.analysis), alignment=asdict(config.alignment),
+                        workflow=asdict(WorkflowPolicy.validate(raw.get("modern", {}).get("workflow"))))
 
     @staticmethod
     def merge_section(base, incoming, allowed, *, derived_token_mode=None):
@@ -115,6 +117,11 @@ class SettingsService:
                                                 derived_token_mode=derived_token_mode(obj))
                     for key, value in merged.items():
                         setattr(obj, key, value)
+            raw_workflow = self.raw().get("modern", {}).get("workflow", {})
+            incoming_workflow = (settings or {}).get('workflow', {})
+            if not isinstance(incoming_workflow, dict):
+                raise ValueError('工作流程必须是对象')
+            cfg.workflow = WorkflowPolicy.validate({**raw_workflow, **incoming_workflow})
             cfg.qwen = copy.deepcopy(cfg.local_qwen)
             if cfg.api.locked and not cfg.api.enabled:
                 raise ValueError('云端锁定时不能切换本地模型；请先解除锁定')
@@ -157,6 +164,13 @@ class SettingsService:
                 except (TypeError, ValueError):
                     number = PREFERENCES[name]
                 prefs[name] = min(high, max(low, number))
+            if 'workflow' in settings:
+                workflow = settings['workflow']
+                if not isinstance(workflow, dict):
+                    raise ValueError('工作流程必须是对象')
+                existing = raw.get('modern', {}).get('workflow', {})
+                effective_workflow = WorkflowPolicy.validate({**existing, **workflow})
+                raw.setdefault('modern', {})['workflow'] = {**existing, **asdict(effective_workflow)}
             raw.setdefault('modern', {})['preferences'] = {k: prefs[k] for k in PREFERENCES}
             self.path.parent.mkdir(parents=True, exist_ok=True)
             temporary = None

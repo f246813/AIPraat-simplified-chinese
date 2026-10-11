@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-    Publish a GitHub release (notes + installer) for the AI Praat frontend.
+    Publish a GitHub release (notes + installer + Anki addon) for the AI Praat frontend.
 
 .DESCRIPTION
     Creates a NEW release (and its tag) on the public mirror and attaches the files
-    listed in -Assets (default: the rebuilt installer). It never touches existing
+    listed in -Assets (default: the rebuilt installer and Anki addon). It never touches existing
     releases or their assets: if a release with the same tag already exists the
     script stops unless -AssetOnly is given.
 
@@ -25,7 +25,7 @@
 [CmdletBinding()]
 param(
     [string]$Repo = 'f246813/praat-simplified-chinese-ai',
-    [string]$Tag = 'v7.0-zh.7',
+    [string]$Tag = 'v7.0-zh.8',
     [string]$TargetCommitish = 'modern',
     [string]$Notes = '',
     [string[]]$Assets = @(),
@@ -62,10 +62,11 @@ function Invoke-GitHub {
 }
 
 $root = Split-Path -Parent $PSScriptRoot           # repository root (contains docs\, ai\)
-if (-not $Notes) { $Notes = Join-Path $root 'docs\2026-10-06-release-notes-v7.0-zh.7.md' }
+if (-not $Notes) { $Notes = Join-Path $root 'docs\2026-10-07-release-notes-v7.0-zh.8.md' }
 if (-not $Assets -or $Assets.Count -eq 0) {
     $Assets = @(
-        (Join-Path $root 'AIPraat-install.exe')
+        (Join-Path $root 'AIPraat-install.exe'),
+        (Join-Path $root 'ai\anki_export\AIPraat.ankiaddon')
     )
 }
 

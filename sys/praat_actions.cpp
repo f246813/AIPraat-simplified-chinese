@@ -807,10 +807,7 @@ void praat_actions_show () {
 			}
 		}
 		#if defined (_WIN32)
-			/*
-			 * Keep the work window taller than its viewport when necessary;
-			 * the fixed bottom buttons remain outside the scrolling area.
-			 */
+			/* The fixed bottom buttons remain outside the scrolling area. */
 			GuiControl_setSize (praat_form, GuiControl_getWidth (praat_form), std::max (1, y));
 		#endif
 	}
@@ -829,9 +826,14 @@ void praat_actions_createDynamicMenu (GuiWindow window) {
 	if (theCurrentPraatApplication -> batch)
 		return;
 	#if defined (_WIN32)
-		/* Reserve the menu bar above and fixed command buttons below. */
-		praat_actionScrollWindow = GuiScrolledWindow_createShown (window,
+		/* Enable the new scrollbar layout only for the Objects action column. */
+		praat_actionScrollWindow = GuiScrolledWindow_create (window,
 			-240, -5, Machine_getMenuBarBottom () + 10, -120, 0, 1, 0);
+		GuiObject scrollWidget = praat_actionScrollWindow -> d_widget;
+		scrollWidget -> motiff.scrolledWindow.isObjectActionArea = true;
+		scrollWidget -> motiff.scrolledWindow.horizontalScrollbarPersistence = 0;
+		scrollWidget -> motiff.scrolledWindow.verticalScrollbarPersistence = 1;
+		GuiThing_show (praat_actionScrollWindow);
 		praat_form = GuiForm_createInScrolledWindow (praat_actionScrollWindow);
 	#else
 	praat_form = window;

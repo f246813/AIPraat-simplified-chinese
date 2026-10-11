@@ -10,7 +10,8 @@ import './codex/organization.css';
 type Anchor=Pick<ContextMenuState,'point'|'trigger'>;
 type Editing={section?:HistorySection;session?:Session};
 type TimeGroup={name:string;sessionIds:string[]};
-const groupActionLabels:Record<HistoryGroupAction,string>={delete:'删除分区及其内容',detach:'仅删除分区',archive:'全部归档'};
+type GroupMenuAction=HistoryGroupAction|'clear';
+const groupActionLabels:Record<GroupMenuAction,string>={delete:'删除分区及其内容',detach:'仅删除分区',clear:'删除分区内所有内容',archive:'全部归档'};
 const PINNED='01984de2-8f74-7c91-a3b2-5c5e937cf318';
 export const ordinarySection:HistorySection={id:'',name:'对话历史',appearance:null,builtin:true};
 
@@ -21,13 +22,13 @@ export function useHistoryOrganization(store:ChatStore,archived:boolean,onCreate
   const [editing,setEditing]=useState<Editing>();
   const [confirm,setConfirm]=useState<{section:HistorySection;kind:'archive'|'restore'|'remove'}>();
   const [groupMenu,setGroupMenu]=useState<TimeGroup & {anchor:Anchor}>();
-  const [groupConfirm,setGroupConfirm]=useState<TimeGroup & {action:HistoryGroupAction}>();
+  const [groupConfirm,setGroupConfirm]=useState<TimeGroup & {action:GroupMenuAction}>();
   const [busy,setBusy]=useState(false);const [error,setError]=useState('');
   const [name,setName]=useState('');const [icon,setIcon]=useState('');const [color,setColor]=useState('');
   const edit=(request:Editing)=>{setName(request.section?.name||'');setIcon(request.section?.appearance?.icon||'');setColor(request.section?.appearance?.color||'');setError('');setEditing(request);};
   const action=async(operation:()=>Promise<unknown>,close:()=>void)=>{setBusy(true);setError('');try{await operation();close();}catch(error){setError(error instanceof Error?error.message:String(error));}finally{setBusy(false);}};
   const members=(section:HistorySection,inArchive=archived)=>state.sessions.filter(s=>Boolean(s.archived)===inArchive&&(section.builtin&&section.id===PINNED?Boolean(s.pinned):!s.pinned&&(s.sectionId||'')===section.id));
-  const groupMenuState:ContextMenuState|null=groupMenu?{...groupMenu.anchor,label:`分组操作 ${groupMenu.name}`,items:(['delete','detach','archive'] as const).map(kind=>({id:`group-${kind}`,label:groupActionLabels[kind],icon:kind==='archive'?<Archive size={14}/>:<Trash2 size={14}/>,danger:kind==='delete',separatorBefore:kind==='archive',disabled:state.organizationBusy||busy||(kind!=='detach'&&groupMenu.sessionIds.some(id=>store.running(id)||state.submitting[id])),onSelect:()=>{setError('');setGroupConfirm({...groupMenu,action:kind});}}))}:null;
+  const groupMenuState:ContextMenuState|null=groupMenu?{...groupMenu.anchor,label:`分组操作 ${groupMenu.name}`,items:(['detach','clear','archive','delete'] as const).map(kind=>({id:`group-${kind}`,label:groupActionLabels[kind],icon:kind==='archive'?<Archive size={14}/>:<Trash2 size={14}/>,danger:kind==='delete'||kind==='clear',separatorBefore:kind==='archive',disabled:state.organizationBusy||busy||(kind!=='detach'&&groupMenu.sessionIds.some(id=>store.running(id)||state.submitting[id])),onSelect:()=>{setError('');setGroupConfirm({...groupMenu,action:kind});}}))}:null;
   const menuState:ContextMenuState|null=menu?{...menu.anchor,label:`分区操作 ${menu.section.name}`,items:[
     {id:'edit-section',label:'编辑分区',icon:<Pencil size={14}/>,disabled:menu.section.builtin||state.organizationBusy,onSelect:()=>edit({section:menu.section})},
     {id:'archive-section',label:archived?'恢复分区会话':'归档分区',icon:archived?<ArchiveRestore size={14}/>:<Archive size={14}/>,disabled:state.organizationBusy||!members(menu.section).length||(!archived&&members(menu.section).some(s=>store.running(s.id)||state.submitting[s.id])),onSelect:()=>{setError('');setConfirm({section:menu.section,kind:archived?'restore':'archive'});}},
@@ -50,8 +51,8 @@ export function useHistoryOrganization(store:ChatStore,archived:boolean,onCreate
       <ContextMenu state={menuState} onClose={()=>setMenu(undefined)}/><ContextMenu state={movingState} onClose={()=>setMoving(undefined)}/>
       <ContextMenu state={groupMenuState} onClose={()=>setGroupMenu(undefined)}/>
       {groupConfirm&&<Modal title={groupActionLabels[groupConfirm.action]} onClose={()=>{if(!busy)setGroupConfirm(undefined);}}>
-        <p>{groupConfirm.action==='detach'?`仅删除“${groupConfirm.name}”分区？其中 ${groupConfirm.sessionIds.length} 个会话会保留，并直接显示在上一级。`:groupConfirm.action==='delete'?`删除“${groupConfirm.name}”及其中 ${groupConfirm.sessionIds.length} 个会话？删除后无法在本应用中恢复。`:`归档“${groupConfirm.name}”中的全部 ${groupConfirm.sessionIds.length} 个会话？可从“设置 → 已归档会话”恢复。`}</p>
-        {error&&<p role="alert">{error}</p>}<div className="actions"><button disabled={busy} onClick={()=>setGroupConfirm(undefined)}>取消</button><button aria-label={`确认${groupActionLabels[groupConfirm.action]}`} className={groupConfirm.action==='delete'?'danger':'primary'} disabled={busy||state.organizationBusy} onClick={()=>void action(()=>store.manageGroup(groupConfirm.sessionIds,groupConfirm.action),()=>setGroupConfirm(undefined))}>{busy?'处理中…':'确认'}</button></div>
+        <p>{groupConfirm.action==='detach'?`仅删除“${groupConfirm.name}”分区？其中 ${groupConfirm.sessionIds.length} 个会话会保留，并直接显示在上一级。`:groupConfirm.action==='clear'?`删除“${groupConfirm.name}”中的全部 ${groupConfirm.sessionIds.length} 个会话？删除后无法在本应用中恢复。清空的时间分区会暂时隐藏，有新的会话时自动显示。`:groupConfirm.action==='delete'?`删除“${groupConfirm.name}”及其中 ${groupConfirm.sessionIds.length} 个会话？删除后无法在本应用中恢复。`:`归档“${groupConfirm.name}”中的全部 ${groupConfirm.sessionIds.length} 个会话？可从“设置 → 已归档会话”恢复。`}</p>
+        {error&&<p role="alert">{error}</p>}<div className="actions"><button disabled={busy} onClick={()=>setGroupConfirm(undefined)}>取消</button><button aria-label={`确认${groupActionLabels[groupConfirm.action]}`} className={groupConfirm.action==='delete'||groupConfirm.action==='clear'?'danger':'primary'} disabled={busy||state.organizationBusy} onClick={()=>void action(()=>store.manageGroup(groupConfirm.sessionIds,groupConfirm.action==='clear'?'delete':groupConfirm.action),()=>setGroupConfirm(undefined))}>{busy?'处理中…':'确认'}</button></div>
       </Modal>}
       {editing&&<Modal title={editing.section?'编辑分区':'新建分区'} onClose={()=>{if(!busy)setEditing(undefined);}}>
         <label className="field"><span>分区名称</span><input aria-label="分区名称" autoFocus maxLength={100} value={name} onChange={e=>setName(e.target.value)}/></label>

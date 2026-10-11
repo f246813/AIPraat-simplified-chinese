@@ -1,0 +1,35 @@
+import { act, fireEvent, render, screen, cleanup } from '@testing-library/react';
+import { afterEach, expect, it, vi } from 'vitest';
+import { createDemoAdapter } from '../src/demo';
+import { SettingsDashboard } from '../src/Settings';
+import { ChatStore, applyEvent } from '../src/store';
+import { workflowPresets } from '../src/WorkflowSettings';
+import type { Rpc } from '../src/types';
+afterEach(cleanup);
+it('workflow presets, custom edit, host save and reopen never start model tests',async()=>{
+  const rpc=vi.fn(createDemoAdapter()) as unknown as Rpc;
+  const store=new ChatStore(rpc);await store.initialize();
+  let view=render(<SettingsDashboard store={store} onClose={()=>{}} initialCategory="工作流程"/>);
+  expect((screen.getByLabelText('工作流程预设') as HTMLSelectElement).value).toBe('balanced');
+  fireEvent.change(screen.getByLabelText('工作流程预设'),{target:{value:'deep'}});
+  expect((screen.getByLabelText('L2 阶段时间上限（秒）') as HTMLInputElement).value).toBe('60');
+  expect((screen.getByLabelText('L2 实际请求上限') as HTMLSelectElement).value).toBe('2');
+  fireEvent.click(screen.getByLabelText('L0 专用工具执行'));
+  expect((screen.getByLabelText('工作流程预设') as HTMLSelectElement).value).toBe('custom');
+  await act(async()=>fireEvent.click(screen.getByRole('button',{name:'保存更改'})));
+  expect(store.getSnapshot().boot?.settings.workflow).toEqual({...workflowPresets.deep,preset:'custom',l0_enabled:false});
+  view.unmount();view=render(<SettingsDashboard store={store} onClose={()=>{}} initialCategory="工作流程"/>);
+  expect((screen.getByLabelText('工作流程预设') as HTMLSelectElement).value).toBe('custom');
+  expect((screen.getByLabelText('L0 专用工具执行') as HTMLInputElement).checked).toBe(false);
+  expect((rpc as any).mock.calls.filter(([m]:[string])=>['tasks.submit','tasks.followup','settings.test'].includes(m))).toEqual([]);
+  store.stop();
+});
+it('host result snapshot remains independent of explanation deltas and cancellation',()=>{
+  const results=[{id:'fact',tool:'duration',arguments:{object:1},rows:['总时长 = 1.25 秒'],status:'success',execution:'delivered',source:'original',evidence_ref:0,range:{},reason:''}];
+  let state:any={sessions:[],tasks:{},messages:{s:[]},loading:{},submitting:{},connected:true};
+  state=applyEvent(state,{seq:1,sessionId:'s',taskId:'t',type:'message',payload:{id:'m',role:'assistant',taskId:'t',content:'',status:'running',results,result_content:'总时长 = 1.25 秒'}});
+  state=applyEvent(state,{seq:2,sessionId:'s',taskId:'t',type:'delta',payload:{messageId:'m',text:'解释中'}});
+  state=applyEvent(state,{seq:3,sessionId:'s',taskId:'t',type:'message',payload:{...state.messages.s[0],content:'已取消后续分析',status:'cancelled'}});
+  expect(state.messages.s[0].results).toEqual(results);
+  expect(state.messages.s[0].result_content).toContain('1.25');
+});

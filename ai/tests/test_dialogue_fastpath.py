@@ -43,6 +43,11 @@ class DialoguePolicyTests(unittest.TestCase):
                      '你能帮我测量基频吗', 'measure intensity between 0.1 and 0.3 seconds'):
             with self.subTest(text=text): self.assertIsNone(self.classify(text))
 
+    def test_general_knowledge_marker_keeps_positive_operations_in_analysis(self):
+        for text in ('请解释 F0，这是一般知识问题，另外测量对象 1 的基频。',
+                     '一般知识问题：解释基频，不需要测量我的录音，但删除 Sound 3。'):
+            with self.subTest(text=text): self.assertIsNone(self.classify(text))
+
     def test_unknown_operations_and_references_keep_analysis_pipeline(self):
         for text in ('你好，复制一份','生成一个 1 秒的 220 Hz 正弦音','rename object 7 to sample',
                      'resample to 16000 Hz','再做一次','它的平均值呢？','Explain its average',

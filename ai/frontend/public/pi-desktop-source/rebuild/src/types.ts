@@ -2,7 +2,9 @@ export type Config = Record<string, unknown>;
 import type { ThreadSection } from './codex/protocol/ThreadSection';
 export type HistorySection = ThreadSection & {builtin?: boolean};
 export interface OrganizationSnapshot {sessions: Session[]; sections: HistorySection[]}
-export interface Settings { api: Config; local: Config; preferences: Config; analysis: Config; alignment: Config; [key: string]: unknown }
+export interface WorkflowPolicy extends Config {schema_version:1; preset:'fast'|'balanced'|'deep'|'chat'|'custom'; l0_enabled:boolean; l1_repair_limit:0|1; l2_mode:'off'|'on_demand'|'always'; l2_detail:'brief'|'full'; l2_deadline_sec:number; l2_request_limit:1|2; l3_mode:'off'|'manual'|'auto'; l4_enabled:boolean}
+export interface ResultFact {id:string; tool:string; arguments:Config; rows:string[]; status:string; execution:string; source:string; evidence_ref:number|null; result_valid?:boolean; object?:{id:number;class_name:string;name:string}|null; quantities?:{name:string;value:number;unit:string}[]; range:Config; reason:string}
+export interface Settings { workflow?: WorkflowPolicy; api: Config; local: Config; preferences: Config; analysis: Config; alignment: Config; [key: string]: unknown }
 /** The durable reading position: a message id plus the viewport offset of its top edge. */
 export interface ReadingAnchor { messageId: string; offset: number }
 export interface Session { id: string; title: string; created: string; updated: string; readOnly: boolean; pinned?: boolean; draft: string; scroll: number; anchor?: ReadingAnchor | null; sectionId?: string | null; sectionPosition?: number | null; archived?: boolean; forkedFrom?: string | null; forkedFromTitle?: string | null }
@@ -11,8 +13,8 @@ export interface Session { timeGroupDetached?: boolean }
 export type HistoryGroupAction = 'delete' | 'detach' | 'archive';
 export interface Attachment { id: string; name: string; mime: string; size: number }
 export interface Activity { id: string; type: 'progress' | 'thinking' | 'tool' | 'compression'; text?: string; name?: string; args?: object; result?: unknown; status?: string; execution?: string }
-export interface Message { id: string; role: 'user' | 'assistant'; content: string; status?: 'running' | 'complete' | 'partial' | 'cancelled' | 'failed' | 'interrupted'; taskId?: string; attachments?: Attachment[]; activities?: Activity[] }
-export interface Task { id: string; sessionId: string; status: string; model: string; created: string }
+export interface Message { results?:ResultFact[]; result_content?:string; analysis_content?:string; followup_actions?:('L2'|'L3'|'L4')[]; id: string; role: 'user' | 'assistant'; content: string; status?: 'running' | 'complete' | 'partial' | 'cancelled' | 'failed' | 'interrupted'; taskId?: string; attachments?: Attachment[]; activities?: Activity[] }
+export interface Task { workflow?:WorkflowPolicy; id: string; sessionId: string; status: string; model: string; created: string }
 export interface HostEvent { seq: number; sessionId: string; taskId: string; type: 'task' | 'delta' | 'activity' | 'message'; payload: unknown }
 export interface PraatSnapshot { pid: number; objects: {id: number; className: string; name: string; selected: boolean}[] }
 export interface Bootstrap { sessions: Session[]; sections?: HistorySection[]; settings: Settings; tasks: Task[]; host: {name: string; version: string; cloudAllowed: boolean; praat?: PraatSnapshot | null}; providers: {label: string; base_url: string; model: string; hint: string}[]; models: {id: string; contextWindow: number; maxTokens: number}[] }
@@ -38,6 +40,7 @@ export interface Methods {
   'sessions.delete': [{sessionId: string}, {ok: true}];
   'sessions.view': [{sessionId: string; draft?: string; scroll?: number; anchor?: ReadingAnchor}, {ok: true}];
   'tasks.submit': [{sessionId: string; text: string; attachmentIds?: string[]}, Task];
+  'tasks.followup': [{sessionId:string; sourceTaskId:string; mode:'L2'|'L3'|'L4'}, Task];
   'tasks.cancel': [{taskId: string}, {ok: true}];
   'events.poll': [{after: number}, {events: HostEvent[]; cursor: number; reset?: boolean; navigation?: {id: string; category: '模型'}}];
   'settings.get': [{}, Settings];
