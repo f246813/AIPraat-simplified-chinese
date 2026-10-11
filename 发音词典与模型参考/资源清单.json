@@ -1,0 +1,147 @@
+{
+  "resources": [
+    {
+      "path": "MFA/english_us_arpa/english_us_arpa.zip",
+      "type": "acoustic",
+      "language": "英语（美式 ARPA）",
+      "version": "3.0.0",
+      "url": "https://github.com/MontrealCorpusTools/mfa-models/releases/download/acoustic-english_us_arpa-v3.0.0/english_us_arpa.zip",
+      "source_page": "https://github.com/MontrealCorpusTools/mfa-models/releases/tag/acoustic-english_us_arpa-v3.0.0",
+      "sha256": "d35ce271ded357d833d2f4b8d1041dc3748b9538567ba13f2c697f4e4126711b",
+      "size": 91928208,
+      "license": "CC-BY-4.0"
+    },
+    {
+      "path": "MFA/english_us_arpa/english_us_arpa.dict",
+      "type": "dictionary",
+      "language": "英语（美式 ARPA）",
+      "version": "3.0.0",
+      "url": "https://github.com/MontrealCorpusTools/mfa-models/releases/download/dictionary-english_us_arpa-v3.0.0/english_us_arpa.dict",
+      "source_page": "https://github.com/MontrealCorpusTools/mfa-models/releases/tag/dictionary-english_us_arpa-v3.0.0",
+      "sha256": "e8c6c7b036ae2b7c78d2768b8dc6b1f9359175b842956d00b48c53c9c332e6b0",
+      "size": 7186498,
+      "license": "CC-BY-4.0"
+    },
+    {
+      "path": "MFA/mandarin_mfa/mandarin_mfa.zip",
+      "type": "acoustic",
+      "language": "普通话（中国大陆词典）",
+      "version": "3.0.0",
+      "url": "https://github.com/MontrealCorpusTools/mfa-models/releases/download/acoustic-mandarin_mfa-v3.0.0/mandarin_mfa.zip",
+      "source_page": "https://github.com/MontrealCorpusTools/mfa-models/releases/tag/acoustic-mandarin_mfa-v3.0.0",
+      "sha256": "c4c91c499ada0de35346481d4af69c7328075ddb0ce16a8cfb19fc74d0401199",
+      "size": 92103335,
+      "license": "CC-BY-4.0"
+    },
+    {
+      "path": "MFA/mandarin_mfa/mandarin_china_mfa.dict",
+      "type": "dictionary",
+      "language": "普通话（中国大陆词典）",
+      "version": "3.0.0",
+      "url": "https://github.com/MontrealCorpusTools/mfa-models/releases/download/dictionary-mandarin_china_mfa-v3.0.0/mandarin_china_mfa.dict",
+      "source_page": "https://github.com/MontrealCorpusTools/mfa-models/releases/tag/dictionary-mandarin_china_mfa-v3.0.0",
+      "sha256": "0881d4e338e26509d022992cb5b897ead24a176448f534481238cb3a7fe949f0",
+      "size": 4076905,
+      "license": "CC-BY-4.0"
+    },
+    {
+      "path": "MFA/japanese_mfa/japanese_mfa.zip",
+      "type": "acoustic",
+      "language": "日语",
+      "version": "3.0.0",
+      "url": "https://github.com/MontrealCorpusTools/mfa-models/releases/download/acoustic-japanese_mfa-v3.0.0/japanese_mfa.zip",
+      "source_page": "https://github.com/MontrealCorpusTools/mfa-models/releases/tag/acoustic-japanese_mfa-v3.0.0",
+      "sha256": "85928ffb1024486872a677a92e1fa94d2f997462d0b84c73a58aa9bb0e35179a",
+      "size": 92191596,
+      "license": "CC-BY-4.0"
+    },
+    {
+      "path": "MFA/japanese_mfa/japanese_mfa.dict",
+      "type": "dictionary",
+      "language": "日语",
+      "version": "3.0.0",
+      "url": "https://github.com/MontrealCorpusTools/mfa-models/releases/download/dictionary-japanese_mfa-v3.0.0/japanese_mfa.dict",
+      "source_page": "https://github.com/MontrealCorpusTools/mfa-models/releases/tag/dictionary-japanese_mfa-v3.0.0",
+      "sha256": "4a0c66760576e4b7f3748f3169e7d5217c0135f857f0b5d34637c93a85fd1c91",
+      "size": 21264022,
+      "license": "CC-BY-4.0"
+    },
+    {
+      "path": "Wav2Vec2/wav2vec2-lv-60-espeak-cv-ft/UPSTREAM-MODEL-CARD.md",
+      "type": "model-support",
+      "model": "facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "revision": "ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4",
+      "url": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft/resolve/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/README.md",
+      "source_page": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "sha256": "81a55816a87034bcf0828d6181fa88abad32a0cbfcebc2ebc8b336664b69ba60",
+      "size": 3035,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "Wav2Vec2/wav2vec2-lv-60-espeak-cv-ft/config.json",
+      "type": "model-support",
+      "model": "facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "revision": "ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4",
+      "url": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft/resolve/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/config.json",
+      "source_page": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "sha256": "4609fb49b7e1d28aecb2840da1926c40bd915bc6f1120a940afacf7159bbfb13",
+      "size": 1856,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "Wav2Vec2/wav2vec2-lv-60-espeak-cv-ft/preprocessor_config.json",
+      "type": "model-support",
+      "model": "facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "revision": "ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4",
+      "url": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft/resolve/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/preprocessor_config.json",
+      "source_page": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "sha256": "a2254a5b58f72cd4de3632f8eee64f3f098b7c1402128d2f419e7d00ae13e335",
+      "size": 212,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "Wav2Vec2/wav2vec2-lv-60-espeak-cv-ft/pytorch_model.bin",
+      "type": "weights",
+      "model": "facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "revision": "ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4",
+      "url": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft/resolve/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/pytorch_model.bin",
+      "source_page": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "sha256": "3173bde9e9ce490fa0f989e413c42f25bc1820c020adc1e6b9b87025b3cfcc5e",
+      "size": 1263535127,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "Wav2Vec2/wav2vec2-lv-60-espeak-cv-ft/special_tokens_map.json",
+      "type": "model-support",
+      "model": "facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "revision": "ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4",
+      "url": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft/resolve/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/special_tokens_map.json",
+      "source_page": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "sha256": "bb7068de1150661a10b55f9e4b12a0e77af8bf91f5e45e1b58afaf1d0e17f675",
+      "size": 85,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "Wav2Vec2/wav2vec2-lv-60-espeak-cv-ft/tokenizer_config.json",
+      "type": "model-support",
+      "model": "facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "revision": "ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4",
+      "url": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft/resolve/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/tokenizer_config.json",
+      "source_page": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "sha256": "1273ec458332cc55226ec596904bae811420755ace7e5d69462b61c4f480b457",
+      "size": 321,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "Wav2Vec2/wav2vec2-lv-60-espeak-cv-ft/vocab.json",
+      "type": "model-support",
+      "model": "facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "revision": "ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4",
+      "url": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft/resolve/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/vocab.json",
+      "source_page": "https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft",
+      "sha256": "d732ab2456c0c017930001dc9af0b41b3b93d25b2eb9740bf9d925508d7d87d0",
+      "size": 4637,
+      "license": "Apache-2.0"
+    }
+  ]
+}
