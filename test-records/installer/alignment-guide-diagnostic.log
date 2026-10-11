@@ -2,4 +2,4 @@ PASS repair_available_only_for_runnable_supported_python_missing_dependencies
 PASS path_dialog_shows_arrow_guide_with_missing_dependencies_and_hides_after_success
 FAIL installer_uses_same_guide_and_skip_hides_it: 安装器引导被较长的路径列表遮挡：{X=0,Y=52,Width=1458,Height=30} / {X=0,Y=0,Width=838,Height=84}
 PASS powershell_launch_preserves_unicode_spaces_apostrophes_and_metacharacters
-Screenshots: C:\Users\f2468\AppData\Local\Temp\AIPraat setup 中文 432406d70dfd4ad0acfa4b9ecb2b7f6a
+Screenshots: C:\Users\USER\AppData\Local\Temp\AIPraat setup 中文 432406d70dfd4ad0acfa4b9ecb2b7f6a

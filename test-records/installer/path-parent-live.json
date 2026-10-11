@@ -1,7 +1,7 @@
 {
   "parent_pid": 17980,
-  "executable": "C:\\Users\\f2468\\Desktop\\Praat\\稳定早期版\\AIPraat-paths.exe",
-  "fixture": "C:\\Users\\f2468\\Desktop\\Praat\\稳定早期版\\installer\\verification\\path-parent-live-37be186837634b01b838027a03eb3b06",
+  "executable": "C:\\Users\\USER\\Desktop\\Praat\\稳定早期版\\AIPraat-paths.exe",
+  "fixture": "C:\\Users\\USER\\Desktop\\Praat\\稳定早期版\\installer\\verification\\path-parent-live-37be186837634b01b838027a03eb3b06",
   "checks": [
     {
       "python": "missing-python",
@@ -10,7 +10,7 @@
       "config_unchanged": true
     },
     {
-      "python": "C:\\Users\\f2468\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "python": "C:\\Users\\USER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
       "pid": 16696,
       "alive_after_seconds": 8.0,
       "config_unchanged": true

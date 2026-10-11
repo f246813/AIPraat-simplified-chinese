@@ -1,0 +1,12 @@
+======================================================================
+FAIL: test_general_continue_preflight_matches_actual_dialogue_context (test_staircase_review_fixes.ReviewFixTests.test_general_continue_preflight_matches_actual_dialogue_context)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_staircase_review_fixes.py", line 299, in test_general_continue_preflight_matches_actual_dialogue_context
+    self.assertTrue(original.audio_report_completed)
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 231 tests in 19.814s
+
+FAILED (failures=1)

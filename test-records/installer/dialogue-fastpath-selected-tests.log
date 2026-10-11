@@ -27,7 +27,7 @@ test_runtime_failure_is_a_safe_report_not_an_uncaught_worker_error (test_dialogu
 test_late_delta_after_final_is_ignored (test_dialogue_ui.StreamUiTests.test_late_delta_after_final_is_ignored) ... ok
 test_partial_text_is_visible_and_replaced_by_one_final_message (test_dialogue_ui.StreamUiTests.test_partial_text_is_visible_and_replaced_by_one_final_message) ... ok
 test_real_process_hints_survive_stream_finalization_and_collapse (test_dialogue_ui.StreamUiTests.test_real_process_hints_survive_stream_finalization_and_collapse) ... FAIL
-test_cancelled_socket_does_not_break_the_next_turn (test_dialogue_protocol.DialogueProtocolTests.test_cancelled_socket_does_not_break_the_next_turn) ... C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pydantic\_internal\_generate_schema.py:904: RuntimeWarning: the Tcl interpreter is leaked because it was deallocated in a thread other than the one it was created in (see gh-83274)
+test_cancelled_socket_does_not_break_the_next_turn (test_dialogue_protocol.DialogueProtocolTests.test_cancelled_socket_does_not_break_the_next_turn) ... C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pydantic\_internal\_generate_schema.py:904: RuntimeWarning: the Tcl interpreter is leaked because it was deallocated in a thread other than the one it was created in (see gh-83274)
   get_schema = getattr(obj, '__get_pydantic_core_schema__', None)
 ok
 test_clean_http_eof_without_a_completion_marker_is_partial (test_dialogue_protocol.DialogueProtocolTests.test_clean_http_eof_without_a_completion_marker_is_partial) ... ok
@@ -80,7 +80,7 @@ test_turns_toggle_independently_and_keep_hints_after_the_answer (test_chat_proce
 FAIL: test_real_process_hints_survive_stream_finalization_and_collapse (test_dialogue_ui.StreamUiTests.test_real_process_hints_survive_stream_finalization_and_collapse)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_ui.py", line 65, in test_real_process_hints_survive_stream_finalization_and_collapse
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_ui.py", line 65, in test_real_process_hints_survive_stream_finalization_and_collapse
     self.assertEqual(window.transcript.tag_cget(block.body_tag,'elide'),'1')
     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 1 != '1'

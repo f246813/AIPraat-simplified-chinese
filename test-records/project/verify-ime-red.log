@@ -6,9 +6,9 @@ test_japanese_composition_matches_each_input_at_all_scales (test_ime.NativeImeTe
 FAIL: test_chinese_composition_matches_each_input_at_all_scales (test_ime.NativeImeTests.test_chinese_composition_matches_each_input_at_all_scales)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_ime.py", line 94, in test_chinese_composition_matches_each_input_at_all_scales
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_ime.py", line 94, in test_chinese_composition_matches_each_input_at_all_scales
     self.run_probe('font', 0x804)
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_ime.py", line 88, in run_probe
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_ime.py", line 88, in run_probe
     self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 AssertionError: 1 != 0 : Traceback (most recent call last):
   File "<string>", line 58, in <module>
@@ -19,9 +19,9 @@ AssertionError: Text IME family: System
 FAIL: test_frontend_renders_without_windows_bitmap_scaling (test_ime.NativeImeTests.test_frontend_renders_without_windows_bitmap_scaling)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_ime.py", line 91, in test_frontend_renders_without_windows_bitmap_scaling
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_ime.py", line 91, in test_frontend_renders_without_windows_bitmap_scaling
     self.run_probe('dpi')
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_ime.py", line 88, in run_probe
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_ime.py", line 88, in run_probe
     self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 AssertionError: 1 != 0 : Traceback (most recent call last):
   File "<string>", line 32, in <module>
@@ -32,9 +32,9 @@ AssertionError: Frontend is DPI unaware: 0
 FAIL: test_japanese_composition_matches_each_input_at_all_scales (test_ime.NativeImeTests.test_japanese_composition_matches_each_input_at_all_scales)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_ime.py", line 97, in test_japanese_composition_matches_each_input_at_all_scales
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_ime.py", line 97, in test_japanese_composition_matches_each_input_at_all_scales
     self.run_probe('font', 0x411)
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_ime.py", line 88, in run_probe
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_ime.py", line 88, in run_probe
     self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 AssertionError: 1 != 0 : Traceback (most recent call last):
   File "<string>", line 58, in <module>

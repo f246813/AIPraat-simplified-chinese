@@ -1,0 +1,17 @@
+[WebServer] (node:23592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:8996) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8996) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\ui.spec.ts:4:1 › normal browser is fail-closed, never a demo (10.4s)
+  ok 2 tests\browser\ui.spec.ts:18:1 › rich composer IME, newline, drafts, native attachment tags, session CRUD (4.1s)
+  ok 3 tests\browser\ui.spec.ts:115:1 › settings categories, key preservation, separate fixture tests and unknown capability (2.3s)
+  ok 4 tests\browser\ui.spec.ts:182:1 › long history math/highlight/diagram, reading position, background stream isolation and cancel (7.5s)
+  ok 5 tests\browser\workflow.spec.ts:3:1 › workflow page presets and custom policy save through host fixture (2.0s)
+  ok 6 tests\browser\workflow.spec.ts:52:1 › published result remains readable after explanation cancellation (1.7s)
+
+  6 passed (31.5s)

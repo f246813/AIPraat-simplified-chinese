@@ -24,7 +24,7 @@ test_transport_retry_preserves_first_mutation_authorization (ai.tests.test_stair
 FAIL: test_input_capability_errors_exclude_output_and_tts (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_input_capability_errors_exclude_output_and_tts) (text='This model does not support audio output. Audio input is supported.')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 259, in test_input_capability_errors_exclude_output_and_tts
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 259, in test_input_capability_errors_exclude_output_and_tts
     self.assertEqual(is_audio_unsupported(400, text), expected)
 AssertionError: True != False
 
@@ -32,7 +32,7 @@ AssertionError: True != False
 FAIL: test_input_capability_errors_exclude_output_and_tts (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_input_capability_errors_exclude_output_and_tts) (text='This endpoint does not support TTS, but audio input is supported.')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 259, in test_input_capability_errors_exclude_output_and_tts
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 259, in test_input_capability_errors_exclude_output_and_tts
     self.assertEqual(is_audio_unsupported(400, text), expected)
 AssertionError: True != False
 
@@ -40,7 +40,7 @@ AssertionError: True != False
 FAIL: test_input_capability_errors_exclude_output_and_tts (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_input_capability_errors_exclude_output_and_tts) (text='This model supports audio input but audio output is unsupported.')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 259, in test_input_capability_errors_exclude_output_and_tts
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 259, in test_input_capability_errors_exclude_output_and_tts
     self.assertEqual(is_audio_unsupported(400, text), expected)
 AssertionError: True != False
 
@@ -48,7 +48,7 @@ AssertionError: True != False
 FAIL: test_limited_continuation_excerpts_long_previous_analysis (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_limited_continuation_excerpts_long_previous_analysis)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 278, in test_limited_continuation_excerpts_long_previous_analysis
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 278, in test_limited_continuation_excerpts_long_previous_analysis
     self.assertEqual(len(calls), 1, state.reason)
 AssertionError: 0 != 1 : ��С���������������Ԥ���޷����ɣ�����С��Χ����������������
 

@@ -19,7 +19,7 @@ test_real_audio_probe_retains_code_without_claiming_unsupported (test_api_capabi
 FAIL: test_runtime_rejection_replaces_saved_verified_observation (test_api_capability_status.CapabilityDialogTests.test_runtime_rejection_replaces_saved_verified_observation)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_api_capability_status.py", line 176, in test_runtime_rejection_replaces_saved_verified_observation
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_api_capability_status.py", line 176, in test_runtime_rejection_replaces_saved_verified_observation
     self.assertIn('�ӿ���ȷ��֧����Ƶ����',other.audio_hint.get())
 AssertionError: '�ӿ���ȷ��֧����Ƶ����' not found in 'ģ��Ԥ�裺��֧��ֱ����Ƶ���루�ٷ��ĵ���\n��Ƶʵ�⣺������Ƶ��֤ͨ������������ȷ������ϸ΢�����ж�׼ȷ\n��ǰ���ã�ֱ����Ƶ�����ѹر�'
 
@@ -27,7 +27,7 @@ AssertionError: '�ӿ���ȷ��֧����Ƶ����' not found i
 FAIL: test_saving_failed_probe_cannot_undo_later_runtime_correction (test_api_capability_status.CapabilityDialogTests.test_saving_failed_probe_cannot_undo_later_runtime_correction)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_api_capability_status.py", line 190, in test_saving_failed_probe_cannot_undo_later_runtime_correction
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_api_capability_status.py", line 190, in test_saving_failed_probe_cannot_undo_later_runtime_correction
     self.assertFalse(load_config(self.path).api.audio_input_enabled)
 AssertionError: True is not false
 

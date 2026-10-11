@@ -1,0 +1,142 @@
+tempfile shim OK: C:\Users\USER\AppData\Local\Temp\tmpzm95zhcx ['probe.txt']
+PRAAT_PROGRESS	0.1000	API ģʽ��������ͣ�����ģ�ͷ���ʡ�Դ棩��
+PRAAT_PROGRESS	0.1000	API ģʽ��������ͣ�����ģ�ͷ���ʡ�Դ棩��
+PRAAT_PROGRESS	0.6000	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	1.0000	����ģ�ͷ�����ͣ��
+PRAAT_PROGRESS	0.1000	API ģʽ��������ȡ���ˡ�˳��ͣ�����ģ�ͷ��񡹣��������񱣳ֲ�����
+PRAAT_PROGRESS	1.0000	API ģʽ�������У�����ģ�ͷ������ñ����
+python : ..............................................................................................................
+....................can't invoke "event" command: application has been destroyed
+所在位置 行:1 字符: 192
++ ... nv:PYTHONPATH='ai'; python ..\_diag\run_project_tests.py 2>&1 | Out-F ...
++                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (.................. been destroyed:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+PRAAT_PROGRESS	0.0200	�лر���ģ�ͣ��ر� API ģʽ����
+.........................................invalid command name "1347747188928flush_messages"
+    while executing
+"1347747188928flush_messages"
+    ("after" script)
+invalid command name "1347747194752focus_set"
+    while executing
+"1347747194752focus_set"
+    ("after" script)
+invalid command name "1347745487680flush_messages"
+    while executing
+"1347745487680flush_messages"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+invalid command name "1347745483648focus_set"
+    while executing
+"1347745483648focus_set"
+    ("after" script)
+.invalid command name "1347660464192_restore_status_text"
+    while executing
+"1347660464192_restore_status_text"
+    ("after" script)
+.......................................................................................................................
+................................................EEEE..EE......................................................��ǰ��δ���
+��[REDACTED] [REDACTED]
+
+Python��C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe
+���� Praat ��·��������ѡ���Ѱ�װ pywebview/pythonnet �� Python��
+�����Զ����þɽ������ģ������
+PRAAT_PROGRESS	0.1000	����ֹͣģ�ͷ���
+PRAAT_PROGRESS	1.0000	��ֹͣ��
+.............................E.EEEEEEEEEEE.............................................................................
+............Exception ignored in: <function Variable.__del__ at 0x00000139A9732D40>
+Traceback (most recent call last):
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tkinter\__init__.py", line 4
+14, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Exception ignored in: <function Variable.__del__ at 0x00000139A9732D40>
+Traceback (most recent call last):
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tkinter\__init__.py", line 4
+14, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Exception ignored in: <function Variable.__del__ at 0x00000139A9732D40>
+Traceback (most recent call last):
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tkinter\__init__.py", line 4
+14, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Exception ignored in: <function Variable.__del__ at 0x00000139A9732D40>
+Traceback (most recent call last):
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tkinter\__init__.py", line 4
+14, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Exception ignored in: <function Variable.__del__ at 0x00000139A9732D40>
+Traceback (most recent call last):
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tkinter\__init__.py", line 4
+14, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Exception ignored in: <function Variable.__del__ at 0x00000139A9732D40>
+Traceback (most recent call last):
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tkinter\__init__.py", line 4
+14, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Exception ignored in: <function Variable.__del__ at 0x00000139A9732D40>
+Traceback (most recent call last):
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tkinter\__init__.py", line 4
+14, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Exception ignored in: <function Variable.__del__ at 0x00000139A9732D40>
+Traceback (most recent call last):
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tkinter\__init__.py", line 4
+14, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Exception ignored in: <function Variable.__del__ at 0x00000139A9732D40>
+Traceback (most recent call last):
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tkinter\__init__.py", line 4
+14, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Exception ignored in: <function Variable.__del__ at 0x00000139A9732D40>
+Traceback (most recent call last):
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tkinter\__init__.py", line 4
+14, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Exception ignored in: <function Variable.__del__ at 0x00000139A9732D40>
+Traceback (most recent call last):
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tkinter\__init__.py", line 4
+14, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Exception ignored in: <function Variable.__del__ at 0x00000139A9732D40>
+Traceback (most recent call last):
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\tkinter\__init__.py", line 4
+14, in __del__
+    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: main thread is not in main loop
+Tcl_AsyncDelete: async handler deleted by the wrong thread

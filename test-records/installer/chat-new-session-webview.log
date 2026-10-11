@@ -1,0 +1,22 @@
+{
+  "checks": [
+    "real-WebView2-single-restricted-RPC-React-startup",
+    "opening-selects-blank-new-session-and-preserves-history",
+    "offline-Markdown-code-KaTeX-Mermaid",
+    "background-events-stay-in-origin-session",
+    "cancellation-isolated-and-delivery-facts-preserved",
+    "settings-dashboard-and-credential-redaction",
+    "refresh-keeps-current-session-without-creating-another",
+    "reopening-selects-another-blank-session",
+    "restart-restores-dialogue-without-execution-replay",
+    "resumed-turn-uses-history-and-new-bound-target",
+    "legacy-records-read-only-and-byte-preserved",
+    "all-page-resources-loopback-or-data"
+  ],
+  "execution": "MOCK only",
+  "realCloud": false,
+  "realPraat": false,
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0",
+  "assetRequests": 30,
+  "passed": true
+}

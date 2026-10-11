@@ -1,0 +1,37 @@
+python.exe : test_blocked_attempts_keep_the_real_reason (test_delivery_state.ReportContextTests.test_blocked_attempts_k
+eep_the_real_reason) ... ok
+所在位置 行:10 字符: 1
++ & $py -B -m unittest -v test_delivery_state *> "$root\verify-delivery ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_blocked_at..._reason) ... ok:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test_failure_instructions_appear_only_when_something_failed (test_delivery_state.ReportContextTests.test_failure_instru
+ctions_appear_only_when_something_failed)
+失败说明必须真的能到模型，而且只在本轮有失败记录时才付这笔提示词开销。 ... ok
+test_delivered_without_completion_is_not_confused_with_not_delivered (test_delivery_state.SendScriptContractTests.test_
+delivered_without_completion_is_not_confused_with_not_delivered) ... ok
+test_send_mode_defaults_to_no_declaration_for_other_callers (test_delivery_state.SendScriptContractTests.test_send_mode
+_defaults_to_no_declaration_for_other_callers) ... ok
+test_write_failure_is_reported_as_not_delivered (test_delivery_state.SendScriptContractTests.test_write_failure_is_repo
+rted_as_not_delivered) ... ok
+test_audio_capability_off_skips_the_eager_snapshot (test_delivery_state.StaircaseDeliveryTests.test_audio_capability_of
+f_skips_the_eager_snapshot)
+音频能力关闭时不该为用不上的材料多投一条脚本。 ... ok
+test_blocked_call_is_not_a_second_unknown (test_delivery_state.StaircaseDeliveryTests.test_blocked_call_is_not_a_second
+_unknown)
+本轮已停止投递时，那次调用是「未执行」，不是又一条「状态不明」。 ... ok
+test_delivered_without_completion_still_stops_and_keeps_the_reason (test_delivery_state.StaircaseDeliveryTests.test_del
+ivered_without_completion_still_stops_and_keeps_the_reason)
+送出去了没等到完成标记：停下来，并且保留超时原文。 ... ok
+test_not_delivered_snapshot_does_not_stop_the_measurement (test_delivery_state.StaircaseDeliveryTests.test_not_delivere
+d_snapshot_does_not_stop_the_measurement)
+快照导出「没送出去」之后，vot 仍然要真的投递并取得证据。 ... ok
+test_snapshot_timeout_blocks_further_delivery_as_not_executed (test_delivery_state.StaircaseDeliveryTests.test_snapshot
+_timeout_blocks_further_delivery_as_not_executed)
+快照超时（真的状态不明）之后，后面的调用是「未执行」，不是第二条「状态不明」。 ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.501s
+
+OK

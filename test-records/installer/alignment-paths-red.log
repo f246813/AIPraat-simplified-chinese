@@ -6,4 +6,4 @@ FAIL path_save_round_trips_alignment_and_keeps_api_parameters_with_backup: 对�
 FAIL unchanged_alignment_fields_preserve_other_window_edits: 对齐路径配置尚未实现
 FAIL installer_saves_paths_but_skip_preserves_existing_settings: 对齐路径配置尚未实现
 FAIL installer_backfills_and_gathers_paths_for_resume: 安装器未回填
-RESULT 0 passed, 8 failed; artifacts=C:\Users\f2468\AppData\Local\Temp\AIPraat alignment 中文 e0bf33c736e74ca8a090ce594106c0c9
+RESULT 0 passed, 8 failed; artifacts=C:\Users\USER\AppData\Local\Temp\AIPraat alignment 中文 e0bf33c736e74ca8a090ce594106c0c9

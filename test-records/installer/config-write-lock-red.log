@@ -3,9 +3,9 @@ F
 FAIL: test_api_update_waits_for_foreign_config_writer_and_merges_latest (test_config_write_lock.ConfigWriteLockTest.test_api_update_waits_for_foreign_config_writer_and_merges_latest)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_config_write_lock.py", line 35, in test_api_update_waits_for_foreign_config_writer_and_merges_latest
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_config_write_lock.py", line 35, in test_api_update_waits_for_foreign_config_writer_and_merges_latest
     self.assertNotIn("api", json.loads(path.read_text(encoding="utf-8")))
-AssertionError: 'api' unexpectedly found in {'server': {'llama_server': 'old.exe'}, 'api': {'api_key': 'fixture-key'}}
+AssertionError: 'api' unexpectedly found in {'server': {'llama_server': 'old.exe'}, 'api': {'api_key': '[REDACTED]'}}
 
 ----------------------------------------------------------------------
 Ran 1 test in 0.648s

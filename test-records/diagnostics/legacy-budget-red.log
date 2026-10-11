@@ -1,0 +1,23 @@
+test_general_continue_preflight_matches_actual_dialogue_context (test_staircase_review_fixes.ReviewFixTests.test_general_continue_preflight_matches_actual_dialogue_context) ... FAIL
+test_legacy_report_uses_budgeted_dialogue_excerpt_once (test_staircase_review_fixes.ReviewFixTests.test_legacy_report_uses_budgeted_dialogue_excerpt_once) ... FAIL
+
+======================================================================
+FAIL: test_general_continue_preflight_matches_actual_dialogue_context (test_staircase_review_fixes.ReviewFixTests.test_general_continue_preflight_matches_actual_dialogue_context)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_staircase_review_fixes.py", line 299, in test_general_continue_preflight_matches_actual_dialogue_context
+    self.assertTrue(original.audio_report_completed)
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_legacy_report_uses_budgeted_dialogue_excerpt_once (test_staircase_review_fixes.ReviewFixTests.test_legacy_report_uses_budgeted_dialogue_excerpt_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_staircase_review_fixes.py", line 339, in test_legacy_report_uses_budgeted_dialogue_excerpt_once
+    self.assertTrue(state.metrics.get('report_verified'), state.reason)
+AssertionError: False is not true : 最小报告上下文与输出预留无法容纳，请缩小范围或增加上下文设置
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.084s
+
+FAILED (failures=2)

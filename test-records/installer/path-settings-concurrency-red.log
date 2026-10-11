@@ -12,8 +12,8 @@ PASS invalid_paths_do_not_write_any_files
 PASS concurrent_config_edits_are_merged_from_latest_file
 FAIL model_switch_while_dialog_open_rejects_stale_projection: 旧窗口覆盖了新模型的投影
 FAIL config_writer_lock_prevents_overlapping_path_write: 未与 API/模型写入共享锁
-RESULT 12 passed, 2 failed; artifacts=C:\Users\f2468\AppData\Local\Temp\AIPraat-path-tests-108ca1ead878475da12c956e62ae3a46
-Exception: C:\Users\f2468\Desktop\Praat\稳定早期版\installer\tests\Run-PathTests.ps1:12
+RESULT 12 passed, 2 failed; artifacts=C:\Users\USER\AppData\Local\Temp\AIPraat-path-tests-108ca1ead878475da12c956e62ae3a46
+Exception: C:\Users\USER\Desktop\Praat\稳定早期版\installer\tests\Run-PathTests.ps1:12
 Line |
   12 |  if ($LASTEXITCODE -ne 0) { throw 'Path configuration tests failed.' }
      |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

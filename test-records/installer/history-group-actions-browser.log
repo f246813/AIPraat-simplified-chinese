@@ -1,0 +1,14 @@
+[WebServer] (node:12784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:15148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\history-group-actions.spec.ts:8:1 › right-clicking the smallest time group offers exactly the requested actions (4.0s)
+  ok 2 tests\browser\history-group-actions.spec.ts:68:1 › delete group and contents includes readonly history and leaves other sections intact (2.5s)
+  ok 3 tests\browser\history-group-actions.spec.ts:116:1 › archive all group contents can be restored through the existing archive page (2.1s)
+
+  3 passed (11.5s)

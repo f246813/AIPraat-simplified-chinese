@@ -1,27 +1,27 @@
 Compiled sys/PraatAiControl.cpp
-C:\Users\f2468\Desktop\Praat\稳定早期版\sys\praat.cpp:1929:4: warning: declaration shadows a variable in the global namespace [-Wshadow]
+C:\Users\USER\Desktop\Praat\稳定早期版\sys\praat.cpp:1929:4: warning: declaration shadows a variable in the global namespace [-Wshadow]
  1929 |                         TRACE
       |                         ^
-C:\Users\f2468\Desktop\Praat\稳定早期版\melder/melder_debug.h:54:31: note: expanded from macro 'TRACE'
+C:\Users\USER\Desktop\Praat\稳定早期版\melder/melder_debug.h:54:31: note: expanded from macro 'TRACE'
    54 | #define TRACE  constexpr bool Melder_isTracingLocally = true;   // intentionally shadow a global variable; meant for temporary tracing of a function (to stderr)
       |                               ^
-C:\Users\f2468\Desktop\Praat\稳定早期版\melder/melder_debug.h:26:13: note: previous declaration is here
+C:\Users\USER\Desktop\Praat\稳定早期版\melder/melder_debug.h:26:13: note: previous declaration is here
    26 | inline bool Melder_isTracingLocally = false;
       |             ^
-C:\Users\f2468\Desktop\Praat\稳定早期版\sys\praat.cpp:3189:30: warning: multiple unsequenced modifications to 'i' [-Wunsequenced]
+C:\Users\USER\Desktop\Praat\稳定早期版\sys\praat.cpp:3189:30: warning: multiple unsequenced modifications to 'i' [-Wunsequenced]
  3189 |                 trace (U"digits 1 to 9: ", ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i);
       |                                            ^     ~~
-C:\Users\f2468\Desktop\Praat\稳定早期版\sys\praat.cpp:3195:32: warning: multiple unsequenced modifications to 'i' [-Wunsequenced]
+C:\Users\USER\Desktop\Praat\稳定早期版\sys\praat.cpp:3195:32: warning: multiple unsequenced modifications to 'i' [-Wunsequenced]
  3195 |                 trace (U"digits 1 to 9: ", i ++, i ++, i ++, i ++, i ++, i ++, i ++, i ++, i ++);
       |                                              ^     ~~
-C:\Users\f2468\Desktop\Praat\稳定早期版\sys\praat.cpp:3202:61: warning: multiple unsequenced modifications to 'i' [-Wunsequenced]
+C:\Users\USER\Desktop\Praat\稳定早期版\sys\praat.cpp:3202:61: warning: multiple unsequenced modifications to 'i' [-Wunsequenced]
  3202 |                 snprintf (buffer,40, "digits 1 to 9: %d%d%d%d%d%d%d%d%d", ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i, ++ i);
       |                                                                           ^     ~~
-C:\Users\f2468\Desktop\Praat\稳定早期版\sys\praat.cpp:3206:63: warning: multiple unsequenced modifications to 'i' [-Wunsequenced]
+C:\Users\USER\Desktop\Praat\稳定早期版\sys\praat.cpp:3206:63: warning: multiple unsequenced modifications to 'i' [-Wunsequenced]
  3206 |                 snprintf (buffer,40, "digits 1 to 9: %d%d%d%d%d%d%d%d%d", i ++, i ++, i ++, i ++, i ++, i ++, i ++, i ++, i ++);
       |                                                                             ^     ~~
 5 warnings generated.
 Compiled sys/praat.cpp
 Compiled sys/praat_translate.cpp
 Compiled foned/FunctionEditor.cpp
-Built C:\Users\f2468\Desktop\Praat\稳定早期版\.build-tools\native\Praat.exe
+Built C:\Users\USER\Desktop\Praat\稳定早期版\.build-tools\native\Praat.exe

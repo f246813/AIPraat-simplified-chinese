@@ -1,0 +1,18 @@
+test_low_process_can_create_and_write_workspace (__main__.PythonWorkspaceTests.test_low_process_can_create_and_write_workspace) ... ok
+test_low_process_does_not_depend_on_inaccessible_temp (__main__.PythonWorkspaceTests.test_low_process_does_not_depend_on_inaccessible_temp) ... ok
+test_low_process_initializes_and_balances_com (__main__.PythonWorkspaceTests.test_low_process_initializes_and_balances_com) ... FAIL
+test_low_process_preserves_existing_mta (__main__.PythonWorkspaceTests.test_low_process_preserves_existing_mta) ... ok
+test_normal_process_keeps_standard_temp (__main__.PythonWorkspaceTests.test_normal_process_keeps_standard_temp) ... ok
+
+======================================================================
+FAIL: test_low_process_initializes_and_balances_com (__main__.PythonWorkspaceTests.test_low_process_initializes_and_balances_com)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\installer\tests\PythonWorkspaceTests.py", line 174, in test_low_process_initializes_and_balances_com
+    self.assertEqual(error, 0, f'Known folder query called without COM initialization: {workspace}')
+AssertionError: -2147221008 != 0 : Known folder query called without COM initialization: .
+
+----------------------------------------------------------------------
+Ran 5 tests in 2.339s
+
+FAILED (failures=1)

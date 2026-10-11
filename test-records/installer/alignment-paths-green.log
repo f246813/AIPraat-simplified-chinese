@@ -9,4 +9,4 @@ PASS existing_mfa_path_command_or_conda_ignored_stale_path_keeps_other_paths_edi
 PASS real_install_engine_persists_alignment_paths_and_skip_reinstall_keeps_bytes
 PASS clearing_paths_keeps_flags_and_changed_invalid_path_rejects_without_writing
 PASS installer_backfills_and_gathers_paths_for_resume
-RESULT 11 passed, 0 failed; artifacts=C:\Users\f2468\AppData\Local\Temp\AIPraat alignment 中文 8f40ff658fa84585a208fc13e9941ad9
+RESULT 11 passed, 0 failed; artifacts=C:\Users\USER\AppData\Local\Temp\AIPraat alignment 中文 8f40ff658fa84585a208fc13e9941ad9

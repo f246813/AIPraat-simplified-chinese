@@ -1,0 +1,5 @@
+PASS: early done waits for final object context
+PASS: callback failure is visible before completion
+PASS: pitch_statistics on Sound after failed Harmonicity conversion
+PASS: intensity_statistics on Sound after failed Harmonicity conversion
+PASS: formant_statistics on Sound after failed Harmonicity conversion

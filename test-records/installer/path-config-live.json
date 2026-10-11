@@ -1,6 +1,6 @@
 {
-  "executable": "C:\\Users\\f2468\\Desktop\\Praat\\稳定早期版\\Praat.exe",
-  "fixture": "C:\\Users\\f2468\\AppData\\Local\\Temp\\AIPraat-live-paths-gn0qc8zr",
+  "executable": "C:\\Users\\USER\\Desktop\\Praat\\稳定早期版\\Praat.exe",
+  "fixture": "C:\\Users\\USER\\AppData\\Local\\Temp\\AIPraat-live-paths-gn0qc8zr",
   "checks": [
     "path_menu_immediately_below_add_model",
     "dialog_opens_without_usable_python_with_seven_path_fields",

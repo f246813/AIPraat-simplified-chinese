@@ -13,4 +13,4 @@ PASS invalid_paths_do_not_write_any_files
 PASS concurrent_config_edits_are_merged_from_latest_file
 PASS model_switch_while_dialog_open_rejects_stale_projection
 PASS config_writer_lock_prevents_overlapping_path_write
-RESULT 15 passed, 0 failed; artifacts=C:\Users\f2468\AppData\Local\Temp\AIPraat-path-tests-b52bb4157efa40dcaa78409888046b8d
+RESULT 15 passed, 0 failed; artifacts=C:\Users\USER\AppData\Local\Temp\AIPraat-path-tests-b52bb4157efa40dcaa78409888046b8d

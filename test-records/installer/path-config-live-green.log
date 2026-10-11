@@ -6,4 +6,4 @@ PASS save_keeps_model_api_flags_and_updates_installation
 PASS saved_python_applied_to_current_praat_within_one_second
 PASS saved_python_refills_on_reopen
 PASS new_python_survives_praat_exit_and_dialog_follows_parent
-Artifacts: C:\Users\f2468\AppData\Local\Temp\AIPraat-live-paths-9puxif68
+Artifacts: C:\Users\USER\AppData\Local\Temp\AIPraat-live-paths-9puxif68

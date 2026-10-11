@@ -41,9 +41,9 @@ OK   create_sound: 已创建220.0 Hz 纯音：新建声音（id 2），时长 0.
 OK   duplicate_object: 已复制为：Sound tone 副本（id 2）
 OK   resample_sound: 已重采样为新对象，采样率 16000 Hz（id 2）（原对象保持不变）
 OK   extract_part: 已截取片段：片段（id 2），区间 0.200–0.500 秒，共 0.300 秒
-OK   save_sound: 已保存 WAV 文件：C:/Users/f2468/AppData/Local/Temp/tmpgmyg22ah/save_sound.wav
-OK   read_file: 已读入文件：Sound read_file（C:/Users/f2468/AppData/Local/Temp/tmpgmyg22ah/read_file.wav）
-OK   read_file-missing: 找不到要读取的文件：C:/Users/f2468/AppData/Local/Temp/tmpgmyg22ah/read_file-missing.wav（请检查路径是否存在）
+OK   save_sound: 已保存 WAV 文件：C:/Users/USER/AppData/Local/Temp/tmpgmyg22ah/save_sound.wav
+OK   read_file: 已读入文件：Sound read_file（C:/Users/USER/AppData/Local/Temp/tmpgmyg22ah/read_file.wav）
+OK   read_file-missing: 找不到要读取的文件：C:/Users/USER/AppData/Local/Temp/tmpgmyg22ah/read_file-missing.wav（请检查路径是否存在）
 OK   concatenate_sounds: 已把 Sound tone 和 Sound tone2 拼成：拼接结果（id 3），时长 2.000 秒
 OK   remove_object: 已删除：Sound tone2
 OK   custom_script: 自定义改名完成

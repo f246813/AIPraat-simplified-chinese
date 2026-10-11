@@ -193,7 +193,7 @@ FAIL: test_right_click_in_the_row_gap_above_the_header_still_toggles (test_chat_
 ���������Ϸ������о��û���ַ���@x,y ���ڱ����б�����Ҳ�����ܵ㿪��
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_chat_process_fold.py", line 184, in test_right_click_in_the_row_gap_above_the_header_still_toggles
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_chat_process_fold.py", line 184, in test_right_click_in_the_row_gap_above_the_header_still_toggles
     self.assertTrue(self.collapsed(tag))
 AssertionError: False is not true
 
@@ -202,7 +202,7 @@ FAIL: test_right_click_one_row_below_the_header_expands_the_collapsed_process (t
 ����������һ�е��о࣬ͬһ������ȥҲҪ��չ������������
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_chat_process_fold.py", line 221, in test_right_click_one_row_below_the_header_expands_the_collapsed_process
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_chat_process_fold.py", line 221, in test_right_click_one_row_below_the_header_expands_the_collapsed_process
     self.assertFalse(self.collapsed(tag))
 AssertionError: True is not false
 

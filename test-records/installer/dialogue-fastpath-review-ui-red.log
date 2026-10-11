@@ -6,7 +6,7 @@ test_real_process_hints_survive_stream_finalization_and_collapse (test_dialogue_
 FAIL: test_real_process_hints_survive_stream_finalization_and_collapse (test_dialogue_ui.StreamUiTests.test_real_process_hints_survive_stream_finalization_and_collapse)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_ui.py", line 61, in test_real_process_hints_survive_stream_finalization_and_collapse
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_ui.py", line 61, in test_real_process_hints_survive_stream_finalization_and_collapse
     self.assertIn('first process hint',text)
 AssertionError: 'first process hint' not found in 'existing user message\n已完成，用时0分1秒  ▾\nfinal answer\n\n'
 

@@ -4,7 +4,7 @@ test_create_rename_save_keeps_successful_operation_records (ai.tests.test_stairc
 FAIL: test_create_rename_save_keeps_successful_operation_records (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_create_rename_save_keeps_successful_operation_records)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 372, in test_create_rename_save_keeps_successful_operation_records
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 372, in test_create_rename_save_keeps_successful_operation_records
     self.assertEqual(len(scripts), 3, window.analysis_state.reason)
 AssertionError: 2 != 3 : �����б���û�С�2��������ȷ�� Praat ��ѡ�еĶ���
 

@@ -4,7 +4,7 @@ test_fast_workflow_does_not_prepare_praat_or_task_materials (test_dialogue_strea
 FAIL: test_fast_workflow_does_not_prepare_praat_or_task_materials (test_dialogue_stream.DialogueStreamTests.test_fast_workflow_does_not_prepare_praat_or_task_materials)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 113, in test_fast_workflow_does_not_prepare_praat_or_task_materials
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 113, in test_fast_workflow_does_not_prepare_praat_or_task_materials
     self.assertEqual(turns[0]['goal'],'what can u do for me?')
 AssertionError: '[凭据已隐藏]w[凭据已隐藏]h[凭据已隐藏]a[凭据已隐藏]t[凭据已隐藏] [[130 chars]已隐藏]' != 'what can u do for me?'
 - [凭据已隐藏]w[凭据已隐藏]h[凭据已隐藏]a[凭据已隐藏]t[凭据已隐藏] [凭据已隐藏]c[凭据已隐藏]a[凭据已隐藏]n[凭据已隐藏] [凭据已隐藏]u[凭据已隐藏] [凭据已隐藏]d[凭据已隐藏]o[凭据已隐藏] [凭据已隐藏]f[凭据已隐藏]o[凭据已隐藏]r[凭据已隐藏] [凭据已隐藏]m[凭据已隐藏]e[凭据已隐藏]?[凭据已隐藏]

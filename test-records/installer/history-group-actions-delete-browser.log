@@ -1,0 +1,20 @@
+[WebServer] (node:7112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:16196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\session-menu.spec.ts:2:1 › Pi extracted session menu: toggle, keyboard, outside, scroll, right click, pin and legacy guards (4.2s)
+  ok 2 tests\browser\session-menu.spec.ts:96:1 › running session cannot delete but may pin; narrow viewport and exact 6px scrollbar (4.6s)
+(node:17028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 tests\browser\sidebar.spec.ts:7:1 › Pi session sidebar: grouping, sorting, preview and keyboard navigation (7.2s)
+  ok 4 tests\browser\sidebar.spec.ts:111:1 › Pi multiple selection: modifier clicks preserve active chat and readonly protection (7.9s)
+  ok 5 tests\browser\sidebar.spec.ts:193:1 › native sidebar scrollbar has a wide pointer lane and drags independently of sidebar resizing (8.5s)
+
+  5 passed (36.8s)

@@ -17,7 +17,7 @@ test_transport_retry_preserves_first_mutation_authorization (ai.tests.test_stair
 FAIL: test_audio_observation_and_previous_report_survive_continuation (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_audio_observation_and_previous_report_survive_continuation)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 125, in test_audio_observation_and_previous_report_survive_continuation
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 125, in test_audio_observation_and_previous_report_survive_continuation
     self.assertIn('OBS-R7', prompt)
 AssertionError: 'OBS-R7' not found in ''
 
@@ -25,20 +25,20 @@ AssertionError: 'OBS-R7' not found in ''
 FAIL: test_confirmed_rename_keeps_bound_id_range_for_next_save (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_confirmed_rename_keeps_bound_id_range_for_next_save)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 231, in test_confirmed_rename_keeps_bound_id_range_for_next_save
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 231, in test_confirmed_rename_keeps_bound_id_range_for_next_save
     process_cloud(window, goal)
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\praat_ai\cloud_workflow.py", line 214, in process_cloud
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\praat_ai\cloud_workflow.py", line 214, in process_cloud
     run_cloud_turn(config, state, execute_action=execute_action, cancel=window.cancel_event,
-  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1139, in __call__
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1139, in __call__
     return self._mock_call(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1143, in _mock_call
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1143, in _mock_call
     return self._execute_mock_call(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1204, in _execute_mock_call
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1204, in _execute_mock_call
     result = effect(*args, **kwargs)
              ^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 227, in cloud
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 227, in cloud
     self.assertTrue(save.ok, save.observation)
 AssertionError: False is not true : ԭĿ���������ʧ�����ݸı䣻δ�滻Ϊ��ǰѡ�еĶ���
 
@@ -46,7 +46,7 @@ AssertionError: False is not true : ԭĿ���������ʧ����
 FAIL: test_general_continuation_with_no_evidence_routes_to_l4 (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_general_continuation_with_no_evidence_routes_to_l4)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 173, in test_general_continuation_with_no_evidence_routes_to_l4
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 173, in test_general_continuation_with_no_evidence_routes_to_l4
     self.assertEqual(planning, [False])
 AssertionError: Lists differ: [True, False] != [False]
 
@@ -65,7 +65,7 @@ False
 FAIL: test_input_capability_errors_exclude_output_and_tts (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_input_capability_errors_exclude_output_and_tts) (text='This model does not support audio output')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 189, in test_input_capability_errors_exclude_output_and_tts
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 189, in test_input_capability_errors_exclude_output_and_tts
     self.assertEqual(is_audio_unsupported(400, text), expected)
 AssertionError: True != False
 
@@ -73,7 +73,7 @@ AssertionError: True != False
 FAIL: test_input_capability_errors_exclude_output_and_tts (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_input_capability_errors_exclude_output_and_tts) (text='This endpoint does not support audio generation or TTS')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 189, in test_input_capability_errors_exclude_output_and_tts
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 189, in test_input_capability_errors_exclude_output_and_tts
     self.assertEqual(is_audio_unsupported(400, text), expected)
 AssertionError: True != False
 
@@ -81,7 +81,7 @@ AssertionError: True != False
 FAIL: test_input_capability_errors_exclude_output_and_tts (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_input_capability_errors_exclude_output_and_tts) (text='ģ�Ͳ�֧����Ƶ���')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 189, in test_input_capability_errors_exclude_output_and_tts
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 189, in test_input_capability_errors_exclude_output_and_tts
     self.assertEqual(is_audio_unsupported(400, text), expected)
 AssertionError: True != False
 
@@ -89,7 +89,7 @@ AssertionError: True != False
 FAIL: test_invalid_report_still_records_audio_request_and_response (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_invalid_report_still_records_audio_request_and_response)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 139, in test_invalid_report_still_records_audio_request_and_response
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 139, in test_invalid_report_still_records_audio_request_and_response
     self.assertTrue(getattr(state, 'audio_sent', False))
 AssertionError: False is not true
 
@@ -97,7 +97,7 @@ AssertionError: False is not true
 FAIL: test_persisted_input_fact_does_not_depend_on_report_success (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_persisted_input_fact_does_not_depend_on_report_success)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 255, in test_persisted_input_fact_does_not_depend_on_report_success
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 255, in test_persisted_input_fact_does_not_depend_on_report_success
     self.assertTrue(record['audio_input'])
 AssertionError: False is not true
 
@@ -105,7 +105,7 @@ AssertionError: False is not true
 FAIL: test_successful_measurement_gap_escalates_once_on_shared_budget (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_successful_measurement_gap_escalates_once_on_shared_budget)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 91, in test_successful_measurement_gap_escalates_once_on_shared_budget
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 91, in test_successful_measurement_gap_escalates_once_on_shared_budget
     self.assertEqual(inputs, [False, False, False, True])
 AssertionError: Lists differ: [False, False, False] != [False, False, False, True]
 
@@ -122,7 +122,7 @@ True
 FAIL: test_transport_retry_preserves_first_mutation_authorization (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_transport_retry_preserves_first_mutation_authorization)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 159, in test_transport_retry_preserves_first_mutation_authorization
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 159, in test_transport_retry_preserves_first_mutation_authorization
     self.assertEqual(len(dispatched), 1, state.attempts)
 AssertionError: 0 != 1 : [{'tool': 'rename_object', 'arguments': {'new_name': 'new', 'object': 1}, 'status': 'not_executed', 'reason': 'δ��Ȩ׷�Ӷ������'}, {'tool': 'rename_object', 'arguments': {'new_name': 'extra', 'object': 1}, 'status': 'not_executed', 'reason': 'δ��Ȩ׷�Ӷ������'}]
 

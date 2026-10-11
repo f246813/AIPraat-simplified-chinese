@@ -1,0 +1,131 @@
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.1000	API 模式：设置里取消了「顺手停掉本机模型服务」，本机服务保持不动。
+PRAAT_PROGRESS	1.0000	API 模式仍在运行；本机模型服务按设置保留。
+PRAAT_PROGRESS	0.1000	正在停止模型服务…
+PRAAT_PROGRESS	1.0000	已停止。
+PRAAT_PROGRESS	0.0500	停止旧的模型服务…
+PRAAT_PROGRESS	0.1500	等待端口释放…
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	停止旧的模型服务…
+PRAAT_PROGRESS	0.1500	等待端口释放…
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.1000	当前是 API 模式，不需要本机模型服务。
+PRAAT_PROGRESS	1.0000	已就绪：deepseek-chat（云端）
+PRAAT_PROGRESS	0.1000	当前是 API 模式，不需要本机模型服务。
+PRAAT_PROGRESS	1.0000	已就绪：deepseek-chat（云端）
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.1000	API 模式：设置里取消了「顺手停掉本机模型服务」，本机服务保持不动。
+PRAAT_PROGRESS	1.0000	API 模式仍在运行；本机模型服务按设置保留。
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	0.1000	正在停止模型服务…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	已停止。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+python.exe : ..........................................................................................................
+......................................F............FF..................................................................
+.......................................................................................................................
+.......................................................................................................................
+.......................................................................................................................
+.....................................
+所在位置 行:1 字符: 209
++ ... NG='utf-8'; & 'D:/Praat-work/venv-ai/Scripts/python.exe' -B -m unitte ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (.................................:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+======================================================================
+FAIL: test_statistics_tools_use_the_editor_selection (test_chat_tools.EditorSelectionRangeTests.test_statistics_tools_u
+se_the_editor_selection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Praat-work\稳定早期版\ai\tests\test_chat_tools.py", line 999, in test_statistics_tools_use_the_editor_selection
+    self.assertTrue(written[-1].endswith("rangeNote$"), name)
+AssertionError: False is not true : pitch_statistics
+
+======================================================================
+FAIL: test_pitch_statistics_reports_time_of_maximum (test_chat_tools.NewToolTests.test_pitch_statistics_reports_time_of
+_maximum)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Praat-work\稳定早期版\ai\tests\test_chat_tools.py", line 703, in test_pitch_statistics_reports_time_of_maximum
+    self.assertIn('Get time of maximum: tmin, tmax, "Hertz", "Parabolic"', script)
+AssertionError: 'Get time of maximum: tmin, tmax, "Hertz", "Parabolic"' not found in 'selectObject: 1\nduration = Get t
+otal duration\ntmin = 0\ntmax = duration\nrangeNote$ = ""\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tm
+ax = duration\nendif\nif tmin > tmax\n    exitScript: "查询范围无效或超出对象时长，请在对象内重新指定起止时间。"\nendif\nTo Pitch: 0, 75.000000, 60
+0.000000\nRename: "ai-chat-temp"\nnFrames = Get number of frames\nmedian = Get quantile: tmin, tmax, 0.5, "Hertz"\nmini
+mum = undefined\nmaximum = undefined\nmaxtime = undefined\npitchLimit$ = ""\nif median <> undefined\n    firstFrame = G
+et frame number from time: tmin\n    lastFrame = Get frame number from time: tmax\n    if firstFrame < 1\n        first
+Frame = 1\n    endif\n    if lastFrame > nFrames\n        lastFrame = nFrames\n    endif\n    ceilingValue = median * 1
+.5\n    floorValue = median * 0.5\n    highest = 0\n    lowest = 0\n    for pitchFrame from firstFrame to lastFrame\n  
+      frameValue = Get value in frame: pitchFrame, "Hertz"\n        if frameValue <> undefined and frameValue <= ceilin
+gValue and frameValue > highest\n            highest = frameValue\n            maxtime = Get time from frame number: pi
+tchFrame\n        endif\n        if frameValue <> undefined and frameValue >= floorValue\n            if lowest = 0 or 
+frameValue < lowest\n                lowest = frameValue\n            endif\n        endif\n    endfor\n    if highest 
+> 0\n        maximum = highest\n    endif\n    if lowest > 0\n        minimum = lowest\n    endif\nendif\nrawMaximum = 
+Get maximum: tmin, tmax, "Hertz", "Parabolic"\nif rawMaximum <> undefined and median <> undefined and rawMaximum > medi
+an * 1.5\n    pitchLimit$ = "（该区间有一帧被自相关误判成 " + fixed$ (rawMaximum, 1) + " Hz，约为中位数 " + fixed$ (median, 1) + " Hz 的 " +
+ fixed$ (rawMaximum / median, 1) + " 倍，已按倍频误判剔除）"\nendif\nmean = Get mean: tmin, tmax, "Hertz"\nif mean = undefined\nap
+pendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp5lwwzn8b/chat_result.tsv", "基频统计（", fixed$ (tmin, 3), "–", fixed$ (
+tmax, 3), " 秒）无法计算：该区间没有周期性声源（可能是无声段或清音）", rangeNote$\nelse\nif minimum = undefined or maximum = undefined\nappendFileL
+ine: "C:/Users/USER/AppData/Local/Temp/tmp5lwwzn8b/chat_result.tsv", "基频统计（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3),
+ " 秒）：平均 ", fixed$ (mean, 3), " Hz（这一段里没有可信的最高/最低值）", rangeNote$, pitchLimit$\nelse\nappendFileLine: "C:/Users/USER/Ap
+pData/Local/Temp/tmp5lwwzn8b/chat_result.tsv", "基频统计（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mea
+n, 3), " Hz，最低 ", fixed$ (minimum, 3), " Hz，最高 ", fixed$ (maximum, 3), " Hz，最高点出现在 ", fixed$ (maxtime, 3), " 秒", rangeN
+ote$, pitchLimit$\nendif\nendif\nRemove\nselectObject: 1\nappendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp5lwwzn8
+b/chat_state.txt", "done"\n'
+
+======================================================================
+FAIL: test_pitch_statistics_uses_mean_min_max (test_chat_tools.NewToolTests.test_pitch_statistics_uses_mean_min_max)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Praat-work\稳定早期版\ai\tests\test_chat_tools.py", line 651, in test_pitch_statistics_uses_mean_min_max
+    self.assertIn('Get minimum: tmin, tmax, "Hertz", "Parabolic"', script)
+AssertionError: 'Get minimum: tmin, tmax, "Hertz", "Parabolic"' not found in 'selectObject: 1\nduration = Get total dur
+ation\ntmin = 0\ntmax = duration\nrangeNote$ = ""\ntmin = 0.100000\ntmax = 0.600000\nif tmin < 0\n    tmin = 0\nendif\n
+if tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: "查询范围无效或超出对象时长，请在对象内重新指定起止时间。"\nendif\n
+To Pitch: 0, 75.000000, 600.000000\nRename: "ai-chat-temp"\nnFrames = Get number of frames\nmedian = Get quantile: tmin
+, tmax, 0.5, "Hertz"\nminimum = undefined\nmaximum = undefined\nmaxtime = undefined\npitchLimit$ = ""\nif median <> und
+efined\n    firstFrame = Get frame number from time: tmin\n    lastFrame = Get frame number from time: tmax\n    if fir
+stFrame < 1\n        firstFrame = 1\n    endif\n    if lastFrame > nFrames\n        lastFrame = nFrames\n    endif\n   
+ ceilingValue = median * 1.5\n    floorValue = median * 0.5\n    highest = 0\n    lowest = 0\n    for pitchFrame from f
+irstFrame to lastFrame\n        frameValue = Get value in frame: pitchFrame, "Hertz"\n        if frameValue <> undefine
+d and frameValue <= ceilingValue and frameValue > highest\n            highest = frameValue\n            maxtime = Get 
+time from frame number: pitchFrame\n        endif\n        if frameValue <> undefined and frameValue >= floorValue\n   
+         if lowest = 0 or frameValue < lowest\n                lowest = frameValue\n            endif\n        endif\n 
+   endfor\n    if highest > 0\n        maximum = highest\n    endif\n    if lowest > 0\n        minimum = lowest\n    e
+ndif\nendif\nrawMaximum = Get maximum: tmin, tmax, "Hertz", "Parabolic"\nif rawMaximum <> undefined and median <> undef
+ined and rawMaximum > median * 1.5\n    pitchLimit$ = "（该区间有一帧被自相关误判成 " + fixed$ (rawMaximum, 1) + " Hz，约为中位数 " + fixed
+$ (median, 1) + " Hz 的 " + fixed$ (rawMaximum / median, 1) + " 倍，已按倍频误判剔除）"\nendif\nmean = Get mean: tmin, tmax, "Hertz
+"\nif mean = undefined\nappendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpcsbutphe/chat_result.tsv", "基频统计（", fixed
+$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）无法计算：该区间没有周期性声源（可能是无声段或清音）", rangeNote$\nelse\nif minimum = undefined or maximu
+m = undefined\nappendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpcsbutphe/chat_result.tsv", "基频统计（", fixed$ (tmin, 
+3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 3), " Hz（这一段里没有可信的最高/最低值）", rangeNote$, pitchLimit$\nelse\nappendFi
+leLine: "C:/Users/USER/AppData/Local/Temp/tmpcsbutphe/chat_result.tsv", "基频统计（", fixed$ (tmin, 3), "–", fixed$ (tmax, 
+3), " 秒）：平均 ", fixed$ (mean, 3), " Hz，最低 ", fixed$ (minimum, 3), " Hz，最高 ", fixed$ (maximum, 3), " Hz，最高点出现在 ", fixed$ 
+(maxtime, 3), " 秒", rangeNote$, pitchLimit$\nendif\nendif\nRemove\nselectObject: 1\nappendFileLine: "C:/Users/USER/App
+Data/Local/Temp/tmpcsbutphe/chat_state.txt", "done"\n'
+
+----------------------------------------------------------------------
+Ran 619 tests in 67.448s
+
+FAILED (failures=3)

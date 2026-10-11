@@ -1,5 +1,5 @@
 {
-  "praat": "C:\\Users\\f2468\\Desktop\\Praat\\稳定早期版\\Praat.exe",
+  "praat": "C:\\Users\\USER\\Desktop\\Praat\\稳定早期版\\Praat.exe",
   "pids": [
     804
   ],
@@ -7,7 +7,7 @@
     {
       "check": "Praat 消息文件可写（2026-10-02 的故障点）",
       "ok": true,
-      "detail": "C:\\Users\\f2468\\AppData\\Roaming\\Praat\\Message.txt"
+      "detail": "C:\\Users\\USER\\AppData\\Roaming\\Praat\\Message.txt"
     },
     {
       "check": "对象列表刷新（真实投递 Message.txt + WM_APP）",
@@ -47,7 +47,7 @@
     {
       "check": "写不进消息文件 → NOT_DELIVERED（不是状态不明）",
       "ok": true,
-      "detail": "['not_delivered'] 无法写入 Praat 消息文件（C:\\Users\\f2468\\AppData\\Roaming\\Praat）：[Errno 13] Permission denied: 'C:\\\\Users\\\\f2468\\\\AppData\\\\Roaming\\\\Praat'"
+      "detail": "['not_delivered'] 无法写入 Praat 消息文件（C:\\Users\\USER\\AppData\\Roaming\\Praat）：[Errno 13] Permission denied: 'C:\\\\Users\\\\USER\\\\AppData\\\\Roaming\\\\Praat'"
     },
     {
       "check": "报告上下文带上真实失败原因",

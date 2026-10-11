@@ -1,0 +1,6 @@
+Parent PID: 6524
+Process.HasExited failed: System.ArgumentException: ID 为 6524 的进程当前未运行。
+   在 System.Diagnostics.Process.GetProcessById(Int32 processId, String machineName)
+   在 PathSettingsParentTests.Main(String[] args)
+PASS dialog stays open across six parent checks
+PASS dialog closes when its parent actually exits

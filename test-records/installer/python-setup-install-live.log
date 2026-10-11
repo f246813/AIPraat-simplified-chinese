@@ -1,10 +1,10 @@
-配置所选 Python：C:\Users\f2468\Desktop\Praat\稳定早期版\installer\verification\python_setup_missing\Scripts\python.exe
+配置所选 Python：C:\Users\USER\Desktop\Praat\稳定早期版\installer\verification\python_setup_missing\Scripts\python.exe
 Traceback (most recent call last):
   File "<string>", line 1, in <module>
 NameError: name 'pip' is not defined. Did you mean: 'zip'?
 正在配置 pip…
-Looking in links: c:\Users\f2468\AppData\Local\Temp\tmpx53dj8qd
-Processing c:\users\f2468\appdata\local\temp\tmpx53dj8qd\pip-25.0.1-py3-none-any.whl
+Looking in links: c:\Users\USER\AppData\Local\Temp\tmpx53dj8qd
+Processing c:\users\USER\appdata\local\temp\tmpx53dj8qd\pip-25.0.1-py3-none-any.whl
 Installing collected packages: pip
 Successfully installed pip-25.0.1
 正在安装 Pillow >= 10、NumPy >= 2…

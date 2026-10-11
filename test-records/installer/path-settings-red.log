@@ -8,8 +8,8 @@ FAIL save_syncs_installation_preferences_result_and_config: 路径配置功能�
 FAIL locked_preferences_roll_back_config_and_install_settings: 路径配置功能尚未实现：PathSettings
 FAIL invalid_paths_do_not_write_any_files: 路径配置功能尚未实现：PathSettings
 FAIL concurrent_config_edits_are_merged_from_latest_file: 路径配置功能尚未实现：PathSettings
-RESULT 0 passed, 10 failed; artifacts=C:\Users\f2468\AppData\Local\Temp\AIPraat-path-tests-1656f27d43504624a2dbbf74384f2a34
-Exception: C:\Users\f2468\Desktop\Praat\稳定早期版\installer\tests\Run-PathTests.ps1:12
+RESULT 0 passed, 10 failed; artifacts=C:\Users\USER\AppData\Local\Temp\AIPraat-path-tests-1656f27d43504624a2dbbf74384f2a34
+Exception: C:\Users\USER\Desktop\Praat\稳定早期版\installer\tests\Run-PathTests.ps1:12
 Line |
   12 |  if ($LASTEXITCODE -ne 0) { throw 'Path configuration tests failed.' }
      |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

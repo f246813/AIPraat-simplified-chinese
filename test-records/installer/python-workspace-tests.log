@@ -1,0 +1,10 @@
+test_low_process_can_create_and_write_workspace (__main__.PythonWorkspaceTests.test_low_process_can_create_and_write_workspace) ... ok
+test_low_process_does_not_depend_on_inaccessible_temp (__main__.PythonWorkspaceTests.test_low_process_does_not_depend_on_inaccessible_temp) ... ok
+test_low_process_initializes_and_balances_com (__main__.PythonWorkspaceTests.test_low_process_initializes_and_balances_com) ... ok
+test_low_process_preserves_existing_mta (__main__.PythonWorkspaceTests.test_low_process_preserves_existing_mta) ... ok
+test_normal_process_keeps_standard_temp (__main__.PythonWorkspaceTests.test_normal_process_keeps_standard_temp) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 3.193s
+
+OK

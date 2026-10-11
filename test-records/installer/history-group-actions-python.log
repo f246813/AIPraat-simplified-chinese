@@ -1,0 +1,19 @@
+.......E....
+======================================================================
+ERROR: test_running_member_or_missing_id_prevents_partial_group_changes (test_modern_organization.HistoryOrganizationTests.test_running_member_or_missing_id_prevents_partial_group_changes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_modern_organization.py", line 49, in test_running_member_or_missing_id_prevents_partial_group_changes
+    self.assertEqual(len(self.rpc('bootstrap')['sessions']),2)
+                         ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_modern_organization.py", line 22, in rpc
+    def rpc(self, method, **params): return self.app.rpc(method,params)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\praat_ai\modern_app.py", line 506, in rpc
+    raise ValueError(safe_error(error, cfg.qwen.api_key)) from None
+ValueError: 'model'
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.675s
+
+FAILED (errors=1)

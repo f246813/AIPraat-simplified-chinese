@@ -1,0 +1,2127 @@
+python.exe : test_bare_done_is_never_shown_to_the_user (test_agent_loop.EmptyAnswerTests.test_bare_done_is_never_shown_
+to_the_user) ... ok
+所在位置 行:1 字符: 384
++ ... aat\稳定早期版"; & $py -B -m unittest discover -s ai/tests -v 1> "verify-p ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_bare_done_...he_user) ... ok:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test_empty_answer_is_asked_again (test_agent_loop.EmptyAnswerTests.test_empty_answer_is_asked_again) ... ok
+test_reasoning_only_message_is_used_as_the_answer (test_agent_loop.EmptyAnswerTests.test_reasoning_only_message_is_used
+_as_the_answer)
+思考型模型把答案只放在 reasoning_content 里时也要显示出来。 ... ok
+test_results_are_kept_when_the_model_stays_silent (test_agent_loop.EmptyAnswerTests.test_results_are_kept_when_the_mode
+l_stays_silent) ... ok
+test_json_plan_is_executed_and_observed (test_agent_loop.JsonPlannerTests.test_json_plan_is_executed_and_observed) ... 
+ok
+test_later_step_runs_after_the_first_result (test_agent_loop.MultiStepTests.test_later_step_runs_after_the_first_result
+) ... ok
+test_several_actions_in_one_round_are_each_executed (test_agent_loop.MultiStepTests.test_several_actions_in_one_round_a
+re_each_executed)
+模型一轮给两个调用（「0.25 和 0.75 秒的基频」），两个都要执行。 ... ok
+test_bad_argument_goes_back_to_the_model (test_agent_loop.ObservationTests.test_bad_argument_goes_back_to_the_model) ..
+. ok
+test_execution_failure_goes_back_to_the_model (test_agent_loop.ObservationTests.test_execution_failure_goes_back_to_the
+_model) ... ok
+test_render_error_uses_the_model_script_and_notes_it (test_agent_loop.ObservationTests.test_render_error_uses_the_model
+_script_and_notes_it)
+工具拒绝、但模型同时给了脚本时，用脚本兜底并把这件事说给用户。 ... ok
+test_repeated_identical_action_runs_once (test_agent_loop.ObservationTests.test_repeated_identical_action_runs_once)
+同一个动作在一轮里出现多次（小模型会这样）只执行一次。 ... ok
+test_round_cap_asks_for_a_text_answer (test_agent_loop.ObservationTests.test_round_cap_asks_for_a_text_answer)
+模型一直要工具：到上限就强制要一次纯文本回答，不会无限循环。 ... ok
+test_script_error_still_shows_its_result_line (test_agent_loop.ObservationTests.test_script_error_still_shows_its_resul
+t_line)
+脚本在 Praat 里报错时，Praat 写回来的那行错误说明要显示给用户。 ... ok
+test_second_round_cannot_mutate_without_being_asked (test_agent_loop.ObservationTests.test_second_round_cannot_mutate_w
+ithout_being_asked)
+用户只说了一件事时，第二轮想改动对象的动作会被拦下（0.8B 预设实测会这样）。 ... ok
+test_second_round_may_read_even_without_being_asked (test_agent_loop.ObservationTests.test_second_round_may_read_even_w
+ithout_being_asked)
+只读查询不受这条护栏限制（多量一个数不会改坏任何东西）。 ... ok
+test_total_step_cap_stops_a_runaway_model (test_agent_loop.ObservationTests.test_total_step_cap_stops_a_runaway_model)
+模型每轮都换着参数调工具：总步数到上限就停，别把用户的 Praat 改花。 ... ok
+test_empty_reply_falls_back_to_the_results (test_agent_loop.SecondRoundTests.test_empty_reply_falls_back_to_the_results
+) ... ok
+test_plain_answer_does_not_execute_anything (test_agent_loop.SecondRoundTests.test_plain_answer_does_not_execute_anythi
+ng) ... ok
+test_second_round_sees_the_results (test_agent_loop.SecondRoundTests.test_second_round_sees_the_results) ... ok
+test_full_text_call_is_parsed (test_agent_loop.TextToolCallTests.test_full_text_call_is_parsed) ... ok
+test_loop_executes_text_calls_and_shows_no_xml (test_agent_loop.TextToolCallTests.test_loop_executes_text_calls_and_sho
+ws_no_xml) ... ok
+test_plain_text_is_untouched (test_agent_loop.TextToolCallTests.test_plain_text_is_untouched) ... ok
+test_prose_outside_the_call_is_kept (test_agent_loop.TextToolCallTests.test_prose_outside_the_call_is_kept) ... ok
+test_truncated_text_call_is_parsed_and_hidden (test_agent_loop.TextToolCallTests.test_truncated_text_call_is_parsed_and
+_hidden)
+被 max_tokens 截断（没有 </tool_call>）也要能执行，半截 XML 不能给用户看。 ... ok
+test_identical_tracks_have_zero_cost (test_alignment.AlignmentTests.test_identical_tracks_have_zero_cost) ... ok
+test_shifted_track_has_positive_cost (test_alignment.AlignmentTests.test_shifted_track_has_positive_cost) ... ok
+test_bare_same_name_is_ambiguous_but_class_name_resolves (test_analysis_object_types.AnalysisObjectTypeTests.test_bare_
+same_name_is_ambiguous_but_class_name_resolves) ... ok
+test_class_specific_tools_do_not_replace_explicit_wrong_id (test_analysis_object_types.AnalysisObjectTypeTests.test_cla
+ss_specific_tools_do_not_replace_explicit_wrong_id) ... ok
+test_duration_rejects_classes_without_duration_command (test_analysis_object_types.AnalysisObjectTypeTests.test_duratio
+n_rejects_classes_without_duration_command) ... ok
+test_each_analysis_rejects_unrelated_time_domain_objects (test_analysis_object_types.AnalysisObjectTypeTests.test_each_
+analysis_rejects_unrelated_time_domain_objects) ... ok
+test_explicit_harmonicity_never_receives_another_analysis_conversion (test_analysis_object_types.AnalysisObjectTypeTest
+s.test_explicit_harmonicity_never_receives_another_analysis_conversion) ... ok
+test_extract_part_accepts_from_to_aliases (test_analysis_object_types.AnalysisObjectTypeTests.test_extract_part_accepts
+_from_to_aliases) ... FAIL
+test_invalid_range_does_not_silently_measure_entire_sound (test_analysis_object_types.AnalysisObjectTypeTests.test_inva
+lid_range_does_not_silently_measure_entire_sound) ... ok
+test_longsound_extract_and_info_use_real_supported_commands (test_analysis_object_types.AnalysisObjectTypeTests.test_lo
+ngsound_extract_and_info_use_real_supported_commands) ... 
+  test_longsound_extract_and_info_use_real_supported_commands (test_analysis_object_types.AnalysisObjectTypeTests.test_
+longsound_extract_and_info_use_real_supported_commands) (tool='object_info') ... FAIL
+  test_longsound_extract_and_info_use_real_supported_commands (test_analysis_object_types.AnalysisObjectTypeTests.test_
+longsound_extract_and_info_use_real_supported_commands) (tool='extract_part') ... FAIL
+test_longsound_is_rejected_for_sound_only_conversions (test_analysis_object_types.AnalysisObjectTypeTests.test_longsoun
+d_is_rejected_for_sound_only_conversions) ... ok
+test_measure_can_resolve_a_default_source_by_parameter_type (test_analysis_object_types.AnalysisObjectTypeTests.test_me
+asure_can_resolve_a_default_source_by_parameter_type) ... ok
+test_missing_import_aborts_before_querying_an_old_object (test_analysis_object_types.AnalysisObjectTypeTests.test_missi
+ng_import_aborts_before_querying_an_old_object) ... ok
+test_multiple_selected_supported_sources_and_unselected_sources_are_ambiguous (test_analysis_object_types.AnalysisObjec
+tTypeTests.test_multiple_selected_supported_sources_and_unselected_sources_are_ambiguous) ... ok
+test_pitch_statistics_guards_against_octave_errors_in_the_script (test_analysis_object_types.AnalysisObjectTypeTests.te
+st_pitch_statistics_guards_against_octave_errors_in_the_script)
+最高/最低基频不能用裸 ``Get maximum``——倍频误判会一帧定结论。 ... ok
+test_pitch_statistics_keeps_a_consistent_contract_for_pitch_objects (test_analysis_object_types.AnalysisObjectTypeTests
+.test_pitch_statistics_keeps_a_consistent_contract_for_pitch_objects)
+显式给 Pitch 对象时，同一个模板也要能跑（不重复 To Pitch）。 ... ok
+test_plan_actions_preserves_invalid_arguments_instead_of_defaults (test_analysis_object_types.AnalysisObjectTypeTests.t
+est_plan_actions_preserves_invalid_arguments_instead_of_defaults) ... ok
+test_read_file_accepts_multiple_imported_objects_and_reports_all_ids (test_analysis_object_types.AnalysisObjectTypeTest
+s.test_read_file_accepts_multiple_imported_objects_and_reports_all_ids) ... FAIL
+test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_
+sound_statistics_cleanup_and_range_aliases_in_real_praat) ... 
+  test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='pitch_statistics') ... FAIL
+  test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='intensity_statistics') ... FAIL
+  test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='formant_statistics') ... FAIL
+  test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='harmonicity_statistics') ... FAIL
+  test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='measure') ... FAIL
+test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_
+supported_existing_analysis_objects_survive_real_queries) ... 
+  test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_supported_existing_analysis_objects_survive_real_queries) (tool='pitch') ... FAIL
+  test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_supported_existing_analysis_objects_survive_real_queries) (tool='pitch_statistics') ... FAIL
+  test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_supported_existing_analysis_objects_survive_real_queries) (tool='pitch_peak_latency') ... FAIL
+  test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_supported_existing_analysis_objects_survive_real_queries) (tool='intensity') ... FAIL
+  test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_supported_existing_analysis_objects_survive_real_queries) (tool='intensity_statistics') ... FAIL
+  test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_supported_existing_analysis_objects_survive_real_queries) (tool='intensity_slope') ... FAIL
+  test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_supported_existing_analysis_objects_survive_real_queries) (tool='formant_frequency') ... FAIL
+  test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_supported_existing_analysis_objects_survive_real_queries) (tool='formant_bandwidth') ... FAIL
+  test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_supported_existing_analysis_objects_survive_real_queries) (tool='formant_statistics') ... FAIL
+  test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_supported_existing_analysis_objects_survive_real_queries) (tool='harmonicity_statistics') ... FAIL
+  test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_supported_existing_analysis_objects_survive_real_queries) (tool='hl_ratio') ... FAIL
+  test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.tes
+t_supported_existing_analysis_objects_survive_real_queries) (tool='hammarberg_index') ... FAIL
+test_wrong_default_selection_can_use_unique_sound (test_analysis_object_types.AnalysisObjectTypeTests.test_wrong_defaul
+t_selection_can_use_unique_sound) ... ok
+test_wrong_default_selection_with_multiple_sounds_is_ambiguous (test_analysis_object_types.AnalysisObjectTypeTests.test
+_wrong_default_selection_with_multiple_sounds_is_ambiguous) ... ok
+test_api_mode_needs_both_url_and_model (test_api_settings.ApiConfigParsingTests.test_api_mode_needs_both_url_and_model)
+ ... ok
+test_api_mode_overrides_the_qwen_client (test_api_settings.ApiConfigParsingTests.test_api_mode_overrides_the_qwen_clien
+t) ... ok
+test_api_section_is_parsed (test_api_settings.ApiConfigParsingTests.test_api_section_is_parsed) ... ok
+test_config_path_can_be_overridden_by_the_environment (test_api_settings.ApiConfigParsingTests.test_config_path_can_be_
+overridden_by_the_environment)
+``PRAAT_AI_CONFIG_PATH`` 整份换配置文件。 ... ok
+test_defaults_are_off_and_local (test_api_settings.ApiConfigParsingTests.test_defaults_are_off_and_local) ... ok
+test_environment_can_point_at_another_endpoint (test_api_settings.ApiConfigParsingTests.test_environment_can_point_at_a
+nother_endpoint) ... ok
+test_environment_variables_override_the_api_key (test_api_settings.ApiConfigParsingTests.test_environment_variables_ove
+rride_the_api_key) ... ok
+test_legacy_single_custom_limit_is_preserved (test_api_settings.ApiConfigParsingTests.test_legacy_single_custom_limit_i
+s_preserved) ... ok
+test_null_qwen_section_uses_defaults (test_api_settings.ApiConfigParsingTests.test_null_qwen_section_uses_defaults) ...
+ ok
+test_knowledge_option_sits_below_stop_without_thinking_control (test_api_settings.ApiSettingsLayoutTests.test_knowledge
+_option_sits_below_stop_without_thinking_control) ... ok
+test_a_422_also_drops_the_thinking_field (test_api_settings.ClientPayloadTests.test_a_422_also_drops_the_thinking_field
+)
+有的网关用 422 报「字段不认」，状态码不能只认 400。 ... C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\tempfile.py:484: Resource
+Warning: Implicitly cleaning up <HTTPError 422: 'Unprocessable Entity'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+ok
+test_a_bare_400_also_drops_the_thinking_field (test_api_settings.ClientPayloadTests.test_a_bare_400_also_drops_the_thin
+king_field)
+有的服务端只说 invalid request，不点名 reasoning_effort，也要降级。 ... C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\tempf
+ile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 400: 'Bad Request'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+ok
+test_a_server_error_does_not_silently_drop_the_thinking_field (test_api_settings.ClientPayloadTests.test_a_server_error
+_does_not_silently_drop_the_thinking_field)
+5xx / 401 这类不是「字段不认」，该报错就报错，别偷偷降级。 ... C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\tempfile.py:484: Reso
+urceWarning: Implicitly cleaning up <HTTPError 401: 'Unauthorized'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+ok
+test_api_provider_does_not_send_llama_cpp_only_fields (test_api_settings.ClientPayloadTests.test_api_provider_does_not_
+send_llama_cpp_only_fields) ... ok
+test_api_thinking_level_becomes_reasoning_effort (test_api_settings.ClientPayloadTests.test_api_thinking_level_becomes_
+reasoning_effort) ... ok
+test_api_thinking_off_sends_no_reasoning_field (test_api_settings.ClientPayloadTests.test_api_thinking_off_sends_no_rea
+soning_field) ... ok
+test_authorization_header_uses_the_api_key (test_api_settings.ClientPayloadTests.test_authorization_header_uses_the_api
+_key) ... ok
+test_gemini_3_omits_sampling_fields (test_api_settings.ClientPayloadTests.test_gemini_3_omits_sampling_fields) ... ok
+test_local_provider_keeps_chat_template_kwargs (test_api_settings.ClientPayloadTests.test_local_provider_keeps_chat_tem
+plate_kwargs) ... ok
+test_local_thinking_level_toggles_enable_thinking (test_api_settings.ClientPayloadTests.test_local_thinking_level_toggl
+es_enable_thinking) ... ok
+test_rejected_reasoning_effort_is_retried_without_it (test_api_settings.ClientPayloadTests.test_rejected_reasoning_effo
+rt_is_retried_without_it)
+服务端不认 reasoning_effort 时去掉重试，而且之后不再发（别白挨 400）。 ... ok
+test_token_limit_can_be_enabled_for_cloud_and_disabled_for_local (test_api_settings.ClientPayloadTests.test_token_limit
+_can_be_enabled_for_cloud_and_disabled_for_local) ... ok
+test_probe_reports_failure_with_the_reason (test_api_settings.ProbeTests.test_probe_reports_failure_with_the_reason) ..
+. ok
+test_probe_reports_success (test_api_settings.ProbeTests.test_probe_reports_success) ... ok
+test_advanced_limits_round_trip_for_each_mode (test_api_settings.SettingsValidationTests.test_advanced_limits_round_tri
+p_for_each_mode) ... ok
+test_partial_api_save_preserves_existing_local_limits (test_api_settings.SettingsValidationTests.test_partial_api_save_
+preserves_existing_local_limits) ... ok
+test_provider_list_has_known_entries (test_api_settings.SettingsValidationTests.test_provider_list_has_known_entries) .
+.. ok
+test_saving_refuses_invalid_values (test_api_settings.SettingsValidationTests.test_saving_refuses_invalid_values) ... o
+k
+test_saving_stores_the_thinking_level_for_both_modes (test_api_settings.SettingsValidationTests.test_saving_stores_the_
+thinking_level_for_both_modes)
+思考档位写进 ``api`` 和 ``qwen`` 两节：本地/云端各自翻成自己的字段。 ... ok
+test_saving_writes_the_config_and_marks_when_it_was_verified (test_api_settings.SettingsValidationTests.test_saving_wri
+tes_the_config_and_marks_when_it_was_verified) ... ok
+test_settings_are_prefilled_from_the_config (test_api_settings.SettingsValidationTests.test_settings_are_prefilled_from
+_the_config) ... ok
+test_settings_round_trip_thinking_and_knowledge (test_api_settings.SettingsValidationTests.test_settings_round_trip_thi
+nking_and_knowledge) ... ok
+test_thinking_choice_labels_cover_every_level (test_api_settings.SettingsValidationTests.test_thinking_choice_labels_co
+ver_every_level) ... ok
+test_validation_rejects_an_enabled_entry_without_url_or_model (test_api_settings.SettingsValidationTests.test_validatio
+n_rejects_an_enabled_entry_without_url_or_model) ... ok
+test_validation_trims_and_defaults (test_api_settings.SettingsValidationTests.test_validation_trims_and_defaults) ... o
+k
+test_defaults_to_true_and_normalizes_when_the_key_is_missing (test_api_settings.StopLocalServiceOptionTests.test_defaul
+ts_to_true_and_normalizes_when_the_key_is_missing) ... ok
+test_round_trips_when_it_is_turned_off (test_api_settings.StopLocalServiceOptionTests.test_round_trips_when_it_is_turne
+d_off) ... ok
+test_turning_it_back_on_is_saved_as_true (test_api_settings.StopLocalServiceOptionTests.test_turning_it_back_on_is_save
+d_as_true) ... ok
+test_api_mode_allows_world_knowledge_by_default (test_api_settings.WorldKnowledgeTests.test_api_mode_allows_world_knowl
+edge_by_default) ... ok
+test_api_mode_carries_the_thinking_level_into_qwen (test_api_settings.WorldKnowledgeTests.test_api_mode_carries_the_thi
+nking_level_into_qwen) ... ok
+test_identity_rule_reports_the_model_and_the_frontend_role (test_api_settings.WorldKnowledgeTests.test_identity_rule_re
+ports_the_model_and_the_frontend_role)
+问「你是谁」时要说自己的模型名 + 「我被设置成 Praat 的前端」。 ... ok
+test_local_mode_keeps_the_strict_prompt (test_api_settings.WorldKnowledgeTests.test_local_mode_keeps_the_strict_prompt)
+ ... ok
+test_message_text_falls_back_to_reasoning_content (test_api_settings.WorldKnowledgeTests.test_message_text_falls_back_t
+o_reasoning_content) ... ok
+test_open_mode_forbids_bare_done_and_asks_for_the_comparison (test_api_settings.WorldKnowledgeTests.test_open_mode_forb
+ids_bare_done_and_asks_for_the_comparison)
+云端模式：对比类请求要把比较写出来，不许只回「已完成」。 ... ok
+test_thinking_level_aliases_are_normalized (test_api_settings.WorldKnowledgeTests.test_thinking_level_aliases_are_norma
+lized) ... ok
+test_turning_world_knowledge_off_keeps_the_strict_prompt (test_api_settings.WorldKnowledgeTests.test_turning_world_know
+ledge_off_keeps_the_strict_prompt) ... ok
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+test_api_switch_reports_when_an_unowned_service_still_occupies_port (test_api_transition.ApiTransitionTests.test_api_sw
+itch_reports_when_an_unowned_service_still_occupies_port) ... ok
+test_chat_dialog_queues_same_transition_for_api_and_local_modes (test_api_transition.ApiTransitionTests.test_chat_dialo
+g_queues_same_transition_for_api_and_local_modes) ... ok
+test_concurrent_saves_converge_on_the_latest_api_mode (test_api_transition.ApiTransitionTests.test_concurrent_saves_con
+verge_on_the_latest_api_mode) ... ok
+test_disabling_api_starts_local_service_when_port_is_empty (test_api_transition.ApiTransitionTests.test_disabling_api_s
+tarts_local_service_when_port_is_empty) ... ok
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+test_enabling_api_stops_only_the_configured_local_service (test_api_transition.ApiTransitionTests.test_enabling_api_sto
+ps_only_the_configured_local_service) ... ok
+PRAAT_PROGRESS	0.1000	API 模式：设置里取消了「顺手停掉本机模型服务」，本机服务保持不动。
+PRAAT_PROGRESS	1.0000	API 模式仍在运行；本机模型服务按设置保留。
+test_enabling_api_with_keep_local_option_does_not_stop_service (test_api_transition.ApiTransitionTests.test_enabling_ap
+i_with_keep_local_option_does_not_stop_service) ... ok
+test_legacy_enabled_api_is_locked_until_user_unlocks_it (test_api_transition.ApiTransitionTests.test_legacy_enabled_api
+_is_locked_until_user_unlocks_it) ... ok
+test_local_menu_policy_covers_all_lock_and_stop_combinations (test_api_transition.ApiTransitionTests.test_local_menu_po
+licy_covers_all_lock_and_stop_combinations) ... ok
+test_lock_and_new_stop_choice_switch_current_local_selection_to_api (test_api_transition.ApiTransitionTests.test_lock_a
+nd_new_stop_choice_switch_current_local_selection_to_api) ... ok
+test_partial_custom_api_is_preserved_and_requires_completion (test_api_transition.ApiTransitionTests.test_partial_custo
+m_api_is_preserved_and_requires_completion) ... ok
+test_settings_callback_failure_is_visible_after_save (test_api_transition.ApiTransitionTests.test_settings_callback_fai
+lure_is_visible_after_save) ... ok
+test_standalone_dialog_reconciles_after_save (test_api_transition.ApiTransitionTests.test_standalone_dialog_reconciles_
+after_save) ... ok
+test_top_bar_can_activate_saved_api_from_local_mode (test_api_transition.ApiTransitionTests.test_top_bar_can_activate_s
+aved_api_from_local_mode) ... ok
+test_top_bar_uses_first_provider_if_no_api_was_configured (test_api_transition.ApiTransitionTests.test_top_bar_uses_fir
+st_provider_if_no_api_was_configured) ... ok
+test_top_menu_grays_local_items_and_keeps_cloud_entry_visible (test_api_transition.ApiTransitionTests.test_top_menu_gra
+ys_local_items_and_keeps_cloud_entry_visible) ... ok
+PRAAT_PROGRESS	0.0200	切回本地模型（关闭 API 模式）…
+test_top_menu_selection_really_switches_cloud_local_cloud (test_api_transition.ApiTransitionTests.test_top_menu_selecti
+on_really_switches_cloud_local_cloud) ... ok
+test_unlocking_keeps_api_selected_and_allows_local_choice (test_api_transition.ApiTransitionTests.test_unlocking_keeps_
+api_selected_and_allows_local_choice) ... ok
+test_waiting_for_stopped_endpoint_raises_on_timeout (test_api_transition.ApiTransitionTests.test_waiting_for_stopped_en
+dpoint_raises_on_timeout) ... ok
+test_different_spectra_produce_errors (test_audio_pipeline.AudioPipelineTests.test_different_spectra_produce_errors) ..
+. ok
+test_identical_files_reuse_reference_boundaries_when_both_sides_conflict (test_audio_pipeline.AudioPipelineTests.test_i
+dentical_files_reuse_reference_boundaries_when_both_sides_conflict) ... ok
+test_identical_wavs_at_distinct_paths_share_supplied_boundaries (test_audio_pipeline.AudioPipelineTests.test_identical_
+wavs_at_distinct_paths_share_supplied_boundaries) ... ok
+test_missing_reference_boundaries_are_aligned (test_audio_pipeline.AudioPipelineTests.test_missing_reference_boundaries
+_are_aligned) ... ok
+test_null_alignment_metadata_uses_defaults (test_audio_pipeline.AudioPipelineTests.test_null_alignment_metadata_uses_de
+faults) ... ok
+test_same_audio_reuses_reference_boundaries_when_both_sides_conflict (test_audio_pipeline.AudioPipelineTests.test_same_
+audio_reuses_reference_boundaries_when_both_sides_conflict) ... ok
+test_same_wav_uses_aligned_reference_boundaries (test_audio_pipeline.AudioPipelineTests.test_same_wav_uses_aligned_refe
+rence_boundaries) ... ok
+test_same_wav_uses_supplied_learner_boundaries_when_aligner_falls_back (test_audio_pipeline.AudioPipelineTests.test_sam
+e_wav_uses_supplied_learner_boundaries_when_aligner_falls_back) ... ok
+test_supplied_boundaries_are_preserved_on_both_sides (test_audio_pipeline.AudioPipelineTests.test_supplied_boundaries_a
+re_preserved_on_both_sides) ... ok
+test_ui_estimates_stay_estimates_after_request_round_trip (test_audio_pipeline.AudioPipelineTests.test_ui_estimates_sta
+y_estimates_after_request_round_trip) ... ok
+test_tutor_rejects_report_root_inside_temporary_import_dir (test_bridge_pipeline.BridgePipelineTests.test_tutor_rejects
+_report_root_inside_temporary_import_dir) ... ok
+test_tutor_writes_all_outputs (test_bridge_pipeline.BridgePipelineTests.test_tutor_writes_all_outputs) ... ok
+test_cancel_before_the_first_step_executes_nothing (test_cancel.AgentLoopCancellationTests.test_cancel_before_the_first
+_step_executes_nothing) ... ok
+test_cancel_stops_the_loop_before_the_next_step (test_cancel.AgentLoopCancellationTests.test_cancel_stops_the_loop_befo
+re_the_next_step) ... ok
+test_execute_receives_the_cancel_flag_through_the_environment (test_cancel.AgentLoopCancellationTests.test_execute_rece
+ives_the_cancel_flag_through_the_environment)
+本地工具（批处理）也要能被打断。 ... ok
+test_run_batch_does_not_even_start_when_already_cancelled (test_cancel.BatchCancellationTests.test_run_batch_does_not_e
+ven_start_when_already_cancelled) ... ok
+test_run_batch_still_reports_a_timeout (test_cancel.BatchCancellationTests.test_run_batch_still_reports_a_timeout) ... 
+ok
+test_run_batch_terminates_the_process_when_cancelled (test_cancel.BatchCancellationTests.test_run_batch_terminates_the_
+process_when_cancelled) ... ok
+test_cancelling_a_delivery_neutralises_the_queued_message (test_cancel.WaitCancellationTests.test_cancelling_a_delivery
+_neutralises_the_queued_message) ... ok
+test_result_that_arrived_before_cancelling_still_counts (test_cancel.WaitCancellationTests.test_result_that_arrived_bef
+ore_cancelling_still_counts) ... ok
+test_waiting_for_praat_stops_when_cancelled (test_cancel.WaitCancellationTests.test_waiting_for_praat_stops_when_cancel
+led) ... ok
+test_assistant_message_gets_a_copy_link_with_the_original_text (test_chat_message_render.ChatMessageBlockTests.test_ass
+istant_message_gets_a_copy_link_with_the_original_text) ... invalid command name "2048550449088flush_messages"
+    while executing
+"2048550449088flush_messages"
+    ("after" script)
+invalid command name "2048550715072flush_messages"
+    while executing
+"2048550715072flush_messages"
+    ("after" script)
+invalid command name "2048550449344focus_set"
+    while executing
+"2048550449344focus_set"
+    ("after" script)
+invalid command name "2048551402048hide_progress"
+    while executing
+"2048551402048hide_progress"
+    ("after" script)
+invalid command name "2048548987648flush_messages"
+    while executing
+"2048548987648flush_messages"
+    ("after" script)
+invalid command name "2048551691840flush_messages"
+    while executing
+"2048551691840flush_messages"
+    ("after" script)
+invalid command name "2048551693888flush_messages"
+    while executing
+"2048551693888flush_messages"
+    ("after" script)
+ok
+test_message_block_colours_follow_the_theme (test_chat_message_render.ChatMessageBlockTests.test_message_block_colours_
+follow_the_theme) ... ok
+test_result_blocks_are_copyable_and_hinted_muted (test_chat_message_render.ChatMessageBlockTests.test_result_blocks_are
+_copyable_and_hinted_muted) ... ok
+test_user_messages_are_not_copyable (test_chat_message_render.ChatMessageBlockTests.test_user_messages_are_not_copyable
+) ... ok
+test_bold_and_code (test_chat_message_render.RenderMessageTests.test_bold_and_code) ... ok
+test_bullets_become_dots (test_chat_message_render.RenderMessageTests.test_bullets_become_dots) ... ok
+test_empty_input (test_chat_message_render.RenderMessageTests.test_empty_input) ... ok
+test_headings (test_chat_message_render.RenderMessageTests.test_headings) ... ok
+test_inline_tags_stack_on_the_block_tag (test_chat_message_render.RenderMessageTests.test_inline_tags_stack_on_the_bloc
+k_tag) ... ok
+test_lines_are_separated_by_newlines (test_chat_message_render.RenderMessageTests.test_lines_are_separated_by_newlines)
+ ... ok
+test_lookalikes_are_left_alone (test_chat_message_render.RenderMessageTests.test_lookalikes_are_left_alone)
+不是标记的写法原样显示（别把用户/模型的普通文字吃掉）。 ... ok
+test_plain_text (test_chat_message_render.RenderMessageTests.test_plain_text) ... ok
+test_trailing_spaces_are_trimmed (test_chat_message_render.RenderMessageTests.test_trailing_spaces_are_trimmed) ... ok
+test_windows_line_endings_behave_the_same (test_chat_message_render.RenderMessageTests.test_windows_line_endings_behave
+_the_same) ... ok
+test_completed_turn_collapses_only_its_process_and_shows_elapsed_time (test_chat_process_fold.ProcessFoldTests.test_com
+pleted_turn_collapses_only_its_process_and_shows_elapsed_time) ... invalid command name "2048630585024flush_messages"
+    while executing
+"2048630585024flush_messages"
+    ("after" script)
+invalid command name "2048630578240flush_messages"
+    while executing
+"2048630578240flush_messages"
+    ("after" script)
+invalid command name "2048630680896flush_messages"
+    while executing
+"2048630680896flush_messages"
+    ("after" script)
+invalid command name "2048630585152focus_set"
+    while executing
+"2048630585152focus_set"
+    ("after" script)
+invalid command name "2048630573056focus_set"
+    while executing
+"2048630573056focus_set"
+    ("after" script)
+invalid command name "2048630681024focus_set"
+    while executing
+"2048630681024focus_set"
+    ("after" script)
+ok
+test_empty_process_and_failed_response_still_finish (test_chat_process_fold.ProcessFoldTests.test_empty_process_and_fai
+led_response_still_finish) ... ok
+test_right_click_after_a_long_answer_really_displays_the_process (test_chat_process_fold.ProcessFoldTests.test_right_cl
+ick_after_a_long_answer_really_displays_the_process) ... ok
+test_right_click_does_not_require_a_prior_motion_event_on_the_header (test_chat_process_fold.ProcessFoldTests.test_righ
+t_click_does_not_require_a_prior_motion_event_on_the_header) ... ok
+test_right_click_expands_and_collapses_preserving_the_process (test_chat_process_fold.ProcessFoldTests.test_right_click
+_expands_and_collapses_preserving_the_process) ... ok
+test_right_click_far_from_any_header_does_nothing (test_chat_process_fold.ProcessFoldTests.test_right_click_far_from_an
+y_header_does_nothing) ... ok
+test_right_click_in_the_row_gap_above_the_header_still_toggles (test_chat_process_fold.ProcessFoldTests.test_right_clic
+k_in_the_row_gap_above_the_header_still_toggles)
+标题文字上方那条行距带没有字符，@x,y 落在标题行本身，也必须能点开。 ... ok
+test_right_click_on_the_arrow_itself_expands_and_collapses (test_chat_process_fold.ProcessFoldTests.test_right_click_on
+_the_arrow_itself_expands_and_collapses) ... ok
+test_right_click_on_the_blank_tail_of_the_header_still_toggles (test_chat_process_fold.ProcessFoldTests.test_right_clic
+k_on_the_blank_tail_of_the_header_still_toggles)
+标题行右侧没有文字的空白（@x,y 落到行尾）以前右键没反应。 ... ok
+test_right_click_one_row_below_the_header_expands_the_collapsed_process (test_chat_process_fold.ProcessFoldTests.test_r
+ight_click_one_row_below_the_header_expands_the_collapsed_process)
+标题下面那一行的行距，同一个点上去也要能展开、能再收起。 ... ok
+test_stopped_turn_keeps_its_process_available (test_chat_process_fold.ProcessFoldTests.test_stopped_turn_keeps_its_proc
+ess_available) ... ok
+test_turns_toggle_independently_and_keep_hints_after_the_answer (test_chat_process_fold.ProcessFoldTests.test_turns_tog
+gle_independently_and_keep_hints_after_the_answer) ... ok
+test_hammarberg_index_needs_sound_or_ltas (test_chat_tools.BorrowedMeasurementTests.test_hammarberg_index_needs_sound_o
+r_ltas) ... ok
+test_hl_ratio_rejects_overlapping_bands (test_chat_tools.BorrowedMeasurementTests.test_hl_ratio_rejects_overlapping_ban
+ds) ... ok
+test_intensity_slope_extracts_a_part_for_sound_ranges (test_chat_tools.BorrowedMeasurementTests.test_intensity_slope_ex
+tracts_a_part_for_sound_ranges) ... ok
+test_intensity_slope_local_and_global (test_chat_tools.BorrowedMeasurementTests.test_intensity_slope_local_and_global) 
+... ok
+test_intensity_slope_rejects_bad_method_and_range (test_chat_tools.BorrowedMeasurementTests.test_intensity_slope_reject
+s_bad_method_and_range) ... ok
+test_intensity_slope_whole_object_does_not_delete_anything (test_chat_tools.BorrowedMeasurementTests.test_intensity_slo
+pe_whole_object_does_not_delete_anything)
+整段分析时 extractedId = 0，收尾的删除要跳过（不能删错对象）。 ... ok
+test_peak_to_average_uses_rms_not_the_signed_mean (test_chat_tools.BorrowedMeasurementTests.test_peak_to_average_uses_r
+ms_not_the_signed_mean) ... ok
+test_pitch_peak_latency_rejects_objects_without_pitch (test_chat_tools.BorrowedMeasurementTests.test_pitch_peak_latency
+_rejects_objects_without_pitch) ... ok
+test_spectral_emphasis_follows_the_source_script (test_chat_tools.BorrowedMeasurementTests.test_spectral_emphasis_follo
+ws_the_source_script) ... ok
+test_spectral_emphasis_rejects_explicit_wrong_object (test_chat_tools.BorrowedMeasurementTests.test_spectral_emphasis_r
+ejects_explicit_wrong_object) ... ok
+test_explicit_range_beats_the_editor_selection (test_chat_tools.EditorSelectionRangeTests.test_explicit_range_beats_the
+_editor_selection) ... ok
+test_extract_part_honours_the_finish_alias (test_chat_tools.EditorSelectionRangeTests.test_extract_part_honours_the_fin
+ish_alias) ... ok
+test_extract_part_uses_the_editor_selection (test_chat_tools.EditorSelectionRangeTests.test_extract_part_uses_the_edito
+r_selection) ... ok
+test_point_query_falls_back_to_the_selection_middle (test_chat_tools.EditorSelectionRangeTests.test_point_query_falls_b
+ack_to_the_selection_middle) ... ok
+test_statistics_note_survives_the_model_echoing_the_selection (test_chat_tools.EditorSelectionRangeTests.test_statistic
+s_note_survives_the_model_echoing_the_selection) ... ok
+test_statistics_tools_use_the_editor_selection (test_chat_tools.EditorSelectionRangeTests.test_statistics_tools_use_the
+_editor_selection) ... ok
+test_textgrid_label_uses_the_editor_selection (test_chat_tools.EditorSelectionRangeTests.test_textgrid_label_uses_the_e
+ditor_selection) ... ok
+test_without_a_selection_the_whole_object_is_still_the_default (test_chat_tools.EditorSelectionRangeTests.test_without_
+a_selection_the_whole_object_is_still_the_default) ... ok
+test_concatenate_needs_two_different_sounds (test_chat_tools.NewToolTests.test_concatenate_needs_two_different_sounds) 
+... ok
+test_concatenate_rejects_non_sound (test_chat_tools.NewToolTests.test_concatenate_rejects_non_sound) ... ok
+test_create_sound_builds_pure_tone_and_silence (test_chat_tools.NewToolTests.test_create_sound_builds_pure_tone_and_sil
+ence) ... ok
+test_duplicate_object_uses_copy (test_chat_tools.NewToolTests.test_duplicate_object_uses_copy) ... ok
+test_extract_part_clamps_and_validates (test_chat_tools.NewToolTests.test_extract_part_clamps_and_validates) ... ok
+test_formant_can_query_several_numbers_at_once (test_chat_tools.NewToolTests.test_formant_can_query_several_numbers_at_
+once) ... ok
+test_formant_statistics_reports_each_formant_separately (test_chat_tools.NewToolTests.test_formant_statistics_reports_e
+ach_formant_separately) ... ok
+test_harmonicity_statistics_uses_harmonicity_analysis (test_chat_tools.NewToolTests.test_harmonicity_statistics_uses_ha
+rmonicity_analysis) ... ok
+test_intensity_statistics_uses_energy_mean (test_chat_tools.NewToolTests.test_intensity_statistics_uses_energy_mean) ..
+. ok
+test_invalid_formant_number_message_is_chinese (test_chat_tools.NewToolTests.test_invalid_formant_number_message_is_chi
+nese) ... ok
+test_pitch_statistics_reports_time_of_maximum (test_chat_tools.NewToolTests.test_pitch_statistics_reports_time_of_maxim
+um) ... ok
+test_pitch_statistics_uses_mean_min_max (test_chat_tools.NewToolTests.test_pitch_statistics_uses_mean_min_max) ... ok
+test_point_queries_accept_several_times (test_chat_tools.NewToolTests.test_point_queries_accept_several_times) ... ok
+test_resample_requires_integer_rate (test_chat_tools.NewToolTests.test_resample_requires_integer_rate) ... ok
+test_save_sound_creates_missing_folder (test_chat_tools.NewToolTests.test_save_sound_creates_missing_folder) ... ok
+test_save_sound_requires_absolute_wav_path (test_chat_tools.NewToolTests.test_save_sound_requires_absolute_wav_path) ..
+. ok
+test_spectrogram_name_does_not_shadow_the_source_object (test_chat_tools.NewToolTests.test_spectrogram_name_does_not_sh
+adow_the_source_object) ... ok
+test_spectrogram_requires_sound (test_chat_tools.NewToolTests.test_spectrogram_requires_sound) ... ok
+test_context_is_parsed (test_chat_tools.ObjectContextTests.test_context_is_parsed) ... ok
+test_cursor_without_a_dragged_range_is_not_a_selection (test_chat_tools.ObjectContextTests.test_cursor_without_a_dragge
+d_range_is_not_a_selection) ... ok
+test_default_object_prefers_selection (test_chat_tools.ObjectContextTests.test_default_object_prefers_selection) ... ok
+test_editor_selection_columns_are_parsed (test_chat_tools.ObjectContextTests.test_editor_selection_columns_are_parsed) 
+... ok
+test_object_can_be_resolved_by_id_and_name (test_chat_tools.ObjectContextTests.test_object_can_be_resolved_by_id_and_na
+me) ... ok
+test_unknown_object_is_rejected (test_chat_tools.ObjectContextTests.test_unknown_object_is_rejected) ... ok
+test_ambiguous_name_is_rejected_with_candidates (test_chat_tools.ObjectMatchingTests.test_ambiguous_name_is_rejected_wi
+th_candidates) ... ok
+test_chinese_id_forms_are_accepted (test_chat_tools.ObjectMatchingTests.test_chinese_id_forms_are_accepted) ... ok
+test_name_without_class_prefix_matches (test_chat_tools.ObjectMatchingTests.test_name_without_class_prefix_matches) ...
+ ok
+test_short_name_matches_full_name (test_chat_tools.ObjectMatchingTests.test_short_name_matches_full_name) ... ok
+test_unknown_name_still_fails (test_chat_tools.ObjectMatchingTests.test_unknown_name_still_fails) ... ok
+test_praat_scripts_are_still_accepted (test_chat_tools.PythonScriptRejectionTests.test_praat_scripts_are_still_accepted
+) ... ok
+test_python_scripts_are_rejected (test_chat_tools.PythonScriptRejectionTests.test_python_scripts_are_rejected) ... ok
+test_formant_query_explains_undefined (test_chat_tools.QueryRobustnessTests.test_formant_query_explains_undefined) ... 
+ok
+test_intensity_query_explains_undefined (test_chat_tools.QueryRobustnessTests.test_intensity_query_explains_undefined) 
+... ok
+test_pitch_clamps_time_and_explains_undefined (test_chat_tools.QueryRobustnessTests.test_pitch_clamps_time_and_explains
+_undefined) ... ok
+test_every_script_ends_with_state_marker (test_chat_tools.ScriptRenderingTests.test_every_script_ends_with_state_marker
+) ... ok
+test_existing_formant_object_is_not_reanalysed (test_chat_tools.ScriptRenderingTests.test_existing_formant_object_is_no
+t_reanalysed) ... ok
+test_formant_bandwidth_uses_object_id_and_double_quotes (test_chat_tools.ScriptRenderingTests.test_formant_bandwidth_us
+es_object_id_and_double_quotes) ... ok
+test_formant_query_accepts_explicit_time_and_unit (test_chat_tools.ScriptRenderingTests.test_formant_query_accepts_expl
+icit_time_and_unit) ... ok
+test_invalid_formant_number_is_rejected (test_chat_tools.ScriptRenderingTests.test_invalid_formant_number_is_rejected) 
+... ok
+test_invalid_unit_is_rejected (test_chat_tools.ScriptRenderingTests.test_invalid_unit_is_rejected) ... ok
+test_object_creating_tools_report_the_new_id (test_chat_tools.ScriptRenderingTests.test_object_creating_tools_report_th
+e_new_id)
+新建对象的结果行里要带 id：多步请求的下一步要靠它认出这个新对象。 ... ok
+test_pitch_and_intensity_templates (test_chat_tools.ScriptRenderingTests.test_pitch_and_intensity_templates) ... ok
+test_rename_requires_new_name (test_chat_tools.ScriptRenderingTests.test_rename_requires_new_name) ... ok
+test_append_file_line_lines_are_untouched (test_chat_tools.ScriptValidationTests.test_append_file_line_lines_are_untouc
+hed) ... ok
+test_custom_script_gets_result_marker (test_chat_tools.ScriptValidationTests.test_custom_script_gets_result_marker) ...
+ ok
+test_custom_script_must_not_open_the_info_window (test_chat_tools.ScriptValidationTests.test_custom_script_must_not_ope
+n_the_info_window)
+模型写 writeInfoLine / print 会弹出「Praat Info」，脚本层要兜住，内容不丢。 ... ok
+test_dangerous_commands_are_rejected (test_chat_tools.ScriptValidationTests.test_dangerous_commands_are_rejected) ... o
+k
+test_literal_output_commands_become_result_lines (test_chat_tools.ScriptValidationTests.test_literal_output_commands_be
+come_result_lines)
+printline / print / echo 在 Praat 里写的是字面文字，整段抄进结果文件。 ... ok
+test_markdown_fence_is_stripped (test_chat_tools.ScriptValidationTests.test_markdown_fence_is_stripped) ... ok
+test_meaningless_info_commands_are_commented_out (test_chat_tools.ScriptValidationTests.test_meaningless_info_commands_
+are_commented_out)
+printtab 只写制表符、clearinfo 只清空 Info 窗口：没有内容可保留。 ... ok
+test_single_quotes_become_double_quotes (test_chat_tools.ScriptValidationTests.test_single_quotes_become_double_quotes)
+ ... ok
+test_unbalanced_quotes_are_rejected (test_chat_tools.ScriptValidationTests.test_unbalanced_quotes_are_rejected) ... ok
+test_value_output_commands_become_result_lines (test_chat_tools.ScriptValidationTests.test_value_output_commands_become
+_result_lines)
+appendInfo / writeInfo 带的是值列表，原样换成 appendFileLine。 ... ok
+test_write_info_line_without_arguments_stays_valid (test_chat_tools.ScriptValidationTests.test_write_info_line_without_
+arguments_stays_valid) ... ok
+test_class_fallback_needs_a_unique_candidate (test_chat_tools.TextGridToolTests.test_class_fallback_needs_a_unique_cand
+idate) ... ok
+test_info_limits_the_listing (test_chat_tools.TextGridToolTests.test_info_limits_the_listing) ... ok
+test_info_lists_tiers_and_intervals (test_chat_tools.TextGridToolTests.test_info_lists_tiers_and_intervals) ... ok
+test_insert_boundary_reports_existing_boundary (test_chat_tools.TextGridToolTests.test_insert_boundary_reports_existing
+_boundary) ... ok
+test_set_interval_inserts_boundaries_and_writes_label (test_chat_tools.TextGridToolTests.test_set_interval_inserts_boun
+daries_and_writes_label) ... ok
+test_set_interval_requires_label_and_range (test_chat_tools.TextGridToolTests.test_set_interval_requires_label_and_rang
+e) ... ok
+test_textgrid_tools_reject_other_objects (test_chat_tools.TextGridToolTests.test_textgrid_tools_reject_other_objects) .
+.. ok
+test_tier_number_is_validated (test_chat_tools.TextGridToolTests.test_tier_number_is_validated) ... ok
+test_duration_rejects_objects_without_time (test_chat_tools.ToolGuardTests.test_duration_rejects_objects_without_time) 
+... ok
+test_object_info_reports_sound_properties (test_chat_tools.ToolGuardTests.test_object_info_reports_sound_properties) ..
+. ok
+test_object_info_skips_duration_for_tables (test_chat_tools.ToolGuardTests.test_object_info_skips_duration_for_tables) 
+... ok
+test_play_requires_sound (test_chat_tools.ToolGuardTests.test_play_requires_sound) ... ok
+test_auto_mode_detects_within_the_given_range (test_chat_tools.VotToolTests.test_auto_mode_detects_within_the_given_ran
+ge) ... ok
+test_auto_mode_needs_a_sound_not_a_textgrid (test_chat_tools.VotToolTests.test_auto_mode_needs_a_sound_not_a_textgrid) 
+... ok
+test_auto_mode_uses_the_range_dragged_in_the_editor (test_chat_tools.VotToolTests.test_auto_mode_uses_the_range_dragged
+_in_the_editor) ... ok
+test_auto_mode_warns_when_the_range_holds_two_phonemes (test_chat_tools.VotToolTests.test_auto_mode_warns_when_the_rang
+e_holds_two_phonemes) ... ok
+test_editor_selection_note_survives_the_model_echoing_it (test_chat_tools.VotToolTests.test_editor_selection_note_survi
+ves_the_model_echoing_it) ... ok
+test_explicit_range_beats_the_editor_selection (test_chat_tools.VotToolTests.test_explicit_range_beats_the_editor_selec
+tion) ... ok
+test_missing_or_bad_times_are_rejected (test_chat_tools.VotToolTests.test_missing_or_bad_times_are_rejected) ... ok
+test_non_numeric_time_is_rejected_in_chinese (test_chat_tools.VotToolTests.test_non_numeric_time_is_rejected_in_chinese
+) ... ok
+test_only_one_time_is_still_an_error (test_chat_tools.VotToolTests.test_only_one_time_is_still_an_error) ... ok
+test_onset_alias_works (test_chat_tools.VotToolTests.test_onset_alias_works) ... ok
+test_placeholder_zero_times_fall_back_to_auto (test_chat_tools.VotToolTests.test_placeholder_zero_times_fall_back_to_au
+to)
+模型会给可选字段填两个 0（"填满"），这该按「没给」处理，走自动估计。 ... ok
+test_sound_path_only_subtracts (test_chat_tools.VotToolTests.test_sound_path_only_subtracts) ... ok
+test_textgrid_path_adds_boundaries_and_reports_ms (test_chat_tools.VotToolTests.test_textgrid_path_adds_boundaries_and_
+reports_ms) ... ok
+test_cloud_model_is_shown_with_the_provider_name (test_chat_window.ApiChoiceLabelTests.test_cloud_model_is_shown_with_t
+he_provider_name) ... ok
+test_cloud_model_without_a_provider_name_still_names_the_model (test_chat_window.ApiChoiceLabelTests.test_cloud_model_w
+ithout_a_provider_name_still_names_the_model) ... ok
+test_missing_model_is_reported_instead_of_an_empty_row (test_chat_window.ApiChoiceLabelTests.test_missing_model_is_repo
+rted_instead_of_an_empty_row) ... ok
+test_missing_executable_is_not_a_blocker (test_chat_window.PraatProcessTests.test_missing_executable_is_not_a_blocker) 
+... ok
+test_missing_tasklist_output_means_not_running (test_chat_window.PraatProcessTests.test_missing_tasklist_output_means_n
+ot_running) ... ok
+test_multiple_instances_produce_a_warning (test_chat_window.PraatProcessTests.test_multiple_instances_produce_a_warning
+) ... ok
+test_refresh_queries_once_without_a_known_list (test_chat_window.PraatProcessTests.test_refresh_queries_once_without_a_
+known_list) ... ok
+test_refresh_reuses_a_known_process_list (test_chat_window.PraatProcessTests.test_refresh_reuses_a_known_process_list)
+调用方已经查过进程列表时，刷新上下文不该再起一次 tasklist。 ... ok
+test_running_process_is_detected (test_chat_window.PraatProcessTests.test_running_process_is_detected) ... ok
+test_single_instance_has_no_warning (test_chat_window.PraatProcessTests.test_single_instance_has_no_warning) ... ok
+test_tasklist_failure_does_not_block_sending (test_chat_window.PraatProcessTests.test_tasklist_failure_does_not_block_s
+ending) ... ok
+test_full_label_resolves (test_chat_window.PresetLabelTests.test_full_label_resolves) ... ok
+test_id_model_and_prefix_also_resolve (test_chat_window.PresetLabelTests.test_id_model_and_prefix_also_resolve) ... ok
+test_missing_file_is_shown_in_the_label (test_chat_window.PresetLabelTests.test_missing_file_is_shown_in_the_label) ...
+ ok
+test_hint_names_the_selected_object (test_chat_window.SelectedObjectHintTests.test_hint_names_the_selected_object) ... 
+ok
+test_hint_when_nothing_is_selected (test_chat_window.SelectedObjectHintTests.test_hint_when_nothing_is_selected) ... ok
+test_send_noise_is_filtered_but_real_errors_survive (test_chat_window.SendOutputTests.test_send_noise_is_filtered_but_r
+eal_errors_survive) ... ok
+test_argv_mode_keeps_the_send_process_path (test_chat_window.SendScriptTests.test_argv_mode_keeps_the_send_process_path
+) ... ok
+test_argv_timeout_kills_the_send_process (test_chat_window.SendScriptTests.test_argv_timeout_kills_the_send_process) ..
+. ok
+test_completion_marker_from_another_request_is_ignored (test_chat_window.SendScriptTests.test_completion_marker_from_an
+other_request_is_ignored)
+完成标记是上一条超时指令写的时，不能把它的数值当成本次结果。 ... ok
+test_context_ping_script_marks_state (test_chat_window.SendScriptTests.test_context_ping_script_marks_state) ... ok
+test_each_request_gets_its_own_script_file (test_chat_window.SendScriptTests.test_each_request_gets_its_own_script_file
+)
+两个请求不能共用一个文件名：旧消息醒来时执行的会是新脚本。 ... ok
+test_praat_error_output_is_kept (test_chat_window.SendScriptTests.test_praat_error_output_is_kept) ... ok
+test_praat_that_never_answers_is_reported_in_chinese (test_chat_window.SendScriptTests.test_praat_that_never_answers_is
+_reported_in_chinese) ... ok
+test_prune_keeps_recent_scripts_even_when_there_are_many (test_chat_window.SendScriptTests.test_prune_keeps_recent_scri
+pts_even_when_there_are_many)
+最近一小时的脚本都要留着：Message.txt 里可能还引用着它们。 ... ok
+test_prune_keeps_the_newest_scripts (test_chat_window.SendScriptTests.test_prune_keeps_the_newest_scripts) ... ok
+test_window_delivery_failure_is_reported (test_chat_window.SendScriptTests.test_window_delivery_failure_is_reported) ..
+. ok
+test_window_delivery_means_success (test_chat_window.SendScriptTests.test_window_delivery_means_success) ... ok
+test_status_mentions_active_preset (test_chat_window.StatusTextTests.test_status_mentions_active_preset) ... ok
+test_status_reports_mismatch_and_unreachable_service (test_chat_window.StatusTextTests.test_status_reports_mismatch_and
+_unreachable_service) ... ok
+test_status_uses_live_model_and_vision (test_chat_window.StatusTextTests.test_status_uses_live_model_and_vision) ... ok
+test_api_strict_limits_knowledge_without_restoring_local_workflow (test_cloud_prompt.CloudPromptTests.test_api_strict_l
+imits_knowledge_without_restoring_local_workflow) ... ok
+test_damaged_native_arguments_are_marked_instead_of_becoming_a_default_action (test_cloud_prompt.CloudPromptTests.test_
+damaged_native_arguments_are_marked_instead_of_becoming_a_default_action) ... ok
+test_direct_native_planner_sends_cloud_policy_and_keeps_all_actions (test_cloud_prompt.CloudPromptTests.test_direct_nat
+ive_planner_sends_cloud_policy_and_keeps_all_actions) ... ok
+test_direct_native_planner_uses_explicit_final_reasoning_answer (test_cloud_prompt.CloudPromptTests.test_direct_native_
+planner_uses_explicit_final_reasoning_answer) ... ok
+test_empty_json_argument_object_remains_valid (test_cloud_prompt.CloudPromptTests.test_empty_json_argument_object_remai
+ns_valid) ... ok
+test_error_explanation_uses_cloud_evidence_and_knowledge_policy (test_cloud_prompt.CloudPromptTests.test_error_explanat
+ion_uses_cloud_evidence_and_knowledge_policy) ... ok
+test_json_fallback_sends_same_cloud_policy_and_preserves_multi_action_plan (test_cloud_prompt.CloudPromptTests.test_jso
+n_fallback_sends_same_cloud_policy_and_preserves_multi_action_plan) ... ok
+test_local_native_keeps_conservative_measurement_rules (test_cloud_prompt.CloudPromptTests.test_local_native_keeps_cons
+ervative_measurement_rules) ... ok
+test_native_followup_and_wrap_up_keep_policy_and_observations (test_cloud_prompt.CloudPromptTests.test_native_followup_
+and_wrap_up_keep_policy_and_observations) ... ok
+test_vision_explanation_keeps_image_evidence_distinct_from_audio (test_cloud_prompt.CloudPromptTests.test_vision_explan
+ation_keeps_image_evidence_distinct_from_audio) ... ok
+test_api_update_waits_for_foreign_config_writer_and_merges_latest (test_config_write_lock.ConfigWriteLockTest.test_api_
+update_waits_for_foreign_config_writer_and_merges_latest) ... ok
+test_default_argument_reads_the_context_file (test_context_freshness.PidMarkerTests.test_default_argument_reads_the_con
+text_file)
+不给参数时要读 chat_context.tsv（真机回归抓到的 bug：默认参数走了空字符串）。 ... ok
+test_marker_does_not_break_object_parsing (test_context_freshness.PidMarkerTests.test_marker_does_not_break_object_pars
+ing) ... ok
+test_marker_is_parsed (test_context_freshness.PidMarkerTests.test_marker_is_parsed) ... ok
+test_another_praat_instance_triggers_one_refresh (test_context_freshness.RefreshDecisionTests.test_another_praat_instan
+ce_triggers_one_refresh) ... ok
+test_assume_fresh_skips_the_ping_for_older_praat_builds (test_context_freshness.RefreshDecisionTests.test_assume_fresh_
+skips_the_ping_for_older_praat_builds)
+老版本 Praat 不写标记，但「这一轮之前投递过脚本」同样说明列表是新的。 ... ok
+test_assume_fresh_still_refreshes_when_the_file_is_gone (test_context_freshness.RefreshDecisionTests.test_assume_fresh_
+still_refreshes_when_the_file_is_gone) ... ok
+test_context_without_a_marker_still_refreshes (test_context_freshness.RefreshDecisionTests.test_context_without_a_marke
+r_still_refreshes)
+老版本 / 别人的 Praat 不写标记：保持原来的行为（刷一次）。 ... ok
+test_failed_refresh_reports_in_chinese (test_context_freshness.RefreshDecisionTests.test_failed_refresh_reports_in_chin
+ese) ... ok
+test_force_refreshes_even_when_fresh (test_context_freshness.RefreshDecisionTests.test_force_refreshes_even_when_fresh)
+ ... ok
+test_fresh_context_does_not_deliver_anything (test_context_freshness.RefreshDecisionTests.test_fresh_context_does_not_d
+eliver_anything)
+列表就是当前这个 Praat 写的：一次往返都不该有。 ... ok
+test_marker_from_a_second_praat_counts (test_context_freshness.RefreshDecisionTests.test_marker_from_a_second_praat_cou
+nts)
+同时开着两个 Praat 时，只要标记是其中之一就不用刷。 ... ok
+test_missing_context_file_refreshes (test_context_freshness.RefreshDecisionTests.test_missing_context_file_refreshes) .
+.. ok
+test_no_praat_running_is_not_an_error (test_context_freshness.RefreshDecisionTests.test_no_praat_running_is_not_an_erro
+r) ... ok
+test_choice_options_are_skipped (test_external_script.FormParsingTests.test_choice_options_are_skipped) ... ok
+test_commas_inside_quotes_do_not_split (test_external_script.FormParsingTests.test_commas_inside_quotes_do_not_split) .
+.. ok
+test_fields_are_parsed_in_order_and_comments_skipped (test_external_script.FormParsingTests.test_fields_are_parsed_in_o
+rder_and_comments_skipped) ... ok
+test_script_without_a_form_has_no_fields (test_external_script.FormParsingTests.test_script_without_a_form_has_no_field
+s) ... ok
+test_unknown_field_type_is_reported (test_external_script.FormParsingTests.test_unknown_field_type_is_reported) ... ok
+test_batch_failure_is_reported_with_the_boundary_note (test_external_script.LocalToolTests.test_batch_failure_is_report
+ed_with_the_boundary_note) ... ok
+test_chat_reports_missing_environment_instead_of_crashing (test_external_script.LocalToolTests.test_chat_reports_missin
+g_environment_instead_of_crashing) ... ok
+test_chat_runs_the_local_tool_through_the_environment (test_external_script.LocalToolTests.test_chat_runs_the_local_too
+l_through_the_environment) ... ok
+test_missing_path_is_refused_in_chinese (test_external_script.LocalToolTests.test_missing_path_is_refused_in_chinese) .
+.. ok
+test_tool_is_registered_with_a_schema (test_external_script.LocalToolTests.test_tool_is_registered_with_a_schema) ... o
+k
+test_whole_flow_exports_then_runs_batch (test_external_script.LocalToolTests.test_whole_flow_exports_then_runs_batch)
+导出声音 → 跑批处理 → 把脚本输出带回对话（批处理是打桩的）。 ... ok
+test_non_numeric_default_for_a_number_field_is_reported (test_external_script.RunArgumentTests.test_non_numeric_default
+_for_a_number_field_is_reported) ... ok
+test_numbers_pass_through_and_strings_are_quoted (test_external_script.RunArgumentTests.test_numbers_pass_through_and_s
+trings_are_quoted) ... ok
+test_quotes_in_a_default_are_escaped (test_external_script.RunArgumentTests.test_quotes_in_a_default_are_escaped) ... o
+k
+test_changed_files_only_reports_new_or_touched (test_external_script.WrapperTests.test_changed_files_only_reports_new_o
+r_touched) ... ok
+test_read_script_checks_name_and_size (test_external_script.WrapperTests.test_read_script_checks_name_and_size) ... ok
+test_wrapper_reads_the_exports_and_calls_the_script (test_external_script.WrapperTests.test_wrapper_reads_the_exports_a
+nd_calls_the_script) ... ok
+test_wrapper_without_a_grid_does_not_select_one (test_external_script.WrapperTests.test_wrapper_without_a_grid_does_not
+_select_one) ... ok
+test_composite_aligner_merges_boundaries (test_forced_alignment.ForcedAlignmentTests.test_composite_aligner_merges_boun
+daries) ... ok
+test_ctc_alignment_finds_token_spans (test_forced_alignment.ForcedAlignmentTests.test_ctc_alignment_finds_token_spans) 
+... ok
+test_mfa_command_uses_configured_model (test_forced_alignment.ForcedAlignmentTests.test_mfa_command_uses_configured_mod
+el) ... ok
+test_textgrid_parser_reads_phone_tier (test_forced_alignment.ForcedAlignmentTests.test_textgrid_parser_reads_phone_tier
+) ... ok
+test_existing_window_is_focused_instead_of_silently_returning (test_frontend_fallback.ChatWindowReuseTests.test_existin
+g_window_is_focused_instead_of_silently_returning) ... ok
+test_focus_is_a_no_operation_off_windows (test_frontend_fallback.ChatWindowReuseTests.test_focus_is_a_no_operation_off_
+windows) ... ok
+test_stale_pid_file_starts_a_new_window (test_frontend_fallback.ChatWindowReuseTests.test_stale_pid_file_starts_a_new_w
+indow) ... ok
+test_current_process_has_verifiable_identity (test_frontend_fallback.ProcessAliveTests.test_current_process_has_verifia
+ble_identity) ... ok
+test_current_process_is_alive (test_frontend_fallback.ProcessAliveTests.test_current_process_is_alive) ... ok
+test_unknown_process_is_not_alive (test_frontend_fallback.ProcessAliveTests.test_unknown_process_is_not_alive) ... ok
+PRAAT_PROGRESS	0.1000	正在停止模型服务…
+PRAAT_PROGRESS	1.0000	已停止。
+test_stop_frontend_does_not_kill_a_service_without_identity_record (test_frontend_fallback.StopFrontendOwnershipTests.t
+est_stop_frontend_does_not_kill_a_service_without_identity_record) ... ok
+test_failed_kill_keeps_record_without_port_fallback (test_frontend_fallback.StopVerificationTests.test_failed_kill_keep
+s_record_without_port_fallback) ... ok
+test_legacy_pid_file_is_removed_without_terminating_its_current_owner (test_frontend_fallback.StopVerificationTests.tes
+t_legacy_pid_file_is_removed_without_terminating_its_current_owner) ... ok
+test_malformed_identity_record_fails_closed (test_frontend_fallback.StopVerificationTests.test_malformed_identity_recor
+d_fails_closed) ... ok
+test_pid_file_is_kept_when_the_process_survives (test_frontend_fallback.StopVerificationTests.test_pid_file_is_kept_whe
+n_the_process_survives) ... ok
+test_pid_file_is_removed_when_the_process_is_gone (test_frontend_fallback.StopVerificationTests.test_pid_file_is_remove
+d_when_the_process_is_gone) ... ok
+test_pid_record_replace_failure_keeps_the_previous_record (test_frontend_fallback.StopVerificationTests.test_pid_record
+_replace_failure_keeps_the_previous_record) ... ok
+test_record_writer_saves_executable_and_creation_token (test_frontend_fallback.StopVerificationTests.test_record_writer
+_saves_executable_and_creation_token) ... ok
+test_reused_pid_with_another_executable_is_not_killed (test_frontend_fallback.StopVerificationTests.test_reused_pid_wit
+h_another_executable_is_not_killed) ... ok
+test_reused_pid_with_same_path_but_new_start_is_not_killed (test_frontend_fallback.StopVerificationTests.test_reused_pi
+d_with_same_path_but_new_start_is_not_killed) ... ok
+test_verified_pid_can_stop_without_a_config_argument (test_frontend_fallback.StopVerificationTests.test_verified_pid_ca
+n_stop_without_a_config_argument) ... ok
+test_stale_pid_record_does_not_mark_an_unrelated_process_running (test_frontend_model.CollectStatusTests.test_stale_pid
+_record_does_not_mark_an_unrelated_process_running) ... ok
+test_status_falls_back_to_config_when_stopped (test_frontend_model.CollectStatusTests.test_status_falls_back_to_config_
+when_stopped) ... ok
+test_status_reports_model_loaded_by_service (test_frontend_model.CollectStatusTests.test_status_reports_model_loaded_by
+_service) ... ok
+test_status_reports_vision_from_service_capabilities (test_frontend_model.CollectStatusTests.test_status_reports_vision
+_from_service_capabilities) ... ok
+test_bad_server_executable_reports_an_error_without_leaking_the_log (test_frontend_model.EnsureStartedTests.test_bad_se
+rver_executable_reports_an_error_without_leaking_the_log)
+llama-server 路径不对时要报中文错误，而且不能把日志文件句柄留在手里。 ... ok
+test_ensure_started_refuses_to_keep_a_different_model (test_frontend_model.EnsureStartedTests.test_ensure_started_refus
+es_to_keep_a_different_model) ... ok
+test_port_check_skips_the_slow_http_probes_and_reports_progress (test_frontend_model.EnsureStartedTests.test_port_check
+_skips_the_slow_http_probes_and_reports_progress)
+端口上没东西在听时，跳过两轮 2 秒超时的 HTTP 探测，而且一开始就报进度。 ... ok
+test_start_command_enables_the_model_chat_template (test_frontend_model.EnsureStartedTests.test_start_command_enables_t
+he_model_chat_template)
+``--jinja`` 不能丢：对话前端要靠模型的工具调用模板回灌 role=tool 结果。 ... ok
+test_start_command_includes_mmproj_only_for_vision (test_frontend_model.EnsureStartedTests.test_start_command_includes_
+mmproj_only_for_vision) ... ok
+test_default_mmproj_is_used_without_mapping_entry (test_frontend_model.MmprojSelectionTests.test_default_mmproj_is_used
+_without_mapping_entry) ... ok
+test_mapping_accepts_bare_file_name (test_frontend_model.MmprojSelectionTests.test_mapping_accepts_bare_file_name) ... 
+ok
+test_missing_mmproj_still_raises (test_frontend_model.MmprojSelectionTests.test_missing_mmproj_still_raises) ... ok
+test_no_mmproj_needed_when_vision_disabled (test_frontend_model.MmprojSelectionTests.test_no_mmproj_needed_when_vision_
+disabled) ... ok
+test_per_model_mapping_wins_over_default (test_frontend_model.MmprojSelectionTests.test_per_model_mapping_wins_over_def
+ault) ... ok
+test_matching_accepts_path_and_bare_file_name (test_frontend_model.RunningModelTests.test_matching_accepts_path_and_bar
+e_file_name) ... ok
+test_reports_model_from_endpoint (test_frontend_model.RunningModelTests.test_reports_model_from_endpoint) ... ok
+test_returns_empty_when_service_is_down (test_frontend_model.RunningModelTests.test_returns_empty_when_service_is_down)
+ ... ok
+test_existing_mapping_entries_are_kept (test_frontend_model.SetMmprojMappingTests.test_existing_mapping_entries_are_kep
+t) ... ok
+test_mmproj_is_recorded_for_the_model (test_frontend_model.SetMmprojMappingTests.test_mmproj_is_recorded_for_the_model)
+ ... ok
+PRAAT_PROGRESS	0.0500	停止旧的模型服务…
+PRAAT_PROGRESS	0.1500	等待端口释放…
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+test_set_model_restarts_service_when_loaded_model_differs (test_frontend_model.StartFrontendTests.test_set_model_restar
+ts_service_when_loaded_model_differs) ... ok
+test_set_model_starts_the_service_when_nothing_is_listening (test_frontend_model.StartFrontendTests.test_set_model_star
+ts_the_service_when_nothing_is_listening)
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+端口空着时选模型必须把服务起起来（以前什么都不做 → 下一条消息 10061）。 ... ok
+test_start_keeps_service_when_loaded_model_matches (test_frontend_model.StartFrontendTests.test_start_keeps_service_whe
+n_loaded_model_matches) ... ok
+PRAAT_PROGRESS	0.0500	停止旧的模型服务…
+PRAAT_PROGRESS	0.1500	等待端口释放…
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+test_start_restarts_service_when_loaded_model_differs (test_frontend_model.StartFrontendTests.test_start_restarts_servi
+ce_when_loaded_model_differs) ... ok
+test_falls_back_to_text_mode_and_records_warning (test_frontend_model.VisionFallbackTests.test_falls_back_to_text_mode_
+and_records_warning) ... ok
+test_reports_error_when_text_mode_also_fails (test_frontend_model.VisionFallbackTests.test_reports_error_when_text_mode
+_also_fails) ... ok
+test_text_only_model_starts_on_first_attempt_when_no_mmproj (test_frontend_model.VisionFallbackTests.test_text_only_mod
+el_starts_on_first_attempt_when_no_mmproj) ... ok
+test_chinese_composition_matches_each_input_at_all_scales (test_ime.NativeImeTests.test_chinese_composition_matches_eac
+h_input_at_all_scales) ... ok
+test_frontend_renders_without_windows_bitmap_scaling (test_ime.NativeImeTests.test_frontend_renders_without_windows_bit
+map_scaling) ... ok
+test_initial_window_fits_the_dpi_scaled_controls (test_ime.NativeImeTests.test_initial_window_fits_the_dpi_scaled_contr
+ols) ... ok
+test_japanese_composition_matches_each_input_at_all_scales (test_ime.NativeImeTests.test_japanese_composition_matches_e
+ach_input_at_all_scales) ... ok
+test_finished_composition_allows_normal_send_and_shift_newline (test_ime_keys.CompositionKeysTests.test_finished_compos
+ition_allows_normal_send_and_shift_newline) ... ok
+test_missing_context_or_non_windows_does_not_block_normal_typing (test_ime_keys.CompositionKeysTests.test_missing_conte
+xt_or_non_windows_does_not_block_normal_typing) ... ok
+test_preedit_return_neither_sends_nor_inserts_a_newline (test_ime_keys.CompositionKeysTests.test_preedit_return_neither
+_sends_nor_inserts_a_newline) ... ok
+test_verify_chat_templates_covers_every_parameter (test_measures.LiveVerificationCoverageTests.test_verify_chat_templat
+es_covers_every_parameter) ... ok
+test_an_existing_pitch_object_is_reused (test_measures.MeasureRenderingTests.test_an_existing_pitch_object_is_reused) .
+.. ok
+test_catalog_text_mentions_the_measure_tool (test_measures.MeasureRenderingTests.test_catalog_text_mentions_the_measure
+_tool) ... ok
+test_dedicated_parameters_delegate_to_their_tool (test_measures.MeasureRenderingTests.test_dedicated_parameters_delegat
+e_to_their_tool) ... ok
+test_editor_only_parameters_explain_themselves (test_measures.MeasureRenderingTests.test_editor_only_parameters_explain
+_themselves) ... ok
+test_every_parameter_renders (test_measures.MeasureRenderingTests.test_every_parameter_renders) ... ok
+test_jitter_uses_a_point_process_and_cleans_up (test_measures.MeasureRenderingTests.test_jitter_uses_a_point_process_an
+d_cleans_up) ... ok
+test_measure_needs_a_sound_or_a_known_derived_object (test_measures.MeasureRenderingTests.test_measure_needs_a_sound_or
+_a_known_derived_object) ... ok
+test_measure_tool_is_registered (test_measures.MeasureRenderingTests.test_measure_tool_is_registered) ... ok
+test_mixing_dedicated_and_table_parameters_is_refused (test_measures.MeasureRenderingTests.test_mixing_dedicated_and_ta
+ble_parameters_is_refused) ... ok
+test_multi_statement_rows_assign_the_value_variable (test_measures.MeasureRenderingTests.test_multi_statement_rows_assi
+gn_the_value_variable) ... ok
+test_parameters_without_a_time_range_do_not_claim_one (test_measures.MeasureRenderingTests.test_parameters_without_a_ti
+me_range_do_not_claim_one) ... ok
+test_pitch_extremes_are_guarded_against_octave_errors (test_measures.MeasureRenderingTests.test_pitch_extremes_are_guar
+ded_against_octave_errors)
+``maximum_pitch`` / ``minimum_pitch`` 不许用裸 Get maximum/minimum。 ... ok
+test_pitch_parameters_share_one_derivation (test_measures.MeasureRenderingTests.test_pitch_parameters_share_one_derivat
+ion) ... ok
+test_range_and_editor_selection_are_reported (test_measures.MeasureRenderingTests.test_range_and_editor_selection_are_r
+eported) ... ok
+test_schema_offers_every_parameter (test_measures.MeasureRenderingTests.test_schema_offers_every_parameter) ... ok
+test_shimmer_selects_both_the_point_process_and_the_sound (test_measures.MeasureRenderingTests.test_shimmer_selects_bot
+h_the_point_process_and_the_sound) ... ok
+test_single_parameter_command_gets_the_value_prefix (test_measures.MeasureRenderingTests.test_single_parameter_command_
+gets_the_value_prefix) ... ok
+test_unknown_parameter_names_are_reported (test_measures.MeasureRenderingTests.test_unknown_parameter_names_are_reporte
+d) ... ok
+test_dedicated_rows_point_at_real_tools (test_measures.MeasureTableTests.test_dedicated_rows_point_at_real_tools) ... o
+k
+test_derivations_are_listed_in_dependency_order (test_measures.MeasureTableTests.test_derivations_are_listed_in_depende
+ncy_order) ... ok
+test_every_entry_has_a_chinese_label (test_measures.MeasureTableTests.test_every_entry_has_a_chinese_label) ... ok
+test_every_query_points_at_a_known_source (test_measures.MeasureTableTests.test_every_query_points_at_a_known_source) .
+.. ok
+test_parameter_names_are_unique (test_measures.MeasureTableTests.test_parameter_names_are_unique) ... ok
+test_source_keys_split_on_plus (test_measures.MeasureTableTests.test_source_keys_split_on_plus) ... ok
+test_table_is_not_empty_and_sections_are_parsed (test_measures.MeasureTableTests.test_table_is_not_empty_and_sections_a
+re_parsed) ... ok
+test_api_config_command_is_available (test_model_progress.ApiModeControlTests.test_api_config_command_is_available) ...
+ ok
+test_local_base_url_ignores_the_cloud_override (test_model_progress.ApiModeControlTests.test_local_base_url_ignores_the
+_cloud_override)
+API 模式下 `qwen.base_url` 是云端地址，本机端口要另算。 ... ok
+PRAAT_PROGRESS	0.1000	当前是 API 模式，不需要本机模型服务。
+PRAAT_PROGRESS	1.0000	已就绪：deepseek-chat（云端）
+test_start_frontend_does_not_launch_llama_server_in_api_mode (test_model_progress.ApiModeControlTests.test_start_fronte
+nd_does_not_launch_llama_server_in_api_mode) ... ok
+test_start_frontend_in_api_mode_reports_progress (test_model_progress.ApiModeControlTests.test_start_frontend_in_api_mo
+de_reports_progress)
+PRAAT_PROGRESS	0.1000	当前是 API 模式，不需要本机模型服务。
+PRAAT_PROGRESS	1.0000	已就绪：deepseek-chat（云端）
+API 模式也要发 `PRAAT_PROGRESS`：Praat 的进度小窗靠它才弹得出来。 ... ok
+test_status_reports_the_api_model_without_the_key (test_model_progress.ApiModeControlTests.test_status_reports_the_api_
+model_without_the_key) ... ok
+test_stop_frontend_in_api_mode_does_not_touch_a_local_service (test_model_progress.ApiModeControlTests.test_stop_fronte
+nd_in_api_mode_does_not_touch_a_local_service)
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+默认 `api.stop_local_service=True`：进 API 之后「停止前端」要真的收掉本机服务。 ... ok
+PRAAT_PROGRESS	0.1000	API 模式：设置里取消了「顺手停掉本机模型服务」，本机服务保持不动。
+PRAAT_PROGRESS	1.0000	API 模式仍在运行；本机模型服务按设置保留。
+test_stop_frontend_in_api_mode_keeps_the_service_when_the_option_is_off (test_model_progress.ApiModeControlTests.test_s
+top_frontend_in_api_mode_keeps_the_service_when_the_option_is_off) ... ok
+test_stop_frontend_in_api_mode_waits_for_the_local_port_only (test_model_progress.ApiModeControlTests.test_stop_fronten
+d_in_api_mode_waits_for_the_local_port_only)
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+停止/等待释放看的是本机端口；拿云端地址去等会白等 20 秒还打网络。 ... ok
+test_an_unreadable_model_list_keeps_the_existing_behaviour (test_model_progress.EnsureLocalServiceTests.test_an_unreada
+ble_model_list_keeps_the_existing_behaviour)
+`server_model_state()` 是 None（读不到模型列表）时不许擅自重启。 ... ok
+test_another_model_on_the_port_restarts_the_service (test_model_progress.EnsureLocalServiceTests.test_another_model_on_
+the_port_restarts_the_service) ... ok
+test_apply_preset_goes_through_ensure_local_service (test_model_progress.EnsureLocalServiceTests.test_apply_preset_goes
+_through_ensure_local_service) ... ok
+test_empty_port_launches_the_server (test_model_progress.EnsureLocalServiceTests.test_empty_port_launches_the_server) .
+.. ok
+test_set_frontend_model_goes_through_ensure_local_service (test_model_progress.EnsureLocalServiceTests.test_set_fronten
+d_model_goes_through_ensure_local_service) ... ok
+test_the_configured_model_is_left_alone (test_model_progress.EnsureLocalServiceTests.test_the_configured_model_is_left_
+alone) ... ok
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+test_launch_server_reports_progress (test_model_progress.ProgressReportingTests.test_launch_server_reports_progress) ..
+. ok
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+test_pid_record_write_failure_stops_the_new_server (test_model_progress.ProgressReportingTests.test_pid_record_write_fa
+ilure_stops_the_new_server) ... ok
+test_progress_line_and_callback (test_model_progress.ProgressReportingTests.test_progress_line_and_callback) ... ok
+test_progress_without_sink_does_not_crash (test_model_progress.ProgressReportingTests.test_progress_without_sink_does_n
+ot_crash) ... ok
+PRAAT_PROGRESS	0.1000	正在停止模型服务…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	已停止。
+test_stop_reports_progress (test_model_progress.ProgressReportingTests.test_stop_reports_progress) ... ok
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+test_unverifiable_pid_identity_stops_the_new_server (test_model_progress.ProgressReportingTests.test_unverifiable_pid_i
+dentity_stops_the_new_server) ... ok
+test_bad_or_missing_pid_is_ignored (test_parent_watch.ParentPidTests.test_bad_or_missing_pid_is_ignored) ... ok
+test_executable_comes_from_the_environment (test_parent_watch.ParentPidTests.test_executable_comes_from_the_environment
+) ... ok
+test_pid_is_read_from_the_environment (test_parent_watch.ParentPidTests.test_pid_is_read_from_the_environment) ... ok
+test_grace_period_delays_the_first_check (test_parent_watch.ParentWatcherTests.test_grace_period_delays_the_first_check
+) ... ok
+test_on_close_callback_takes_over_the_shutdown (test_parent_watch.ParentWatcherTests.test_on_close_callback_takes_over_
+the_shutdown)
+对话窗口要先说一句再关，所以给了 on_close 就不由 watcher 来 destroy。 ... ok
+test_unknown_state_never_closes_the_window (test_parent_watch.ParentWatcherTests.test_unknown_state_never_closes_the_wi
+ndow) ... ok
+test_window_is_closed_when_praat_is_gone (test_parent_watch.ParentWatcherTests.test_window_is_closed_when_praat_is_gone
+) ... ok
+test_window_survives_while_praat_is_running (test_parent_watch.ParentWatcherTests.test_window_survives_while_praat_is_r
+unning) ... ok
+test_the_launcher_pid_is_authoritative (test_parent_watch.PraatAliveTests.test_the_launcher_pid_is_authoritative) ... o
+k
+test_watching_is_skipped_when_no_praat_is_running (test_parent_watch.PraatAliveTests.test_watching_is_skipped_when_no_p
+raat_is_running)
+手工起对话窗口做开发时没有 Praat，别自己把自己关掉。 ... ok
+test_without_a_pid_the_process_table_is_used (test_parent_watch.PraatAliveTests.test_without_a_pid_the_process_table_is
+_used) ... ok
+test_model_reply_is_used_when_present (test_planner_tools.NativePlanningTests.test_model_reply_is_used_when_present) ..
+. ok
+test_nothing_returned_falls_back_to_the_json_planner (test_planner_tools.NativePlanningTests.test_nothing_returned_fall
+s_back_to_the_json_planner) ... ok
+test_plain_answer_without_tools_is_not_an_action (test_planner_tools.NativePlanningTests.test_plain_answer_without_tool
+s_is_not_an_action) ... ok
+test_tools_mode_reports_an_empty_response (test_planner_tools.NativePlanningTests.test_tools_mode_reports_an_empty_resp
+onse) ... ok
+test_two_calls_become_two_actions (test_planner_tools.NativePlanningTests.test_two_calls_become_two_actions) ... ok
+test_actions_are_capped (test_planner_tools.PlanActionTests.test_actions_are_capped) ... ok
+test_actions_from_native_tool_calls_keep_their_order (test_planner_tools.PlanActionTests.test_actions_from_native_tool_
+calls_keep_their_order) ... ok
+test_empty_plan_has_no_actions (test_planner_tools.PlanActionTests.test_empty_plan_has_no_actions) ... ok
+test_script_only_plan_becomes_a_custom_script_action (test_planner_tools.PlanActionTests.test_script_only_plan_becomes_
+a_custom_script_action) ... ok
+test_single_tool_plan_is_normalised (test_planner_tools.PlanActionTests.test_single_tool_plan_is_normalised) ... ok
+test_custom_script_action_uses_the_script_argument (test_planner_tools.RenderActionTests.test_custom_script_action_uses
+_the_script_argument) ... ok
+test_model_script_rescues_a_bad_argument (test_planner_tools.RenderActionTests.test_model_script_rescues_a_bad_argument
+) ... ok
+test_tool_action_renders_a_script (test_planner_tools.RenderActionTests.test_tool_action_renders_a_script) ... ok
+test_unknown_tool_is_an_error (test_planner_tools.RenderActionTests.test_unknown_tool_is_an_error) ... ok
+test_arguments_arrive_as_a_json_string (test_planner_tools.ToolCallParsingTests.test_arguments_arrive_as_a_json_string)
+ ... ok
+test_broken_arguments_do_not_crash (test_planner_tools.ToolCallParsingTests.test_broken_arguments_do_not_crash) ... ok
+test_message_without_calls_has_no_actions (test_planner_tools.ToolCallParsingTests.test_message_without_calls_has_no_ac
+tions) ... ok
+test_multiple_calls_are_all_kept (test_planner_tools.ToolCallParsingTests.test_multiple_calls_are_all_kept) ... ok
+test_planner_mode_env (test_planner_tools.ToolCallParsingTests.test_planner_mode_env) ... ok
+test_every_tool_has_a_schema (test_planner_tools.ToolSchemaTests.test_every_tool_has_a_schema) ... ok
+test_schema_parameters_match_the_documented_signature (test_planner_tools.ToolSchemaTests.test_schema_parameters_match_
+the_documented_signature)
+schema 里的参数名必须出现在工具的 signature 里，防止两边跑偏。 ... ok
+test_schema_shape_is_valid (test_planner_tools.ToolSchemaTests.test_schema_shape_is_valid) ... ok
+test_schemas_are_openai_shaped (test_planner_tools.ToolSchemaTests.test_schemas_are_openai_shaped) ... ok
+test_tool_labels_cover_every_tool (test_planner_tools.ToolSchemaTests.test_tool_labels_cover_every_tool) ... ok
+test_install_writes_the_expected_folder (test_plugin_build.ChatLauncherTests.test_install_writes_the_expected_folder) .
+.. ok
+test_missing_generated_script_is_reported (test_plugin_build.ChatLauncherTests.test_missing_generated_script_is_reporte
+d) ... ok
+test_praat_literal_is_reversible (test_plugin_build.ChatLauncherTests.test_praat_literal_is_reversible) ... ok
+test_checked_in_script_matches_the_table (test_plugin_build.GeneratedScriptTests.test_checked_in_script_matches_the_tab
+le) ... ok
+test_every_parameter_has_a_block (test_plugin_build.GeneratedScriptTests.test_every_parameter_has_a_block) ... ok
+test_pitch_extremes_are_guarded_against_octave_errors (test_plugin_build.GeneratedScriptTests.test_pitch_extremes_are_g
+uarded_against_octave_errors)
+插件里的最高/最低基频也要防倍频误判（和会话模板同一处修正）。 ... ok
+test_script_has_no_single_quote_interpolation (test_plugin_build.GeneratedScriptTests.test_script_has_no_single_quote_i
+nterpolation) ... ok
+test_script_never_opens_the_info_window (test_plugin_build.GeneratedScriptTests.test_script_never_opens_the_info_window
+)
+插件也不该往 Praat Info 里写（结果进 Table；guide §8.5 的约定）。 ... ok
+test_script_uses_the_plugin_range_variables (test_plugin_build.GeneratedScriptTests.test_script_uses_the_plugin_range_v
+ariables) ... ok
+test_editor_wrapper_passes_as_many_arguments_as_the_form_has_fields (test_plugin_build.MenuRegistrationTests.test_edito
+r_wrapper_passes_as_many_arguments_as_the_form_has_fields) ... ok
+test_menu_commands_point_at_existing_scripts (test_plugin_build.MenuRegistrationTests.test_menu_commands_point_at_exist
+ing_scripts) ... ok
+test_chat_uses_the_locator (test_praat_app.ChatDelegationTests.test_chat_uses_the_locator) ... ok
+test_describe_search_lists_where_it_looked (test_praat_app.LocatorTests.test_describe_search_lists_where_it_looked) ...
+ ok
+test_env_override_wins (test_praat_app.LocatorTests.test_env_override_wins) ... ok
+test_explicit_path_that_does_not_exist_is_empty (test_praat_app.LocatorTests.test_explicit_path_that_does_not_exist_is_
+empty)
+用户指了路径但文件不在：返回空串，别偷偷用别的 Praat。 ... ok
+test_explicit_path_wins (test_praat_app.LocatorTests.test_explicit_path_wins) ... ok
+test_first_existing_candidate_is_used (test_praat_app.LocatorTests.test_first_existing_candidate_is_used) ... ok
+test_found_result_is_cached (test_praat_app.LocatorTests.test_found_result_is_cached) ... ok
+test_not_found_is_cached_until_the_retry_interval (test_praat_app.LocatorTests.test_not_found_is_cached_until_the_retry
+_interval)
+没找到也缓存：30 秒内不重复搜盘；reset 之后可以立刻再搜一次。 ... ok
+test_not_found_is_retried_after_the_interval (test_praat_app.LocatorTests.test_not_found_is_retried_after_the_interval)
+ ... ok
+test_path_search_is_the_last_resort (test_praat_app.LocatorTests.test_path_search_is_the_last_resort) ... ok
+test_repo_build_is_tried_first (test_praat_app.LocatorTests.test_repo_build_is_tried_first)
+这个 fork 自己构建的 Praat.exe 排在最前面。 ... ok
+test_apply_preset_keeps_service_when_model_already_loaded (test_presets.PresetApplyTests.test_apply_preset_keeps_servic
+e_when_model_already_loaded) ... ok
+test_apply_preset_rejects_unknown_and_missing (test_presets.PresetApplyTests.test_apply_preset_rejects_unknown_and_miss
+ing) ... ok
+test_apply_preset_restarts_when_another_model_is_served (test_presets.PresetApplyTests.test_apply_preset_restarts_when_
+another_model_is_served) ... ok
+test_apply_preset_updates_config_when_service_is_stopped (test_presets.PresetApplyTests.test_apply_preset_updates_confi
+g_when_service_is_stopped) ... ok
+test_apply_preset_without_presets_is_rejected (test_presets.PresetApplyTests.test_apply_preset_without_presets_is_rejec
+ted) ... ok
+test_locked_or_stopped_cloud_rejects_local_preset (test_presets.PresetApplyTests.test_locked_or_stopped_cloud_rejects_l
+ocal_preset) ... ok
+test_set_model_keeps_preset_flag_in_sync (test_presets.PresetApplyTests.test_set_model_keeps_preset_flag_in_sync) ... o
+k
+test_status_lists_presets_for_the_frontend (test_presets.PresetApplyTests.test_status_lists_presets_for_the_frontend) .
+.. ok
+PRAAT_PROGRESS	0.0200	切回本地模型（关闭 API 模式）…
+test_top_selection_can_switch_local_cloud_local_cloud (test_presets.PresetApplyTests.test_top_selection_can_switch_loca
+l_cloud_local_cloud) ... ok
+test_config_without_presets_still_loads (test_presets.PresetParsingTests.test_config_without_presets_still_loads) ... o
+k
+test_find_preset_accepts_id_label_and_file_name (test_presets.PresetParsingTests.test_find_preset_accepts_id_label_and_
+file_name) ... ok
+test_preset_config_values_merge_mmproj_mapping (test_presets.PresetParsingTests.test_preset_config_values_merge_mmproj_
+mapping) ... ok
+test_preset_config_values_reject_missing_files (test_presets.PresetParsingTests.test_preset_config_values_reject_missin
+g_files) ... ok
+test_preset_overrides_runtime_profile (test_presets.PresetParsingTests.test_preset_overrides_runtime_profile) ... ok
+test_preset_view_reports_availability_and_vision (test_presets.PresetParsingTests.test_preset_view_reports_availability
+_and_vision) ... ok
+test_presets_are_parsed_with_defaults (test_presets.PresetParsingTests.test_presets_are_parsed_with_defaults) ... ok
+test_presets_can_be_written_as_a_mapping (test_presets.PresetParsingTests.test_presets_can_be_written_as_a_mapping) ...
+ ok
+test_pidfd_open_failure_falls_back_to_identity_checked_kill (test_process_termination.ProcessTerminationTests.test_pidf
+d_open_failure_falls_back_to_identity_checked_kill) ... ok
+test_pidfd_path_checks_identity_before_signalling (test_process_termination.ProcessTerminationTests.test_pidfd_path_che
+cks_identity_before_signalling) ... ok
+test_pidfd_path_signals_a_verified_process_once (test_process_termination.ProcessTerminationTests.test_pidfd_path_signa
+ls_a_verified_process_once) ... ok
+test_posix_fallback_does_not_signal_a_reused_pid (test_process_termination.ProcessTerminationTests.test_posix_fallback_
+does_not_signal_a_reused_pid) ... ok
+test_posix_fallback_signals_a_verified_process_once (test_process_termination.ProcessTerminationTests.test_posix_fallba
+ck_signals_a_verified_process_once) ... ok
+test_windows_does_not_terminate_a_reused_pid (test_process_termination.ProcessTerminationTests.test_windows_does_not_te
+rminate_a_reused_pid) ... ok
+test_windows_terminates_a_verified_process (test_process_termination.ProcessTerminationTests.test_windows_terminates_a_
+verified_process) ... ok
+test_shifted_phone_has_error (test_pronunciation.PronunciationTests.test_shifted_phone_has_error) ... ok
+test_similar_phone_has_no_error (test_pronunciation.PronunciationTests.test_similar_phone_has_no_error) ... ok
+test_a_remote_endpoint_gets_no_local_service_hint (test_qwen.ConnectionHintTests.test_a_remote_endpoint_gets_no_local_s
+ervice_hint) ... ok
+test_other_transport_errors_are_not_mistaken_for_a_stopped_service (test_qwen.ConnectionHintTests.test_other_transport_
+errors_are_not_mistaken_for_a_stopped_service) ... ok
+test_refused_local_connection_points_at_the_menu (test_qwen.ConnectionHintTests.test_refused_local_connection_points_at
+_the_menu) ... ok
+test_url_error_wrapping_a_refusal_is_recognized (test_qwen.ConnectionHintTests.test_url_error_wrapping_a_refusal_is_rec
+ognized) ... ok
+test_json_object_is_extracted_from_explanation (test_qwen.QwenTests.test_json_object_is_extracted_from_explanation) ...
+ ok
+test_json_object_is_extracted_from_markdown (test_qwen.QwenTests.test_json_object_is_extracted_from_markdown) ... ok
+test_both_tools_agree_on_the_alias_set (test_range_aliases.RangeAliasTests.test_both_tools_agree_on_the_alias_set)
+同一对 ``from``/``to`` 在截取和标注里必须落到同一个区间。 ... ok
+test_extract_part_prefers_start_over_from (test_range_aliases.RangeAliasTests.test_extract_part_prefers_start_over_from
+) ... ok
+test_extract_part_uses_finish_alias_for_end (test_range_aliases.RangeAliasTests.test_extract_part_uses_finish_alias_for
+_end) ... ok
+test_extract_part_uses_nonzero_from_to_aliases (test_range_aliases.RangeAliasTests.test_extract_part_uses_nonzero_from_
+to_aliases) ... ok
+test_non_numeric_alias_value_is_rejected (test_range_aliases.RangeAliasTests.test_non_numeric_alias_value_is_rejected) 
+... ok
+test_range_beyond_object_duration_is_not_silently_swapped (test_range_aliases.RangeAliasTests.test_range_beyond_object_
+duration_is_not_silently_swapped)
+给了越界的 from/to 之后不许退回整段，必须让脚本自己失败。 ... ok
+test_statistics_still_accept_start_end_aliases (test_range_aliases.RangeAliasTests.test_statistics_still_accept_start_e
+nd_aliases) ... ok
+test_statistics_use_nonzero_from_to_aliases (test_range_aliases.RangeAliasTests.test_statistics_use_nonzero_from_to_ali
+ases) ... ok
+test_textgrid_set_interval_accepts_from_to_aliases (test_range_aliases.RangeAliasTests.test_textgrid_set_interval_accep
+ts_from_to_aliases) ... ok
+test_textgrid_set_interval_still_accepts_start_end (test_range_aliases.RangeAliasTests.test_textgrid_set_interval_still
+_accepts_start_end) ... ok
+test_textgrid_set_interval_uses_finish_alias_for_end (test_range_aliases.RangeAliasTests.test_textgrid_set_interval_use
+s_finish_alias_for_end) ... ok
+test_report (unittest.loader._FailedTest.test_report) ... ERROR
+test_chat_delivers_through_sendpraat (test_sendpraat.ChatIntegrationTests.test_chat_delivers_through_sendpraat) ... ok
+test_cancel_pending_replaces_the_message (test_sendpraat.DeliverTests.test_cancel_pending_replaces_the_message) ... ok
+test_cancel_pending_without_message_does_nothing (test_sendpraat.DeliverTests.test_cancel_pending_without_message_does_
+nothing) ... ok
+test_deliver_reports_a_closed_window (test_sendpraat.DeliverTests.test_deliver_reports_a_closed_window) ... ok
+test_deliver_without_praat_is_reported (test_sendpraat.DeliverTests.test_deliver_without_praat_is_reported) ... ok
+test_deliver_writes_message_and_posts_once (test_sendpraat.DeliverTests.test_deliver_writes_message_and_posts_once) ...
+ ok
+test_backslashes_and_quotes_are_escaped (test_sendpraat.MessageTests.test_backslashes_and_quotes_are_escaped) ... ok
+test_consume_can_be_turned_off_for_comparison (test_sendpraat.MessageTests.test_consume_can_be_turned_off_for_compariso
+n)
+``consume=False`` 时和 ``--send`` 自己写的内容一致（只用于对照/排障）。 ... ok
+test_consume_statement_is_empty_without_a_message_file (test_sendpraat.MessageTests.test_consume_statement_is_empty_wit
+hout_a_message_file) ... ok
+test_failure_file_is_part_of_the_delivery_contract (test_sendpraat.MessageTests.test_failure_file_is_part_of_the_delive
+ry_contract)
+Praat 报错时写下的 chat_failure.txt：每次投递前要清掉、能读回来。 ... ok
+test_message_consumes_itself_before_running_the_script (test_sendpraat.MessageTests.test_message_consumes_itself_before
+_running_the_script)
+消息第一句就要把 Message.txt 换成空操作（重复执行的根治办法）。 ... ok
+test_message_starts_with_the_trust_marker_and_the_script (test_sendpraat.MessageTests.test_message_starts_with_the_trus
+t_marker_and_the_script) ... ok
+test_noop_message_has_trust_marker_and_does_nothing (test_sendpraat.MessageTests.test_noop_message_has_trust_marker_and
+_does_nothing) ... ok
+test_the_message_marks_itself_as_the_frontends (test_sendpraat.MessageTests.test_the_message_marks_itself_as_the_fronte
+nds)
+Praat 那边靠这两个标记认出「是对话前端发来的」（决定要不要弹错误框）。 ... ok
+test_default_mode_is_window (test_sendpraat.ModeTests.test_default_mode_is_window) ... ok
+test_env_var_switches_to_argv (test_sendpraat.ModeTests.test_env_var_switches_to_argv) ... ok
+test_message_file_follows_appdata (test_sendpraat.ModeTests.test_message_file_follows_appdata) ... ok
+test_non_windows_falls_back_to_argv (test_sendpraat.ModeTests.test_non_windows_falls_back_to_argv)
+macOS/Linux 上没有 Message.txt + WM_APP 这套协议，走老的 --send。 ... ok
+test_non_windows_has_no_message_file (test_sendpraat.ModeTests.test_non_windows_has_no_message_file) ... ok
+test_explicit_process_wins (test_sendpraat.WindowChoiceTests.test_explicit_process_wins) ... ok
+test_newest_praat_wins (test_sendpraat.WindowChoiceTests.test_newest_praat_wins) ... ok
+test_no_window_returns_none (test_sendpraat.WindowChoiceTests.test_no_window_returns_none) ... ok
+test_objects_window_is_preferred (test_sendpraat.WindowChoiceTests.test_objects_window_is_preferred) ... ok
+test_praat_window_class_prefix (test_sendpraat.WindowChoiceTests.test_praat_window_class_prefix) ... ok
+test_blank_model_path_identifies_the_setting (test_startup_config.StartupConfigTests.test_blank_model_path_identifies_t
+he_setting) ... ok
+test_blank_server_path_identifies_the_setting (test_startup_config.StartupConfigTests.test_blank_server_path_identifies
+_the_setting) ... ok
+test_environment_paths_allow_start_without_a_config_file (test_startup_config.StartupConfigTests.test_environment_paths
+_allow_start_without_a_config_file) ... ok
+test_missing_config_identifies_the_file_and_setup_step (test_startup_config.StartupConfigTests.test_missing_config_iden
+tifies_the_file_and_setup_step) ... ok
+test_budget_never_goes_negative (test_token_budget.BudgetTests.test_budget_never_goes_negative) ... ok
+test_history_budget_subtracts_the_instructions_and_the_answer (test_token_budget.BudgetTests.test_history_budget_subtra
+cts_the_instructions_and_the_answer) ... ok
+test_ascii_is_cheaper_than_cjk (test_token_budget.EstimateTests.test_ascii_is_cheaper_than_cjk) ... ok
+test_empty_text_is_free (test_token_budget.EstimateTests.test_empty_text_is_free) ... ok
+test_dropped_zero_when_everything_fits (test_token_budget.HistoryTrimTests.test_dropped_zero_when_everything_fits) ... 
+ok
+test_history_keeps_valid_prefixes_only (test_token_budget.HistoryTrimTests.test_history_keeps_valid_prefixes_only)
+留下的必须从某句用户消息开始：截出来的半截回答（开头是 assistant）要丢掉。 ... ok
+test_long_history_is_trimmed_by_tokens_and_reports_the_drop (test_token_budget.HistoryTrimTests.test_long_history_is_tr
+immed_by_tokens_and_reports_the_drop) ... ok
+test_short_history_is_kept_whole (test_token_budget.HistoryTrimTests.test_short_history_is_kept_whole) ... ok
+test_header_stays_even_when_everything_else_is_trimmed (test_token_budget.ObjectContextTrimTests.test_header_stays_even
+_when_everything_else_is_trimmed) ... ok
+test_long_list_keeps_the_selection_and_says_what_was_hidden (test_token_budget.ObjectContextTrimTests.test_long_list_ke
+eps_the_selection_and_says_what_was_hidden) ... ok
+test_short_list_is_untouched (test_token_budget.ObjectContextTrimTests.test_short_list_is_untouched) ... ok
+test_short_conversation_has_no_notes (test_token_budget.TurnNoteTests.test_short_conversation_has_no_notes) ... ok
+test_trimmed_history_is_announced (test_token_budget.TurnNoteTests.test_trimmed_history_is_announced) ... ok
+test_trimmed_object_list_is_announced (test_token_budget.TurnNoteTests.test_trimmed_object_list_is_announced) ... ok
+test_one_hundred_and_fifty_percent (test_ui_theme.ScaleTests.test_one_hundred_and_fifty_percent) ... ok
+test_one_hundred_and_twentyfive_percent (test_ui_theme.ScaleTests.test_one_hundred_and_twentyfive_percent) ... ok
+test_one_hundred_percent (test_ui_theme.ScaleTests.test_one_hundred_percent) ... ok
+test_silly_values_are_clamped (test_ui_theme.ScaleTests.test_silly_values_are_clamped) ... ok
+test_broken_registry_falls_back_to_light (test_ui_theme.SystemThemeTests.test_broken_registry_falls_back_to_light) ... 
+ok
+test_dark_system (test_ui_theme.SystemThemeTests.test_dark_system) ... ok
+test_garbage_value_falls_back_to_light (test_ui_theme.SystemThemeTests.test_garbage_value_falls_back_to_light) ... ok
+test_light_system (test_ui_theme.SystemThemeTests.test_light_system) ... ok
+test_missing_value_falls_back_to_light (test_ui_theme.SystemThemeTests.test_missing_value_falls_back_to_light) ... ok
+test_without_winreg_module_it_is_light (test_ui_theme.SystemThemeTests.test_without_winreg_module_it_is_light) ... ok
+test_colours_and_metrics (test_ui_theme.ThemeTests.test_colours_and_metrics) ... ok
+test_dark_mode_switches_the_palette (test_ui_theme.ThemeTests.test_dark_mode_switches_the_palette) ... ok
+test_fonts_fall_back_without_a_tk_root (test_ui_theme.ThemeTests.test_fonts_fall_back_without_a_tk_root) ... ok
+test_listeners_fire_on_switch_and_survive_failures (test_ui_theme.ThemeTests.test_listeners_fire_on_switch_and_survive_
+failures) ... ok
+test_remove_listener (test_ui_theme.ThemeTests.test_remove_listener) ... ok
+test_unknown_token_is_reported (test_ui_theme.ThemeTests.test_unknown_token_is_reported) ... ok
+test_it_reports_changes_and_keeps_polling (test_ui_theme.ThemeWatcherTests.test_it_reports_changes_and_keeps_polling) .
+.. ok
+test_probe_failure_keeps_the_previous_value (test_ui_theme.ThemeWatcherTests.test_probe_failure_keeps_the_previous_valu
+e) ... ok
+test_stop_prevents_further_polling (test_ui_theme.ThemeWatcherTests.test_stop_prevents_further_polling) ... ok
+test_accent_headers_pass_the_large_text_threshold (test_ui_theme.TokenTests.test_accent_headers_pass_the_large_text_thr
+eshold)
+强调行是加粗小标题（WCAG 的"大字号"档），底线是 3:1。 ... ok
+test_both_palettes_have_the_same_keys (test_ui_theme.TokenTests.test_both_palettes_have_the_same_keys) ... ok
+test_contrast_ratio_matches_wcag_examples (test_ui_theme.TokenTests.test_contrast_ratio_matches_wcag_examples) ... ok
+test_every_token_is_a_hex_colour (test_ui_theme.TokenTests.test_every_token_is_a_hex_colour) ... ok
+test_text_is_readable_on_every_surface (test_ui_theme.TokenTests.test_text_is_readable_on_every_surface)
+正文 vs 各层底色至少要过 WCAG AA（4.5:1）——深色下也要看得清。 ... ok
+test_card_has_a_body_and_unregisters_itself (test_ui_widgets.CardTests.test_card_has_a_body_and_unregisters_itself) ...
+ ok
+test_card_redraws_on_theme_change (test_ui_widgets.CardTests.test_card_redraws_on_theme_change) ... ok
+test_chip_kind_switches_palette (test_ui_widgets.ChipAndSnackbarTests.test_chip_kind_switches_palette) ... ok
+test_snackbar_follows_the_theme (test_ui_widgets.ChipAndSnackbarTests.test_snackbar_follows_the_theme) ... ok
+test_it_wraps_a_real_ttk_entry (test_ui_widgets.FieldCardTests.test_it_wraps_a_real_ttk_entry)
+``key_entry.cget("show")`` 这些是回归脚本读的，不能被换成自绘控件。 ... ok
+test_wrapped_entry_does_not_draw_a_second_border (test_ui_widgets.FieldCardTests.test_wrapped_entry_does_not_draw_a_sec
+ond_border) ... ok
+test_wrapped_entry_focus_is_shown_on_the_rounded_shell (test_ui_widgets.FieldCardTests.test_wrapped_entry_focus_is_show
+n_on_the_rounded_shell) ... ok
+test_disabled_button_never_fires (test_ui_widgets.RoundedButtonTests.test_disabled_button_never_fires) ... ok
+test_outlined_hover_and_pressed_states_use_distinct_colors (test_ui_widgets.RoundedButtonTests.test_outlined_hover_and_
+pressed_states_use_distinct_colors) ... ok
+test_press_and_release_inside_the_button_clicks (test_ui_widgets.RoundedButtonTests.test_press_and_release_inside_the_b
+utton_clicks) ... ok
+test_release_outside_the_button_does_not_click (test_ui_widgets.RoundedButtonTests.test_release_outside_the_button_does
+_not_click) ... ok
+test_text_can_be_changed (test_ui_widgets.RoundedButtonTests.test_text_can_be_changed) ... ok
+test_ttk_style_api (test_ui_widgets.RoundedButtonTests.test_ttk_style_api) ... ok
+test_destroy_cancels_the_animation (test_ui_widgets.RoundedProgressBarTests.test_destroy_cancels_the_animation) ... ok
+test_indeterminate_mode_is_ignored_gracefully (test_ui_widgets.RoundedProgressBarTests.test_indeterminate_mode_is_ignor
+ed_gracefully) ... ok
+test_ttk_value_semantics (test_ui_widgets.RoundedProgressBarTests.test_ttk_value_semantics) ... ok
+test_values_are_clamped (test_ui_widgets.RoundedProgressBarTests.test_values_are_clamped) ... ok
+test_destroy_stops_it (test_ui_widgets.SpinnerTests.test_destroy_stops_it) ... ok
+test_start_and_stop (test_ui_widgets.SpinnerTests.test_start_and_stop) ... ok
+test_reasoning_without_final_answer_is_not_shown_as_answer (test_vot_dispatch.TruncatedResponseTests.test_reasoning_wit
+hout_final_answer_is_not_shown_as_answer) ... ok
+test_truncated_connection_probe_still_confirms_connectivity (test_vot_dispatch.TruncatedResponseTests.test_truncated_co
+nnection_probe_still_confirms_connectivity) ... ok
+test_truncated_explanation_preserves_completed_tool_results (test_vot_dispatch.TruncatedResponseTests.test_truncated_ex
+planation_preserves_completed_tool_results) ... ok
+test_truncated_first_response_executes_nothing (test_vot_dispatch.TruncatedResponseTests.test_truncated_first_response_
+executes_nothing) ... ok
+test_truncated_response_is_rejected_even_with_partial_tool_call (test_vot_dispatch.TruncatedResponseTests.test_truncate
+d_response_is_rejected_even_with_partial_tool_call) ... ok
+test_cancelled_request_does_not_execute (test_vot_dispatch.VotDispatchTests.test_cancelled_request_does_not_execute) ..
+. ok
+test_explicit_landmarks_and_object_are_preserved (test_vot_dispatch.VotDispatchTests.test_explicit_landmarks_and_object
+_are_preserved) ... ok
+test_explicit_object_is_never_replaced_by_another_sound (test_vot_dispatch.VotDispatchTests.test_explicit_object_is_nev
+er_replaced_by_another_sound) ... ok
+test_explicit_range_is_search_window_not_two_landmarks (test_vot_dispatch.VotDispatchTests.test_explicit_range_is_searc
+h_window_not_two_landmarks) ... ok
+test_explicit_selection_requires_a_selection (test_vot_dispatch.VotDispatchTests.test_explicit_selection_requires_a_sel
+ection) ... ok
+test_explicit_zero_landmarks_never_become_auto_detection (test_vot_dispatch.VotDispatchTests.test_explicit_zero_landmar
+ks_never_become_auto_detection) ... ok
+test_failure_or_metadata_cannot_count_as_vot_measurement (test_vot_dispatch.VotDispatchTests.test_failure_or_metadata_c
+annot_count_as_vot_measurement) ... ok
+test_invalid_range_does_not_measure_the_whole_sound (test_vot_dispatch.VotDispatchTests.test_invalid_range_does_not_mea
+sure_the_whole_sound) ... ok
+test_json_planner_setting_also_uses_vot (test_vot_dispatch.VotDispatchTests.test_json_planner_setting_also_uses_vot) ..
+. ok
+test_measurement_uses_real_vot_and_editor_selection (test_vot_dispatch.VotDispatchTests.test_measurement_uses_real_vot_
+and_editor_selection) ... ok
+test_missing_landmark_does_not_silently_use_auto_detection (test_vot_dispatch.VotDispatchTests.test_missing_landmark_do
+es_not_silently_use_auto_detection) ... ok
+test_model_chosen_vot_also_checks_result_and_adds_formula (test_vot_dispatch.VotDispatchTests.test_model_chosen_vot_als
+o_checks_result_and_adds_formula) ... ok
+test_questions_negation_and_multi_step_requests_still_use_planner (test_vot_dispatch.VotDispatchTests.test_questions_ne
+gation_and_multi_step_requests_still_use_planner) ... ok
+test_short_editor_selection_is_not_replaced_by_whole_recording (test_vot_dispatch.VotDispatchTests.test_short_editor_se
+lection_is_not_replaced_by_whole_recording) ... ok
+test_large_gpu_can_enable_vision (test_vram.VramTests.test_large_gpu_can_enable_vision) ... ok
+test_midrange_gpu_disables_vision (test_vram.VramTests.test_midrange_gpu_disables_vision) ... ok
+test_small_gpu_selects_cpu_text_mode (test_vram.VramTests.test_small_gpu_selects_cpu_text_mode) ... ok
+test_protocol_two_waits_until_matching_callback_finished (test_workflow_context.CompletionTests.test_protocol_two_waits
+_until_matching_callback_finished) ... ok
+test_extra_columns_are_not_truncated (test_workflow_context.RequestContextTests.test_extra_columns_are_not_truncated)
+列数比 6 多（以后协议再加列）时不能把多出来的列吃掉。 ... ok
+test_four_column_legacy_lines_are_untouched (test_workflow_context.RequestContextTests.test_four_column_legacy_lines_ar
+e_untouched) ... ok
+test_local_prefix_of_whole_does_not_count (test_workflow_context.RequestContextTests.test_local_prefix_of_whole_does_no
+t_count) ... ok
+test_non_recording_request_keeps_the_editor_selection (test_workflow_context.RequestContextTests.test_non_recording_req
+uest_keeps_the_editor_selection) ... ok
+test_only_the_selection_columns_are_cleared (test_workflow_context.RequestContextTests.test_only_the_selection_columns_
+are_cleared) ... ok
+test_whole_recording_phrasings_are_recognised (test_workflow_context.RequestContextTests.test_whole_recording_phrasings
+_are_recognised) ... ok
+test_api_allows_more_steps_and_followup_analysis_preparation (test_workflow_context.WorkflowTests.test_api_allows_more_
+steps_and_followup_analysis_preparation) ... ok
+test_corrected_retry_clears_recovered_failure (test_workflow_context.WorkflowTests.test_corrected_retry_clears_recovere
+d_failure) ... ok
+test_created_object_is_resolvable_in_next_round (test_workflow_context.WorkflowTests.test_created_object_is_resolvable_
+in_next_round) ... ok
+test_default_selection_in_the_analysed_batch_uses_the_refreshed_state (test_workflow_context.WorkflowTests.test_default
+_selection_in_the_analysed_batch_uses_the_refreshed_state)
+没有 explicitly 给 object 时，默认对象要按刷新后的选择走。 ... ok
+test_invalid_parameters_never_execute_default_mutation (test_workflow_context.WorkflowTests.test_invalid_parameters_nev
+er_execute_default_mutation) ... ok
+test_json_refresh_and_empty_reply_recovery_keep_observations (test_workflow_context.WorkflowTests.test_json_refresh_and
+_empty_reply_recovery_keep_observations) ... ok
+test_large_api_observation_is_clipped_without_losing_call_pairs (test_workflow_context.WorkflowTests.test_large_api_obs
+ervation_is_clipped_without_losing_call_pairs) ... ok
+test_legacy_json_top_level_script_is_executed (test_workflow_context.WorkflowTests.test_legacy_json_top_level_script_is
+_executed) ... ok
+test_refresh_failure_stops_remaining_actions_and_pairs_calls (test_workflow_context.WorkflowTests.test_refresh_failure_
+stops_remaining_actions_and_pairs_calls) ... ok
+test_repeated_failure_stays_failed (test_workflow_context.WorkflowTests.test_repeated_failure_stays_failed) ... ok
+test_same_batch_uses_current_selection_and_next_round_sees_it (test_workflow_context.WorkflowTests.test_same_batch_uses
+_current_selection_and_next_round_sees_it) ... ok
+test_step_budget_pairs_all_pending_calls (test_workflow_context.WorkflowTests.test_step_budget_pairs_all_pending_calls)
+ ... ok
+test_unlimited_api_keeps_full_observation (test_workflow_context.WorkflowTests.test_unlimited_api_keeps_full_observatio
+n) ... ok
+test_user_failure_chain_never_analyses_the_harmonicity (test_workflow_context.WorkflowTests.test_user_failure_chain_nev
+er_analyses_the_harmonicity)
+复现 2026-09-29 用户报的故障链。 ... ok
+test_whole_recording_ignores_editor_selection (test_workflow_context.WorkflowTests.test_whole_recording_ignores_editor_
+selection) ... ok
+test_wrap_up_failure_recovers_on_retry (test_workflow_context.WorkflowTests.test_wrap_up_failure_recovers_on_retry)
+重试成功时就用模型给出的回答，不用摘要。 ... ok
+test_wrap_up_failure_still_returns_measured_results (test_workflow_context.WorkflowTests.test_wrap_up_failure_still_ret
+urns_measured_results)
+收尾那轮网络失败，不能把已经测到的结果丢掉（2026-09-30 真机验收发现）。 ... ok
+
+======================================================================
+ERROR: test_report (unittest.loader._FailedTest.test_report)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_report
+Traceback (most recent call last):
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 374, in _get_module_from_n
+ame
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report.py", line 5, in <module>
+    import parselmouth
+ModuleNotFoundError: No module named 'parselmouth'
+
+
+======================================================================
+FAIL: test_extract_part_accepts_from_to_aliases (test_analysis_object_types.AnalysisObjectTypeTests.test_extract_part_a
+ccepts_from_to_aliases)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 248, in test_extract_part_acce
+pts_from_to_aliases
+    self.run_praat(SOUND + "\n" + tools.render("extract_part", {"from": 0.2, "to": 0.7}, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'length = Get total duration\nassert abs(length - 0.5) < 0.0001\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpdvo5ctso\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 19 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpdvo5ctso/result.txt", "已截取片段：", "片段", "（id ", fixed$ (newId, 0)
+, "）", "，区间 ", fixed$ (t1, 3), "–", fixed$ (t2, 3), " 秒，共 ", fixed$ (duration, 3), " 秒", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpdvo5ctso\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpdvo5ctso\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_longsound_extract_and_info_use_real_supported_commands (test_analysis_object_types.AnalysisObjectTypeTests.t
+est_longsound_extract_and_info_use_real_supported_commands) (tool='object_info')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 231, in test_longsound_extract
+_and_info_use_real_supported_commands
+    self.run_praat(prefix + tools.render(name, arguments, context))
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp6a85qqvt\in
+put.wav”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Sounds not concatenated and not saved to “C:\Users\USER\AppData\Local\Temp\tmp6a85qqvt\input.wav”.
+
+Script line 2 not performed or completed:
+
+« Save as WAV file: "C:/Users/USER/AppData/Local/Temp/tmp6a85qqvt/input.wav" »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp6a85qqvt\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp6a85qqvt\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_longsound_extract_and_info_use_real_supported_commands (test_analysis_object_types.AnalysisObjectTypeTests.t
+est_longsound_extract_and_info_use_real_supported_commands) (tool='extract_part')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 231, in test_longsound_extract
+_and_info_use_real_supported_commands
+    self.run_praat(prefix + tools.render(name, arguments, context))
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp6a85qqvt\in
+put.wav”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Sounds not concatenated and not saved to “C:\Users\USER\AppData\Local\Temp\tmp6a85qqvt\input.wav”.
+
+Script line 2 not performed or completed:
+
+« Save as WAV file: "C:/Users/USER/AppData/Local/Temp/tmp6a85qqvt/input.wav" »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp6a85qqvt\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp6a85qqvt\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_read_file_accepts_multiple_imported_objects_and_reports_all_ids (test_analysis_object_types.AnalysisObjectTy
+peTests.test_read_file_accepts_multiple_imported_objects_and_reports_all_ids)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 239, in test_read_file_accepts
+_multiple_imported_objects_and_reports_all_ids
+    self.run_praat(prefix + tools.render("read_file", {"path": str(collection)}, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 2\nassert selected (1) = 3\nassert selected (2) = 4\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp17k8genz\ob
+jects.Collection”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Collection: not written to text file “C:\Users\USER\AppData\Local\Temp\tmp17k8genz\objects.Collection”.
+
+Script line 4 not performed or completed:
+
+« Save as text file: "C:/Users/USER/AppData/Local/Temp/tmp17k8genz/objects.Collection" »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp17k8genz\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp17k8genz\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests
+.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='pitch_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_
+cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert selected () = 1\nselect all\nassert numberOfSelected () = 1\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 74 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpd3kfj866/result.txt", "基频统计（", fixed$ (tmin, 3), "–", fixed$ (t
+max, 3), " 秒）：平均 ", fixed$ (mean, 3), " Hz，最低 ", fixed$ (minimum, 3), " Hz，最高 ", fixed$ (maximum, 3), " Hz，最高点出现在 ", fi
+xed$ (maxtime, 3), " 秒", rangeNote$, pitchLimit$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests
+.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='intensity_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_
+cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert selected () = 1\nselect all\nassert numberOfSelected () = 1\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 22 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpd3kfj866/result.txt", "强度统计（", fixed$ (tmin, 3), "–", fixed$ (t
+max, 3), " 秒）：平均 ", fixed$ (mean, 3), " dB，最高 ", fixed$ (maximum, 3), " dB", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests
+.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='formant_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_
+cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert selected () = 1\nselect all\nassert numberOfSelected () = 1\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 22 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpd3kfj866/result.txt", "第 2 共振峰平均（", fixed$ (tmin, 3), "–", fixe
+d$ (tmax, 3), " 秒）= ", fixed$ (mean, 1), " Hz", "（标准差 ", fixed$ (std, 1), "）", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests
+.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='harmonicity_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_
+cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert selected () = 1\nselect all\nassert numberOfSelected () = 1\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 25 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpd3kfj866/result.txt", "谐噪比 HNR（", fixed$ (tmin, 3), "–", fixed$
+ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 2), " dB，最高 ", fixed$ (maximum, 2), " dB", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests
+.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='measure')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_
+cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert selected () = 1\nselect all\nassert numberOfSelected () = 1\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 25 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpd3kfj866/result.txt", "平均基频（", fixed$ (tmin, 3), "–", fixed$ (t
+max, 3), " 秒）= ", fixed$ (value, 2), " Hz", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpd3kfj866\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='pitch')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 19 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpjk3tnnmc/result.txt", "基频（", fixed$ (time, 3), " 秒处）= ", fixed$
+ (value, 3), " Hz", note$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='pitch_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 71 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpjk3tnnmc/result.txt", "基频统计（", fixed$ (tmin, 3), "–", fixed$ (t
+max, 3), " 秒）：平均 ", fixed$ (mean, 3), " Hz，最低 ", fixed$ (minimum, 3), " Hz，最高 ", fixed$ (maximum, 3), " Hz，最高点出现在 ", fi
+xed$ (maxtime, 3), " 秒", rangeNote$, pitchLimit$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='pitch_peak_latency')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 69 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpjk3tnnmc/result.txt", "基频峰值延迟 = ", fixed$ (latency, 3), "（峰值 ",
+ fixed$ (peakTime, 3), " 秒出现在 ", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒这一段里；0.5 = 正好在中间）", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='intensity')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 19 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpjk3tnnmc/result.txt", "强度（", fixed$ (time, 3), " 秒处）= ", fixed$
+ (value, 3), " dB", note$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='intensity_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 19 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpjk3tnnmc/result.txt", "强度统计（", fixed$ (tmin, 3), "–", fixed$ (t
+max, 3), " 秒）：平均 ", fixed$ (mean, 3), " dB，最高 ", fixed$ (maximum, 3), " dB", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='intensity_slope')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 17 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpjk3tnnmc/result.txt", "强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= ", fixed$ (sl
+ope, 2), " dB/s（", fixed$ (colsNum, 0), " 个点，步长 ", fixed$ (timeStep, 6), " 秒）", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='formant_frequency')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 24 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpjk3tnnmc/result.txt", "第 2 共振峰（", fixed$ (time, 3), " 秒处）：频率 ",
+ fixed$ (value, 3), " Hz", bandwidthText$, note$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='formant_bandwidth')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 19 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpjk3tnnmc/result.txt", "第 2 共振峰带宽（", fixed$ (time, 3), " 秒处）= ",
+ fixed$ (value, 3), " Hz", note$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='formant_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 19 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpjk3tnnmc/result.txt", "第 2 共振峰平均（", fixed$ (tmin, 3), "–", fixe
+d$ (tmax, 3), " 秒）= ", fixed$ (mean, 1), " Hz", "（标准差 ", fixed$ (std, 1), "）", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='harmonicity_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 22 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpjk3tnnmc/result.txt", "谐噪比 HNR（", fixed$ (tmin, 3), "–", fixed$
+ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 2), " dB，最高 ", fixed$ (maximum, 2), " dB", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='hl_ratio')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 10 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpjk3tnnmc/result.txt", "H/L = ", fixed$ (hl, 4), "（高频 4000–8000 
+Hz 能量 ÷ 低频 ", "0–4000 Hz 能量）" »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='hammarberg_index')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 7 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpjk3tnnmc/result.txt", "Hammarberg 指数 = ", fixed$ (hammarberg, 2
+), " dB（0–2000 Hz 最大电平 ", fixed$ (lowBand, 2), " dB − 2000–5000 Hz 最大电平 ", fixed$ (highBand, 2), " dB）" »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpjk3tnnmc\test.praat>> not completed.
+
+
+
+
+
+----------------------------------------------------------------------
+Ran 659 tests in 103.488s
+
+FAILED (failures=21, errors=1)

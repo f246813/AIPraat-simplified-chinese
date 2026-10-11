@@ -19,4 +19,4 @@ PASS locked_file_rolls_back_prior_changes
 PASS python_missing_path_is_rejected
 PASS real_python_capability_probe
 PASS real_python_without_dependencies_is_rejected
-RESULT 21 passed, 0 failed; artifacts=C:\Users\f2468\AppData\Local\Temp\AIPraat-contract-086b105d6e4644c29e459e7f96fd8a18
+RESULT 21 passed, 0 failed; artifacts=C:\Users\USER\AppData\Local\Temp\AIPraat-contract-086b105d6e4644c29e459e7f96fd8a18

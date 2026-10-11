@@ -1,0 +1,37 @@
+[WebServer] (node:19444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 22 tests using 1 worker
+
+(node:18600) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18600) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\browser\archived-settings.spec.ts:26:1 › archived entry lives in settings; Codex rows show dates and restore without leaving settings (5.5s)
+  ok  2 tests\browser\archived-settings.spec.ts:71:1 › archive search and source/project filters reuse host results; row delete requires confirmation (4.7s)
+  ok  3 tests\browser\archived-settings.spec.ts:135:1 › archived sections keep original grouping; group and global deletion retain active chats (4.0s)
+  ok  4 tests\browser\archived-settings.spec.ts:224:1 › opening archived history respects unsaved settings and restores legacy history as read-only (3.1s)
+  ok  5 tests\browser\archived-settings.spec.ts:290:1 › archive settings rows remain aligned in a narrow viewport (2.2s)
+  ok  6 tests\browser\empty-layout.spec.ts:2:1 › blank conversation fits the available window without vertical scrolling (3.3s)
+  ok  7 tests\browser\empty-layout.spec.ts:51:1 › welcome shortcuts still fill the composer and history remains scrollable (3.5s)
+  ok  8 tests\browser\history-group-actions.spec.ts:8:1 › right-clicking the smallest time group offers exactly the requested actions (3.6s)
+  ok  9 tests\browser\history-group-actions.spec.ts:68:1 › delete group and contents includes readonly history and leaves other sections intact (2.6s)
+  ok 10 tests\browser\history-group-actions.spec.ts:116:1 › archive all group contents can be restored through the existing archive page (2.3s)
+  ok 11 tests\browser\organization.spec.ts:16:1 › Codex section menus: create, edit, membership, new chat and remove without deleting history (3.3s)
+  ok 12 tests\browser\organization.spec.ts:100:1 › right-click menu forks an independent legacy snapshot; archives restore from settings (2.5s)
+  ok 13 tests\browser\organization.spec.ts:147:1 › section keyboard picker, cross-section drag, ordered insertion and bulk archive restore (6.5s)
+  ok 14 tests\browser\search.spec.ts:26:1 › Mod+K opens the find bar, and hits are painted without rewriting the transcript (3.3s)
+  ok 15 tests\browser\search.spec.ts:62:1 › next and previous move between hits and bring them into view (3.9s)
+  ok 16 tests\browser\search.spec.ts:105:1 › a query that only exists in withheld rows offers that page instead of faking a count (3.7s)
+  ok 17 tests\browser\search.spec.ts:131:1 › a query with no hits anywhere reports it and offers nothing (2.8s)
+  ok 18 tests\browser\session-menu.spec.ts:2:1 › Pi extracted session menu: toggle, keyboard, outside, scroll, right click, pin and legacy guards (3.7s)
+  ok 19 tests\browser\session-menu.spec.ts:96:1 › running session cannot delete but may pin; narrow viewport and exact 6px scrollbar (4.7s)
+(node:8212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 20 tests\browser\sidebar.spec.ts:7:1 › Pi session sidebar: grouping, sorting, preview and keyboard navigation (7.4s)
+  ok 21 tests\browser\sidebar.spec.ts:111:1 › Pi multiple selection: modifier clicks preserve active chat and allow readonly deletion (7.7s)
+  ok 22 tests\browser\sidebar.spec.ts:193:1 › native sidebar scrollbar has a wide pointer lane and drags independently of sidebar resizing (8.5s)
+
+  22 passed (1.7m)

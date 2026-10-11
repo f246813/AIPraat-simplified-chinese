@@ -1,0 +1,22 @@
+{
+  "candidate_sha256": "777b54ff1ed57484be27aba83f79c22c62b87c3ce8406b2a4f2b0f3b8e7ab37f",
+  "checks": [
+    "real_low_integrity_native_process",
+    "actual_editor_start_frontend_callback",
+    "selected_user_python_launcher",
+    "LocalLow_workspace_created_and_written",
+    "unicode_sound_export_RIFF",
+    "frontend_status_running",
+    "Tk_chat_window_low_integrity",
+    "private_preferences_configuration_and_runtime"
+  ],
+  "fixture": "C:\\Users\\USER\\AppData\\LocalLow\\praat-frontend-test-797e555cfbc64a28acd686d8a4b23fb0",
+  "python_executable": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.PythonManager_26.3.240.0_x64__3847v3x7pw1km\\python.exe",
+  "ok": true,
+  "praat_pid": 22600,
+  "chat_pid": 16060,
+  "integrity": 4096,
+  "workspace": "C:\\Users\\USER\\AppData\\LocalLow\\Praat\\Python\\praat_py_workspace_22600",
+  "selected_object": "Sound ���ʤ�",
+  "frontend_status": "running (API)"
+}

@@ -1,0 +1,16 @@
+test_cancelled_draft_is_never_persisted_as_formal_reply (test_report_chain_regressions.ReportChainTests.test_cancelled_draft_is_never_persisted_as_formal_reply) ... FAIL
+
+======================================================================
+FAIL: test_cancelled_draft_is_never_persisted_as_formal_reply (test_report_chain_regressions.ReportChainTests.test_cancelled_draft_is_never_persisted_as_formal_reply)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_chain_regressions.py", line 280, in test_cancelled_draft_is_never_persisted_as_formal_reply
+    self.assert_incomplete_storage(cancelled=True)
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_chain_regressions.py", line 269, in assert_incomplete_storage
+    self.assertFalse(messages[-1]['formal'])
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 1 test in 0.369s
+
+FAILED (failures=1)

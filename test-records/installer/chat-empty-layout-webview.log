@@ -1,0 +1,104 @@
+{"width": 886, "height": 603, "client": 339, "scroll": 339, "top": 0, "composerBottom": 584.2000122070312, "welcomeTop": 83.5999984741211, "welcomeBottom": 422.5999984741211, "expanded": false}
+{"width": 786, "height": 563, "client": 299, "scroll": 299, "top": 0, "composerBottom": 544.2000122070312, "welcomeTop": 83.5999984741211, "welcomeBottom": 382.5999984741211, "expanded": false}
+{"width": 1266, "height": 812, "client": 541, "scroll": 541, "top": 0, "composerBottom": 791.0000305175781, "welcomeTop": 88.5999984741211, "welcomeBottom": 629.3999862670898, "expanded": false}
+{"width": 1540, "height": 844, "client": 573, "scroll": 573, "top": 0, "composerBottom": 823.0000305175781, "welcomeTop": 88.5999984741211, "welcomeBottom": 661.3999862670898, "expanded": false}
+{"width": 886, "height": 603, "client": 339, "scroll": 339, "top": 0, "composerBottom": 584.2000122070312, "welcomeTop": 83.5999984741211, "welcomeBottom": 422.5999984741211, "expanded": true}
+{"width": 786, "height": 563, "client": 299, "scroll": 299, "top": 0, "composerBottom": 544.2000122070312, "welcomeTop": 83.5999984741211, "welcomeBottom": 382.5999984741211, "expanded": true}
+{"width": 1266, "height": 812, "client": 541, "scroll": 541, "top": 0, "composerBottom": 791.0000305175781, "welcomeTop": 88.5999984741211, "welcomeBottom": 629.3999862670898, "expanded": true}
+{"width": 1540, "height": 844, "client": 573, "scroll": 573, "top": 0, "composerBottom": 823.0000305175781, "welcomeTop": 88.5999984741211, "welcomeBottom": 661.3999862670898, "expanded": true}
+{
+  "realWebView2": true,
+  "productionAssets": true,
+  "samples": [
+    {
+      "width": 886,
+      "height": 603,
+      "client": 339,
+      "scroll": 339,
+      "top": 0,
+      "composerBottom": 584.2000122070312,
+      "welcomeTop": 83.5999984741211,
+      "welcomeBottom": 422.5999984741211,
+      "expanded": false
+    },
+    {
+      "width": 786,
+      "height": 563,
+      "client": 299,
+      "scroll": 299,
+      "top": 0,
+      "composerBottom": 544.2000122070312,
+      "welcomeTop": 83.5999984741211,
+      "welcomeBottom": 382.5999984741211,
+      "expanded": false
+    },
+    {
+      "width": 1266,
+      "height": 812,
+      "client": 541,
+      "scroll": 541,
+      "top": 0,
+      "composerBottom": 791.0000305175781,
+      "welcomeTop": 88.5999984741211,
+      "welcomeBottom": 629.3999862670898,
+      "expanded": false
+    },
+    {
+      "width": 1540,
+      "height": 844,
+      "client": 573,
+      "scroll": 573,
+      "top": 0,
+      "composerBottom": 823.0000305175781,
+      "welcomeTop": 88.5999984741211,
+      "welcomeBottom": 661.3999862670898,
+      "expanded": false
+    },
+    {
+      "width": 886,
+      "height": 603,
+      "client": 339,
+      "scroll": 339,
+      "top": 0,
+      "composerBottom": 584.2000122070312,
+      "welcomeTop": 83.5999984741211,
+      "welcomeBottom": 422.5999984741211,
+      "expanded": true
+    },
+    {
+      "width": 786,
+      "height": 563,
+      "client": 299,
+      "scroll": 299,
+      "top": 0,
+      "composerBottom": 544.2000122070312,
+      "welcomeTop": 83.5999984741211,
+      "welcomeBottom": 382.5999984741211,
+      "expanded": true
+    },
+    {
+      "width": 1266,
+      "height": 812,
+      "client": 541,
+      "scroll": 541,
+      "top": 0,
+      "composerBottom": 791.0000305175781,
+      "welcomeTop": 88.5999984741211,
+      "welcomeBottom": 629.3999862670898,
+      "expanded": true
+    },
+    {
+      "width": 1540,
+      "height": 844,
+      "client": 573,
+      "scroll": 573,
+      "top": 0,
+      "composerBottom": 823.0000305175781,
+      "welcomeTop": 88.5999984741211,
+      "welcomeBottom": 661.3999862670898,
+      "expanded": true
+    }
+  ],
+  "passed": true,
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0"
+}

@@ -1,0 +1,10 @@
+python.exe : ----------------------------------------------------------------------
+所在位置 行:14 字符: 1
++ & $py -B -m unittest -q test_cloud_escape test_staircase test_stairca ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (---------------...---------------:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Ran 249 tests in 10.631s
+
+OK

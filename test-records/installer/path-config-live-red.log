@@ -3,12 +3,12 @@ PASS dialog_opens_without_usable_python_with_three_fields
 PASS cancel_leaves_configuration_unchanged
 PASS valid_python_enables_save
 PASS save_keeps_model_api_flags_and_updates_installation
-Artifacts: C:\Users\f2468\AppData\Local\Temp\AIPraat-live-paths-1gvfoghr
+Artifacts: C:\Users\USER\AppData\Local\Temp\AIPraat-live-paths-1gvfoghr
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\verify_path_settings_live.py", line 167, in <module>
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\verify_path_settings_live.py", line 167, in <module>
     if __name__=="__main__":raise SystemExit(main())
                                              ^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\verify_path_settings_live.py", line 146, in main
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\verify_path_settings_live.py", line 146, in main
     assert sys.executable in values,"Current Praat still uses old Python: "+repr(values)
            ^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: Current Praat still uses old Python: ['missing-python']

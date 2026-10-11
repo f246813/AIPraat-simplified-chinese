@@ -1,0 +1,142 @@
+................................E.........EEEEF...................................................................................................................................................................................................................................................................................................F..................................................................................................................................................................................................................................................................................................................................................................................................................................................F..........................................................E.................................................................................................................................................................................................................................................................................................
+======================================================================
+ERROR: test_invalid_range_does_not_silently_measure_entire_sound (test_analysis_object_types.AnalysisObjectTypeTests.test_invalid_range_does_not_silently_measure_entire_sound) (start=0.7, end=0.2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 263, in test_invalid_range_does_not_silently_measure_entire_sound
+    script = tools.render("pitch_statistics", {"from": start, "to": end}, context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 4359, in render
+    return tool.build(args, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 843, in _build_pitch_statistics
+    lines.extend(_range_lines(arguments, row))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 1148, in _range_lines
+    start, end = _range_pair(arguments)
+                 ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 416, in _range_pair
+    raise ToolError(f"起点必须早于终点（现在 from={first:g}、to={second:g}）。")
+praat_ai.tools.ToolError: 起点必须早于终点（现在 from=0.7、to=0.2）。
+
+======================================================================
+ERROR: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='pitch_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 226, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 4358, in render
+    _reject_unsupported_arguments(name, args)
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 4417, in _reject_unsupported_arguments
+    raise ToolError(f"参数名不认识：{'、'.join(unknown)}。{name} 可用参数：{shown}。")
+praat_ai.tools.ToolError: 参数名不认识：parameter。pitch_statistics 可用参数：from、object、pitch_ceiling、pitch_floor、to。
+
+======================================================================
+ERROR: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='intensity_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 226, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 4358, in render
+    _reject_unsupported_arguments(name, args)
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 4417, in _reject_unsupported_arguments
+    raise ToolError(f"参数名不认识：{'、'.join(unknown)}。{name} 可用参数：{shown}。")
+praat_ai.tools.ToolError: 参数名不认识：parameter。intensity_statistics 可用参数：from、object、to。
+
+======================================================================
+ERROR: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='formant_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 226, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 4358, in render
+    _reject_unsupported_arguments(name, args)
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 4417, in _reject_unsupported_arguments
+    raise ToolError(f"参数名不认识：{'、'.join(unknown)}。{name} 可用参数：{shown}。")
+praat_ai.tools.ToolError: 参数名不认识：parameter。formant_statistics 可用参数：formant、from、object、to、unit。
+
+======================================================================
+ERROR: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='harmonicity_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 226, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 4358, in render
+    _reject_unsupported_arguments(name, args)
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 4417, in _reject_unsupported_arguments
+    raise ToolError(f"参数名不认识：{'、'.join(unknown)}。{name} 可用参数：{shown}。")
+praat_ai.tools.ToolError: 参数名不认识：parameter。harmonicity_statistics 可用参数：from、object、pitch_floor、to。
+
+======================================================================
+ERROR: test_extract_part_prefers_start_over_from (test_range_aliases.RangeAliasTests.test_extract_part_prefers_start_over_from)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_range_aliases.py", line 75, in test_extract_part_prefers_start_over_from
+    script = tools.render(
+             ^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 4359, in render
+    return tool.build(args, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 2255, in _build_extract_part
+    {"start": _range_argument(arguments, RANGE_START_KEYS)},
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\tools.py", line 401, in _range_argument
+    raise ToolError(f"{first_key} 与 {key} 给了互相矛盾的范围，请只保留一个。")
+praat_ai.tools.ToolError: from 与 start 给了互相矛盾的范围，请只保留一个。
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='intensity_slope')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 217, in test_supported_existing_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 282, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+AssertionError: 4294967295 != 0 :  ########## Running Praat script C:\Users\USER\AppData\Local\Temp\tmpnrmmh8x6\test.praat
+Error: Expected “then”, but found “,”:
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpnrmmh8x6/result.txt", "强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= ", fixed$ (slope, 2), " dB/s（", fixed$ (colsNum, 0), " 个点，步长 ", fixed$ (timeStep, 6), " 秒）", if slope < 0.005,
+Script line 17 not performed or completed:
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpnrmmh8x6/result.txt", "强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= ", fixed$ (slope, 2), " dB/s（", fixed$ (colsNum, 0), " 个点，步长 ", fixed$ (timeStep, 6), " 秒）", if slope < 0.005, "——整段几乎没有强度变化；如果是静音或空录音，这个数值没有实际意义。", endif, rangeNote$ »
+Script “C:\Users\USER\AppData\Local\Temp\tmpnrmmh8x6\test.praat” not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpnrmmh8x6\test.praat>> not completed.
+
+
+
+======================================================================
+FAIL: test_low_context_reserves_report (test_cloud_escape.CloudTests.test_low_context_reserves_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_escape.py", line 88, in test_low_context_reserves_report
+    self.assertEqual(len(model.report_messages), 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_schema_parameters_match_the_documented_signature (test_planner_tools.ToolSchemaTests.test_schema_parameters_match_the_documented_signature) (tool='harmonicity_statistics')
+schema 里的参数名必须出现在工具的 signature 里，防止两边跑偏。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_planner_tools.py", line 63, in test_schema_parameters_match_the_documented_signature
+    self.assertTrue(
+AssertionError: False is not true : harmonicity_statistics: schema 多出来的参数 {'pitch_floor'}
+
+----------------------------------------------------------------------
+Ran 1119 tests in 155.338s
+
+FAILED (failures=3, errors=6)
+
+
+== 汇总 ==
+runs=1119 failures=3 errors=6 skipped=0 expectedFailures=0
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='intensity_slope')
+FAIL: test_low_context_reserves_report (test_cloud_escape.CloudTests.test_low_context_reserves_report)
+FAIL: test_schema_parameters_match_the_documented_signature (test_planner_tools.ToolSchemaTests.test_schema_parameters_match_the_documented_signature) (tool='harmonicity_statistics')
+ERROR: test_invalid_range_does_not_silently_measure_entire_sound (test_analysis_object_types.AnalysisObjectTypeTests.test_invalid_range_does_not_silently_measure_entire_sound) (start=0.7, end=0.2)
+ERROR: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='pitch_statistics')
+ERROR: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='intensity_statistics')
+ERROR: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='formant_statistics')
+ERROR: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='harmonicity_statistics')
+ERROR: test_extract_part_prefers_start_over_from (test_range_aliases.RangeAliasTests.test_extract_part_prefers_start_over_from)

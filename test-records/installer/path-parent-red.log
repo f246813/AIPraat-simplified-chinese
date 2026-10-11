@@ -1,0 +1,5 @@
+Parent PID: 17980
+Process.HasExited failed: System.ArgumentException: ID 为 17980 的进程当前未运行。
+   在 System.Diagnostics.Process.GetProcessById(Int32 processId, String machineName)
+   在 PathSettingsParentTests.Main(String[] args)
+FAIL dialog closed while parent was alive; deadline=False

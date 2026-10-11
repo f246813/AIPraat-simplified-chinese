@@ -6,7 +6,7 @@ test_only_unambiguous_duration_queries_use_direct_measurement (test_dialogue_fas
 FAIL: test_cancel_while_waiting_for_first_text_returns_promptly (test_dialogue_stream.DialogueStreamTests.test_cancel_while_waiting_for_first_text_returns_promptly)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 40, in test_cancel_while_waiting_for_first_text_returns_promptly
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 40, in test_cancel_while_waiting_for_first_text_returns_promptly
     self.assertLess(time.monotonic()-started,0.6)
 AssertionError: 1.5310000000172295 not less than 0.6
 
@@ -14,12 +14,12 @@ AssertionError: 1.5310000000172295 not less than 0.6
 FAIL: test_runtime_failure_is_a_safe_report_not_an_uncaught_worker_error (test_dialogue_stream.RuntimeTests.test_runtime_failure_is_a_safe_report_not_an_uncaught_worker_error)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 124, in test_runtime_failure_is_a_safe_report_not_an_uncaught_worker_error
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 124, in test_runtime_failure_is_a_safe_report_not_an_uncaught_worker_error
     cloud_agent.run_cloud_turn(cfg,state,execute_action=lambda *_:None,cancel=threading.Event(),runtime=Broken())
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 585, in run_cloud_turn
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 585, in run_cloud_turn
     return runtime.run(config, operation)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 120, in run
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 120, in run
     def run(self,*_): raise OSError('fixture secret failed')
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 OSError: fixture secret failed
@@ -27,7 +27,7 @@ OSError: fixture secret failed
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 125, in test_runtime_failure_is_a_safe_report_not_an_uncaught_worker_error
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 125, in test_runtime_failure_is_a_safe_report_not_an_uncaught_worker_error
     except Exception as error: self.fail('Runtime exception must become a safe report: '+type(error).__name__)
                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: Runtime exception must become a safe report: OSError
@@ -36,7 +36,7 @@ AssertionError: Runtime exception must become a safe report: OSError
 FAIL: test_only_unambiguous_duration_queries_use_direct_measurement (test_dialogue_fastpath.DialoguePolicyTests.test_only_unambiguous_duration_queries_use_direct_measurement)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in test_only_unambiguous_duration_queries_use_direct_measurement
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in test_only_unambiguous_duration_queries_use_direct_measurement
     self.assertTrue(callable(direct), 'Missing conservative direct measurement dispatch')
 AssertionError: False is not true : Missing conservative direct measurement dispatch
 

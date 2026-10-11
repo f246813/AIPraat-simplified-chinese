@@ -1,0 +1,35 @@
+
+> praat-assistant-frontend@1.0.0 test
+> vitest run
+
+
+ RUN  v3.2.4 C:/Users/USER/Desktop/Praat/稳定早期版/ai/frontend
+
+ ✓ tests/minimap.test.ts (6 tests) 13ms
+ ✓ tests/completions.test.ts (4 tests) 13ms
+ ✓ tests/startup-session.test.ts (3 tests) 45ms
+ ✓ tests/bridge-store.test.ts (17 tests) 115ms
+ ✓ tests/search.test.ts (8 tests) 81ms
+ ✓ tests/organization-store.test.ts (9 tests) 364ms
+ ✓ tests/layout.test.ts (7 tests) 34ms
+ ✓ tests/transcript-menu.test.ts (5 tests) 12ms
+ ✓ tests/session-menu.test.ts (5 tests) 47ms
+ ✓ tests/archived-groups.test.ts (2 tests) 26ms
+ ✓ tests/transcript-window.test.ts (6 tests) 9ms
+ ✓ tests/modern-boundaries.test.ts (2 tests) 9ms
+ ✓ tests/scroll.test.ts (5 tests) 7ms
+ ✓ tests/sidebar-origins.test.ts (2 tests) 6ms
+ ✓ tests/editor.test.ts (10 tests) 15ms
+ ✓ tests/composer-status.test.tsx (5 tests) 576ms
+   ✓ debounces real host estimates and ignores stale session replies  384ms
+ ✓ tests/speech-dictionaries.test.tsx (8 tests) 1089ms
+ ✓ tests/model-settings-navigation.test.tsx (2 tests) 435ms
+   ✓ repeated menu requests select Model/API and keep unsaved settings  429ms
+ ✓ tests/archived-settings.test.tsx (2 tests) 398ms
+ ✓ tests/sidebar-search.test.tsx (5 tests) 604ms
+
+ Test Files  20 passed (20)
+      Tests  113 passed (113)
+   Start at  00:13:45
+   Duration  11.06s (transform 2.01s, setup 0ms, collect 41.54s, tests 3.90s, environment 29.33s, prepare 6.10s)
+

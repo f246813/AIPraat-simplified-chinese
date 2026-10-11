@@ -1,0 +1,15 @@
+test_cancel_is_idempotent_in_the_event_stream (test_rpc_robustness.RpcRobustnessTests.test_cancel_is_idempotent_in_the_event_stream) ... ok
+test_dispatcher_poison_is_cleared_by_a_verified_ping (test_rpc_robustness.RpcRobustnessTests.test_dispatcher_poison_is_cleared_by_a_verified_ping)
+投递状态不明之后，一次成功的核对 ping 就该放行——不必重启桌面。 ... ok
+test_missing_arguments_report_the_parameter_name (test_rpc_robustness.RpcRobustnessTests.test_missing_arguments_report_the_parameter_name) ... ok
+test_oversized_evidence_is_bounded (test_rpc_robustness.RpcRobustnessTests.test_oversized_evidence_is_bounded)
+失控输出（几万行）不该把整份证据写进库、再整份回读。 ... ok
+test_poll_payload_is_capped_and_cursor_advances (test_rpc_robustness.RpcRobustnessTests.test_poll_payload_is_capped_and_cursor_advances) ... ok
+test_restart_converts_every_unfinished_status (test_rpc_robustness.RpcRobustnessTests.test_restart_converts_every_unfinished_status) ... ok
+test_submit_does_not_hold_the_guard_while_waiting_for_praat (test_rpc_robustness.RpcRobustnessTests.test_submit_does_not_hold_the_guard_while_waiting_for_praat) ... ok
+test_unknown_attachment_does_not_leak_a_host_path (test_rpc_robustness.RpcRobustnessTests.test_unknown_attachment_does_not_leak_a_host_path) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 2.194s
+
+OK

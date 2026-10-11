@@ -1,0 +1,104 @@
+OK   duration: Sound tone 总时长 = 1.000000 秒
+OK   object_info: Sound「Sound tone」（id 1）：时长 1.000 秒，通道数 1，采样率 44100 Hz
+OK   formant_bandwidth: 第 2 共振峰带宽（0.500 秒处）= 0.664 Hz
+OK   formant_frequency: 第 1 共振峰（0.400 秒处）：频率 191.946 Hz，带宽 0.725 Hz | 第 2 共振峰（0.400 秒处）：频率 229.541 Hz，带宽 0.665 Hz
+OK   pitch: 基频（0.500 秒处）= 220.000 Hz
+OK   pitch-multi-times: 基频（0.250 秒处）= 220.000 Hz | 基频（0.750 秒处）= 220.000 Hz
+OK   pitch_statistics: 基频统计（0–1.000 秒）：平均 220.000 Hz，最低 220.000 Hz，最高 220.000 Hz，最高点出现在 0.450 秒
+OK   pitch_statistics-robust-extremes: 基频统计（0–1.000 秒）：平均 220.000 Hz，最低 220.000 Hz，最高 220.000 Hz，最高点出现在 0.450 秒
+OK   intensity: 强度（0.500 秒处）= 84.949 dB
+OK   intensity_statistics: 强度统计（0–1.000 秒）：平均 84.949 dB，最高 84.949 dB
+OK   formant_statistics: 第 1 共振峰平均（0–1.000 秒）= 191.9 Hz（标准差 0.04） | 第 2 共振峰平均（0–1.000 秒）= 229.5 Hz（标准差 0.04）
+OK   harmonicity_statistics: 谐噪比 HNR（0–1.000 秒）：平均 100.33 dB，最高 103.19 dB
+OK   spectrogram: 已生成频谱图：频谱图（id 2），分析窗口 5.0 ms，最高频率 5000 Hz，共 496 帧（可用 Praat 的「绘制」菜单画到 Picture 窗口）
+OK   textgrid_info: TextGrid grid：时长 1.000 秒，共 1 层 | 第 1 层「words」（区间层）：3 个区间 |     区间 1：0–0.200 秒，标签「」 |     区间 2：0.200–0.500 秒，标签「a」 |     区间 3：0.500–1.000 秒，标签「」
+OK   textgrid_set_interval: 已把第 1 层的 0.300–0.700 秒（1 个区间）标成「b」
+OK   textgrid_set_interval-from-to: 已把第 1 层的 0.300–0.700 秒（1 个区间）标成「b」
+OK   extract_part-from-to: 已截取片段：片段（id 2），区间 0.300–0.700 秒，共 0.400 秒
+OK   textgrid_insert_boundary: 已在第 1 层的 0.600 秒处插入边界
+OK   textgrid-insert-existing-boundary: 第 1 层的 0.500 秒处已经有边界（或在 TextGrid 起止点上），没有改动
+OK   vot: VOT = 0.1200 秒（120.0 毫秒）：第 1 层 0.300 秒（爆破）→ 0.420 秒（浊音起始），并在该层补上了边界
+OK   vot-sound: VOT = 0.1200 秒（120.0 毫秒）：0.300 秒（爆破）→ 0.420 秒（浊音起始）；按给出的两个时刻相减，未做自动检测
+OK   vot-auto: VOT 估计值 = 0.0320 秒（32.0 毫秒）：爆破 0.300 秒（高频带 2–8 kHz 能量升 33.4 dB）→ 浊音起始 0.332 秒（自相关基频 221.2 Hz，之后 50 毫秒内谐噪比最高 125.0 dB）；范围 0.250–0.500 秒；爆破与浊音起始分开估计，请对着语图核对
+OK   vot-auto-no-range: VOT 估计值 = 0.0320 秒（32.0 毫秒）：爆破 0.300 秒（高频带 2–8 kHz 能量升 29.1 dB）→ 浊音起始 0.332 秒（自相关基频 220.0 Hz，之后 50 毫秒内谐噪比最高 125.0 dB）；范围 0–1.000 秒；爆破与浊音起始分开估计，请对着语图核对（未指定范围，按整个对象搜索）
+OK   vot-auto-no-burst: 自动检测失败：范围起点附近（0.400 秒）已经是浊音（自相关基频连续成立），说明爆破不在这个范围里。请把 from 提前到闭音段（爆破之前），或直接给出 burst 和 voicing 两个时刻。
+OK   vot-auto-two-phonemes: VOT 估计值 = 0.0320 秒（32.0 毫秒）：爆破 0.300 秒（高频带 2–8 kHz 能量升 34.3 dB）→ 浊音起始 0.332 秒（自相关基频 219.6 Hz，之后 50 毫秒内谐噪比最高 125.0 dB）；范围 0.250–1.000 秒；爆破与浊音起始分开估计，请对着语图核对；范围偏大：后面还有第 2 段浊音从 0.746 秒开始，本次只报了第一个候选，建议收紧范围
+OK   vot-auto-editor-selection: VOT 估计值 = 0.0320 秒（32.0 毫秒）：爆破 0.300 秒（高频带 2–8 kHz 能量升 33.1 dB）→ 浊音起始 0.332 秒（自相关基频 219.9 Hz，之后 50 毫秒内谐噪比最高 125.0 dB）；范围 0.250–0.500 秒；爆破与浊音起始分开估计，请对着语图核对（按编辑器圈选 0.250–0.500 秒）
+OK   pitch_statistics-editor-selection: 基频统计（0.250–0.500 秒）：平均 220.000 Hz，最低 220.000 Hz，最高 220.000 Hz，最高点出现在 0.450 秒（按编辑器圈选 0.250–0.500 秒）
+OK   formant_statistics-editor-selection: 第 1 共振峰平均（0.250–0.500 秒）= 191.9 Hz（标准差 0.01）（按编辑器圈选 0.250–0.500 秒） | 第 2 共振峰平均（0.250–0.500 秒）= 229.5 Hz（标准差 0.007）（按编辑器圈选 0.250–0.500 秒）
+OK   extract_part-editor-selection: 已截取片段：片段（id 2），区间 0.250–0.500 秒，共 0.250 秒（按编辑器圈选 0.250–0.500 秒）
+OK   pitch-editor-selection: 基频（0.375 秒处）= 220.000 Hz
+OK   textgrid_set_interval-editor-selection: 已把第 1 层的 0.250–0.500 秒（1 个区间）标成「b」（按编辑器圈选 0.250–0.500 秒）
+OK   select_object: 已选中：Sound tone
+OK   spectral_emphasis: 谱强调（Spectral emphasis）= 0.001 dB：低通上限 330.0 Hz（该段平均基频 220.0 Hz × 1.5），平滑 20 Hz
+OK   hl_ratio: H/L = 0.00000004（高频 4000–8000 Hz 能量 ÷ 低频 0–4000 Hz 能量）
+OK   hammarberg_index: Hammarberg 指数 = 72.67 dB（0–2000 Hz 最大电平 65.16 dB − 2000–5000 Hz 最大电平 -7.51 dB）
+OK   pitch_peak_latency: 基频峰值延迟 = 0.450（峰值 0.450 秒出现在 0–1.000 秒这一段里；0.5 = 正好在中间）
+OK   pitch_peak_latency-range: 基频峰值延迟 = 0.417（峰值 0.450 秒出现在 0.200–0.800 秒这一段里；0.5 = 正好在中间）
+OK   peak_to_average_ratio: 峰值/有效值 = 1.41（峰值 0.5000 Pa ÷ 有效值 0.3536 Pa，0–1.000 秒）
+OK   intensity_slope: 强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= 0.18 dB/s（936 个点，步长 0.001000 秒）
+OK   intensity_slope-global: 强度整体斜率（首尾差 ÷ 时长）= 0 dB/s（84.95 dB → 84.95 dB）
+OK   intensity_slope-range: 强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= 0.18 dB/s（537 个点，步长 0.001000 秒）
+OK   rename_object: Sound tone 已重命名为 改名测试
+OK   create_sound: 已创建220.0 Hz 纯音：新建声音（id 2），时长 0.500 秒
+OK   duplicate_object: 已复制为：Sound tone 副本（id 2）
+OK   resample_sound: 已重采样为新对象，采样率 16000 Hz（id 2）（原对象保持不变）
+OK   extract_part: 已截取片段：片段（id 2），区间 0.200–0.500 秒，共 0.300 秒
+OK   save_sound: 已保存 WAV 文件：C:/Users/USER/AppData/Local/Temp/tmp47smelhp/save_sound.wav
+OK   read_file: 已读入文件：Sound read_file（id 2）（C:/Users/USER/AppData/Local/Temp/tmp47smelhp/read_file.wav）
+OK   read_file-missing: ########## Running Praat script C:\Users\USER\AppData\Local\Temp\tmp47smelhp\read_file-missing.praat
+ | Error: 找不到要读取的文件：C:/Users/USER/AppData/Local/Temp/tmp47smelhp/read_file-missing.wav（请检查路径是否存在）
+OK   concatenate_sounds: 已把 Sound tone 和 Sound tone2 拼成：拼接结果（id 3），时长 2.000 秒
+OK   remove_object: 已删除：Sound tone2
+OK   custom_script: 自定义改名完成
+OK   custom_script-info-rewrite: Info 改写成功 | 改写成 appendFileLine也照样回来
+OK   custom_script-literal-output: printline 的字面输出 | echo 也要留着
+OK   pitch-out-of-range: 基频（1.000 秒处）无法计算：该时刻没有周期性声源（可能是无声段或清音）（已按对象时长截断）
+OK   formant-out-of-range: 第 2 共振峰带宽（1.000 秒处）无法计算：该时刻没有可用的共振峰数据（已按对象时长截断）
+OK   intensity-out-of-range: 强度（1.000 秒处）无法计算：该时刻没有强度数据（已按对象时长截断）
+OK   pitch-unvoiced: 基频（0.200 秒处）无法计算：该时刻没有周期性声源（可能是无声段或清音）
+OK   pitch-statistics-silence: 基频统计（0–1.000 秒）无法计算：该区间没有周期性声源（可能是无声段或清音）
+OK   measure-mean_pitch: 平均基频（0–1.000 秒）= 220.00 Hz
+OK   measure-minimum_pitch: 最低基频（0–1.000 秒）= 220.00 Hz
+OK   measure-maximum_pitch: 最高基频（0–1.000 秒）= 220.00 Hz
+OK   measure-median_pitch: 基频中位数（0–1.000 秒）= 220.00 Hz
+OK   measure-sd_pitch: 基频标准差（0–1.000 秒）= 0.00001 Hz
+OK   measure-pitch_slope: 基频平均绝对斜率 = 0.002 Hz/s
+OK   measure-pitch_slope_octave_free: 不含倍频跳变的基频斜率 = 0.0001 半音/s
+OK   measure-pitch_start: 起点基频（0–1.000 秒）= 220.00 Hz
+OK   measure-pitch_end: 终点基频（0–1.000 秒）= 220.00 Hz
+OK   measure-mean_intensity: 平均强度（0–1.000 秒）= 84.95 dB
+OK   measure-minimum_intensity: 最低强度（0–1.000 秒）= 84.95 dB
+OK   measure-maximum_intensity: 最高强度（0–1.000 秒）= 84.95 dB
+OK   measure-median_intensity: 强度中位数（0–1.000 秒）= 84.95 dB
+OK   measure-sd_intensity: 强度标准差（0–1.000 秒）= 0.0001 dB
+OK   measure-hnr: 谐噪比 HNR（0–1.000 秒）= 100.33 dB
+OK   measure-rms: 有效值 RMS（0–1.000 秒）= 0.3536 Pa
+OK   measure-peak_amplitude: 峰值幅度（0–1.000 秒）= 0.5000 Pa
+OK   measure-mean_amplitude: 平均幅度（0–1.000 秒）= -0.000000000000000004 Pa
+OK   measure-f1: 第 1 共振峰平均（0–1.000 秒）= 191.9 Hz
+OK   measure-f2: 第 2 共振峰平均（0–1.000 秒）= 229.5 Hz
+OK   measure-f3: 第 3 共振峰平均（0–1.000 秒）= 267.2 Hz
+OK   measure-b1: 第 1 共振峰带宽中位数（0–1.000 秒）= 0.7 Hz
+OK   measure-b2: 第 2 共振峰带宽中位数（0–1.000 秒）= 0.7 Hz
+OK   measure-b3: 第 3 共振峰带宽中位数（0–1.000 秒）= 0.6 Hz
+OK   measure-centre_of_gravity: 频谱重心 = 219.9 Hz
+OK   measure-skewness: 频谱偏度 = 73.078
+OK   measure-kurtosis: 频谱峰度 = 59388.532
+OK   measure-cpps: 倒谱峰突出 CPPS = 20.62 dB
+OK   measure-local_jitter: 局部基频微扰 jitter（0–1.000 秒）= 0.000000003 %
+OK   measure-rap_jitter: rap 基频微扰 jitter（0–1.000 秒）= 0.000000002 %
+OK   measure-local_shimmer_percent: 局部振幅微扰 shimmer（0–1.000 秒）= 0.0000000003 %
+OK   measure-local_shimmer_db: 局部振幅微扰 shimmer（0–1.000 秒）= 0.000000003 dB
+OK   measure-apq3_shimmer: apq3 振幅微扰 shimmer（0–1.000 秒）= 0.0000000002 %
+OK   measure-hl_ratio: H/L = 0.00000004（高频 4000–8000 Hz 能量 ÷ 低频 0–4000 Hz 能量）
+OK   measure-spectral_emphasis: 谱强调（Spectral emphasis）= 0.001 dB：低通上限 330.0 Hz（该段平均基频 220.0 Hz × 1.5），平滑 20 Hz
+OK   measure-hammarberg_index: Hammarberg 指数 = 72.67 dB（0–2000 Hz 最大电平 65.16 dB − 2000–5000 Hz 最大电平 -7.51 dB）
+OK   measure-pitch_peak_latency: 基频峰值延迟 = 0.450（峰值 0.450 秒出现在 0–1.000 秒这一段里；0.5 = 正好在中间）
+OK   measure-peak_to_average_amplitude: 峰值/有效值 = 1.41（峰值 0.5000 Pa ÷ 有效值 0.3536 Pa，0–1.000 秒）
+OK   measure-intensity_slope_local: 强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= 0.18 dB/s（936 个点，步长 0.001000 秒）
+OK   measure-intensity_slope_global: 强度整体斜率（首尾差 ÷ 时长）= 0 dB/s（84.95 dB → 84.95 dB）
+OK   measure-mean_autocorrelation: 平均自相关：这个参数只能在 Praat 的编辑器里查（Voice report → Mean autocorrelation），对象列表里没有对应命令。
+OK   measure-many: 平均基频（0–1.000 秒）= 220.00 Hz | 最低基频（0–1.000 秒）= 220.00 Hz | 最高基频（0–1.000 秒）= 220.00 Hz | 基频中位数（0–1.000 秒）= 220.00 Hz | 基频标准差（0–1.000 秒）= 0.00001 Hz | 基频平均绝对斜率 = 0.002 Hz/s | 不含倍频跳变的基频斜率 = 0.0001 半音/s | 起点基频（0–1.000 秒）= 220.00 Hz | 终点基频（0–1.000 秒）= 220.00 Hz | 平均强度（0–1.000 秒）= 84.95 dB | 最低强度（0–1.000 秒）= 84.95 dB | 最高强度（0–1.000 秒）= 84.95 dB | 强度中位数（0–1.000 秒）= 84.95 dB | 强度标准差（0–1.000 秒）= 0.0001 dB | 谐噪比 HNR（0–1.000 秒）= 100.33 dB | 有效值 RMS（0–1.000 秒）= 0.3536 Pa | 峰值幅度（0–1.000 秒）= 0.5000 Pa | 平均幅度（0–1.000 秒）= -0.000000000000000004 Pa | 第 1 共振峰平均（0–1.000 秒）= 191.9 Hz | 第 2 共振峰平均（0–1.000 秒）= 229.5 Hz | 第 3 共振峰平均（0–1.000 秒）= 267.2 Hz | 第 1 共振峰带宽中位数（0–1.000 秒）= 0.7 Hz | 第 2 共振峰带宽中位数（0–1.000 秒）= 0.7 Hz | 第 3 共振峰带宽中位数（0–1.000 秒）= 0.6 Hz | 频谱重心 = 219.9 Hz | 频谱偏度 = 73.078 | 频谱峰度 = 59388.532 | 倒谱峰突出 CPPS = 20.62 dB | 局部基频微扰 jitter（0–1.000 秒）= 0.000000003 % | rap 基频微扰 jitter（0–1.000 秒）= 0.000000002 % | 局部振幅微扰 shimmer（0–1.000 秒）= 0.0000000003 % | 局部振幅微扰 shimmer（0–1.000 秒）= 0.000000003 dB | apq3 振幅微扰 shimmer（0–1.000 秒）= 0.0000000002 %
+
+101/101 个模板用例通过

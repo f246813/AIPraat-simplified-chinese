@@ -1,0 +1,671 @@
+
+ RUN  v3.2.4 C:/Users/USER/Desktop/Praat/稳定早期版/ai/frontend
+
+ ✓ tests/search.test.ts (8 tests) 71ms
+ ✓ tests/bridge-store.test.ts (17 tests) 84ms
+ ✓ tests/startup-session.test.ts (3 tests) 47ms
+ ✓ tests/layout.test.ts (7 tests) 41ms
+ ✓ tests/session-menu.test.ts (7 tests) 69ms
+ ✓ tests/organization-store.test.ts (9 tests) 340ms
+ ✓ tests/composer-status.test.tsx (5 tests) 1446ms
+   ✓ debounces real host estimates and ignores stale session replies  793ms
+   ✓ unknown windows and RPC failures never fabricate a percentage  366ms
+ ✓ tests/archived-groups.test.ts (2 tests) 43ms
+ ✓ tests/archived-settings.test.tsx (2 tests) 895ms
+   ✓ failed restore keeps history visible, reports the error and permits a successful retry  657ms
+ ✓ tests/model-settings-navigation.test.tsx (2 tests) 1036ms
+   ✓ repeated menu requests select Model/API and keep unsaved settings  1023ms
+ ✓ tests/transcript-menu.test.ts (5 tests) 15ms
+ ✓ tests/completions.test.ts (4 tests) 12ms
+ ✓ tests/modern-boundaries.test.ts (2 tests) 21ms
+ ✓ tests/minimap.test.ts (6 tests) 15ms
+ ❯ tests/speech-dictionaries.test.tsx (8 tests | 1 failed) 2475ms
+   ✓ loads configured paths and opens the native picker from the bottom action  413ms
+   ✓ right-click deletion requires choosing delete; cancel leaves configuration intact  456ms
+   ✓ shows picker errors and keeps the existing list 135ms
+   ✓ left-clicking the select menu updates the current check and border after host save 234ms
+   ✓ keeps the old active dictionary when selecting fails 243ms
+   ✓ does not offer selection of a missing dictionary file 150ms
+   × switches the sidebar to acoustic models and uses their picker and current selection 308ms
+     → Unable to find an accessible element with the role "heading" and name "管理语音词典与模型"
+
+Here are the accessible roles:
+
+  navigation:
+
+  Name "词典与模型分类":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"词典与模型分类"[39m
+    [33mclass[39m=[32m"settings-nav dictionary-nav"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "对齐资源":
+  [36m<h2 />[39m
+
+  Name "管理语音词典":
+  [36m<h1 />[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "语音词典":
+  [36m<button[39m
+    [33maria-current[39m=[32m"page"[39m
+    [33mclass[39m=[32m"selected"[39m
+  [36m/>[39m
+
+  Name "声学模型":
+  [36m<button[39m
+    [33mclass[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "中文.dict C:/词典/中文.dict 当前":
+  [36m<button[39m
+    [33maria-current[39m=[32m"true"[39m
+    [33mclass[39m=[32m"dictionary-row is-active"[39m
+    [33mtitle[39m=[32m"C:/词典/中文.dict"[39m
+  [36m/>[39m
+
+  Name "添加语音词典":
+  [36m<button[39m
+    [33mclass[39m=[32m"primary"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  main:
+
+  Name "":
+  [36m<main[39m
+    [33mclass[39m=[32m"dictionary-window"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"muted"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "已配置的语音词典":
+  [36m<section[39m
+    [33maria-busy[39m=[32m"false"[39m
+    [33maria-label[39m=[32m"已配置的语音词典"[39m
+    [33mclass[39m=[32m"dictionary-list"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  contentinfo:
+
+  Name "":
+  [36m<footer />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"settings-dashboard dictionary-manager"[39m
+    [36m>[39m
+      [36m<nav[39m
+        [33maria-label[39m=[32m"词典与模型分类"[39m
+        [33mclass[39m=[32m"settings-nav dictionary-nav"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0m对齐资源[0m
+        [36m</h2>[39m
+        [36m<button[39m
+          [33maria-current[39m=[32m"page"[39m
+          [33mclass[39m=[32m"selected"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-book-open"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"18"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"18"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 7v14"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m语音词典[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m""[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-audio-lines"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"18"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"18"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 10v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M6 6v11"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M10 3v18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M14 8v7"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M18 5v13"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M22 10v3"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m声学模型[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<main[39m
+        [33mclass[39m=[32m"dictionary-window"[39m
+      [36m>[39m
+        [36m<header>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"dictionary-mark"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mclass[39m=[32m"lucide lucide-book-open"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"23"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"23"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<h1>[39m
+              [0m管理语音[0m
+              [0m词典[0m
+            [36m</h1>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"muted"[39m
+            [36m>[39m
+              [0m已配置的[0m
+              [0m词典[0m
+              [0m · 右键条目可选用或删除[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</header>[39m
+        [36m<section[39m
+          [33maria-busy[39m=[32m"false"[39m
+          [33maria-label[39m=[32m"已配置的语音词典"[39m
+          [33mclass[39m=[32m"dictionary-list"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"true"[39m
+            [33mclass[39m=[32m"dictionary-row is-active"[39m
+            [33mtitle[39m=[32m"C:/词典/中文.dict"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mclass[39m=[32m"lucide lucide-book-open"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"19"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"19"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 7v14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span>[39m
+              [36m<strong>[39m
+                [0m中文.dict[0m
+              [36m</strong>[39m
+              [36m<small>[39m
+                [0mC:/词典/中文.dict[0m
+              [36m</small>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"dictionary-current"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-check"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2.5"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M20 6 9 17l-5-5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m当前[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</section>[39m
+        [36m<footer>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"primary"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mclass[39m=[32m"lucide lucide-plus"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"17"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"17"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M5 12h14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 5v14"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m添加语音词典[0m
+          [36m</button>[39m
+          [36m<small>[39m
+            [0m1[0m
+            [0m 个[0m
+            [0m词典[0m
+          [36m</small>[39m
+        [36m</footer>[39m
+      [36m</main>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   ✓ models share deletion confirmation and return to dictionaries through the sidebar  534ms
+ ✓ tests/editor.test.ts (10 tests) 32ms
+ ✓ tests/sidebar-search.test.tsx (5 tests) 1354ms
+   ✓ searches unopened messages with one compact host request and no full history hydration  517ms
+   ✓ discards old responses and clears pending search without changing the input or active chat  316ms
+ ✓ tests/sidebar-origins.test.ts (2 tests) 6ms
+ ✓ tests/scroll.test.ts (5 tests) 5ms
+ ✓ tests/transcript-window.test.ts (6 tests) 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/speech-dictionaries.test.tsx > switches the sidebar to acoustic models and uses their picker and current selection
+TestingLibraryElementError: Unable to find an accessible element with the role "heading" and name "管理语音词典与模型"
+
+Here are the accessible roles:
+
+  navigation:
+
+  Name "词典与模型分类":
+  <nav
+    aria-label="词典与模型分类"
+    class="settings-nav dictionary-nav"
+  />
+
+  --------------------------------------------------
+  heading:
+
+  Name "对齐资源":
+  <h2 />
+
+  Name "管理语音词典":
+  <h1 />
+
+  --------------------------------------------------
+  button:
+
+  Name "语音词典":
+  <button
+    aria-current="page"
+    class="selected"
+  />
+
+  Name "声学模型":
+  <button
+    class=""
+  />
+
+  Name "中文.dict C:/词典/中文.dict 当前":
+  <button
+    aria-current="true"
+    class="dictionary-row is-active"
+    title="C:/词典/中文.dict"
+  />
+
+  Name "添加语音词典":
+  <button
+    class="primary"
+  />
+
+  --------------------------------------------------
+  main:
+
+  Name "":
+  <main
+    class="dictionary-window"
+  />
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  <header />
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  <p
+    class="muted"
+  />
+
+  --------------------------------------------------
+  region:
+
+  Name "已配置的语音词典":
+  <section
+    aria-busy="false"
+    aria-label="已配置的语音词典"
+    class="dictionary-list"
+  />
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  <strong />
+
+  --------------------------------------------------
+  contentinfo:
+
+  Name "":
+  <footer />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <section
+      class="settings-dashboard dictionary-manager"
+    >
+      <nav
+        aria-label="词典与模型分类"
+        class="settings-nav dictionary-nav"
+      >
+        <h2>
+          对齐资源
+        </h2>
+        <button
+          aria-current="page"
+          class="selected"
+        >
+          <svg
+            class="lucide lucide-book-open"
+            fill="none"
+            height="18"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 7v14"
+            />
+            <path
+              d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+            />
+          </svg>
+          语音词典
+        </button>
+        <button
+          class=""
+        >
+          <svg
+            class="lucide lucide-audio-lines"
+            fill="none"
+            height="18"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M2 10v3"
+            />
+            <path
+              d="M6 6v11"
+            />
+            <path
+              d="M10 3v18"
+            />
+            <path
+              d="M14 8v7"
+            />
+            <path
+              d="M18 5v13"
+            />
+            <path
+              d="M22 10v3"
+            />
+          </svg>
+          声学模型
+        </button>
+      </nav>
+      <main
+        class="dictionary-window"
+      >
+        <header>
+          <div
+            class="dictionary-mark"
+          >
+            <svg
+              class="lucide lucide-book-open"
+              fill="none"
+              height="23"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="23"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 7v14"
+              />
+              <path
+                d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1>
+              管理语音
+              词典
+            </h1>
+            <p
+              class="muted"
+            >
+              已配置的
+              词典
+               · 右键条目可选用或删除
+            </p>
+          </div>
+        </header>
+        <section
+          aria-busy="false"
+          aria-label="已配置的语音词典"
+          class="dictionary-list"
+        >
+          <button
+            aria-current="true"
+            class="dictionary-row is-active"
+            title="C:/词典/中文.dict"
+          >
+            <svg
+              class="lucide lucide-book-open"
+              fill="none"
+              height="19"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="19"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 7v14"
+              />
+              <path
+                d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"
+              />
+            </svg>
+            <span>
+              <strong>
+                中文.dict
+              </strong>
+              <small>
+                C:/词典/中文.dict
+              </small>
+            </span>
+            <span
+              class="dictionary-current"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-check"
+                fill="none"
+                height="18"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M20 6 9 17l-5-5"
+                />
+              </svg>
+              当前
+            </span>
+          </button>
+        </section>
+        <footer>
+          <button
+            class="primary"
+          >
+            <svg
+              class="lucide lucide-plus"
+              fill="none"
+              height="17"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="17"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 12h14"
+              />
+              <path
+                d="M12 5v14"
+              />
+            </svg>
+            添加语音词典
+          </button>
+          <small>
+            1
+             个
+            词典
+          </small>
+        </footer>
+      </main>
+    </section>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/speech-dictionaries.test.tsx:95:17
+     93|   render(<SpeechDictionaries rpc={rpc}/>);
+     94|   await screen.findByText('中文.dict');
+     95|   expect(screen.getByRole('heading', {name: '管理语音词典与模型'})).toBeTruthy(…
+       |                 ^
+     96|   fireEvent.click(screen.getByRole('button', {name: '声学模型'}));
+     97|   const row = await screen.findByRole('button', {name: /英语声学.zip/});
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 19 passed (20)
+      Tests  1 failed | 114 passed (115)
+   Start at  03:12:55
+   Duration  8.06s (transform 3.31s, setup 0ms, collect 14.90s, tests 8.01s, environment 34.07s, prepare 7.83s)
+

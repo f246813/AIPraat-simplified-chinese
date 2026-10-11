@@ -1,0 +1,69 @@
+[WebServer] (node:8912) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 12 tests using 1 worker
+
+(node:10308) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10308) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\browser\sidebar-options.spec.ts:13:1 › ellipsis opens two real submenus; sorting retains existing creation/name choices (4.8s)
+  ok  2 tests\browser\sidebar-options.spec.ts:73:1 › submenu opens by keyboard, closes to parent, escapes and restores trigger focus (2.1s)
+  ok  3 tests\browser\sidebar-options.spec.ts:104:1 › sidebar organization switches real project/connection groups without moving section history (3.3s)
+  ok  4 tests\browser\sidebar-options.spec.ts:175:1 › root and submenu stay inside a narrow desktop viewport (1.8s)
+  ok  5 tests\browser\startup-session.spec.ts:2:1 › opening starts a blank session and keeps historical conversations accessible (3.7s)
+  ok  6 tests\browser\ui.spec.ts:4:1 › normal browser is fail-closed, never a demo (9.9s)
+  ok  7 tests\browser\ui.spec.ts:18:1 › rich composer IME, newline, drafts, native attachment tags, session CRUD (4.3s)
+  ok  8 tests\browser\ui.spec.ts:115:1 › settings categories, key preservation, separate fixture tests and unknown capability (3.0s)
+  ok  9 tests\browser\ui.spec.ts:182:1 › long history math/highlight/diagram, reading position, background stream isolation and cancel (9.4s)
+(node:10860) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10860) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 10 tests\browser\sidebar.spec.ts:7:1 › Pi session sidebar: grouping, sorting, preview and keyboard navigation (7.2s)
+  ok 11 tests\browser\sidebar.spec.ts:111:1 › Pi multiple selection: modifier clicks preserve active chat and readonly protection (8.0s)
+  x  12 tests\browser\sidebar.spec.ts:193:1 › native sidebar scrollbar has a wide pointer lane and drags independently of sidebar resizing (6.8s)
+
+
+  1) tests\browser\sidebar.spec.ts:193:1 › native sidebar scrollbar has a wide pointer lane and drags independently of sidebar resizing 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('.session-row')
+    Expected: [32m4[39m
+    Received: [31m5[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for locator('.session-row')[22m
+    [2m    9 × locator resolved to 5 elements[22m
+    [2m      - unexpected value "5"[22m
+
+
+      90 |   for (let count=5;count<=45;count++) {
+      91 |     await page.getByRole('button',{name:'新建会话',exact:true}).click();
+    > 92 |     await expect(page.locator('.session-row')).toHaveCount(count);
+         |                                                ^
+      93 |   }
+      94 |   const list=page.locator('.session-list');
+      95 |   const sample=await list.evaluate(el=>({height:el.clientHeight,total:el.scrollHeight,lane:(el as HTMLElement).offsetWidth-el.clientWidth,width:getComputedStyle(el,'::-webkit-scrollbar').width,side:el.closest('.sidebar')!.getBoundingClientRect().width}));
+        at C:\Users\USER\Desktop\Praat\稳定早期版\ai\frontend\tests\browser\sidebar.spec.ts:92:48
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\.build-tools\dictionary-models-scratch\frontend-playwright-results\sidebar-native-sidebar-scr-e1e37-ndently-of-sidebar-resizing\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\.build-tools\dictionary-models-scratch\frontend-playwright-results\sidebar-native-sidebar-scr-e1e37-ndently-of-sidebar-resizing\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\.build-tools\dictionary-models-scratch\frontend-playwright-results\sidebar-native-sidebar-scr-e1e37-ndently-of-sidebar-resizing\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\.build-tools\dictionary-models-scratch\frontend-playwright-results\sidebar-native-sidebar-scr-e1e37-ndently-of-sidebar-resizing\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\browser\sidebar.spec.ts:193:1 › native sidebar scrollbar has a wide pointer lane and drags independently of sidebar resizing 
+  11 passed (1.2m)

@@ -1,0 +1,14 @@
+
+> praat-assistant-frontend@1.0.0 test
+> vitest run tests/workflow-settings.test.tsx
+
+
+ RUN  v3.2.4 C:/Users/USER/Desktop/Praat/稳定早期版/ai/frontend
+
+ ✓ tests/workflow-settings.test.tsx (2 tests) 248ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  01:09:02
+   Duration  2.93s (transform 243ms, setup 0ms, collect 1.01s, tests 248ms, environment 1.01s, prepare 156ms)
+

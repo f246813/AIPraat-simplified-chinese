@@ -1,0 +1,77 @@
+
+> praat-assistant-frontend@1.0.0 test
+> vitest run --run tests/startup-session.test.ts
+
+
+ RUN  v3.2.4 C:/Users/USER/Desktop/Praat/稳定早期版/ai/frontend
+
+ ❯ tests/startup-session.test.ts (3 tests | 3 failed) 31ms
+   × opens a blank new session without loading pinned or legacy history 24ms
+     → expected '长历史与渲染夹具' to be '新会话' // Object.is equality
+   × refreshes and event resets keep the selection; reopening creates a different session 5ms
+     → expected [] to have a length of 1 but got +0
+   × creates one usable session when opening an empty workspace 1ms
+     → expected undefined to be 'first' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/startup-session.test.ts > opens a blank new session without loading pinned or legacy history
+AssertionError: expected '长历史与渲染夹具' to be '新会话' // Object.is equality
+
+Expected: "新会话"
+Received: "长历史与渲染夹具"
+
+ ❯ tests/startup-session.test.ts:16:26
+     14|   const state=store.getSnapshot();
+     15|   const selected=state.sessions.find(s=>s.id===state.selected)!;
+     16|   expect(selected.title).toBe('新会话');
+       |                          ^
+     17|   expect(before.sessions.some(s=>s.id===selected.id)).toBe(false);
+     18|   expect(selected.draft).toBe('');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/startup-session.test.ts > refreshes and event resets keep the selection; reopening creates a different session
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/startup-session.test.ts:42:84
+     40|   expect(store.getSnapshot().selected).toBe('demo-history');
+     41|   expect(store.getSnapshot().messages['demo-history'].length).toBeGrea…
+     42|   expect(vi.mocked(rpc).mock.calls.filter(([method])=>method==='sessio…
+       |                                                                                    ^
+     43|   store.stop();
+     44|   const reopened=new ChatStore(rpc);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/startup-session.test.ts > creates one usable session when opening an empty workspace
+AssertionError: expected undefined to be 'first' // Object.is equality
+
+- Expected: 
+"first"
+
++ Received: 
+undefined
+
+ ❯ tests/startup-session.test.ts:66:40
+     64|   const store=new ChatStore(rpc as Rpc);
+     65|   await store.initialize({newSession:true});
+     66|   expect(store.getSnapshot().selected).toBe('first');
+       |                                        ^
+     67|   expect(store.getSnapshot().sessions).toHaveLength(1);
+     68|   expect(rpc.mock.calls.filter(([method])=>method==='sessions.create')…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  00:12:25
+   Duration  11.87s (transform 125ms, setup 0ms, collect 225ms, tests 31ms, environment 10.29s, prepare 758ms)
+

@@ -136,7 +136,7 @@ FAIL: test_config_path_can_be_overridden_by_the_environment (test_api_settings.A
 ``PRAAT_AI_CONFIG_PATH`` 整份换配置文件。
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_api_settings.py", line 167, in test_config_path_can_be_overridden_by_the_environment
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_api_settings.py", line 167, in test_config_path_can_be_overridden_by_the_environment
     self.assertEqual(config_module.default_config_path(), path)
 AssertionError: Windo[42 chars]aat/verification/dialogue-__737qcx/config.json') != Windo[42 chars]aat/verification/dialogue-__737qcx/tmp4n_0wlrc/ai_config.json')
 
@@ -144,7 +144,7 @@ AssertionError: Windo[42 chars]aat/verification/dialogue-__737qcx/config.json') 
 FAIL: test_top_menu_grays_local_items_and_keeps_cloud_entry_visible (test_api_transition.ApiTransitionTests.test_top_menu_grays_local_items_and_keeps_cloud_entry_visible) (locked=False, stopped=False)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_api_transition.py", line 167, in test_top_menu_grays_local_items_and_keeps_cloud_entry_visible
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_api_transition.py", line 167, in test_top_menu_grays_local_items_and_keeps_cloud_entry_visible
     self.assertEqual(window.preset_choice.get(), window.api_choice)
 AssertionError: '本地测试 · local.gguf · 纯文本' != '云端 API：未配置'
 - 本地测试 · local.gguf · 纯文本
@@ -155,7 +155,7 @@ AssertionError: '本地测试 · local.gguf · 纯文本' != '云端 API：未�
 FAIL: test_top_menu_grays_local_items_and_keeps_cloud_entry_visible (test_api_transition.ApiTransitionTests.test_top_menu_grays_local_items_and_keeps_cloud_entry_visible) (locked=False, stopped=True)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_api_transition.py", line 166, in test_top_menu_grays_local_items_and_keeps_cloud_entry_visible
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_api_transition.py", line 166, in test_top_menu_grays_local_items_and_keeps_cloud_entry_visible
     self.assertEqual(window.preset_menu.entrycget(1, "state"), expected)
 AssertionError: 'normal' != 'disabled'
 - normal
@@ -166,7 +166,7 @@ AssertionError: 'normal' != 'disabled'
 FAIL: test_top_menu_grays_local_items_and_keeps_cloud_entry_visible (test_api_transition.ApiTransitionTests.test_top_menu_grays_local_items_and_keeps_cloud_entry_visible)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_api_transition.py", line 173, in test_top_menu_grays_local_items_and_keeps_cloud_entry_visible
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_api_transition.py", line 173, in test_top_menu_grays_local_items_and_keeps_cloud_entry_visible
     self.assertEqual(window.preset_choice.get(), window.api_choice)
 AssertionError: '本地测试 · local.gguf · 纯文本' != '云端 API：未配置'
 - 本地测试 · local.gguf · 纯文本
@@ -177,7 +177,7 @@ AssertionError: '本地测试 · local.gguf · 纯文本' != '云端 API：未�
 FAIL: test_top_menu_selection_really_switches_cloud_local_cloud (test_api_transition.ApiTransitionTests.test_top_menu_selection_really_switches_cloud_local_cloud)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_api_transition.py", line 231, in test_top_menu_selection_really_switches_cloud_local_cloud
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_api_transition.py", line 231, in test_top_menu_selection_really_switches_cloud_local_cloud
     self.assertEqual(load_config(path).api.enabled, expected)
 AssertionError: True != False
 

@@ -20,7 +20,7 @@ test_real_audio_probe_retains_code_without_claiming_unsupported (test_api_capabi
 FAIL: test_refresh_preserves_new_test_after_historical_runtime_rejection (test_api_capability_status.CapabilityDialogTests.test_refresh_preserves_new_test_after_historical_runtime_rejection)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_api_capability_status.py", line 203, in test_refresh_preserves_new_test_after_historical_runtime_rejection
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_api_capability_status.py", line 203, in test_refresh_preserves_new_test_after_historical_runtime_rejection
     self.assertIn('δ����֤',self.dialog.audio_hint.get())
 AssertionError: 'δ����֤' not found in 'status code: 400 �� model: qwen3.7-flash\nģ��Ԥ�裺��֧��ֱ����Ƶ���루�ٷ��ĵ���\n��Ƶʵ�⣺�ӿ���ȷ��֧����Ƶ����\n��ǰ���ã�ֱ����Ƶ�����ѹر�'
 

@@ -1,7 +1,7 @@
-配置所选 Python：C:\Users\f2468\Desktop\Praat\稳定早期版\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\Scripts\python.exe
+配置所选 Python：C:\Users\USER\Desktop\Praat\稳定早期版\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\Scripts\python.exe
 正在配置 pip…
-Looking in links: c:\Users\f2468\AppData\Local\Temp\tmpyufw41_o
-Processing c:\users\f2468\appdata\local\temp\tmpyufw41_o\pip-25.0.1-py3-none-any.whl
+Looking in links: c:\Users\USER\AppData\Local\Temp\tmpyufw41_o
+Processing c:\users\USER\appdata\local\temp\tmpyufw41_o\pip-25.0.1-py3-none-any.whl
 Installing collected packages: pip
 Successfully installed pip-25.0.1
 正在安装前端、阶梯编排与云端会话依赖…
@@ -110,41 +110,41 @@ Successfully installed Pillow-12.3.0 annotated-types-0.8.0 anyio-4.15.1 attrs-26
 Tk / Pillow / NumPy / cloud orchestration OK
 运行环境配置完成。返回配置界面后将自动检查。
 PASS fresh environment installs pip Pillow NumPy pinned cloud dependencies and validates Tk on Windows PowerShell 5.1
-配置所选 Python：C:\Users\f2468\Desktop\Praat\稳定早期版\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\Scripts\python.exe
+配置所选 Python：C:\Users\USER\Desktop\Praat\稳定早期版\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\Scripts\python.exe
 正在安装前端、阶梯编排与云端会话依赖…
-Requirement already satisfied: Pillow>=10 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (12.3.0)
-Requirement already satisfied: numpy>=2 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (2.5.3)
-Requirement already satisfied: pydantic-ai-slim==2.52.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim[openai]==2.52.0) (2.52.0)
-Requirement already satisfied: pydantic-graph==2.52.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (2.52.0)
-Requirement already satisfied: jsonschema==4.26.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (4.26.0)
-Requirement already satisfied: anyio>=4.7.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (4.15.1)
-Requirement already satisfied: genai-prices>=0.1.9 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (0.1.9)
-Requirement already satisfied: griffelib>=2.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (2.3.0)
-Requirement already satisfied: httpx2>=2.7 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (2.13.1)
-Requirement already satisfied: opentelemetry-api>=1.28.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (1.45.0)
-Requirement already satisfied: pydantic>=2.12 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (2.13.5)
-Requirement already satisfied: typing-inspection>=0.4.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (0.4.4)
-Requirement already satisfied: logfire-api>=3.14.1 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-graph==2.52.0) (5.1.1)
-Requirement already satisfied: attrs>=22.2.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from jsonschema==4.26.0) (26.1.0)
-Requirement already satisfied: jsonschema-specifications>=2023.03.6 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from jsonschema==4.26.0) (2025.9.1)
-Requirement already satisfied: referencing>=0.28.4 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from jsonschema==4.26.0) (0.37.0)
-Requirement already satisfied: rpds-py>=0.25.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from jsonschema==4.26.0) (2026.6.3)
-Requirement already satisfied: openai>=3.19.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim[openai]==2.52.0) (3.23.0)
-Requirement already satisfied: tiktoken>=0.12.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim[openai]==2.52.0) (0.14.0)
-Requirement already satisfied: idna>=2.8 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from anyio>=4.7.0->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (3.20)
-Requirement already satisfied: typing_extensions>=4.16.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from anyio>=4.7.0->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (4.16.0)
-Requirement already satisfied: httpcore2==2.13.1 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from httpx2>=2.7->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (2.13.1)
-Requirement already satisfied: truststore>=0.10 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from httpx2>=2.7->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (0.10.4)
-Requirement already satisfied: h11>=0.16 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from httpcore2==2.13.1->httpx2>=2.7->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (0.16.0)
-Requirement already satisfied: jiter<1,>=0.16.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from openai>=3.19.0->pydantic-ai-slim[openai]==2.52.0) (0.17.0)
-Requirement already satisfied: sniffio in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from openai>=3.19.0->pydantic-ai-slim[openai]==2.52.0) (1.3.1)
-Requirement already satisfied: annotated-types>=0.6.0 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic>=2.12->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (0.8.0)
-Requirement already satisfied: pydantic-core==2.46.5 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic>=2.12->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (2.46.5)
-Requirement already satisfied: regex in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0) (2026.9.29)
-Requirement already satisfied: requests in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0) (2.34.2)
-Requirement already satisfied: charset_normalizer<4,>=2 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from requests->tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0) (3.5.2)
-Requirement already satisfied: urllib3<3,>=1.26 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from requests->tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0) (2.8.0)
-Requirement already satisfied: certifi>=2023.5.7 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from requests->tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0) (2026.7.22)
+Requirement already satisfied: Pillow>=10 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (12.3.0)
+Requirement already satisfied: numpy>=2 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (2.5.3)
+Requirement already satisfied: pydantic-ai-slim==2.52.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim[openai]==2.52.0) (2.52.0)
+Requirement already satisfied: pydantic-graph==2.52.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (2.52.0)
+Requirement already satisfied: jsonschema==4.26.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (4.26.0)
+Requirement already satisfied: anyio>=4.7.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (4.15.1)
+Requirement already satisfied: genai-prices>=0.1.9 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (0.1.9)
+Requirement already satisfied: griffelib>=2.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (2.3.0)
+Requirement already satisfied: httpx2>=2.7 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (2.13.1)
+Requirement already satisfied: opentelemetry-api>=1.28.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (1.45.0)
+Requirement already satisfied: pydantic>=2.12 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (2.13.5)
+Requirement already satisfied: typing-inspection>=0.4.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (0.4.4)
+Requirement already satisfied: logfire-api>=3.14.1 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-graph==2.52.0) (5.1.1)
+Requirement already satisfied: attrs>=22.2.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from jsonschema==4.26.0) (26.1.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from jsonschema==4.26.0) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from jsonschema==4.26.0) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from jsonschema==4.26.0) (2026.6.3)
+Requirement already satisfied: openai>=3.19.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim[openai]==2.52.0) (3.23.0)
+Requirement already satisfied: tiktoken>=0.12.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic-ai-slim[openai]==2.52.0) (0.14.0)
+Requirement already satisfied: idna>=2.8 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from anyio>=4.7.0->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (3.20)
+Requirement already satisfied: typing_extensions>=4.16.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from anyio>=4.7.0->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (4.16.0)
+Requirement already satisfied: httpcore2==2.13.1 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from httpx2>=2.7->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (2.13.1)
+Requirement already satisfied: truststore>=0.10 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from httpx2>=2.7->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (0.10.4)
+Requirement already satisfied: h11>=0.16 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from httpcore2==2.13.1->httpx2>=2.7->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (0.16.0)
+Requirement already satisfied: jiter<1,>=0.16.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from openai>=3.19.0->pydantic-ai-slim[openai]==2.52.0) (0.17.0)
+Requirement already satisfied: sniffio in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from openai>=3.19.0->pydantic-ai-slim[openai]==2.52.0) (1.3.1)
+Requirement already satisfied: annotated-types>=0.6.0 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic>=2.12->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (0.8.0)
+Requirement already satisfied: pydantic-core==2.46.5 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from pydantic>=2.12->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0) (2.46.5)
+Requirement already satisfied: regex in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0) (2026.9.29)
+Requirement already satisfied: requests in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0) (2.34.2)
+Requirement already satisfied: charset_normalizer<4,>=2 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from requests->tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0) (3.5.2)
+Requirement already satisfied: urllib3<3,>=1.26 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from requests->tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0) (2.8.0)
+Requirement already satisfied: certifi>=2023.5.7 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-ebe7422dcb9c46818e472b7723e9df89\lib\site-packages (from requests->tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0) (2026.7.22)
 正在复检 Tk、Pillow、NumPy 与云端编排…
 Tk / Pillow / NumPy / cloud orchestration OK
 运行环境配置完成。返回配置界面后将自动检查。

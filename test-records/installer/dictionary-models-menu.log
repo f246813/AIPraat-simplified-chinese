@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "Chinese_dictionary_command_in_alignment_menu",
+    "native_menu_opens_detached_assistant_window",
+    "dictionary_window_closes_with_bound_Praat_parent",
+    "menu_opening_does_not_modify_configuration"
+  ],
+  "executable": "C:\\Users\\USER\\Desktop\\Praat\\�ȶ����ڰ�\\.build-tools\\dictionary-models-20261005\\Praat-link.exe"
+}

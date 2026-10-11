@@ -4,7 +4,7 @@ test_clean_http_eof_without_a_completion_marker_is_partial (test_dialogue_protoc
 FAIL: test_clean_http_eof_without_a_completion_marker_is_partial (test_dialogue_protocol.DialogueProtocolTests.test_clean_http_eof_without_a_completion_marker_is_partial)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_protocol.py", line 80, in test_clean_http_eof_without_a_completion_marker_is_partial
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_protocol.py", line 80, in test_clean_http_eof_without_a_completion_marker_is_partial
     self.assertEqual(state.status,'partial')
 AssertionError: 'complete' != 'partial'
 - complete

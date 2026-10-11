@@ -7,4 +7,4 @@ PASS unchanged_alignment_fields_preserve_other_window_edits
 PASS installer_saves_paths_but_skip_preserves_existing_settings
 FAIL existing_mfa_path_command_or_conda_ignored_stale_path_keeps_other_paths_editable: MFA 程序不存在，请选择 mfa.exe / .bat / .cmd，或清空此项。
 PASS installer_backfills_and_gathers_paths_for_resume
-RESULT 8 passed, 1 failed; artifacts=C:\Users\f2468\AppData\Local\Temp\AIPraat alignment 中文 4e0bb657869045a1848729ffccd7b511
+RESULT 8 passed, 1 failed; artifacts=C:\Users\USER\AppData\Local\Temp\AIPraat alignment 中文 4e0bb657869045a1848729ffccd7b511

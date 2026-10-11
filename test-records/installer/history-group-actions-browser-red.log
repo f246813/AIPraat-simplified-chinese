@@ -1,0 +1,51 @@
+[WebServer] (node:2348) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:8932) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8932) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\browser\history-group-actions.spec.ts:8:1 › right-clicking the smallest time group offers exactly the requested actions (7.2s)
+
+
+  1) tests\browser\history-group-actions.spec.ts:8:1 › right-clicking the smallest time group offers exactly the requested actions 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('menu')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('menu')[22m
+
+
+       9 |   await open(page);
+      10 |   await page.getByRole('button',{name:'折叠 今天',exact:true}).click({button:'right'});
+    > 11 |   await expect(page.getByRole('menu')).toBeVisible();
+         |                                        ^
+      12 |   expect(await page.getByRole('menuitem').allTextContents()).toEqual(['删除分区及其内容','仅删除分区','全部归档']);
+      13 |   await page.getByRole('menuitem',{name:'仅删除分区',exact:true}).click();
+      14 |   await expect(page.getByRole('dialog')).toContainText('保留');
+        at C:\Users\USER\Desktop\Praat\稳定早期版\ai\frontend\tests\browser\history-group-actions.spec.ts:11:40
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\history-group-actions-righ-85649-actly-the-requested-actions\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\history-group-actions-righ-85649-actly-the-requested-actions\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\history-group-actions-righ-85649-actly-the-requested-actions\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\history-group-actions-righ-85649-actly-the-requested-actions\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\browser\history-group-actions.spec.ts:8:1 › right-clicking the smallest time group offers exactly the requested actions 

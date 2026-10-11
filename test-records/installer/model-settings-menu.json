@@ -1,5 +1,5 @@
 {
-  "executable": "C:\\Users\\f2468\\Desktop\\Praat\\稳定早期版\\Praat-model-settings.exe",
+  "executable": "C:\\Users\\USER\\Desktop\\Praat\\稳定早期版\\Praat-model-settings.exe",
   "checks": [
     "closed_desktop_native_API_menu_opens_model_API_page",
     "no_standalone_API_window",

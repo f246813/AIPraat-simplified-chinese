@@ -40,7 +40,7 @@ PASS real_python_capability_probe
 
 PASS real_python_without_dependencies_is_rejected
 
-RESULT 21 passed, 0 failed; artifacts=C:\Users\f2468\AppData\LocalLow\Praat\verification\dialogue-ukx7ywca\AIPraat-contract-1236be9c7afb46be99a92599061c304a
+RESULT 21 passed, 0 failed; artifacts=C:\Users\USER\AppData\LocalLow\Praat\verification\dialogue-ukx7ywca\AIPraat-contract-1236be9c7afb46be99a92599061c304a
 
 
 oked from within

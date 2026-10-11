@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "checks": [
+    "production-frontend-opens-blank-session",
+    "native-window-close-removes-unused-session",
+    "reopened-host-preserves-existing-dialogue-without-empty-history"
+  ],
+  "realModel": false,
+  "realPraat": false
+}

@@ -1,0 +1,142 @@
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.1000	API 模式：设置里取消了「顺手停掉本机模型服务」，本机服务保持不动。
+PRAAT_PROGRESS	1.0000	API 模式仍在运行；本机模型服务按设置保留。
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+PRAAT_PROGRESS	0.0200	切回本地模型（关闭 API 模式）…
+invalid command name "2580805404096focus_set"
+    while executing
+"2580805404096focus_set"
+    ("after" script)
+invalid command name "2580805408448flush_messages"
+    while executing
+"2580805408448flush_messages"
+    ("after" script)
+invalid command name "2580805416640flush_messages"
+    while executing
+"2580805416640flush_messages"
+    ("after" script)
+invalid command name "2580805416704focus_set"
+    while executing
+"2580805416704focus_set"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+invalid command name "2580805386304flush_messages"
+    while executing
+"2580805386304flush_messages"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+invalid command name "2580788217216focus_set"
+    while executing
+"2580788217216focus_set"
+    ("after" script)
+invalid command name "2580805406976_restore_status_text"
+    while executing
+"2580805406976_restore_status_text"
+    ("after" script)
+新前端未启动：[REDACTED] [REDACTED]
+
+Python：C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe
+请在 Praat 的路径配置中选择已安装 pywebview/pythonnet 的 Python。
+不会自动改用旧界面或发送模型请求。
+PRAAT_PROGRESS	0.1000	正在停止模型服务…
+PRAAT_PROGRESS	1.0000	已停止。
+PRAAT_PROGRESS	0.0500	停止旧的模型服务…
+PRAAT_PROGRESS	0.1500	等待端口释放…
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	停止旧的模型服务…
+PRAAT_PROGRESS	0.1500	等待端口释放…
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.1000	当前是 API 模式，不需要本机模型服务。
+PRAAT_PROGRESS	1.0000	已就绪：deepseek-chat（云端）
+PRAAT_PROGRESS	0.1000	当前是 API 模式，不需要本机模型服务。
+PRAAT_PROGRESS	1.0000	已就绪：deepseek-chat（云端）
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.1000	API 模式：设置里取消了「顺手停掉本机模型服务」，本机服务保持不动。
+PRAAT_PROGRESS	1.0000	API 模式仍在运行；本机模型服务按设置保留。
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	0.1000	正在停止模型服务…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	已停止。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	0.0200	切回本地模型（关闭 API 模式）…
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+invalid command name "2580899423936flush_messages"
+    while executing
+"2580899423936flush_messages"
+    ("after" script)
+invalid command name "2580899421824focus_set"
+    while executing
+"2580899421824focus_set"
+    ("after" script)
+invalid command name "2580880466432flush_messages"
+    while executing
+"2580880466432flush_messages"
+    ("after" script)
+invalid command name "2580880464640focus_set"
+    while executing
+"2580880464640focus_set"
+    ("after" script)
+invalid command name "2580880484864flush_messages"
+    while executing
+"2580880484864flush_messages"
+    ("after" script)
+invalid command name "2580880475200focus_set"
+    while executing
+"2580880475200focus_set"
+    ("after" script)
+----------------------------------------------------------------------
+Ran 1093 tests in 152.567s
+
+OK

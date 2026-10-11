@@ -1,0 +1,8 @@
+{
+  "installer": "C:\\Users\\USER\\Desktop\\Praat\\稳定早期版\\AIPraat-install.exe",
+  "size": 56208384,
+  "sha256": "06755D1E88FA452958FA93FCD746A9D17A4A4436AD2F8D7396C864BD0FD629DB",
+  "praat_sha256": "777b54ff1ed57484be27aba83f79c22c62b87c3ce8406b2a4f2b0f3b8e7ab37f",
+  "payload_files": 68,
+  "built_at": "2026-10-02T07:43:05.1471198Z"
+}

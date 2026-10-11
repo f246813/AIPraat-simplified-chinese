@@ -92,17 +92,17 @@ Using cached urllib3-2.8.0-py3-none-any.whl (135 kB)
 Using cached certifi-2026.7.22-py3-none-any.whl (136 kB)
 Using cached sniffio-1.3.1-py3-none-any.whl (10 kB)
 Installing collected packages: urllib3, typing_extensions, truststore, sniffio, rpds-py, regex, logfire-api, jiter, idna, h11, griffelib, charset_normalizer, certifi, attrs, annotated-types, typing-inspection, requests, referencing, pydantic-core, opentelemetry-api, httpcore2, anyio, tiktoken, pydantic, jsonschema-specifications, httpx2, pydantic-graph, openai, jsonschema, genai-prices, pydantic-ai-slim
-  WARNING: The script idna.exe is installed in 'C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
+  WARNING: The script idna.exe is installed in 'C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The script normalizer.exe is installed in 'C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
+  WARNING: The script normalizer.exe is installed in 'C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The script httpx2.exe is installed in 'C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
+  WARNING: The script httpx2.exe is installed in 'C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The script jsonschema.exe is installed in 'C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
+  WARNING: The script jsonschema.exe is installed in 'C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The script genai-prices.exe is installed in 'C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
+  WARNING: The script genai-prices.exe is installed in 'C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The script pai.exe is installed in 'C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
+  WARNING: The script pai.exe is installed in 'C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Scripts' which is not on PATH.
   Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
 
 Successfully installed annotated-types-0.8.0 anyio-4.15.1 attrs-26.1.0 certifi-2026.7.22 charset_normalizer-3.5.2 genai-prices-0.1.9 griffelib-2.3.0 h11-0.16.0 httpcore2-2.13.1 httpx2-2.13.1 idna-3.20 jiter-0.17.0 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 logfire-api-5.1.1 openai-3.23.0 opentelemetry-api-1.45.0 pydantic-2.13.5 pydantic-ai-slim-2.52.0 pydantic-core-2.46.5 pydantic-graph-2.52.0 referencing-0.37.0 regex-2026.9.29 requests-2.34.2 rpds-py-2026.6.3 sniffio-1.3.1 tiktoken-0.14.0 truststore-0.10.4 typing-inspection-0.4.4 typing_extensions-4.16.0 urllib3-2.8.0

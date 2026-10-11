@@ -1,0 +1,1227 @@
+python.exe : ...............................F.FF.......FFFFFFFFFFFFFFFFFF..................................C:\Users\USER
+68\AppData\Local\Python\pythoncore-3.14-64\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 422:
+ 'Unprocessable Entity'>
+所在位置 行:1 字符: 384
++ ... aat\稳定早期版"; & $py -B -m unittest discover -s ai/tests 1> "verify-fold ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (..................ssable Entity'>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  _warnings.warn(self.warn_message, ResourceWarning)
+.C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <H
+TTPError 400: 'Bad Request'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+.C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <H
+TTPError 401: 'Unauthorized'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.1000	API 模式：设置里取消了「顺手停掉本机模型服务」，本机服务保持不动。
+PRAAT_PROGRESS	1.0000	API 模式仍在运行；本机模型服务按设置保留。
+PRAAT_PROGRESS	0.0200	切回本地模型（关闭 API 模式）…
+..........................................................................invalid command name "2140623922176flush_mess
+ages"
+    while executing
+"2140623922176flush_messages"
+    ("after" script)
+invalid command name "2140623926976flush_messages"
+    while executing
+"2140623926976flush_messages"
+    ("after" script)
+invalid command name "2140623927488focus_set"
+    while executing
+"2140623927488focus_set"
+    ("after" script)
+invalid command name "2140623925312hide_progress"
+    while executing
+"2140623925312hide_progress"
+    ("after" script)
+invalid command name "2140623918272flush_messages"
+    while executing
+"2140623918272flush_messages"
+    ("after" script)
+invalid command name "2140512755520flush_messages"
+    while executing
+"2140512755520flush_messages"
+    ("after" script)
+invalid command name "2140623915904flush_messages"
+    while executing
+"2140623915904flush_messages"
+    ("after" script)
+..............invalid command name "2140641253504flush_messages"
+    while executing
+"2140641253504flush_messages"
+    ("after" script)
+invalid command name "2140641253632focus_set"
+    while executing
+"2140641253632focus_set"
+    ("after" script)
+invalid command name "2140641251648flush_messages"
+    while executing
+"2140641251648flush_messages"
+    ("after" script)
+invalid command name "2140641303744flush_messages"
+    while executing
+"2140641303744flush_messages"
+    ("after" script)
+invalid command name "2140641251520focus_set"
+    while executing
+"2140641251520focus_set"
+    ("after" script)
+invalid command name "2140641303872focus_set"
+    while executing
+"2140641303872focus_set"
+    ("after" script)
+PRAAT_PROGRESS	0.1000	正在停止模型服务…
+PRAAT_PROGRESS	1.0000	已停止。
+PRAAT_PROGRESS	0.0500	停止旧的模型服务…
+PRAAT_PROGRESS	0.1500	等待端口释放…
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	停止旧的模型服务…
+PRAAT_PROGRESS	0.1500	等待端口释放…
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.1000	当前是 API 模式，不需要本机模型服务。
+PRAAT_PROGRESS	1.0000	已就绪：deepseek-chat（云端）
+PRAAT_PROGRESS	0.1000	当前是 API 模式，不需要本机模型服务。
+PRAAT_PROGRESS	1.0000	已就绪：deepseek-chat（云端）
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.1000	API 模式：设置里取消了「顺手停掉本机模型服务」，本机服务保持不动。
+PRAAT_PROGRESS	1.0000	API 模式仍在运行；本机模型服务按设置保留。
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	0.1000	正在停止模型服务…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	已停止。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	0.0200	切回本地模型（关闭 API 模式）…
+.......................................................................................................................
+..............................................EEEE.....................................................................
+.......................................................................................................................
+..........................................................................................................E............
+.....................................................................................invalid command name "214074575321
+6flush_messages"
+    while executing
+"2140745753216flush_messages"
+    ("after" script)
+invalid command name "2140745753024focus_set"
+    while executing
+"2140745753024focus_set"
+    ("after" script)
+invalid command name "2140745822464flush_messages"
+    while executing
+"2140745822464flush_messages"
+    ("after" script)
+invalid command name "2140745822336focus_set"
+    while executing
+"2140745822336focus_set"
+    ("after" script)
+invalid command name "2140745882048flush_messages"
+    while executing
+"2140745882048flush_messages"
+    ("after" script)
+invalid command name "2140745882176focus_set"
+    while executing
+"2140745882176focus_set"
+    ("after" script)
+invalid command name "2140738721920flush_messages"
+    while executing
+"2140738721920flush_messages"
+    ("after" script)
+invalid command name "2140509858624focus_set"
+    while executing
+"2140509858624focus_set"
+    ("after" script)
+...........................................................
+======================================================================
+ERROR: test_audio_rejection_redirects_once_without_audio (test_cloud_protocol.ProtocolTests.test_audio_rejection_redire
+cts_once_without_audio)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 388, in nor
+malize_port
+    port_as_int = int(port)
+ValueError: invalid literal for int() with base 10: ':1]'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 109, in test_audio_rejection_redirect
+s_once_without_audio
+    state, corrections = self.run_audio(base)
+                         ~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 87, in run_audio
+    run_cloud_turn(config,state,execute_action=lambda *_:self.fail('No Praat operation required'),
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   cancel=threading.Event(), materials=material,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   correct_audio=corrections.append, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 599, in run_cloud_turn
+    session = CloudSession(config, state, execute_action, cancel, progress, model, tool_schemas,
+                           materials, prepare_audio, correct_audio)
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 150, in __init__
+    self.model = model or create_model(config)
+                          ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 129, in create_model
+    client = AsyncOpenAI(base_url=config.api.base_url.strip().rstrip('/'),
+                         api_key=config.api.api_key or 'EMPTY', max_retries=0,
+                         timeout=config.api.request_timeout_sec)
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_client.py", line 1095, in __in
+it__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        version=__version__,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        _strict_response_validation=_strict_response_validation,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1638, in
+ __init__
+    self._client = http_client or AsyncHttpxClientWrapper(
+                                  ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_url=base_url,
+        ^^^^^^^^^^^^^^^^^^
+        # cast to a valid type because mypy doesn't understand our type narrowing
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        timeout=cast(Timeout, timeout),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1534, in
+ __init__
+    super().__init__(**kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_client.py", line 1510, in __in
+it__
+    URLPattern(key): None
+    ~~~~~~~~~~^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_utils.py", line 182, in __init
+__
+    url = URL(pattern)
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urls.py", line 126, in __init_
+_
+    self._uri_reference = urlparse(url, **kwargs)
+                          ~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 302, in url
+parse
+    parsed_port: int | None = normalize_port(port, scheme)
+                              ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 390, in nor
+malize_port
+    raise InvalidURL(f"Invalid port: {port!r}")
+httpx2.InvalidURL: Invalid port: ':1]'
+
+======================================================================
+ERROR: test_qwen_stream_uri_and_text_output (test_cloud_protocol.ProtocolTests.test_qwen_stream_uri_and_text_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 388, in nor
+malize_port
+    port_as_int = int(port)
+ValueError: invalid literal for int() with base 10: ':1]'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 95, in test_qwen_stream_uri_and_text_
+output
+    state, _ = self.run_audio(base)
+               ~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 87, in run_audio
+    run_cloud_turn(config,state,execute_action=lambda *_:self.fail('No Praat operation required'),
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   cancel=threading.Event(), materials=material,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   correct_audio=corrections.append, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 599, in run_cloud_turn
+    session = CloudSession(config, state, execute_action, cancel, progress, model, tool_schemas,
+                           materials, prepare_audio, correct_audio)
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 150, in __init__
+    self.model = model or create_model(config)
+                          ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 129, in create_model
+    client = AsyncOpenAI(base_url=config.api.base_url.strip().rstrip('/'),
+                         api_key=config.api.api_key or 'EMPTY', max_retries=0,
+                         timeout=config.api.request_timeout_sec)
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_client.py", line 1095, in __in
+it__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        version=__version__,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        _strict_response_validation=_strict_response_validation,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1638, in
+ __init__
+    self._client = http_client or AsyncHttpxClientWrapper(
+                                  ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_url=base_url,
+        ^^^^^^^^^^^^^^^^^^
+        # cast to a valid type because mypy doesn't understand our type narrowing
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        timeout=cast(Timeout, timeout),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1534, in
+ __init__
+    super().__init__(**kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_client.py", line 1510, in __in
+it__
+    URLPattern(key): None
+    ~~~~~~~~~~^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_utils.py", line 182, in __init
+__
+    url = URL(pattern)
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urls.py", line 126, in __init_
+_
+    self._uri_reference = urlparse(url, **kwargs)
+                          ~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 302, in url
+parse
+    parsed_port: int | None = normalize_port(port, scheme)
+                              ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 390, in nor
+malize_port
+    raise InvalidURL(f"Invalid port: {port!r}")
+httpx2.InvalidURL: Invalid port: ':1]'
+
+======================================================================
+ERROR: test_rate_limit_does_not_correct_capability_or_loop (test_cloud_protocol.ProtocolTests.test_rate_limit_does_not_
+correct_capability_or_loop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 388, in nor
+malize_port
+    port_as_int = int(port)
+ValueError: invalid literal for int() with base 10: ':1]'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 125, in test_rate_limit_does_not_corr
+ect_capability_or_loop
+    state, corrections = self.run_audio(base, model='gemini-3.8-flash')
+                         ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 87, in run_audio
+    run_cloud_turn(config,state,execute_action=lambda *_:self.fail('No Praat operation required'),
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   cancel=threading.Event(), materials=material,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   correct_audio=corrections.append, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 599, in run_cloud_turn
+    session = CloudSession(config, state, execute_action, cancel, progress, model, tool_schemas,
+                           materials, prepare_audio, correct_audio)
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 150, in __init__
+    self.model = model or create_model(config)
+                          ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 129, in create_model
+    client = AsyncOpenAI(base_url=config.api.base_url.strip().rstrip('/'),
+                         api_key=config.api.api_key or 'EMPTY', max_retries=0,
+                         timeout=config.api.request_timeout_sec)
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_client.py", line 1095, in __in
+it__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        version=__version__,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        _strict_response_validation=_strict_response_validation,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1638, in
+ __init__
+    self._client = http_client or AsyncHttpxClientWrapper(
+                                  ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_url=base_url,
+        ^^^^^^^^^^^^^^^^^^
+        # cast to a valid type because mypy doesn't understand our type narrowing
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        timeout=cast(Timeout, timeout),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1534, in
+ __init__
+    super().__init__(**kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_client.py", line 1510, in __in
+it__
+    URLPattern(key): None
+    ~~~~~~~~~~^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_utils.py", line 182, in __init
+__
+    url = URL(pattern)
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urls.py", line 126, in __init_
+_
+    self._uri_reference = urlparse(url, **kwargs)
+                          ~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 302, in url
+parse
+    parsed_port: int | None = normalize_port(port, scheme)
+                              ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 390, in nor
+malize_port
+    raise InvalidURL(f"Invalid port: {port!r}")
+httpx2.InvalidURL: Invalid port: ':1]'
+
+======================================================================
+ERROR: test_reasoning_rejected_field_retry (test_cloud_protocol.ProtocolTests.test_reasoning_rejected_field_retry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 388, in nor
+malize_port
+    port_as_int = int(port)
+ValueError: invalid literal for int() with base 10: ':1]'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 118, in test_reasoning_rejected_field
+_retry
+    state, _ = self.run_audio(base, model='gemini-3.8-flash')
+               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 87, in run_audio
+    run_cloud_turn(config,state,execute_action=lambda *_:self.fail('No Praat operation required'),
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   cancel=threading.Event(), materials=material,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   correct_audio=corrections.append, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 599, in run_cloud_turn
+    session = CloudSession(config, state, execute_action, cancel, progress, model, tool_schemas,
+                           materials, prepare_audio, correct_audio)
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 150, in __init__
+    self.model = model or create_model(config)
+                          ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 129, in create_model
+    client = AsyncOpenAI(base_url=config.api.base_url.strip().rstrip('/'),
+                         api_key=config.api.api_key or 'EMPTY', max_retries=0,
+                         timeout=config.api.request_timeout_sec)
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_client.py", line 1095, in __in
+it__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        version=__version__,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        _strict_response_validation=_strict_response_validation,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1638, in
+ __init__
+    self._client = http_client or AsyncHttpxClientWrapper(
+                                  ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_url=base_url,
+        ^^^^^^^^^^^^^^^^^^
+        # cast to a valid type because mypy doesn't understand our type narrowing
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        timeout=cast(Timeout, timeout),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1534, in
+ __init__
+    super().__init__(**kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_client.py", line 1510, in __in
+it__
+    URLPattern(key): None
+    ~~~~~~~~~~^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_utils.py", line 182, in __init
+__
+    url = URL(pattern)
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urls.py", line 126, in __init_
+_
+    self._uri_reference = urlparse(url, **kwargs)
+                          ~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 302, in url
+parse
+    parsed_port: int | None = normalize_port(port, scheme)
+                              ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 390, in nor
+malize_port
+    raise InvalidURL(f"Invalid port: {port!r}")
+httpx2.InvalidURL: Invalid port: ':1]'
+
+======================================================================
+ERROR: test_report (unittest.loader._FailedTest.test_report)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_report
+Traceback (most recent call last):
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 433, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 374, in _get_module_from_n
+ame
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report.py", line 5, in <module>
+    import parselmouth
+ModuleNotFoundError: No module named 'parselmouth'
+
+
+======================================================================
+FAIL: test_extract_part_accepts_from_to_aliases (test_analysis_object_types.AnalysisObjectTypeTests.test_extract_part_a
+ccepts_from_to_aliases)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 248, in test_extract_part_acce
+pts_from_to_aliases
+    self.run_praat(SOUND + "\n" + tools.render("extract_part", {"from": 0.2, "to": 0.7}, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'length = Get total duration\nassert abs(length - 0.5) < 0.0001\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpr65olayy\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 19 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpr65olayy/result.txt", "已截取片段：", "片段", "（id ", fixed$ (newId, 0)
+, "）", "，区间 ", fixed$ (t1, 3), "–", fixed$ (t2, 3), " 秒，共 ", fixed$ (duration, 3), " 秒", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpr65olayy\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpr65olayy\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_longsound_extract_and_info_use_real_supported_commands (test_analysis_object_types.AnalysisObjectTypeTests.t
+est_longsound_extract_and_info_use_real_supported_commands) (tool='object_info')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 231, in test_longsound_extract
+_and_info_use_real_supported_commands
+    self.run_praat(prefix + tools.render(name, arguments, context))
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmph7nq7apz\in
+put.wav”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Sounds not concatenated and not saved to “C:\Users\USER\AppData\Local\Temp\tmph7nq7apz\input.wav”.
+
+Script line 2 not performed or completed:
+
+« Save as WAV file: "C:/Users/USER/AppData/Local/Temp/tmph7nq7apz/input.wav" »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmph7nq7apz\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmph7nq7apz\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_longsound_extract_and_info_use_real_supported_commands (test_analysis_object_types.AnalysisObjectTypeTests.t
+est_longsound_extract_and_info_use_real_supported_commands) (tool='extract_part')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 231, in test_longsound_extract
+_and_info_use_real_supported_commands
+    self.run_praat(prefix + tools.render(name, arguments, context))
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmph7nq7apz\in
+put.wav”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Sounds not concatenated and not saved to “C:\Users\USER\AppData\Local\Temp\tmph7nq7apz\input.wav”.
+
+Script line 2 not performed or completed:
+
+« Save as WAV file: "C:/Users/USER/AppData/Local/Temp/tmph7nq7apz/input.wav" »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmph7nq7apz\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmph7nq7apz\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_read_file_accepts_multiple_imported_objects_and_reports_all_ids (test_analysis_object_types.AnalysisObjectTy
+peTests.test_read_file_accepts_multiple_imported_objects_and_reports_all_ids)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 239, in test_read_file_accepts
+_multiple_imported_objects_and_reports_all_ids
+    self.run_praat(prefix + tools.render("read_file", {"path": str(collection)}, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 2\nassert selected (1) = 3\nassert selected (2) = 4\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpwj2f3dip\ob
+jects.Collection”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Collection: not written to text file “C:\Users\USER\AppData\Local\Temp\tmpwj2f3dip\objects.Collection”.
+
+Script line 4 not performed or completed:
+
+« Save as text file: "C:/Users/USER/AppData/Local/Temp/tmpwj2f3dip/objects.Collection" »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmpwj2f3dip\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpwj2f3dip\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests
+.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='pitch_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_
+cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert selected () = 1\nselect all\nassert numberOfSelected () = 1\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 74 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp4g08tfhm/result.txt", "基频统计（", fixed$ (tmin, 3), "–", fixed$ (t
+max, 3), " 秒）：平均 ", fixed$ (mean, 3), " Hz，最低 ", fixed$ (minimum, 3), " Hz，最高 ", fixed$ (maximum, 3), " Hz，最高点出现在 ", fi
+xed$ (maxtime, 3), " 秒", rangeNote$, pitchLimit$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests
+.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='intensity_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_
+cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert selected () = 1\nselect all\nassert numberOfSelected () = 1\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 22 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp4g08tfhm/result.txt", "强度统计（", fixed$ (tmin, 3), "–", fixed$ (t
+max, 3), " 秒）：平均 ", fixed$ (mean, 3), " dB，最高 ", fixed$ (maximum, 3), " dB", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests
+.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='formant_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_
+cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert selected () = 1\nselect all\nassert numberOfSelected () = 1\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 22 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp4g08tfhm/result.txt", "第 2 共振峰平均（", fixed$ (tmin, 3), "–", fixe
+d$ (tmax, 3), " 秒）= ", fixed$ (mean, 1), " Hz", "（标准差 ", fixed$ (std, 1), "）", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests
+.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='harmonicity_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_
+cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert selected () = 1\nselect all\nassert numberOfSelected () = 1\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 25 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp4g08tfhm/result.txt", "谐噪比 HNR（", fixed$ (tmin, 3), "–", fixed$
+ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 2), " dB，最高 ", fixed$ (maximum, 2), " dB", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests
+.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='measure')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_
+cleanup_and_range_aliases_in_real_praat
+    self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert selected () = 1\nselect all\nassert numberOfSelected () = 1\n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 25 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp4g08tfhm/result.txt", "平均基频（", fixed$ (tmin, 3), "–", fixed$ (t
+max, 3), " 秒）= ", fixed$ (value, 2), " Hz", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp4g08tfhm\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='pitch')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 19 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp7w81xn80/result.txt", "基频（", fixed$ (time, 3), " 秒处）= ", fixed$
+ (value, 3), " Hz", note$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='pitch_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 71 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp7w81xn80/result.txt", "基频统计（", fixed$ (tmin, 3), "–", fixed$ (t
+max, 3), " 秒）：平均 ", fixed$ (mean, 3), " Hz，最低 ", fixed$ (minimum, 3), " Hz，最高 ", fixed$ (maximum, 3), " Hz，最高点出现在 ", fi
+xed$ (maxtime, 3), " 秒", rangeNote$, pitchLimit$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='pitch_peak_latency')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 69 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp7w81xn80/result.txt", "基频峰值延迟 = ", fixed$ (latency, 3), "（峰值 ",
+ fixed$ (peakTime, 3), " 秒出现在 ", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒这一段里；0.5 = 正好在中间）", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='intensity')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 19 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp7w81xn80/result.txt", "强度（", fixed$ (time, 3), " 秒处）= ", fixed$
+ (value, 3), " dB", note$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='intensity_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 19 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp7w81xn80/result.txt", "强度统计（", fixed$ (tmin, 3), "–", fixed$ (t
+max, 3), " 秒）：平均 ", fixed$ (mean, 3), " dB，最高 ", fixed$ (maximum, 3), " dB", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='intensity_slope')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 17 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp7w81xn80/result.txt", "强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= ", fixed$ (sl
+ope, 2), " dB/s（", fixed$ (colsNum, 0), " 个点，步长 ", fixed$ (timeStep, 6), " 秒）", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='formant_frequency')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 24 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp7w81xn80/result.txt", "第 2 共振峰（", fixed$ (time, 3), " 秒处）：频率 ",
+ fixed$ (value, 3), " Hz", bandwidthText$, note$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='formant_bandwidth')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 19 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp7w81xn80/result.txt", "第 2 共振峰带宽（", fixed$ (time, 3), " 秒处）= ",
+ fixed$ (value, 3), " Hz", note$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='formant_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 19 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp7w81xn80/result.txt", "第 2 共振峰平均（", fixed$ (tmin, 3), "–", fixe
+d$ (tmax, 3), " 秒）= ", fixed$ (mean, 1), " Hz", "（标准差 ", fixed$ (std, 1), "）", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='harmonicity_statistics')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 22 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp7w81xn80/result.txt", "谐噪比 HNR（", fixed$ (tmin, 3), "–", fixed$
+ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 2), " dB，最高 ", fixed$ (maximum, 2), " dB", rangeNote$ »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='hl_ratio')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 10 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp7w81xn80/result.txt", "H/L = ", fixed$ (hl, 4), "（高频 4000–8000 
+Hz 能量 ÷ 低频 ", "0–4000 Hz 能量）" »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat>> not completed.
+
+
+
+
+
+======================================================================
+FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests
+.test_supported_existing_analysis_objects_survive_real_queries) (tool='hammarberg_index')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existin
+g_analysis_objects_survive_real_queries
+    self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   'assert numberOfSelected () = 1\nassert selected () = 2\nselect all\nassert numberOfSelected () = 2\
+n')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+    self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\re
+sult.txt”.
+
+Not-so-useful hint: unexpected error 13 (5).
+
+Formula not run.
+
+Script line 7 not performed or completed:
+
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp7w81xn80/result.txt", "Hammarberg 指数 = ", fixed$ (hammarberg, 2
+), " dB（0–2000 Hz 最大电平 ", fixed$ (lowBand, 2), " dB − 2000–5000 Hz 最大电平 ", fixed$ (highBand, 2), " dB）" »
+
+Script “C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat” not completed.
+
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp7w81xn80\test.praat>> not completed.
+
+
+
+
+
+----------------------------------------------------------------------
+Ran 788 tests in 128.909s
+
+FAILED (failures=21, errors=5)

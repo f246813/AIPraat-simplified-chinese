@@ -1,0 +1,21 @@
+[WebServer] (node:3312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 10 tests using 1 worker
+
+(node:10968) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10968) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\browser\disclosure-anchor.spec.ts:53:1 › height changing above the held row is compensated, not passed on to the reading position (7.7s)
+  ok  2 tests\browser\disclosure-anchor.spec.ts:84:1 › expanding a row still lets the content below it move down (5.6s)
+  ok  3 tests\browser\empty-layout.spec.ts:2:1 › blank conversation fits the available window without vertical scrolling (3.1s)
+  ok  4 tests\browser\empty-layout.spec.ts:44:1 › welcome shortcuts still fill the composer and history remains scrollable (3.1s)
+  ok  5 tests\browser\pane-resize.spec.ts:20:1 › the expanded sidebar is width-adjustable by pointer, keyboard and double-click, and collapses instead of cramping (4.3s)
+  ok  6 tests\browser\pane-resize.spec.ts:69:1 › the conversation band is width-adjustable from either edge and stays inside the pane gutters (2.6s)
+  ok  7 tests\browser\search-scroll.spec.ts:2:1 › opening and scrolling a body-search conversation does not rebuild the sidebar results (5.6s)
+  ok  8 tests\browser\startup-session.spec.ts:2:1 › opening starts a blank session and keeps historical conversations accessible (5.5s)
+  ok  9 tests\browser\transcript-menu.spec.ts:20:1 › a message row offers only the actions this host can carry out (8.2s)
+  ok 10 tests\browser\transcript-menu.spec.ts:49:1 › the transcript background offers the conversation actions and the selection actions work (8.3s)
+
+  10 passed (58.4s)

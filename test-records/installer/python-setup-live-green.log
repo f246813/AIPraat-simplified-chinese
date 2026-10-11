@@ -1,7 +1,7 @@
-配置所选 Python：C:\Users\f2468\Desktop\Praat\稳定早期版\installer\verification\python-live-13d96a930b3d46988fdf0543280c7e0f\Scripts\python.exe
+配置所选 Python：C:\Users\USER\Desktop\Praat\稳定早期版\installer\verification\python-live-13d96a930b3d46988fdf0543280c7e0f\Scripts\python.exe
 正在配置 pip…
-Looking in links: c:\Users\f2468\AppData\Local\Temp\tmpm_qf99sg
-Processing c:\users\f2468\appdata\local\temp\tmpm_qf99sg\pip-25.0.1-py3-none-any.whl
+Looking in links: c:\Users\USER\AppData\Local\Temp\tmpm_qf99sg
+Processing c:\users\USER\appdata\local\temp\tmpm_qf99sg\pip-25.0.1-py3-none-any.whl
 Installing collected packages: pip
 Successfully installed pip-25.0.1
 正在安装 Pillow >= 10、NumPy >= 2…
@@ -17,10 +17,10 @@ Successfully installed Pillow-12.3.0 numpy-2.5.3
 Tk / Pillow / NumPy OK
 运行环境配置完成。返回配置界面后将自动检查。
 PASS fresh environment installs pip Pillow NumPy and validates Tk on Windows PowerShell 5.1
-配置所选 Python：C:\Users\f2468\Desktop\Praat\稳定早期版\installer\verification\python-live-13d96a930b3d46988fdf0543280c7e0f\Scripts\python.exe
+配置所选 Python：C:\Users\USER\Desktop\Praat\稳定早期版\installer\verification\python-live-13d96a930b3d46988fdf0543280c7e0f\Scripts\python.exe
 正在安装 Pillow >= 10、NumPy >= 2…
-Requirement already satisfied: Pillow>=10 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-13d96a930b3d46988fdf0543280c7e0f\lib\site-packages (12.3.0)
-Requirement already satisfied: numpy>=2 in c:\users\f2468\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-13d96a930b3d46988fdf0543280c7e0f\lib\site-packages (2.5.3)
+Requirement already satisfied: Pillow>=10 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-13d96a930b3d46988fdf0543280c7e0f\lib\site-packages (12.3.0)
+Requirement already satisfied: numpy>=2 in c:\users\USER\desktop\praat\�ȶ����ڰ�\installer\verification\python-live-13d96a930b3d46988fdf0543280c7e0f\lib\site-packages (2.5.3)
 正在复检 Tk、Pillow、NumPy…
 Tk / Pillow / NumPy OK
 运行环境配置完成。返回配置界面后将自动检查。

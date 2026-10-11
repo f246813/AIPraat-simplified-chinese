@@ -1,0 +1,26 @@
+
+> praat-assistant-frontend@1.0.0 prebuild
+> node scripts/offline-assets.mjs && node scripts/license-notices.mjs
+
+Copied official Mermaid browser ESM and lazy diagram chunks for offline use.
+Generated notices for 408 installed production packages.
+
+> praat-assistant-frontend@1.0.0 build
+> tsc -b && vite build
+
+vite v6.3.6 building for production...
+transforming...
+✓ 2979 modules transformed.
+rendering chunks...
+✗ Build failed in 8.08s
+error during build:
+[vite:esbuild-transpile] remove C:\Users\USER\AppData\Local\Temp\esbuild-0cba6ff1f08cf698f0e86489a7c30e751eb9cee4d256bd01d772ceb0d052f7f9: Access is denied.
+    at C:\Users\USER\Desktop\Praat\稳定早期版\ai\frontend\node_modules\esbuild\lib\main.js:718:38
+    at responseCallbacks.<computed> (C:\Users\USER\Desktop\Praat\稳定早期版\ai\frontend\node_modules\esbuild\lib\main.js:603:9)
+    at handleIncomingPacket (C:\Users\USER\Desktop\Praat\稳定早期版\ai\frontend\node_modules\esbuild\lib\main.js:657:31)
+    at Socket.readFromStdout (C:\Users\USER\Desktop\Praat\稳定早期版\ai\frontend\node_modules\esbuild\lib\main.js:581:7)
+    at Socket.emit (node:events:509:28)
+    at addChunk (node:internal/streams/readable:563:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)
+    at Readable.push (node:internal/streams/readable:394:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)

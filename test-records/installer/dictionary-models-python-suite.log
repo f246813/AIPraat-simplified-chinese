@@ -1,0 +1,1336 @@
+test_bare_done_is_never_shown_to_the_user (test_agent_loop.EmptyAnswerTests.test_bare_done_is_never_shown_to_the_user) ... ok
+test_empty_answer_is_asked_again (test_agent_loop.EmptyAnswerTests.test_empty_answer_is_asked_again) ... ok
+test_reasoning_only_message_is_used_as_the_answer (test_agent_loop.EmptyAnswerTests.test_reasoning_only_message_is_used_as_the_answer)
+˼����ģ�ͰѴ�ֻ���� reasoning_content ��ʱҲҪ��ʾ������ ... ok
+test_results_are_kept_when_the_model_stays_silent (test_agent_loop.EmptyAnswerTests.test_results_are_kept_when_the_model_stays_silent) ... ok
+test_json_plan_is_executed_and_observed (test_agent_loop.JsonPlannerTests.test_json_plan_is_executed_and_observed) ... ok
+test_later_step_runs_after_the_first_result (test_agent_loop.MultiStepTests.test_later_step_runs_after_the_first_result) ... ok
+test_several_actions_in_one_round_are_each_executed (test_agent_loop.MultiStepTests.test_several_actions_in_one_round_are_each_executed)
+ģ��һ�ָ��������ã���0.25 �� 0.75 ��Ļ�Ƶ������������Ҫִ�С� ... ok
+test_bad_argument_goes_back_to_the_model (test_agent_loop.ObservationTests.test_bad_argument_goes_back_to_the_model) ... ok
+test_execution_failure_goes_back_to_the_model (test_agent_loop.ObservationTests.test_execution_failure_goes_back_to_the_model) ... ok
+test_render_error_uses_the_model_script_and_notes_it (test_agent_loop.ObservationTests.test_render_error_uses_the_model_script_and_notes_it)
+���߾ܾ�����ģ��ͬʱ���˽ű�ʱ���ýű����ײ��������˵���û��� ... ok
+test_repeated_identical_action_runs_once (test_agent_loop.ObservationTests.test_repeated_identical_action_runs_once)
+ͬһ��������һ������ֶ�Σ�Сģ�ͻ�������ִֻ��һ�Ρ� ... ok
+test_round_cap_asks_for_a_text_answer (test_agent_loop.ObservationTests.test_round_cap_asks_for_a_text_answer)
+ģ��һֱҪ���ߣ������޾�ǿ��Ҫһ�δ��ı��ش𣬲�������ѭ���� ... ok
+test_script_error_still_shows_its_result_line (test_agent_loop.ObservationTests.test_script_error_still_shows_its_result_line)
+�ű��� Praat �ﱨ��ʱ��Praat д���������д���˵��Ҫ��ʾ���û��� ... ok
+test_second_round_cannot_mutate_without_being_asked (test_agent_loop.ObservationTests.test_second_round_cannot_mutate_without_being_asked)
+�û�ֻ˵��һ����ʱ���ڶ�����Ķ�����Ķ����ᱻ���£�0.8B Ԥ��ʵ����������� ... ok
+test_second_round_may_read_even_without_being_asked (test_agent_loop.ObservationTests.test_second_round_may_read_even_without_being_asked)
+ֻ����ѯ���������������ƣ�����һ��������Ļ��κζ������� ... ok
+test_total_step_cap_stops_a_runaway_model (test_agent_loop.ObservationTests.test_total_step_cap_stops_a_runaway_model)
+ģ��ÿ�ֶ����Ų��������ߣ��ܲ��������޾�ͣ������û��� Praat �Ļ��� ... ok
+test_empty_reply_falls_back_to_the_results (test_agent_loop.SecondRoundTests.test_empty_reply_falls_back_to_the_results) ... ok
+test_plain_answer_does_not_execute_anything (test_agent_loop.SecondRoundTests.test_plain_answer_does_not_execute_anything) ... ok
+test_second_round_sees_the_results (test_agent_loop.SecondRoundTests.test_second_round_sees_the_results) ... ok
+test_full_text_call_is_parsed (test_agent_loop.TextToolCallTests.test_full_text_call_is_parsed) ... ok
+test_loop_executes_text_calls_and_shows_no_xml (test_agent_loop.TextToolCallTests.test_loop_executes_text_calls_and_shows_no_xml) ... ok
+test_plain_text_is_untouched (test_agent_loop.TextToolCallTests.test_plain_text_is_untouched) ... ok
+test_prose_outside_the_call_is_kept (test_agent_loop.TextToolCallTests.test_prose_outside_the_call_is_kept) ... ok
+test_truncated_text_call_is_parsed_and_hidden (test_agent_loop.TextToolCallTests.test_truncated_text_call_is_parsed_and_hidden)
+�� max_tokens �ضϣ�û�� </tool_call>��ҲҪ��ִ�У���� XML ���ܸ��û����� ... ok
+test_identical_tracks_have_zero_cost (test_alignment.AlignmentTests.test_identical_tracks_have_zero_cost) ... ok
+test_shifted_track_has_positive_cost (test_alignment.AlignmentTests.test_shifted_track_has_positive_cost) ... ok
+test_bare_same_name_is_ambiguous_but_class_name_resolves (test_analysis_object_types.AnalysisObjectTypeTests.test_bare_same_name_is_ambiguous_but_class_name_resolves) ... ok
+test_class_specific_tools_do_not_replace_explicit_wrong_id (test_analysis_object_types.AnalysisObjectTypeTests.test_class_specific_tools_do_not_replace_explicit_wrong_id) ... ok
+test_duration_rejects_classes_without_duration_command (test_analysis_object_types.AnalysisObjectTypeTests.test_duration_rejects_classes_without_duration_command) ... ok
+test_each_analysis_rejects_unrelated_time_domain_objects (test_analysis_object_types.AnalysisObjectTypeTests.test_each_analysis_rejects_unrelated_time_domain_objects) ... ok
+test_explicit_harmonicity_never_receives_another_analysis_conversion (test_analysis_object_types.AnalysisObjectTypeTests.test_explicit_harmonicity_never_receives_another_analysis_conversion) ... ok
+test_extract_part_accepts_from_to_aliases (test_analysis_object_types.AnalysisObjectTypeTests.test_extract_part_accepts_from_to_aliases) ... ok
+test_invalid_range_does_not_silently_measure_entire_sound (test_analysis_object_types.AnalysisObjectTypeTests.test_invalid_range_does_not_silently_measure_entire_sound) ... ok
+test_longsound_extract_and_info_use_real_supported_commands (test_analysis_object_types.AnalysisObjectTypeTests.test_longsound_extract_and_info_use_real_supported_commands) ... ok
+test_longsound_is_rejected_for_sound_only_conversions (test_analysis_object_types.AnalysisObjectTypeTests.test_longsound_is_rejected_for_sound_only_conversions) ... ok
+test_measure_can_resolve_a_default_source_by_parameter_type (test_analysis_object_types.AnalysisObjectTypeTests.test_measure_can_resolve_a_default_source_by_parameter_type) ... ok
+test_missing_import_aborts_before_querying_an_old_object (test_analysis_object_types.AnalysisObjectTypeTests.test_missing_import_aborts_before_querying_an_old_object) ... ok
+test_multiple_selected_supported_sources_and_unselected_sources_are_ambiguous (test_analysis_object_types.AnalysisObjectTypeTests.test_multiple_selected_supported_sources_and_unselected_sources_are_ambiguous) ... ok
+test_pitch_statistics_guards_against_octave_errors_in_the_script (test_analysis_object_types.AnalysisObjectTypeTests.test_pitch_statistics_guards_against_octave_errors_in_the_script)
+���/��ͻ�Ƶ�������� ``Get maximum``������Ƶ���л�һ֡�����ۡ� ... ok
+test_pitch_statistics_keeps_a_consistent_contract_for_pitch_objects (test_analysis_object_types.AnalysisObjectTypeTests.test_pitch_statistics_keeps_a_consistent_contract_for_pitch_objects)
+��ʽ�� Pitch ����ʱ��ͬһ��ģ��ҲҪ���ܣ����ظ� To Pitch���� ... ok
+test_plan_actions_preserves_invalid_arguments_instead_of_defaults (test_analysis_object_types.AnalysisObjectTypeTests.test_plan_actions_preserves_invalid_arguments_instead_of_defaults) ... ok
+test_read_file_accepts_multiple_imported_objects_and_reports_all_ids (test_analysis_object_types.AnalysisObjectTypeTests.test_read_file_accepts_multiple_imported_objects_and_reports_all_ids) ... ok
+test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) ... ok
+test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) ... ok
+test_wrong_default_selection_can_use_unique_sound (test_analysis_object_types.AnalysisObjectTypeTests.test_wrong_default_selection_can_use_unique_sound) ... ok
+test_wrong_default_selection_with_multiple_sounds_is_ambiguous (test_analysis_object_types.AnalysisObjectTypeTests.test_wrong_default_selection_with_multiple_sounds_is_ambiguous) ... ok
+test_400_error_code_and_model_precede_preset_and_test_state (test_api_capability_status.CapabilityDialogTests.test_400_error_code_and_model_precede_preset_and_test_state) ... ok
+test_cancelled_probe_preserves_setting (test_api_capability_status.CapabilityDialogTests.test_cancelled_probe_preserves_setting) ... ok
+test_changed_key_invalidates_previous_success_and_blocks_inflight_result (test_api_capability_status.CapabilityDialogTests.test_changed_key_invalidates_previous_success_and_blocks_inflight_result) ... ok
+test_connection_is_text_only_and_does_not_mark_audio_verified (test_api_capability_status.CapabilityDialogTests.test_connection_is_text_only_and_does_not_mark_audio_verified) ... ok
+test_details_are_read_only_and_hide_credentials (test_api_capability_status.CapabilityDialogTests.test_details_are_read_only_and_hide_credentials) ... ok
+test_explicit_manual_change_after_rejection_is_preserved (test_api_capability_status.CapabilityDialogTests.test_explicit_manual_change_after_rejection_is_preserved) ... ok
+test_explicit_rejection_displays_unsupported_and_disables_audio (test_api_capability_status.CapabilityDialogTests.test_explicit_rejection_displays_unsupported_and_disables_audio) ... ok
+test_model_change_invalidates_previous_error_and_details (test_api_capability_status.CapabilityDialogTests.test_model_change_invalidates_previous_error_and_details) ... ok
+test_official_preset_displays_support_and_unverified_state (test_api_capability_status.CapabilityDialogTests.test_official_preset_displays_support_and_unverified_state) ... ok
+test_old_verified_dialog_cannot_undo_newer_runtime_rejection (test_api_capability_status.CapabilityDialogTests.test_old_verified_dialog_cannot_undo_newer_runtime_rejection) ... ok
+test_queued_old_success_cannot_undo_later_runtime_rejection (test_api_capability_status.CapabilityDialogTests.test_queued_old_success_cannot_undo_later_runtime_rejection) ... ok
+test_real_save_manual_setting_after_rejection_is_preserved (test_api_capability_status.CapabilityDialogTests.test_real_save_manual_setting_after_rejection_is_preserved) ... ok
+test_real_save_old_manual_setting_cannot_undo_later_rejection (test_api_capability_status.CapabilityDialogTests.test_real_save_old_manual_setting_cannot_undo_later_rejection) ... ok
+test_refresh_preserves_new_test_after_historical_runtime_rejection (test_api_capability_status.CapabilityDialogTests.test_refresh_preserves_new_test_after_historical_runtime_rejection) ... ok
+test_runtime_rejection_replaces_saved_verified_observation (test_api_capability_status.CapabilityDialogTests.test_runtime_rejection_replaces_saved_verified_observation) ... ok
+test_saved_failed_test_reopens_and_new_credentials_invalidate_it (test_api_capability_status.CapabilityDialogTests.test_saved_failed_test_reopens_and_new_credentials_invalidate_it) ... ok
+test_saving_failed_probe_cannot_undo_later_runtime_correction (test_api_capability_status.CapabilityDialogTests.test_saving_failed_probe_cannot_undo_later_runtime_correction) ... ok
+test_timeout_has_explicit_unverified_status_without_fake_http_code (test_api_capability_status.CapabilityDialogTests.test_timeout_has_explicit_unverified_status_without_fake_http_code) ... ok
+test_unknown_gateway_does_not_claim_official_support (test_api_capability_status.CapabilityDialogTests.test_unknown_gateway_does_not_claim_official_support) ... ok
+test_unverified_preserves_manual_enabled_setting (test_api_capability_status.CapabilityDialogTests.test_unverified_preserves_manual_enabled_setting) ... ok
+test_verified_reports_basic_validation_and_enables_audio (test_api_capability_status.CapabilityDialogTests.test_verified_reports_basic_validation_and_enables_audio) ... ok
+test_real_audio_probe_retains_code_without_claiming_unsupported (test_api_capability_status.ProbeDiagnosticTests.test_real_audio_probe_retains_code_without_claiming_unsupported) ... ok
+test_api_mode_needs_both_url_and_model (test_api_settings.ApiConfigParsingTests.test_api_mode_needs_both_url_and_model) ... ok
+test_api_mode_overrides_the_qwen_client (test_api_settings.ApiConfigParsingTests.test_api_mode_overrides_the_qwen_client) ... ok
+test_api_section_is_parsed (test_api_settings.ApiConfigParsingTests.test_api_section_is_parsed) ... ok
+test_config_path_can_be_overridden_by_the_environment (test_api_settings.ApiConfigParsingTests.test_config_path_can_be_overridden_by_the_environment)
+``PRAAT_AI_CONFIG_PATH`` ���ݻ������ļ��� ... ok
+test_defaults_are_off_and_local (test_api_settings.ApiConfigParsingTests.test_defaults_are_off_and_local) ... ok
+test_environment_can_point_at_another_endpoint (test_api_settings.ApiConfigParsingTests.test_environment_can_point_at_another_endpoint) ... ok
+test_environment_variables_override_the_api_key (test_api_settings.ApiConfigParsingTests.test_environment_variables_override_the_api_key) ... ok
+test_legacy_single_custom_limit_is_preserved (test_api_settings.ApiConfigParsingTests.test_legacy_single_custom_limit_is_preserved) ... ok
+test_null_qwen_section_uses_defaults (test_api_settings.ApiConfigParsingTests.test_null_qwen_section_uses_defaults) ... ok
+test_knowledge_option_sits_below_stop_without_thinking_control (test_api_settings.ApiSettingsLayoutTests.test_knowledge_option_sits_below_stop_without_thinking_control) ... ok
+test_a_422_also_drops_the_thinking_field (test_api_settings.ClientPayloadTests.test_a_422_also_drops_the_thinking_field)
+�е������� 422 �����ֶβ��ϡ���״̬�벻��ֻ�� 400�� ... ok
+test_a_bare_400_also_drops_the_thinking_field (test_api_settings.ClientPayloadTests.test_a_bare_400_also_drops_the_thinking_field)
+�еķ����ֻ˵ invalid request�������� reasoning_effort��ҲҪ������ ... ok
+test_a_server_error_does_not_silently_drop_the_thinking_field (test_api_settings.ClientPayloadTests.test_a_server_error_does_not_silently_drop_the_thinking_field)
+5xx / 401 ���಻�ǡ��ֶβ��ϡ����ñ����ͱ�������͵͵������ ... ok
+test_api_provider_does_not_send_llama_cpp_only_fields (test_api_settings.ClientPayloadTests.test_api_provider_does_not_send_llama_cpp_only_fields) ... ok
+test_api_thinking_level_becomes_reasoning_effort (test_api_settings.ClientPayloadTests.test_api_thinking_level_becomes_reasoning_effort) ... ok
+test_api_thinking_off_sends_no_reasoning_field (test_api_settings.ClientPayloadTests.test_api_thinking_off_sends_no_reasoning_field) ... ok
+test_authorization_header_uses_the_api_key (test_api_settings.ClientPayloadTests.test_authorization_header_uses_the_api_key) ... ok
+test_gemini_3_omits_sampling_fields (test_api_settings.ClientPayloadTests.test_gemini_3_omits_sampling_fields) ... ok
+test_local_provider_keeps_chat_template_kwargs (test_api_settings.ClientPayloadTests.test_local_provider_keeps_chat_template_kwargs) ... ok
+test_local_thinking_level_toggles_enable_thinking (test_api_settings.ClientPayloadTests.test_local_thinking_level_toggles_enable_thinking) ... ok
+test_rejected_reasoning_effort_is_retried_without_it (test_api_settings.ClientPayloadTests.test_rejected_reasoning_effort_is_retried_without_it)
+����˲��� reasoning_effort ʱȥ�����ԣ�����֮���ٷ�����װ� 400���� ... ok
+test_token_limit_can_be_enabled_for_cloud_and_disabled_for_local (test_api_settings.ClientPayloadTests.test_token_limit_can_be_enabled_for_cloud_and_disabled_for_local) ... ok
+test_probe_reports_failure_with_the_reason (test_api_settings.ProbeTests.test_probe_reports_failure_with_the_reason) ... ok
+test_probe_reports_success (test_api_settings.ProbeTests.test_probe_reports_success) ... ok
+test_advanced_limits_round_trip_for_each_mode (test_api_settings.SettingsValidationTests.test_advanced_limits_round_trip_for_each_mode) ... ok
+test_dialogue_reply_limit_is_clamped_to_a_sane_range (test_api_settings.SettingsValidationTests.test_dialogue_reply_limit_is_clamped_to_a_sane_range) ... ok
+test_dialogue_reply_limit_round_trips (test_api_settings.SettingsValidationTests.test_dialogue_reply_limit_round_trips) ... ok
+test_partial_api_save_preserves_existing_local_limits (test_api_settings.SettingsValidationTests.test_partial_api_save_preserves_existing_local_limits) ... ok
+test_provider_list_has_known_entries (test_api_settings.SettingsValidationTests.test_provider_list_has_known_entries) ... ok
+test_saving_refuses_invalid_values (test_api_settings.SettingsValidationTests.test_saving_refuses_invalid_values) ... ok
+test_saving_stores_the_thinking_level_for_both_modes (test_api_settings.SettingsValidationTests.test_saving_stores_the_thinking_level_for_both_modes)
+˼����λд�� ``api`` �� ``qwen`` ���ڣ�����/�ƶ˸��Է����Լ����ֶΡ� ... ok
+test_saving_writes_the_config_and_marks_when_it_was_verified (test_api_settings.SettingsValidationTests.test_saving_writes_the_config_and_marks_when_it_was_verified) ... ok
+test_settings_are_prefilled_from_the_config (test_api_settings.SettingsValidationTests.test_settings_are_prefilled_from_the_config) ... ok
+test_settings_round_trip_thinking_and_knowledge (test_api_settings.SettingsValidationTests.test_settings_round_trip_thinking_and_knowledge) ... ok
+test_thinking_choice_labels_cover_every_level (test_api_settings.SettingsValidationTests.test_thinking_choice_labels_cover_every_level) ... ok
+test_validation_rejects_an_enabled_entry_without_url_or_model (test_api_settings.SettingsValidationTests.test_validation_rejects_an_enabled_entry_without_url_or_model) ... ok
+test_validation_trims_and_defaults (test_api_settings.SettingsValidationTests.test_validation_trims_and_defaults) ... ok
+test_defaults_to_true_and_normalizes_when_the_key_is_missing (test_api_settings.StopLocalServiceOptionTests.test_defaults_to_true_and_normalizes_when_the_key_is_missing) ... ok
+test_round_trips_when_it_is_turned_off (test_api_settings.StopLocalServiceOptionTests.test_round_trips_when_it_is_turned_off) ... ok
+test_turning_it_back_on_is_saved_as_true (test_api_settings.StopLocalServiceOptionTests.test_turning_it_back_on_is_saved_as_true) ... ok
+test_api_mode_allows_world_knowledge_by_default (test_api_settings.WorldKnowledgeTests.test_api_mode_allows_world_knowledge_by_default) ... ok
+test_api_mode_carries_the_thinking_level_into_qwen (test_api_settings.WorldKnowledgeTests.test_api_mode_carries_the_thinking_level_into_qwen) ... ok
+test_identity_rule_reports_the_model_and_the_frontend_role (test_api_settings.WorldKnowledgeTests.test_identity_rule_reports_the_model_and_the_frontend_role)
+�ʡ�����˭��ʱҪ˵�Լ���ģ���� + ���ұ����ó� Praat ��ǰ�ˡ��� ... ok
+test_local_mode_keeps_the_strict_prompt (test_api_settings.WorldKnowledgeTests.test_local_mode_keeps_the_strict_prompt) ... ok
+test_message_text_falls_back_to_reasoning_content (test_api_settings.WorldKnowledgeTests.test_message_text_falls_back_to_reasoning_content) ... ok
+test_open_mode_forbids_bare_done_and_asks_for_the_comparison (test_api_settings.WorldKnowledgeTests.test_open_mode_forbids_bare_done_and_asks_for_the_comparison)
+�ƶ�ģʽ���Ա�������Ҫ�ѱȽ�д����������ֻ�ء�����ɡ��� ... ok
+test_thinking_level_aliases_are_normalized (test_api_settings.WorldKnowledgeTests.test_thinking_level_aliases_are_normalized) ... ok
+test_turning_world_knowledge_off_keeps_the_strict_prompt (test_api_settings.WorldKnowledgeTests.test_turning_world_knowledge_off_keeps_the_strict_prompt) ... ok
+PRAAT_PROGRESS	0.1000	API ģʽ��������ͣ������ģ�ͷ���ʡ�Դ棩��
+test_api_switch_reports_when_an_unowned_service_still_occupies_port (test_api_transition.ApiTransitionTests.test_api_switch_reports_when_an_unowned_service_still_occupies_port) ... ok
+test_chat_dialog_queues_same_transition_for_api_and_local_modes (test_api_transition.ApiTransitionTests.test_chat_dialog_queues_same_transition_for_api_and_local_modes) ... ok
+test_concurrent_saves_converge_on_the_latest_api_mode (test_api_transition.ApiTransitionTests.test_concurrent_saves_converge_on_the_latest_api_mode) ... ok
+test_disabling_api_starts_local_service_when_port_is_empty (test_api_transition.ApiTransitionTests.test_disabling_api_starts_local_service_when_port_is_empty) ... ok
+PRAAT_PROGRESS	0.1000	API ģʽ��������ͣ������ģ�ͷ���ʡ�Դ棩��
+PRAAT_PROGRESS	0.6000	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	1.0000	����ģ�ͷ�����ͣ��
+test_enabling_api_stops_only_the_configured_local_service (test_api_transition.ApiTransitionTests.test_enabling_api_stops_only_the_configured_local_service) ... ok
+PRAAT_PROGRESS	0.1000	API ģʽ��������ȡ���ˡ�˳��ͣ������ģ�ͷ��񡹣��������񱣳ֲ�����
+PRAAT_PROGRESS	1.0000	API ģʽ�������У�����ģ�ͷ������ñ�����
+test_enabling_api_with_keep_local_option_does_not_stop_service (test_api_transition.ApiTransitionTests.test_enabling_api_with_keep_local_option_does_not_stop_service) ... ok
+test_legacy_enabled_api_is_locked_until_user_unlocks_it (test_api_transition.ApiTransitionTests.test_legacy_enabled_api_is_locked_until_user_unlocks_it) ... ok
+test_local_menu_policy_covers_all_lock_and_stop_combinations (test_api_transition.ApiTransitionTests.test_local_menu_policy_covers_all_lock_and_stop_combinations) ... ok
+test_lock_and_new_stop_choice_switch_current_local_selection_to_api (test_api_transition.ApiTransitionTests.test_lock_and_new_stop_choice_switch_current_local_selection_to_api) ... ok
+test_partial_custom_api_is_preserved_and_requires_completion (test_api_transition.ApiTransitionTests.test_partial_custom_api_is_preserved_and_requires_completion) ... ok
+test_settings_callback_failure_is_visible_after_save (test_api_transition.ApiTransitionTests.test_settings_callback_failure_is_visible_after_save) ... ok
+test_standalone_entry_redirects_without_changing_service_or_configuration (test_api_transition.ApiTransitionTests.test_standalone_entry_redirects_without_changing_service_or_configuration) ... ok
+test_top_bar_can_activate_saved_api_from_local_mode (test_api_transition.ApiTransitionTests.test_top_bar_can_activate_saved_api_from_local_mode) ... ok
+test_top_bar_uses_first_provider_if_no_api_was_configured (test_api_transition.ApiTransitionTests.test_top_bar_uses_first_provider_if_no_api_was_configured) ... ok
+test_top_menu_grays_local_items_and_keeps_cloud_entry_visible (test_api_transition.ApiTransitionTests.test_top_menu_grays_local_items_and_keeps_cloud_entry_visible) ... can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+ok
+PRAAT_PROGRESS	0.0200	�лر���ģ�ͣ��ر� API ģʽ����
+test_top_menu_selection_really_switches_cloud_local_cloud (test_api_transition.ApiTransitionTests.test_top_menu_selection_really_switches_cloud_local_cloud) ... ok
+test_unlocking_keeps_api_selected_and_allows_local_choice (test_api_transition.ApiTransitionTests.test_unlocking_keeps_api_selected_and_allows_local_choice) ... ok
+test_waiting_for_stopped_endpoint_raises_on_timeout (test_api_transition.ApiTransitionTests.test_waiting_for_stopped_endpoint_raises_on_timeout) ... ok
+test_different_spectra_produce_errors (test_audio_pipeline.AudioPipelineTests.test_different_spectra_produce_errors) ... ok
+test_identical_files_reuse_reference_boundaries_when_both_sides_conflict (test_audio_pipeline.AudioPipelineTests.test_identical_files_reuse_reference_boundaries_when_both_sides_conflict) ... ok
+test_identical_wavs_at_distinct_paths_share_supplied_boundaries (test_audio_pipeline.AudioPipelineTests.test_identical_wavs_at_distinct_paths_share_supplied_boundaries) ... ok
+test_missing_reference_boundaries_are_aligned (test_audio_pipeline.AudioPipelineTests.test_missing_reference_boundaries_are_aligned) ... ok
+test_null_alignment_metadata_uses_defaults (test_audio_pipeline.AudioPipelineTests.test_null_alignment_metadata_uses_defaults) ... ok
+test_same_audio_reuses_reference_boundaries_when_both_sides_conflict (test_audio_pipeline.AudioPipelineTests.test_same_audio_reuses_reference_boundaries_when_both_sides_conflict) ... ok
+test_same_wav_uses_aligned_reference_boundaries (test_audio_pipeline.AudioPipelineTests.test_same_wav_uses_aligned_reference_boundaries) ... ok
+test_same_wav_uses_supplied_learner_boundaries_when_aligner_falls_back (test_audio_pipeline.AudioPipelineTests.test_same_wav_uses_supplied_learner_boundaries_when_aligner_falls_back) ... ok
+test_supplied_boundaries_are_preserved_on_both_sides (test_audio_pipeline.AudioPipelineTests.test_supplied_boundaries_are_preserved_on_both_sides) ... ok
+test_ui_estimates_stay_estimates_after_request_round_trip (test_audio_pipeline.AudioPipelineTests.test_ui_estimates_stay_estimates_after_request_round_trip) ... ok
+test_synthetic_wav_and_feature_validation (test_audio_probe.ProbeTests.test_synthetic_wav_and_feature_validation) ... ok
+test_tutor_rejects_report_root_inside_temporary_import_dir (test_bridge_pipeline.BridgePipelineTests.test_tutor_rejects_report_root_inside_temporary_import_dir) ... ok
+test_tutor_writes_all_outputs (test_bridge_pipeline.BridgePipelineTests.test_tutor_writes_all_outputs) ... ok
+test_cancel_before_the_first_step_executes_nothing (test_cancel.AgentLoopCancellationTests.test_cancel_before_the_first_step_executes_nothing) ... ok
+test_cancel_stops_the_loop_before_the_next_step (test_cancel.AgentLoopCancellationTests.test_cancel_stops_the_loop_before_the_next_step) ... ok
+test_execute_receives_the_cancel_flag_through_the_environment (test_cancel.AgentLoopCancellationTests.test_execute_receives_the_cancel_flag_through_the_environment)
+���ع��ߣ���������ҲҪ�ܱ���ϡ� ... ok
+test_run_batch_does_not_even_start_when_already_cancelled (test_cancel.BatchCancellationTests.test_run_batch_does_not_even_start_when_already_cancelled) ... ok
+test_run_batch_still_reports_a_timeout (test_cancel.BatchCancellationTests.test_run_batch_still_reports_a_timeout) ... ok
+test_run_batch_terminates_the_process_when_cancelled (test_cancel.BatchCancellationTests.test_run_batch_terminates_the_process_when_cancelled) ... ok
+test_cancelling_a_delivery_neutralises_the_queued_message (test_cancel.WaitCancellationTests.test_cancelling_a_delivery_neutralises_the_queued_message) ... ok
+test_result_that_arrived_before_cancelling_still_counts (test_cancel.WaitCancellationTests.test_result_that_arrived_before_cancelling_still_counts) ... ok
+test_waiting_for_praat_stops_when_cancelled (test_cancel.WaitCancellationTests.test_waiting_for_praat_stops_when_cancelled) ... ok
+test_assistant_message_gets_a_copy_link_with_the_original_text (test_chat_message_render.ChatMessageBlockTests.test_assistant_message_gets_a_copy_link_with_the_original_text) ... invalid command name "2247946832832focus_set"
+    while executing
+"2247946832832focus_set"
+    ("after" script)
+invalid command name "2247946902656flush_messages"
+    while executing
+"2247946902656flush_messages"
+    ("after" script)
+invalid command name "2247947033152flush_messages"
+    while executing
+"2247947033152flush_messages"
+    ("after" script)
+invalid command name "2247947029888flush_messages"
+    while executing
+"2247947029888flush_messages"
+    ("after" script)
+invalid command name "2247947032448focus_set"
+    while executing
+"2247947032448focus_set"
+    ("after" script)
+invalid command name "2247927700992hide_progress"
+    while executing
+"2247927700992hide_progress"
+    ("after" script)
+invalid command name "2247946835776flush_messages"
+    while executing
+"2247946835776flush_messages"
+    ("after" script)
+invalid command name "2247946899968flush_messages"
+    while executing
+"2247946899968flush_messages"
+    ("after" script)
+invalid command name "2247850175104flush_messages"
+    while executing
+"2247850175104flush_messages"
+    ("after" script)
+ok
+test_message_block_colours_follow_the_theme (test_chat_message_render.ChatMessageBlockTests.test_message_block_colours_follow_the_theme) ... ok
+test_result_blocks_are_copyable_and_hinted_muted (test_chat_message_render.ChatMessageBlockTests.test_result_blocks_are_copyable_and_hinted_muted) ... ok
+test_user_messages_are_not_copyable (test_chat_message_render.ChatMessageBlockTests.test_user_messages_are_not_copyable) ... ok
+test_bold_and_code (test_chat_message_render.RenderMessageTests.test_bold_and_code) ... ok
+test_bullets_become_dots (test_chat_message_render.RenderMessageTests.test_bullets_become_dots) ... ok
+test_empty_input (test_chat_message_render.RenderMessageTests.test_empty_input) ... ok
+test_headings (test_chat_message_render.RenderMessageTests.test_headings) ... ok
+test_inline_tags_stack_on_the_block_tag (test_chat_message_render.RenderMessageTests.test_inline_tags_stack_on_the_block_tag) ... ok
+test_lines_are_separated_by_newlines (test_chat_message_render.RenderMessageTests.test_lines_are_separated_by_newlines) ... ok
+test_lookalikes_are_left_alone (test_chat_message_render.RenderMessageTests.test_lookalikes_are_left_alone)
+���Ǳ�ǵ�д��ԭ����ʾ������û�/ģ�͵���ͨ���ֳԵ����� ... ok
+test_plain_text (test_chat_message_render.RenderMessageTests.test_plain_text) ... ok
+test_trailing_spaces_are_trimmed (test_chat_message_render.RenderMessageTests.test_trailing_spaces_are_trimmed) ... ok
+test_windows_line_endings_behave_the_same (test_chat_message_render.RenderMessageTests.test_windows_line_endings_behave_the_same) ... ok
+test_completed_turn_collapses_only_its_process_and_shows_elapsed_time (test_chat_process_fold.ProcessFoldTests.test_completed_turn_collapses_only_its_process_and_shows_elapsed_time) ... invalid command name "2247882617088flush_messages"
+    while executing
+"2247882617088flush_messages"
+    ("after" script)
+invalid command name "2247882614848focus_set"
+    while executing
+"2247882614848focus_set"
+    ("after" script)
+invalid command name "2247882641728flush_messages"
+    while executing
+"2247882641728flush_messages"
+    ("after" script)
+invalid command name "2247882641792focus_set"
+    while executing
+"2247882641792focus_set"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+invalid command name "2247882803328flush_messages"
+    while executing
+"2247882803328flush_messages"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+invalid command name "2247882803392focus_set"
+    while executing
+"2247882803392focus_set"
+    ("after" script)
+ok
+test_empty_process_and_failed_response_still_finish (test_chat_process_fold.ProcessFoldTests.test_empty_process_and_failed_response_still_finish) ... ok
+test_repeated_events_from_one_right_click_toggle_only_once (test_chat_process_fold.ProcessFoldTests.test_repeated_events_from_one_right_click_toggle_only_once)
+ͬһ���Ҽ��������ظ��¼�ֻ���л�һ�Ρ� ... ok
+test_right_click_after_a_long_answer_really_displays_the_process (test_chat_process_fold.ProcessFoldTests.test_right_click_after_a_long_answer_really_displays_the_process) ... ok
+test_right_click_does_not_require_a_prior_motion_event_on_the_header (test_chat_process_fold.ProcessFoldTests.test_right_click_does_not_require_a_prior_motion_event_on_the_header) ... ok
+test_right_click_expands_and_collapses_preserving_the_process (test_chat_process_fold.ProcessFoldTests.test_right_click_expands_and_collapses_preserving_the_process) ... ok
+test_right_click_far_from_any_header_does_nothing (test_chat_process_fold.ProcessFoldTests.test_right_click_far_from_any_header_does_nothing) ... ok
+test_right_click_in_the_row_gap_above_the_header_still_toggles (test_chat_process_fold.ProcessFoldTests.test_right_click_in_the_row_gap_above_the_header_still_toggles)
+���������Ϸ������о��û���ַ���@x,y ���ڱ����б�����Ҳ�����ܵ㿪�� ... ok
+test_right_click_on_the_arrow_itself_expands_and_collapses (test_chat_process_fold.ProcessFoldTests.test_right_click_on_the_arrow_itself_expands_and_collapses) ... ok
+test_right_click_on_the_blank_tail_of_the_header_still_toggles (test_chat_process_fold.ProcessFoldTests.test_right_click_on_the_blank_tail_of_the_header_still_toggles)
+�������Ҳ�û�����ֵĿհף�@x,y �䵽��β����ǰ�Ҽ�û��Ӧ�� ... ok
+test_right_click_one_row_below_the_header_expands_the_collapsed_process (test_chat_process_fold.ProcessFoldTests.test_right_click_one_row_below_the_header_expands_the_collapsed_process)
+����������һ�е��о࣬ͬһ������ȥҲҪ��չ������������ ... ok
+test_right_drag_within_the_debounce_window_toggles_only_once (test_chat_process_fold.ProcessFoldTests.test_right_drag_within_the_debounce_window_toggles_only_once)
+�Ҽ���������һ�±�ĵط������ܰѸ�չ�����۵��������� ... ok
+test_stopped_turn_keeps_its_process_available (test_chat_process_fold.ProcessFoldTests.test_stopped_turn_keeps_its_process_available) ... ok
+test_turns_toggle_independently_and_keep_hints_after_the_answer (test_chat_process_fold.ProcessFoldTests.test_turns_toggle_independently_and_keep_hints_after_the_answer) ... ok
+test_two_separate_right_clicks_still_toggle_twice (test_chat_process_fold.ProcessFoldTests.test_two_separate_right_clicks_still_toggle_twice)
+���ظ�Ͷ��ֻ�ԡ�ͬһ�Ρ����������������ε���վɸ���һ�Ρ� ... ok
+test_hammarberg_index_needs_sound_or_ltas (test_chat_tools.BorrowedMeasurementTests.test_hammarberg_index_needs_sound_or_ltas) ... ok
+test_hl_ratio_rejects_overlapping_bands (test_chat_tools.BorrowedMeasurementTests.test_hl_ratio_rejects_overlapping_bands) ... ok
+test_intensity_slope_extracts_a_part_for_sound_ranges (test_chat_tools.BorrowedMeasurementTests.test_intensity_slope_extracts_a_part_for_sound_ranges) ... ok
+test_intensity_slope_local_and_global (test_chat_tools.BorrowedMeasurementTests.test_intensity_slope_local_and_global) ... ok
+test_intensity_slope_rejects_bad_method_and_range (test_chat_tools.BorrowedMeasurementTests.test_intensity_slope_rejects_bad_method_and_range) ... ok
+test_intensity_slope_whole_object_does_not_delete_anything (test_chat_tools.BorrowedMeasurementTests.test_intensity_slope_whole_object_does_not_delete_anything)
+���η���ʱ extractedId = 0����β��ɾ��Ҫ����������ɾ�����󣩡� ... ok
+test_peak_to_average_uses_rms_not_the_signed_mean (test_chat_tools.BorrowedMeasurementTests.test_peak_to_average_uses_rms_not_the_signed_mean) ... ok
+test_pitch_peak_latency_rejects_objects_without_pitch (test_chat_tools.BorrowedMeasurementTests.test_pitch_peak_latency_rejects_objects_without_pitch) ... ok
+test_spectral_emphasis_follows_the_source_script (test_chat_tools.BorrowedMeasurementTests.test_spectral_emphasis_follows_the_source_script) ... ok
+test_spectral_emphasis_rejects_explicit_wrong_object (test_chat_tools.BorrowedMeasurementTests.test_spectral_emphasis_rejects_explicit_wrong_object) ... ok
+test_explicit_range_beats_the_editor_selection (test_chat_tools.EditorSelectionRangeTests.test_explicit_range_beats_the_editor_selection) ... ok
+test_extract_part_honours_the_finish_alias (test_chat_tools.EditorSelectionRangeTests.test_extract_part_honours_the_finish_alias) ... ok
+test_extract_part_uses_the_editor_selection (test_chat_tools.EditorSelectionRangeTests.test_extract_part_uses_the_editor_selection) ... ok
+test_point_query_falls_back_to_the_selection_middle (test_chat_tools.EditorSelectionRangeTests.test_point_query_falls_back_to_the_selection_middle) ... ok
+test_statistics_note_survives_the_model_echoing_the_selection (test_chat_tools.EditorSelectionRangeTests.test_statistics_note_survives_the_model_echoing_the_selection) ... ok
+test_statistics_tools_use_the_editor_selection (test_chat_tools.EditorSelectionRangeTests.test_statistics_tools_use_the_editor_selection) ... ok
+test_textgrid_label_uses_the_editor_selection (test_chat_tools.EditorSelectionRangeTests.test_textgrid_label_uses_the_editor_selection) ... ok
+test_without_a_selection_the_whole_object_is_still_the_default (test_chat_tools.EditorSelectionRangeTests.test_without_a_selection_the_whole_object_is_still_the_default) ... ok
+test_concatenate_needs_two_different_sounds (test_chat_tools.NewToolTests.test_concatenate_needs_two_different_sounds) ... ok
+test_concatenate_rejects_non_sound (test_chat_tools.NewToolTests.test_concatenate_rejects_non_sound) ... ok
+test_create_sound_builds_pure_tone_and_silence (test_chat_tools.NewToolTests.test_create_sound_builds_pure_tone_and_silence) ... ok
+test_duplicate_object_uses_copy (test_chat_tools.NewToolTests.test_duplicate_object_uses_copy) ... ok
+test_extract_part_clamps_and_validates (test_chat_tools.NewToolTests.test_extract_part_clamps_and_validates) ... ok
+test_formant_can_query_several_numbers_at_once (test_chat_tools.NewToolTests.test_formant_can_query_several_numbers_at_once) ... ok
+test_formant_statistics_reports_each_formant_separately (test_chat_tools.NewToolTests.test_formant_statistics_reports_each_formant_separately) ... ok
+test_harmonicity_statistics_uses_harmonicity_analysis (test_chat_tools.NewToolTests.test_harmonicity_statistics_uses_harmonicity_analysis) ... ok
+test_intensity_statistics_uses_energy_mean (test_chat_tools.NewToolTests.test_intensity_statistics_uses_energy_mean) ... ok
+test_invalid_formant_number_message_is_chinese (test_chat_tools.NewToolTests.test_invalid_formant_number_message_is_chinese) ... ok
+test_pitch_statistics_reports_time_of_maximum (test_chat_tools.NewToolTests.test_pitch_statistics_reports_time_of_maximum) ... ok
+test_pitch_statistics_uses_mean_min_max (test_chat_tools.NewToolTests.test_pitch_statistics_uses_mean_min_max) ... ok
+test_point_queries_accept_several_times (test_chat_tools.NewToolTests.test_point_queries_accept_several_times) ... ok
+test_resample_requires_integer_rate (test_chat_tools.NewToolTests.test_resample_requires_integer_rate) ... ok
+test_save_sound_creates_missing_folder (test_chat_tools.NewToolTests.test_save_sound_creates_missing_folder) ... ok
+test_save_sound_requires_absolute_wav_path (test_chat_tools.NewToolTests.test_save_sound_requires_absolute_wav_path) ... ok
+test_spectrogram_name_does_not_shadow_the_source_object (test_chat_tools.NewToolTests.test_spectrogram_name_does_not_shadow_the_source_object) ... ok
+test_spectrogram_requires_sound (test_chat_tools.NewToolTests.test_spectrogram_requires_sound) ... ok
+test_context_is_parsed (test_chat_tools.ObjectContextTests.test_context_is_parsed) ... ok
+test_cursor_without_a_dragged_range_is_not_a_selection (test_chat_tools.ObjectContextTests.test_cursor_without_a_dragged_range_is_not_a_selection) ... ok
+test_default_object_prefers_selection (test_chat_tools.ObjectContextTests.test_default_object_prefers_selection) ... ok
+test_editor_selection_columns_are_parsed (test_chat_tools.ObjectContextTests.test_editor_selection_columns_are_parsed) ... ok
+test_object_can_be_resolved_by_id_and_name (test_chat_tools.ObjectContextTests.test_object_can_be_resolved_by_id_and_name) ... ok
+test_unknown_object_is_rejected (test_chat_tools.ObjectContextTests.test_unknown_object_is_rejected) ... ok
+test_ambiguous_name_is_rejected_with_candidates (test_chat_tools.ObjectMatchingTests.test_ambiguous_name_is_rejected_with_candidates) ... ok
+test_chinese_id_forms_are_accepted (test_chat_tools.ObjectMatchingTests.test_chinese_id_forms_are_accepted) ... ok
+test_name_without_class_prefix_matches (test_chat_tools.ObjectMatchingTests.test_name_without_class_prefix_matches) ... ok
+test_short_name_matches_full_name (test_chat_tools.ObjectMatchingTests.test_short_name_matches_full_name) ... ok
+test_unknown_name_still_fails (test_chat_tools.ObjectMatchingTests.test_unknown_name_still_fails) ... ok
+test_praat_scripts_are_still_accepted (test_chat_tools.PythonScriptRejectionTests.test_praat_scripts_are_still_accepted) ... ok
+test_python_scripts_are_rejected (test_chat_tools.PythonScriptRejectionTests.test_python_scripts_are_rejected) ... ok
+test_formant_query_explains_undefined (test_chat_tools.QueryRobustnessTests.test_formant_query_explains_undefined) ... ok
+test_intensity_query_explains_undefined (test_chat_tools.QueryRobustnessTests.test_intensity_query_explains_undefined) ... ok
+test_pitch_clamps_time_and_explains_undefined (test_chat_tools.QueryRobustnessTests.test_pitch_clamps_time_and_explains_undefined) ... ok
+test_every_script_ends_with_state_marker (test_chat_tools.ScriptRenderingTests.test_every_script_ends_with_state_marker) ... ok
+test_existing_formant_object_is_not_reanalysed (test_chat_tools.ScriptRenderingTests.test_existing_formant_object_is_not_reanalysed) ... ok
+test_formant_bandwidth_uses_object_id_and_double_quotes (test_chat_tools.ScriptRenderingTests.test_formant_bandwidth_uses_object_id_and_double_quotes) ... ok
+test_formant_query_accepts_explicit_time_and_unit (test_chat_tools.ScriptRenderingTests.test_formant_query_accepts_explicit_time_and_unit) ... ok
+test_invalid_formant_number_is_rejected (test_chat_tools.ScriptRenderingTests.test_invalid_formant_number_is_rejected) ... ok
+test_invalid_unit_is_rejected (test_chat_tools.ScriptRenderingTests.test_invalid_unit_is_rejected) ... ok
+test_object_creating_tools_report_the_new_id (test_chat_tools.ScriptRenderingTests.test_object_creating_tools_report_the_new_id)
+�½�����Ľ������Ҫ�� id���ಽ�������һ��Ҫ�����ϳ�����¶��� ... ok
+test_pitch_and_intensity_templates (test_chat_tools.ScriptRenderingTests.test_pitch_and_intensity_templates) ... ok
+test_rename_requires_new_name (test_chat_tools.ScriptRenderingTests.test_rename_requires_new_name) ... ok
+test_append_file_line_lines_are_untouched (test_chat_tools.ScriptValidationTests.test_append_file_line_lines_are_untouched) ... ok
+test_custom_script_gets_result_marker (test_chat_tools.ScriptValidationTests.test_custom_script_gets_result_marker) ... ok
+test_custom_script_must_not_open_the_info_window (test_chat_tools.ScriptValidationTests.test_custom_script_must_not_open_the_info_window)
+ģ��д writeInfoLine / print �ᵯ����Praat Info�����ű���Ҫ��ס�����ݲ����� ... ok
+test_dangerous_commands_are_rejected (test_chat_tools.ScriptValidationTests.test_dangerous_commands_are_rejected) ... ok
+test_literal_output_commands_become_result_lines (test_chat_tools.ScriptValidationTests.test_literal_output_commands_become_result_lines)
+printline / print / echo �� Praat ��д�����������֣����γ�������ļ��� ... ok
+test_markdown_fence_is_stripped (test_chat_tools.ScriptValidationTests.test_markdown_fence_is_stripped) ... ok
+test_meaningless_info_commands_are_commented_out (test_chat_tools.ScriptValidationTests.test_meaningless_info_commands_are_commented_out)
+printtab ֻд�Ʊ�����clearinfo ֻ��� Info ���ڣ�û�����ݿɱ����� ... ok
+test_single_quotes_become_double_quotes (test_chat_tools.ScriptValidationTests.test_single_quotes_become_double_quotes) ... ok
+test_unbalanced_quotes_are_rejected (test_chat_tools.ScriptValidationTests.test_unbalanced_quotes_are_rejected) ... ok
+test_value_output_commands_become_result_lines (test_chat_tools.ScriptValidationTests.test_value_output_commands_become_result_lines)
+appendInfo / writeInfo ������ֵ�б���ԭ������ appendFileLine�� ... ok
+test_write_info_line_without_arguments_stays_valid (test_chat_tools.ScriptValidationTests.test_write_info_line_without_arguments_stays_valid) ... ok
+test_class_fallback_needs_a_unique_candidate (test_chat_tools.TextGridToolTests.test_class_fallback_needs_a_unique_candidate) ... ok
+test_info_limits_the_listing (test_chat_tools.TextGridToolTests.test_info_limits_the_listing) ... ok
+test_info_lists_tiers_and_intervals (test_chat_tools.TextGridToolTests.test_info_lists_tiers_and_intervals) ... ok
+test_insert_boundary_reports_existing_boundary (test_chat_tools.TextGridToolTests.test_insert_boundary_reports_existing_boundary) ... ok
+test_set_interval_inserts_boundaries_and_writes_label (test_chat_tools.TextGridToolTests.test_set_interval_inserts_boundaries_and_writes_label) ... ok
+test_set_interval_requires_label_and_range (test_chat_tools.TextGridToolTests.test_set_interval_requires_label_and_range) ... ok
+test_textgrid_tools_reject_other_objects (test_chat_tools.TextGridToolTests.test_textgrid_tools_reject_other_objects) ... ok
+test_tier_number_is_validated (test_chat_tools.TextGridToolTests.test_tier_number_is_validated) ... ok
+test_duration_rejects_objects_without_time (test_chat_tools.ToolGuardTests.test_duration_rejects_objects_without_time) ... ok
+test_object_info_reports_sound_properties (test_chat_tools.ToolGuardTests.test_object_info_reports_sound_properties) ... ok
+test_object_info_skips_duration_for_tables (test_chat_tools.ToolGuardTests.test_object_info_skips_duration_for_tables) ... ok
+test_object_info_writes_the_selection_share_of_the_duration (test_chat_tools.ToolGuardTests.test_object_info_writes_the_selection_share_of_the_duration)
+2026-10-04��Ȧѡ��Ҫ����ռʱ���İٷֱȡ� ... ok
+test_play_requires_sound (test_chat_tools.ToolGuardTests.test_play_requires_sound) ... ok
+test_auto_mode_detects_within_the_given_range (test_chat_tools.VotToolTests.test_auto_mode_detects_within_the_given_range) ... ok
+test_auto_mode_needs_a_sound_not_a_textgrid (test_chat_tools.VotToolTests.test_auto_mode_needs_a_sound_not_a_textgrid) ... ok
+test_auto_mode_uses_the_range_dragged_in_the_editor (test_chat_tools.VotToolTests.test_auto_mode_uses_the_range_dragged_in_the_editor) ... ok
+test_auto_mode_warns_when_the_range_holds_two_phonemes (test_chat_tools.VotToolTests.test_auto_mode_warns_when_the_range_holds_two_phonemes) ... ok
+test_editor_selection_note_survives_the_model_echoing_it (test_chat_tools.VotToolTests.test_editor_selection_note_survives_the_model_echoing_it) ... ok
+test_explicit_range_beats_the_editor_selection (test_chat_tools.VotToolTests.test_explicit_range_beats_the_editor_selection) ... ok
+test_missing_or_bad_times_are_rejected (test_chat_tools.VotToolTests.test_missing_or_bad_times_are_rejected) ... ok
+test_non_numeric_time_is_rejected_in_chinese (test_chat_tools.VotToolTests.test_non_numeric_time_is_rejected_in_chinese) ... ok
+test_only_one_time_is_still_an_error (test_chat_tools.VotToolTests.test_only_one_time_is_still_an_error) ... ok
+test_onset_alias_works (test_chat_tools.VotToolTests.test_onset_alias_works) ... ok
+test_placeholder_zero_times_fall_back_to_auto (test_chat_tools.VotToolTests.test_placeholder_zero_times_fall_back_to_auto)
+ģ�ͻ����ѡ�ֶ������� 0��"����"������ð���û�������������Զ����ơ� ... ok
+test_sound_path_only_subtracts (test_chat_tools.VotToolTests.test_sound_path_only_subtracts) ... ok
+test_textgrid_path_adds_boundaries_and_reports_ms (test_chat_tools.VotToolTests.test_textgrid_path_adds_boundaries_and_reports_ms) ... ok
+test_cloud_model_is_shown_with_the_provider_name (test_chat_window.ApiChoiceLabelTests.test_cloud_model_is_shown_with_the_provider_name) ... ok
+test_cloud_model_without_a_provider_name_still_names_the_model (test_chat_window.ApiChoiceLabelTests.test_cloud_model_without_a_provider_name_still_names_the_model) ... ok
+test_missing_model_is_reported_instead_of_an_empty_row (test_chat_window.ApiChoiceLabelTests.test_missing_model_is_reported_instead_of_an_empty_row) ... ok
+test_missing_executable_is_not_a_blocker (test_chat_window.PraatProcessTests.test_missing_executable_is_not_a_blocker) ... ok
+test_missing_tasklist_output_means_not_running (test_chat_window.PraatProcessTests.test_missing_tasklist_output_means_not_running) ... ok
+test_multiple_instances_produce_a_warning (test_chat_window.PraatProcessTests.test_multiple_instances_produce_a_warning) ... ok
+test_refresh_queries_once_without_a_known_list (test_chat_window.PraatProcessTests.test_refresh_queries_once_without_a_known_list) ... ok
+test_refresh_reuses_a_known_process_list (test_chat_window.PraatProcessTests.test_refresh_reuses_a_known_process_list)
+���÷��Ѿ���������б�ʱ��ˢ�������Ĳ�������һ�� tasklist�� ... ok
+test_running_process_is_detected (test_chat_window.PraatProcessTests.test_running_process_is_detected) ... ok
+test_single_instance_has_no_warning (test_chat_window.PraatProcessTests.test_single_instance_has_no_warning) ... ok
+test_tasklist_failure_does_not_block_sending (test_chat_window.PraatProcessTests.test_tasklist_failure_does_not_block_sending) ... ok
+test_full_label_resolves (test_chat_window.PresetLabelTests.test_full_label_resolves) ... ok
+test_id_model_and_prefix_also_resolve (test_chat_window.PresetLabelTests.test_id_model_and_prefix_also_resolve) ... ok
+test_missing_file_is_shown_in_the_label (test_chat_window.PresetLabelTests.test_missing_file_is_shown_in_the_label) ... ok
+test_hint_names_the_selected_object (test_chat_window.SelectedObjectHintTests.test_hint_names_the_selected_object) ... ok
+test_hint_when_nothing_is_selected (test_chat_window.SelectedObjectHintTests.test_hint_when_nothing_is_selected) ... ok
+test_send_noise_is_filtered_but_real_errors_survive (test_chat_window.SendOutputTests.test_send_noise_is_filtered_but_real_errors_survive) ... ok
+test_argv_mode_keeps_the_send_process_path (test_chat_window.SendScriptTests.test_argv_mode_keeps_the_send_process_path) ... ok
+test_argv_timeout_kills_the_send_process (test_chat_window.SendScriptTests.test_argv_timeout_kills_the_send_process) ... ok
+test_completion_marker_from_another_request_is_ignored (test_chat_window.SendScriptTests.test_completion_marker_from_another_request_is_ignored)
+��ɱ������һ����ʱָ��д��ʱ�����ܰ�������ֵ���ɱ��ν���� ... ok
+test_context_ping_script_marks_state (test_chat_window.SendScriptTests.test_context_ping_script_marks_state) ... ok
+test_each_request_gets_its_own_script_file (test_chat_window.SendScriptTests.test_each_request_gets_its_own_script_file)
+���������ܹ���һ���ļ���������Ϣ����ʱִ�еĻ����½ű��� ... ok
+test_praat_error_output_is_kept (test_chat_window.SendScriptTests.test_praat_error_output_is_kept) ... ok
+test_praat_that_never_answers_is_reported_in_chinese (test_chat_window.SendScriptTests.test_praat_that_never_answers_is_reported_in_chinese) ... ok
+test_prune_keeps_recent_scripts_even_when_there_are_many (test_chat_window.SendScriptTests.test_prune_keeps_recent_scripts_even_when_there_are_many)
+���һСʱ�Ľű���Ҫ���ţ�Message.txt ����ܻ����������ǡ� ... ok
+test_prune_keeps_the_newest_scripts (test_chat_window.SendScriptTests.test_prune_keeps_the_newest_scripts) ... ok
+test_window_delivery_failure_is_reported (test_chat_window.SendScriptTests.test_window_delivery_failure_is_reported) ... ok
+test_window_delivery_means_success (test_chat_window.SendScriptTests.test_window_delivery_means_success) ... ok
+test_status_mentions_active_preset (test_chat_window.StatusTextTests.test_status_mentions_active_preset) ... ok
+test_status_reports_mismatch_and_unreachable_service (test_chat_window.StatusTextTests.test_status_reports_mismatch_and_unreachable_service) ... ok
+test_status_uses_live_model_and_vision (test_chat_window.StatusTextTests.test_status_uses_live_model_and_vision) ... ok
+test_cancel_during_tool_retains_completed_evidence (test_cloud_escape.CloudTests.test_cancel_during_tool_retains_completed_evidence) ... ok
+test_cancel_prevents_all_requests (test_cloud_escape.CloudTests.test_cancel_prevents_all_requests) ... ok
+test_cancel_while_waiting_for_model_stops_later_nodes (test_cloud_escape.CloudTests.test_cancel_while_waiting_for_model_stops_later_nodes) ... ok
+test_discussion_needs_no_praat (test_cloud_escape.CloudTests.test_discussion_needs_no_praat) ... ok
+test_discussion_preserves_compact_visible_dialogue (test_cloud_escape.CloudTests.test_discussion_preserves_compact_visible_dialogue) ... ok
+test_failure_after_one_repair_reports (test_cloud_escape.CloudTests.test_failure_after_one_repair_reports) ... ok
+test_low_context_reserves_report (test_cloud_escape.CloudTests.test_low_context_reserves_report) ... ok
+test_original_invalid_arguments_are_retained_as_proposal (test_cloud_escape.CloudTests.test_original_invalid_arguments_are_retained_as_proposal) ... ok
+test_repeats_stop_after_two_rounds_no_progress (test_cloud_escape.CloudTests.test_repeats_stop_after_two_rounds_no_progress) ... ok
+test_success_enters_independent_report (test_cloud_escape.CloudTests.test_success_enters_independent_report) ... ok
+test_unknown_execution_and_missing_dependency_stop_immediately (test_cloud_escape.CloudTests.test_unknown_execution_and_missing_dependency_stop_immediately) ... ok
+test_unlimited_does_not_use_user_context_cutoff (test_cloud_escape.CloudTests.test_unlimited_does_not_use_user_context_cutoff) ... ok
+test_api_strict_limits_knowledge_without_restoring_local_workflow (test_cloud_prompt.CloudPromptTests.test_api_strict_limits_knowledge_without_restoring_local_workflow) ... ok
+test_damaged_native_arguments_are_marked_instead_of_becoming_a_default_action (test_cloud_prompt.CloudPromptTests.test_damaged_native_arguments_are_marked_instead_of_becoming_a_default_action) ... ok
+test_direct_native_planner_sends_cloud_policy_and_keeps_all_actions (test_cloud_prompt.CloudPromptTests.test_direct_native_planner_sends_cloud_policy_and_keeps_all_actions) ... ok
+test_direct_native_planner_uses_explicit_final_reasoning_answer (test_cloud_prompt.CloudPromptTests.test_direct_native_planner_uses_explicit_final_reasoning_answer) ... ok
+test_empty_json_argument_object_remains_valid (test_cloud_prompt.CloudPromptTests.test_empty_json_argument_object_remains_valid) ... ok
+test_error_explanation_uses_cloud_evidence_and_knowledge_policy (test_cloud_prompt.CloudPromptTests.test_error_explanation_uses_cloud_evidence_and_knowledge_policy) ... ok
+test_json_fallback_sends_same_cloud_policy_and_preserves_multi_action_plan (test_cloud_prompt.CloudPromptTests.test_json_fallback_sends_same_cloud_policy_and_preserves_multi_action_plan) ... ok
+test_local_native_keeps_conservative_measurement_rules (test_cloud_prompt.CloudPromptTests.test_local_native_keeps_conservative_measurement_rules) ... ok
+test_native_followup_and_wrap_up_keep_policy_and_observations (test_cloud_prompt.CloudPromptTests.test_native_followup_and_wrap_up_keep_policy_and_observations) ... ok
+test_vision_explanation_keeps_image_evidence_distinct_from_audio (test_cloud_prompt.CloudPromptTests.test_vision_explanation_keeps_image_evidence_distinct_from_audio) ... ok
+test_audio_rejection_redirects_once_without_audio (test_cloud_protocol.ProtocolTests.test_audio_rejection_redirects_once_without_audio) ... ok
+test_qwen_stream_uri_and_text_output (test_cloud_protocol.ProtocolTests.test_qwen_stream_uri_and_text_output) ... ok
+test_rate_limit_does_not_correct_capability_or_loop (test_cloud_protocol.ProtocolTests.test_rate_limit_does_not_correct_capability_or_loop) ... ok
+test_reasoning_rejected_field_retry (test_cloud_protocol.ProtocolTests.test_reasoning_rejected_field_retry) ... ok
+test_api_update_waits_for_foreign_config_writer_and_merges_latest (test_config_write_lock.ConfigWriteLockTest.test_api_update_waits_for_foreign_config_writer_and_merges_latest) ... ok
+test_default_argument_reads_the_context_file (test_context_freshness.PidMarkerTests.test_default_argument_reads_the_context_file)
+��������ʱҪ�� chat_context.tsv������ع�ץ���� bug��Ĭ�ϲ������˿��ַ������� ... ok
+test_marker_does_not_break_object_parsing (test_context_freshness.PidMarkerTests.test_marker_does_not_break_object_parsing) ... ok
+test_marker_is_parsed (test_context_freshness.PidMarkerTests.test_marker_is_parsed) ... ok
+test_another_praat_instance_triggers_one_refresh (test_context_freshness.RefreshDecisionTests.test_another_praat_instance_triggers_one_refresh) ... ok
+test_assume_fresh_skips_the_ping_for_older_praat_builds (test_context_freshness.RefreshDecisionTests.test_assume_fresh_skips_the_ping_for_older_praat_builds)
+�ϰ汾 Praat ��д��ǣ�������һ��֮ǰͶ�ݹ��ű���ͬ��˵���б����µġ� ... ok
+test_assume_fresh_still_refreshes_when_the_file_is_gone (test_context_freshness.RefreshDecisionTests.test_assume_fresh_still_refreshes_when_the_file_is_gone) ... ok
+test_context_without_a_marker_still_refreshes (test_context_freshness.RefreshDecisionTests.test_context_without_a_marker_still_refreshes)
+�ϰ汾 / ���˵� Praat ��д��ǣ�����ԭ������Ϊ��ˢһ�Σ��� ... ok
+test_failed_refresh_reports_in_chinese (test_context_freshness.RefreshDecisionTests.test_failed_refresh_reports_in_chinese) ... ok
+test_force_refreshes_even_when_fresh (test_context_freshness.RefreshDecisionTests.test_force_refreshes_even_when_fresh) ... ok
+test_fresh_context_does_not_deliver_anything (test_context_freshness.RefreshDecisionTests.test_fresh_context_does_not_deliver_anything)
+�б����ǵ�ǰ��� Praat д�ģ�һ�������������С� ... ok
+test_marker_from_a_second_praat_counts (test_context_freshness.RefreshDecisionTests.test_marker_from_a_second_praat_counts)
+ͬʱ�������� Praat ʱ��ֻҪ���������֮һ�Ͳ���ˢ�� ... ok
+test_missing_context_file_refreshes (test_context_freshness.RefreshDecisionTests.test_missing_context_file_refreshes) ... ok
+test_no_praat_running_is_not_an_error (test_context_freshness.RefreshDecisionTests.test_no_praat_running_is_not_an_error) ... ok
+test_records_survive_reopen_without_credentials_or_binary (test_conversation_store.StoreTests.test_records_survive_reopen_without_credentials_or_binary) ... ok
+test_blocked_attempts_keep_the_real_reason (test_delivery_state.ReportContextTests.test_blocked_attempts_keep_the_real_reason) ... ok
+test_failure_instructions_appear_only_when_something_failed (test_delivery_state.ReportContextTests.test_failure_instructions_appear_only_when_something_failed)
+ʧ��˵����������ܵ�ģ�ͣ�����ֻ�ڱ�����ʧ�ܼ�¼ʱ�Ÿ������ʾ�ʿ����� ... ok
+test_report_context_carries_the_users_own_words_about_themselves (test_delivery_state.ReportContextTests.test_report_context_carries_the_users_own_words_about_themselves)
+�û�������˵����/¼��������Ҫ�汨��������һ�����û������ʱ����������� ... ok
+test_report_refuses_an_accent_claim_without_a_pitch_contour (test_delivery_state.ReportContextTests.test_report_refuses_an_accent_claim_without_a_pitch_contour)
+2026-10-04��ֻ��ȫ��ƽ����Ƶ 81.6 Hz �Ͷ��ԡ����ʤ�����ƽ���ͣ����ݴ˸��� ... ok
+test_report_requires_arithmetic_before_claiming_a_segment_position (test_delivery_state.ReportContextTests.test_report_requires_arithmetic_before_claiming_a_segment_position)
+2026-10-04������׶�û�й��ߣ�ֻ�����֡� ... ok
+test_delivered_without_completion_is_not_confused_with_not_delivered (test_delivery_state.SendScriptContractTests.test_delivered_without_completion_is_not_confused_with_not_delivered) ... ok
+test_send_mode_defaults_to_no_declaration_for_other_callers (test_delivery_state.SendScriptContractTests.test_send_mode_defaults_to_no_declaration_for_other_callers) ... ok
+test_write_failure_is_reported_as_not_delivered (test_delivery_state.SendScriptContractTests.test_write_failure_is_reported_as_not_delivered) ... ok
+test_audio_capability_off_skips_the_eager_snapshot (test_delivery_state.StaircaseDeliveryTests.test_audio_capability_off_skips_the_eager_snapshot)
+��Ƶ�����ر�ʱ����Ϊ�ò��ϵĲ��϶�Ͷһ���ű��� ... ok
+test_blocked_call_is_not_a_second_unknown (test_delivery_state.StaircaseDeliveryTests.test_blocked_call_is_not_a_second_unknown)
+������ֹͣͶ��ʱ���Ǵε����ǡ�δִ�С���������һ����״̬�������� ... ok
+test_delivered_without_completion_still_stops_and_keeps_the_reason (test_delivery_state.StaircaseDeliveryTests.test_delivered_without_completion_still_stops_and_keeps_the_reason)
+�ͳ�ȥ��û�ȵ���ɱ�ǣ�ͣ���������ұ�����ʱԭ�ġ� ... ok
+test_not_delivered_snapshot_does_not_stop_the_measurement (test_delivery_state.StaircaseDeliveryTests.test_not_delivered_snapshot_does_not_stop_the_measurement)
+���յ�����û�ͳ�ȥ��֮��vot ��ȻҪ���Ͷ�ݲ�ȡ��֤�ݡ� ... ok
+test_snapshot_timeout_blocks_further_delivery_as_not_executed (test_delivery_state.StaircaseDeliveryTests.test_snapshot_timeout_blocks_further_delivery_as_not_executed)
+���ճ�ʱ�����״̬������֮�󣬺���ĵ����ǡ�δִ�С������ǵڶ�����״̬�������� ... ok
+test_alive_reused_pid_without_chat_window_or_identity_does_not_suppress_launch (test_desktop_launch.DesktopLaunchTests.test_alive_reused_pid_without_chat_window_or_identity_does_not_suppress_launch) ... ok
+test_cleanup_never_removes_someone_elses_pid (test_desktop_launch.DesktopLaunchTests.test_cleanup_never_removes_someone_elses_pid) ... ok
+test_explicit_service_cli_keeps_legacy_behavior (test_desktop_launch.DesktopLaunchTests.test_explicit_service_cli_keeps_legacy_behavior) ... ok
+test_host_records_connection_once_without_exposing_an_extra_api (test_desktop_launch.DesktopLaunchTests.test_host_records_connection_once_without_exposing_an_extra_api) ... ok
+test_identity_matched_process_still_starting_is_not_duplicated (test_desktop_launch.DesktopLaunchTests.test_identity_matched_process_still_starting_is_not_duplicated) ... ok
+test_installed_entry_uses_same_desktop_launcher (test_desktop_launch.DesktopLaunchTests.test_installed_entry_uses_same_desktop_launcher) ... ok
+test_launch_failure_is_visible_and_redacts_both_credentials (test_desktop_launch.DesktopLaunchTests.test_launch_failure_is_visible_and_redacts_both_credentials) ... ��ǰ��δ������[REDACTED] [REDACTED]
+
+Python��C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe
+���� Praat ��·��������ѡ���Ѱ�װ pywebview/pythonnet �� Python��
+�����Զ����þɽ������ģ������
+ok
+test_missing_assets_fail_before_spawn (test_desktop_launch.DesktopLaunchTests.test_missing_assets_fail_before_spawn) ... ok
+test_missing_python_dependencies_fail_before_spawn (test_desktop_launch.DesktopLaunchTests.test_missing_python_dependencies_fail_before_spawn) ... ok
+test_native_menu_prepares_desktop_without_old_service_or_network (test_desktop_launch.DesktopLaunchTests.test_native_menu_prepares_desktop_without_old_service_or_network) ... ok
+test_other_native_commands_keep_legacy_behavior (test_desktop_launch.DesktopLaunchTests.test_other_native_commands_keep_legacy_behavior) ... ok
+test_pythonw_with_no_stderr_still_displays_error (test_desktop_launch.DesktopLaunchTests.test_pythonw_with_no_stderr_still_displays_error) ... ok
+test_snapshot_requires_bound_live_parent_and_matching_native_marker (test_desktop_launch.DesktopLaunchTests.test_snapshot_requires_bound_live_parent_and_matching_native_marker) ... ok
+test_start_preflight_failure_has_no_child_and_reports (test_desktop_launch.DesktopLaunchTests.test_start_preflight_failure_has_no_child_and_reports) ... ok
+test_capability_questions_do_not_need_a_greeting_prefix (test_dialogue_fastpath.DialoguePolicyTests.test_capability_questions_do_not_need_a_greeting_prefix) ... ok
+test_concept_prefix_does_not_override_operations_targets_or_ranges (test_dialogue_fastpath.DialoguePolicyTests.test_concept_prefix_does_not_override_operations_targets_or_ranges) ... ok
+test_concepts_and_analysis_keep_selected_high_level (test_dialogue_fastpath.DialoguePolicyTests.test_concepts_and_analysis_keep_selected_high_level) ... ok
+test_english_identity_and_capability_are_ordinary_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_english_identity_and_capability_are_ordinary_dialogue) ... ok
+test_force_setting_does_not_upgrade_other_manual_levels (test_dialogue_fastpath.DialoguePolicyTests.test_force_setting_does_not_upgrade_other_manual_levels) ... ok
+test_greetings_identity_and_ordinary_chat (test_dialogue_fastpath.DialoguePolicyTests.test_greetings_identity_and_ordinary_chat) ... ok
+test_high_ordinary_dialogue_relaxes_unless_forced (test_dialogue_fastpath.DialoguePolicyTests.test_high_ordinary_dialogue_relaxes_unless_forced) ... ok
+test_material_and_mixed_requests_are_not_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_material_and_mixed_requests_are_not_dialogue) ... ok
+test_only_unambiguous_duration_queries_use_direct_measurement (test_dialogue_fastpath.DialoguePolicyTests.test_only_unambiguous_duration_queries_use_direct_measurement) ... ok
+test_pure_concept_discussion (test_dialogue_fastpath.DialoguePolicyTests.test_pure_concept_discussion) ... ok
+test_unknown_operations_and_references_keep_analysis_pipeline (test_dialogue_fastpath.DialoguePolicyTests.test_unknown_operations_and_references_keep_analysis_pipeline) ... ok
+test_advanced_checkbox_is_collected_and_survives_reopening (test_dialogue_fastpath.ForceSettingTests.test_advanced_checkbox_is_collected_and_survives_reopening) ... ok
+test_force_setting_roundtrips_through_real_save (test_dialogue_fastpath.ForceSettingTests.test_force_setting_roundtrips_through_real_save) ... ok
+test_old_configuration_defaults_to_not_forcing_high (test_dialogue_fastpath.ForceSettingTests.test_old_configuration_defaults_to_not_forcing_high) ... ok
+test_levels_reserve_provider_bounded_or_conservative_output (test_dialogue_fastpath.ReasoningReserveTests.test_levels_reserve_provider_bounded_or_conservative_output) ... ok
+test_official_qwen_high_enables_thinking_without_openai_effort (test_dialogue_fastpath.ThinkingFieldsTests.test_official_qwen_high_enables_thinking_without_openai_effort) ... ok
+test_official_qwen_low_and_medium_have_bounded_thinking (test_dialogue_fastpath.ThinkingFieldsTests.test_official_qwen_low_and_medium_have_bounded_thinking) ... ok
+test_official_qwen_off_explicitly_disables_thinking (test_dialogue_fastpath.ThinkingFieldsTests.test_official_qwen_off_explicitly_disables_thinking) ... ok
+test_service_auto_stays_default_and_unknown_gateway_keeps_compatibility (test_dialogue_fastpath.ThinkingFieldsTests.test_service_auto_stays_default_and_unknown_gateway_keeps_compatibility) ... ok
+test_duration_uses_verified_template_without_model_or_audio_material (test_dialogue_measurement.DurationWorkflowTests.test_duration_uses_verified_template_without_model_or_audio_material) ... ok
+test_cancelled_socket_does_not_break_the_next_turn (test_dialogue_protocol.DialogueProtocolTests.test_cancelled_socket_does_not_break_the_next_turn) ... ok
+test_clean_http_eof_without_a_completion_marker_is_partial (test_dialogue_protocol.DialogueProtocolTests.test_clean_http_eof_without_a_completion_marker_is_partial) ... ok
+test_disconnect_after_first_text_is_not_retried_or_saved_as_complete (test_dialogue_protocol.DialogueProtocolTests.test_disconnect_after_first_text_is_not_retried_or_saved_as_complete) ... ok
+test_optional_protocol_tail_is_bounded_after_done (test_dialogue_protocol.DialogueProtocolTests.test_optional_protocol_tail_is_bounded_after_done) ... ok
+test_provider_output_cap_also_bounds_the_reasoning_allowance (test_dialogue_protocol.DialogueProtocolTests.test_provider_output_cap_also_bounds_the_reasoning_allowance) ... ok
+test_provider_without_a_named_limit_drops_the_reasoning_allowance (test_dialogue_protocol.DialogueProtocolTests.test_provider_without_a_named_limit_drops_the_reasoning_allowance) ... ok
+test_qwen_off_is_in_actual_request_and_first_text_precedes_finish (test_dialogue_protocol.DialogueProtocolTests.test_qwen_off_is_in_actual_request_and_first_text_precedes_finish) ... ok
+test_rejected_forced_high_is_not_silently_disabled_and_retried (test_dialogue_protocol.DialogueProtocolTests.test_rejected_forced_high_is_not_silently_disabled_and_retried) ... ok
+test_rejected_output_limit_is_lowered_once_instead_of_failing_the_turn (test_dialogue_protocol.DialogueProtocolTests.test_rejected_output_limit_is_lowered_once_instead_of_failing_the_turn) ... ok
+test_same_socket_reused_and_changed_force_setting_applies_immediately (test_dialogue_protocol.DialogueProtocolTests.test_same_socket_reused_and_changed_force_setting_applies_immediately) ... ok
+test_truncated_reply_is_continued_once_and_merged (test_dialogue_protocol.DialogueProtocolTests.test_truncated_reply_is_continued_once_and_merged) ... ok
+test_truncated_reply_is_not_continued_when_the_request_budget_is_spent (test_dialogue_protocol.DialogueProtocolTests.test_truncated_reply_is_not_continued_when_the_request_budget_is_spent) ... ok
+test_truncated_reply_keeps_the_written_text_when_continuation_truncates (test_dialogue_protocol.DialogueProtocolTests.test_truncated_reply_keeps_the_written_text_when_continuation_truncates) ... ok
+test_concept_body_limit_comes_from_the_setting (test_dialogue_stream.DialogueOutputLimitTests.test_concept_body_limit_comes_from_the_setting) ... ok
+test_concept_limit_still_respects_the_reply_budget (test_dialogue_stream.DialogueOutputLimitTests.test_concept_limit_still_respects_the_reply_budget) ... ok
+test_context_that_cannot_hold_body_and_reasoning_shrinks_reasoning_first (test_dialogue_stream.DialogueOutputLimitTests.test_context_that_cannot_hold_body_and_reasoning_shrinks_reasoning_first) ... ok
+test_fast_greeting_keeps_its_small_cap_without_reasoning (test_dialogue_stream.DialogueOutputLimitTests.test_fast_greeting_keeps_its_small_cap_without_reasoning) ... ok
+test_setting_can_lower_below_the_old_hard_coded_cap (test_dialogue_stream.DialogueOutputLimitTests.test_setting_can_lower_below_the_old_hard_coded_cap) ... ok
+test_cancel_while_waiting_for_first_text_returns_promptly (test_dialogue_stream.DialogueStreamTests.test_cancel_while_waiting_for_first_text_returns_promptly) ... ok
+test_cancellation_does_not_publish_partial_as_complete (test_dialogue_stream.DialogueStreamTests.test_cancellation_does_not_publish_partial_as_complete) ... ok
+test_failure_after_first_chunk_does_not_retry_or_duplicate_text (test_dialogue_stream.DialogueStreamTests.test_failure_after_first_chunk_does_not_retry_or_duplicate_text) ... ok
+test_fast_workflow_does_not_prepare_praat_or_task_materials (test_dialogue_stream.DialogueStreamTests.test_fast_workflow_does_not_prepare_praat_or_task_materials) ... ok
+test_forced_high_is_sent_for_ordinary_conversation (test_dialogue_stream.DialogueStreamTests.test_forced_high_is_sent_for_ordinary_conversation) ... ok
+test_one_plain_request_streams_before_completion (test_dialogue_stream.DialogueStreamTests.test_one_plain_request_streams_before_completion) ... ok
+test_reuses_same_loop_and_model_then_replaces_changed_identity (test_dialogue_stream.RuntimeTests.test_reuses_same_loop_and_model_then_replaces_changed_identity) ... ok
+test_runtime_failure_is_a_safe_report_not_an_uncaught_worker_error (test_dialogue_stream.RuntimeTests.test_runtime_failure_is_a_safe_report_not_an_uncaught_worker_error) ... ok
+test_late_delta_after_final_is_ignored (test_dialogue_ui.StreamUiTests.test_late_delta_after_final_is_ignored) ... ok
+test_partial_text_is_visible_and_replaced_by_one_final_message (test_dialogue_ui.StreamUiTests.test_partial_text_is_visible_and_replaced_by_one_final_message) ... ok
+test_real_process_hints_survive_stream_finalization_and_collapse (test_dialogue_ui.StreamUiTests.test_real_process_hints_survive_stream_finalization_and_collapse) ... ok
+test_abandoned_owned_tasks_cleanup_keeps_active_and_user_files (test_escape_capabilities.CapabilityTests.test_abandoned_owned_tasks_cleanup_keeps_active_and_user_files) ... ok
+test_exact_presets_and_unknown (test_escape_capabilities.CapabilityTests.test_exact_presets_and_unknown) ... ok
+test_explicit_errors_only (test_escape_capabilities.CapabilityTests.test_explicit_errors_only) ... ok
+test_formant_schema_matches_multiple_numbers_and_default (test_escape_capabilities.CapabilityTests.test_formant_schema_matches_multiple_numbers_and_default) ... ok
+test_invalid_wav_is_classified_as_material_failure (test_escape_capabilities.CapabilityTests.test_invalid_wav_is_classified_as_material_failure) ... ok
+test_manual_reopen_and_compare_update (test_escape_capabilities.CapabilityTests.test_manual_reopen_and_compare_update) ... ok
+test_material_cleanup_preserves_user_source (test_escape_capabilities.CapabilityTests.test_material_cleanup_preserves_user_source) ... ok
+test_settings_preserve_audio_and_new_model_resets_preset (test_escape_capabilities.CapabilityTests.test_settings_preserve_audio_and_new_model_resets_preset) ... ok
+test_unrelated_save_cannot_undo_concurrent_audio_correction (test_escape_capabilities.CapabilityTests.test_unrelated_save_cannot_undo_concurrent_audio_correction) ... ok
+test_wav_range_snapshot_has_stable_fingerprint (test_escape_capabilities.CapabilityTests.test_wav_range_snapshot_has_stable_fingerprint) ... ok
+test_choices_offer_settings_and_hide_missing_audio (test_escape_gui.GuiTests.test_choices_offer_settings_and_hide_missing_audio) ... ok
+test_closing_configuration_cancels_audio_probe (test_escape_gui.GuiTests.test_closing_configuration_cancels_audio_probe) ... ok
+test_configuration_presets_manual_and_correction_refresh (test_escape_gui.GuiTests.test_configuration_presets_manual_and_correction_refresh) ... ok
+test_continuation_preflight_does_not_start_impossible_report (test_escape_gui.GuiTests.test_continuation_preflight_does_not_start_impossible_report) ... ok
+test_continue_click_double_guard_and_visible_prompt (test_escape_gui.GuiTests.test_continue_click_double_guard_and_visible_prompt) ... ok
+test_old_probe_cannot_override_manual_audio_change (test_escape_gui.GuiTests.test_old_probe_cannot_override_manual_audio_change) ... ok
+test_praat_exit_preserves_cloud_window (test_escape_gui.GuiTests.test_praat_exit_preserves_cloud_window) ... ok
+test_record_view_is_read_only_and_contains_saved_report (test_escape_gui.GuiTests.test_record_view_is_read_only_and_contains_saved_report) ... ok
+test_changed_selection_keeps_original_range (test_escape_integration.WindowIntegrationTests.test_changed_selection_keeps_original_range) ... ok
+test_cloud_discussion_bypasses_global_praat_check (test_escape_integration.WindowIntegrationTests.test_cloud_discussion_bypasses_global_praat_check) ... ok
+test_continue_uses_original_state_and_visible_prompt (test_escape_integration.WindowIntegrationTests.test_continue_uses_original_state_and_visible_prompt) ... ok
+test_explicit_target_and_range_override_current_selection (test_escape_integration.WindowIntegrationTests.test_explicit_target_and_range_override_current_selection) ... ok
+test_number_references_and_multi_target_measurement_binding (test_escape_integration.WindowIntegrationTests.test_number_references_and_multi_target_measurement_binding) ... ok
+test_choice_options_are_skipped (test_external_script.FormParsingTests.test_choice_options_are_skipped) ... ok
+test_commas_inside_quotes_do_not_split (test_external_script.FormParsingTests.test_commas_inside_quotes_do_not_split) ... ok
+test_fields_are_parsed_in_order_and_comments_skipped (test_external_script.FormParsingTests.test_fields_are_parsed_in_order_and_comments_skipped) ... ok
+test_script_without_a_form_has_no_fields (test_external_script.FormParsingTests.test_script_without_a_form_has_no_fields) ... ok
+test_unknown_field_type_is_reported (test_external_script.FormParsingTests.test_unknown_field_type_is_reported) ... ok
+test_batch_failure_is_reported_with_the_boundary_note (test_external_script.LocalToolTests.test_batch_failure_is_reported_with_the_boundary_note) ... ok
+test_chat_reports_missing_environment_instead_of_crashing (test_external_script.LocalToolTests.test_chat_reports_missing_environment_instead_of_crashing) ... ok
+test_chat_runs_the_local_tool_through_the_environment (test_external_script.LocalToolTests.test_chat_runs_the_local_tool_through_the_environment) ... ok
+test_missing_path_is_refused_in_chinese (test_external_script.LocalToolTests.test_missing_path_is_refused_in_chinese) ... ok
+test_tool_is_registered_with_a_schema (test_external_script.LocalToolTests.test_tool_is_registered_with_a_schema) ... ok
+test_whole_flow_exports_then_runs_batch (test_external_script.LocalToolTests.test_whole_flow_exports_then_runs_batch)
+�������� �� �������� �� �ѽű�������ضԻ����������Ǵ�׮�ģ��� ... ok
+test_non_numeric_default_for_a_number_field_is_reported (test_external_script.RunArgumentTests.test_non_numeric_default_for_a_number_field_is_reported) ... ok
+test_numbers_pass_through_and_strings_are_quoted (test_external_script.RunArgumentTests.test_numbers_pass_through_and_strings_are_quoted) ... ok
+test_quotes_in_a_default_are_escaped (test_external_script.RunArgumentTests.test_quotes_in_a_default_are_escaped) ... ok
+test_changed_files_only_reports_new_or_touched (test_external_script.WrapperTests.test_changed_files_only_reports_new_or_touched) ... ok
+test_read_script_checks_name_and_size (test_external_script.WrapperTests.test_read_script_checks_name_and_size) ... ok
+test_wrapper_reads_the_exports_and_calls_the_script (test_external_script.WrapperTests.test_wrapper_reads_the_exports_and_calls_the_script) ... ok
+test_wrapper_without_a_grid_does_not_select_one (test_external_script.WrapperTests.test_wrapper_without_a_grid_does_not_select_one) ... ok
+test_composite_aligner_merges_boundaries (test_forced_alignment.ForcedAlignmentTests.test_composite_aligner_merges_boundaries) ... ok
+test_ctc_alignment_finds_token_spans (test_forced_alignment.ForcedAlignmentTests.test_ctc_alignment_finds_token_spans) ... ok
+test_mfa_command_uses_configured_model (test_forced_alignment.ForcedAlignmentTests.test_mfa_command_uses_configured_model) ... ok
+test_textgrid_parser_reads_phone_tier (test_forced_alignment.ForcedAlignmentTests.test_textgrid_parser_reads_phone_tier) ... ok
+test_existing_window_is_focused_instead_of_silently_returning (test_frontend_fallback.ChatWindowReuseTests.test_existing_window_is_focused_instead_of_silently_returning) ... ok
+test_focus_is_a_no_operation_off_windows (test_frontend_fallback.ChatWindowReuseTests.test_focus_is_a_no_operation_off_windows) ... ok
+test_stale_pid_file_starts_a_new_window (test_frontend_fallback.ChatWindowReuseTests.test_stale_pid_file_starts_a_new_window) ... ok
+test_current_process_has_verifiable_identity (test_frontend_fallback.ProcessAliveTests.test_current_process_has_verifiable_identity) ... ok
+test_current_process_is_alive (test_frontend_fallback.ProcessAliveTests.test_current_process_is_alive) ... ok
+test_unknown_process_is_not_alive (test_frontend_fallback.ProcessAliveTests.test_unknown_process_is_not_alive) ... ok
+PRAAT_PROGRESS	0.1000	����ֹͣģ�ͷ���
+PRAAT_PROGRESS	1.0000	��ֹͣ��
+test_stop_frontend_does_not_kill_a_service_without_identity_record (test_frontend_fallback.StopFrontendOwnershipTests.test_stop_frontend_does_not_kill_a_service_without_identity_record) ... ok
+test_failed_kill_keeps_record_without_port_fallback (test_frontend_fallback.StopVerificationTests.test_failed_kill_keeps_record_without_port_fallback) ... ok
+test_legacy_pid_file_is_removed_without_terminating_its_current_owner (test_frontend_fallback.StopVerificationTests.test_legacy_pid_file_is_removed_without_terminating_its_current_owner) ... ok
+test_malformed_identity_record_fails_closed (test_frontend_fallback.StopVerificationTests.test_malformed_identity_record_fails_closed) ... ok
+test_pid_file_is_kept_when_the_process_survives (test_frontend_fallback.StopVerificationTests.test_pid_file_is_kept_when_the_process_survives) ... ok
+test_pid_file_is_removed_when_the_process_is_gone (test_frontend_fallback.StopVerificationTests.test_pid_file_is_removed_when_the_process_is_gone) ... ok
+test_pid_record_replace_failure_keeps_the_previous_record (test_frontend_fallback.StopVerificationTests.test_pid_record_replace_failure_keeps_the_previous_record) ... ok
+test_record_writer_saves_executable_and_creation_token (test_frontend_fallback.StopVerificationTests.test_record_writer_saves_executable_and_creation_token) ... ok
+test_reused_pid_with_another_executable_is_not_killed (test_frontend_fallback.StopVerificationTests.test_reused_pid_with_another_executable_is_not_killed) ... ok
+test_reused_pid_with_same_path_but_new_start_is_not_killed (test_frontend_fallback.StopVerificationTests.test_reused_pid_with_same_path_but_new_start_is_not_killed) ... ok
+test_verified_pid_can_stop_without_a_config_argument (test_frontend_fallback.StopVerificationTests.test_verified_pid_can_stop_without_a_config_argument) ... ok
+test_changes_are_read_fresh_without_rewriting_dictionary_configuration (test_frontend_menu_status.FrontendMenuStatusTests.test_changes_are_read_fresh_without_rewriting_dictionary_configuration) ... ok
+test_cloud_label_and_incomplete_cloud_configuration (test_frontend_menu_status.FrontendMenuStatusTests.test_cloud_label_and_incomplete_cloud_configuration) ... ok
+test_cloud_never_reports_local_gpu_warning_and_local_switch_restores_it (test_frontend_menu_status.FrontendMenuStatusTests.test_cloud_never_reports_local_gpu_warning_and_local_switch_restores_it) ... ok
+test_local_shows_saved_preset_label_without_a_running_service (test_frontend_menu_status.FrontendMenuStatusTests.test_local_shows_saved_preset_label_without_a_running_service) ... ok
+test_missing_local_files_and_no_configuration (test_frontend_menu_status.FrontendMenuStatusTests.test_missing_local_files_and_no_configuration) ... ok
+test_only_connected_identity_matched_desktop_counts_as_running (test_frontend_menu_status.FrontendMenuStatusTests.test_only_connected_identity_matched_desktop_counts_as_running) ... ok
+test_thresholds_use_unrounded_free_memory (test_frontend_menu_status.FrontendMenuStatusTests.test_thresholds_use_unrounded_free_memory) ... ok
+test_zero_memory_is_known_red_and_absent_gpu_is_unknown (test_frontend_menu_status.FrontendMenuStatusTests.test_zero_memory_is_known_red_and_absent_gpu_is_unknown) ... ok
+test_stale_pid_record_does_not_mark_an_unrelated_process_running (test_frontend_model.CollectStatusTests.test_stale_pid_record_does_not_mark_an_unrelated_process_running) ... ok
+test_status_falls_back_to_config_when_stopped (test_frontend_model.CollectStatusTests.test_status_falls_back_to_config_when_stopped) ... ok
+test_status_reports_model_loaded_by_service (test_frontend_model.CollectStatusTests.test_status_reports_model_loaded_by_service) ... ok
+test_status_reports_vision_from_service_capabilities (test_frontend_model.CollectStatusTests.test_status_reports_vision_from_service_capabilities) ... ok
+test_bad_server_executable_reports_an_error_without_leaking_the_log (test_frontend_model.EnsureStartedTests.test_bad_server_executable_reports_an_error_without_leaking_the_log)
+llama-server ·������ʱҪ�����Ĵ��󣬶��Ҳ��ܰ���־�ļ����������� ... ok
+test_ensure_started_refuses_to_keep_a_different_model (test_frontend_model.EnsureStartedTests.test_ensure_started_refuses_to_keep_a_different_model) ... ok
+test_port_check_skips_the_slow_http_probes_and_reports_progress (test_frontend_model.EnsureStartedTests.test_port_check_skips_the_slow_http_probes_and_reports_progress)
+�˿���û��������ʱ���������� 2 �볬ʱ�� HTTP ̽�⣬����һ��ʼ�ͱ����ȡ� ... ok
+test_start_command_enables_the_model_chat_template (test_frontend_model.EnsureStartedTests.test_start_command_enables_the_model_chat_template)
+``--jinja`` ���ܶ����Ի�ǰ��Ҫ��ģ�͵Ĺ��ߵ���ģ��ع� role=tool ����� ... ok
+test_start_command_includes_mmproj_only_for_vision (test_frontend_model.EnsureStartedTests.test_start_command_includes_mmproj_only_for_vision) ... ok
+test_default_mmproj_is_used_without_mapping_entry (test_frontend_model.MmprojSelectionTests.test_default_mmproj_is_used_without_mapping_entry) ... ok
+test_mapping_accepts_bare_file_name (test_frontend_model.MmprojSelectionTests.test_mapping_accepts_bare_file_name) ... ok
+test_missing_mmproj_still_raises (test_frontend_model.MmprojSelectionTests.test_missing_mmproj_still_raises) ... ok
+test_no_mmproj_needed_when_vision_disabled (test_frontend_model.MmprojSelectionTests.test_no_mmproj_needed_when_vision_disabled) ... ok
+test_per_model_mapping_wins_over_default (test_frontend_model.MmprojSelectionTests.test_per_model_mapping_wins_over_default) ... ok
+test_matching_accepts_path_and_bare_file_name (test_frontend_model.RunningModelTests.test_matching_accepts_path_and_bare_file_name) ... ok
+test_reports_model_from_endpoint (test_frontend_model.RunningModelTests.test_reports_model_from_endpoint) ... ok
+test_returns_empty_when_service_is_down (test_frontend_model.RunningModelTests.test_returns_empty_when_service_is_down) ... ok
+test_existing_mapping_entries_are_kept (test_frontend_model.SetMmprojMappingTests.test_existing_mapping_entries_are_kept) ... ok
+test_mmproj_is_recorded_for_the_model (test_frontend_model.SetMmprojMappingTests.test_mmproj_is_recorded_for_the_model) ... ok
+PRAAT_PROGRESS	0.0500	ֹͣ�ɵ�ģ�ͷ���
+PRAAT_PROGRESS	0.1500	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	0.0500	����Կ������в�����
+PRAAT_PROGRESS	0.0800	׼����������ģ�ͷ���
+PRAAT_PROGRESS	1.0000	ģ�ͷ����Ѿ�����
+test_set_model_restarts_service_when_loaded_model_differs (test_frontend_model.StartFrontendTests.test_set_model_restarts_service_when_loaded_model_differs) ... ok
+test_set_model_starts_the_service_when_nothing_is_listening (test_frontend_model.StartFrontendTests.test_set_model_starts_the_service_when_nothing_is_listening)
+PRAAT_PROGRESS	0.0500	����Կ������в�����
+PRAAT_PROGRESS	0.0800	׼����������ģ�ͷ���
+PRAAT_PROGRESS	1.0000	ģ�ͷ����Ѿ�����
+�˿ڿ���ʱѡģ�ͱ���ѷ�������������ǰʲô������ �� ��һ����Ϣ 10061���� ... ok
+test_start_keeps_service_when_loaded_model_matches (test_frontend_model.StartFrontendTests.test_start_keeps_service_when_loaded_model_matches) ... ok
+PRAAT_PROGRESS	0.0500	ֹͣ�ɵ�ģ�ͷ���
+PRAAT_PROGRESS	0.1500	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	0.0500	����Կ������в�����
+PRAAT_PROGRESS	0.0800	׼����������ģ�ͷ���
+PRAAT_PROGRESS	1.0000	ģ�ͷ����Ѿ�����
+test_start_restarts_service_when_loaded_model_differs (test_frontend_model.StartFrontendTests.test_start_restarts_service_when_loaded_model_differs) ... ok
+test_falls_back_to_text_mode_and_records_warning (test_frontend_model.VisionFallbackTests.test_falls_back_to_text_mode_and_records_warning) ... ok
+test_reports_error_when_text_mode_also_fails (test_frontend_model.VisionFallbackTests.test_reports_error_when_text_mode_also_fails) ... ok
+test_text_only_model_starts_on_first_attempt_when_no_mmproj (test_frontend_model.VisionFallbackTests.test_text_only_model_starts_on_first_attempt_when_no_mmproj) ... ok
+test_chinese_composition_matches_each_input_at_all_scales (test_ime.NativeImeTests.test_chinese_composition_matches_each_input_at_all_scales) ... ok
+test_frontend_renders_without_windows_bitmap_scaling (test_ime.NativeImeTests.test_frontend_renders_without_windows_bitmap_scaling) ... ok
+test_initial_window_fits_the_dpi_scaled_controls (test_ime.NativeImeTests.test_initial_window_fits_the_dpi_scaled_controls) ... ok
+test_japanese_composition_matches_each_input_at_all_scales (test_ime.NativeImeTests.test_japanese_composition_matches_each_input_at_all_scales) ... ok
+test_finished_composition_allows_normal_send_and_shift_newline (test_ime_keys.CompositionKeysTests.test_finished_composition_allows_normal_send_and_shift_newline) ... ok
+test_missing_context_or_non_windows_does_not_block_normal_typing (test_ime_keys.CompositionKeysTests.test_missing_context_or_non_windows_does_not_block_normal_typing) ... ok
+test_preedit_return_neither_sends_nor_inserts_a_newline (test_ime_keys.CompositionKeysTests.test_preedit_return_neither_sends_nor_inserts_a_newline) ... ok
+test_verify_chat_templates_covers_every_parameter (test_measures.LiveVerificationCoverageTests.test_verify_chat_templates_covers_every_parameter) ... ok
+test_an_existing_pitch_object_is_reused (test_measures.MeasureRenderingTests.test_an_existing_pitch_object_is_reused) ... ok
+test_catalog_text_mentions_the_measure_tool (test_measures.MeasureRenderingTests.test_catalog_text_mentions_the_measure_tool) ... ok
+test_dedicated_parameters_delegate_to_their_tool (test_measures.MeasureRenderingTests.test_dedicated_parameters_delegate_to_their_tool) ... ok
+test_editor_only_parameters_explain_themselves (test_measures.MeasureRenderingTests.test_editor_only_parameters_explain_themselves) ... ok
+test_every_parameter_renders (test_measures.MeasureRenderingTests.test_every_parameter_renders) ... ok
+test_jitter_uses_a_point_process_and_cleans_up (test_measures.MeasureRenderingTests.test_jitter_uses_a_point_process_and_cleans_up) ... ok
+test_mean_pitch_uses_the_same_guarded_frames_as_the_extremes (test_measures.MeasureRenderingTests.test_mean_pitch_uses_the_same_guarded_frames_as_the_extremes)
+``mean_pitch`` Ҳ�������� ``Get mean``��2026-10-04���� ... ok
+test_measure_needs_a_sound_or_a_known_derived_object (test_measures.MeasureRenderingTests.test_measure_needs_a_sound_or_a_known_derived_object) ... ok
+test_measure_tool_is_registered (test_measures.MeasureRenderingTests.test_measure_tool_is_registered) ... ok
+test_mixing_dedicated_and_table_parameters_is_refused (test_measures.MeasureRenderingTests.test_mixing_dedicated_and_table_parameters_is_refused) ... ok
+test_multi_statement_rows_assign_the_value_variable (test_measures.MeasureRenderingTests.test_multi_statement_rows_assign_the_value_variable) ... ok
+test_parameters_without_a_time_range_do_not_claim_one (test_measures.MeasureRenderingTests.test_parameters_without_a_time_range_do_not_claim_one) ... ok
+test_pitch_extremes_are_guarded_against_octave_errors (test_measures.MeasureRenderingTests.test_pitch_extremes_are_guarded_against_octave_errors)
+``maximum_pitch`` / ``minimum_pitch`` �������� Get maximum/minimum�� ... ok
+test_pitch_parameters_share_one_derivation (test_measures.MeasureRenderingTests.test_pitch_parameters_share_one_derivation) ... ok
+test_range_and_editor_selection_are_reported (test_measures.MeasureRenderingTests.test_range_and_editor_selection_are_reported) ... ok
+test_schema_offers_every_parameter (test_measures.MeasureRenderingTests.test_schema_offers_every_parameter) ... ok
+test_shimmer_selects_both_the_point_process_and_the_sound (test_measures.MeasureRenderingTests.test_shimmer_selects_both_the_point_process_and_the_sound) ... ok
+test_single_parameter_command_gets_the_value_prefix (test_measures.MeasureRenderingTests.test_single_parameter_command_gets_the_value_prefix) ... ok
+test_unknown_parameter_names_are_reported (test_measures.MeasureRenderingTests.test_unknown_parameter_names_are_reported) ... ok
+test_dedicated_rows_point_at_real_tools (test_measures.MeasureTableTests.test_dedicated_rows_point_at_real_tools) ... ok
+test_derivations_are_listed_in_dependency_order (test_measures.MeasureTableTests.test_derivations_are_listed_in_dependency_order) ... ok
+test_every_entry_has_a_chinese_label (test_measures.MeasureTableTests.test_every_entry_has_a_chinese_label) ... ok
+test_every_query_points_at_a_known_source (test_measures.MeasureTableTests.test_every_query_points_at_a_known_source) ... ok
+test_parameter_names_are_unique (test_measures.MeasureTableTests.test_parameter_names_are_unique) ... ok
+test_source_keys_split_on_plus (test_measures.MeasureTableTests.test_source_keys_split_on_plus) ... ok
+test_table_is_not_empty_and_sections_are_parsed (test_measures.MeasureTableTests.test_table_is_not_empty_and_sections_are_parsed) ... ok
+test_api_config_command_is_available (test_model_progress.ApiModeControlTests.test_api_config_command_is_available) ... ok
+test_local_base_url_ignores_the_cloud_override (test_model_progress.ApiModeControlTests.test_local_base_url_ignores_the_cloud_override)
+API ģʽ�� `qwen.base_url` ���ƶ˵�ַ�������˿�Ҫ���㡣 ... ok
+PRAAT_PROGRESS	0.1000	��ǰ�� API ģʽ������Ҫ����ģ�ͷ���
+PRAAT_PROGRESS	1.0000	�Ѿ�����deepseek-chat���ƶˣ�
+test_start_frontend_does_not_launch_llama_server_in_api_mode (test_model_progress.ApiModeControlTests.test_start_frontend_does_not_launch_llama_server_in_api_mode) ... ok
+test_start_frontend_in_api_mode_reports_progress (test_model_progress.ApiModeControlTests.test_start_frontend_in_api_mode_reports_progress)
+PRAAT_PROGRESS	0.1000	��ǰ�� API ģʽ������Ҫ����ģ�ͷ���
+PRAAT_PROGRESS	1.0000	�Ѿ�����deepseek-chat���ƶˣ�
+API ģʽҲҪ�� `PRAAT_PROGRESS`��Praat �Ľ���С�������ŵ��ó����� ... ok
+test_status_reports_the_api_model_without_the_key (test_model_progress.ApiModeControlTests.test_status_reports_the_api_model_without_the_key) ... ok
+test_stop_frontend_in_api_mode_does_not_touch_a_local_service (test_model_progress.ApiModeControlTests.test_stop_frontend_in_api_mode_does_not_touch_a_local_service)
+PRAAT_PROGRESS	0.1000	API ģʽ��������ͣ������ģ�ͷ���ʡ�Դ棩��
+PRAAT_PROGRESS	0.6000	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	1.0000	����ģ�ͷ�����ͣ��
+Ĭ�� `api.stop_local_service=True`���� API ֮��ֹͣǰ�ˡ�Ҫ����յ��������� ... ok
+PRAAT_PROGRESS	0.1000	API ģʽ��������ȡ���ˡ�˳��ͣ������ģ�ͷ��񡹣��������񱣳ֲ�����
+PRAAT_PROGRESS	1.0000	API ģʽ�������У�����ģ�ͷ������ñ�����
+test_stop_frontend_in_api_mode_keeps_the_service_when_the_option_is_off (test_model_progress.ApiModeControlTests.test_stop_frontend_in_api_mode_keeps_the_service_when_the_option_is_off) ... ok
+test_stop_frontend_in_api_mode_waits_for_the_local_port_only (test_model_progress.ApiModeControlTests.test_stop_frontend_in_api_mode_waits_for_the_local_port_only)
+PRAAT_PROGRESS	0.1000	API ģʽ��������ͣ������ģ�ͷ���ʡ�Դ棩��
+PRAAT_PROGRESS	0.6000	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	1.0000	����ģ�ͷ�����ͣ��
+ֹͣ/�ȴ��ͷſ����Ǳ����˿ڣ����ƶ˵�ַȥ�Ȼ�׵� 20 �뻹�����硣 ... ok
+test_an_unreadable_model_list_keeps_the_existing_behaviour (test_model_progress.EnsureLocalServiceTests.test_an_unreadable_model_list_keeps_the_existing_behaviour)
+`server_model_state()` �� None��������ģ���б���ʱ�������������� ... ok
+test_another_model_on_the_port_restarts_the_service (test_model_progress.EnsureLocalServiceTests.test_another_model_on_the_port_restarts_the_service) ... ok
+test_apply_preset_goes_through_ensure_local_service (test_model_progress.EnsureLocalServiceTests.test_apply_preset_goes_through_ensure_local_service) ... ok
+test_empty_port_launches_the_server (test_model_progress.EnsureLocalServiceTests.test_empty_port_launches_the_server) ... ok
+test_set_frontend_model_goes_through_ensure_local_service (test_model_progress.EnsureLocalServiceTests.test_set_frontend_model_goes_through_ensure_local_service) ... ok
+test_the_configured_model_is_left_alone (test_model_progress.EnsureLocalServiceTests.test_the_configured_model_is_left_alone) ... ok
+PRAAT_PROGRESS	0.0500	����Կ������в�����
+PRAAT_PROGRESS	0.0800	׼����������ģ�ͷ���
+PRAAT_PROGRESS	1.0000	ģ�ͷ����Ѿ�����
+test_launch_server_reports_progress (test_model_progress.ProgressReportingTests.test_launch_server_reports_progress) ... ok
+PRAAT_PROGRESS	0.0500	����Կ������в�����
+PRAAT_PROGRESS	0.0800	׼����������ģ�ͷ���
+test_pid_record_write_failure_stops_the_new_server (test_model_progress.ProgressReportingTests.test_pid_record_write_failure_stops_the_new_server) ... ok
+test_progress_line_and_callback (test_model_progress.ProgressReportingTests.test_progress_line_and_callback) ... ok
+test_progress_without_sink_does_not_crash (test_model_progress.ProgressReportingTests.test_progress_without_sink_does_not_crash) ... ok
+PRAAT_PROGRESS	0.1000	����ֹͣģ�ͷ���
+PRAAT_PROGRESS	0.6000	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	1.0000	��ֹͣ��
+test_stop_reports_progress (test_model_progress.ProgressReportingTests.test_stop_reports_progress) ... ok
+PRAAT_PROGRESS	0.0500	����Կ������в�����
+PRAAT_PROGRESS	0.0800	׼����������ģ�ͷ���
+test_unverifiable_pid_identity_stops_the_new_server (test_model_progress.ProgressReportingTests.test_unverifiable_pid_identity_stops_the_new_server) ... ok
+test_first_launch_targets_new_desktop_without_model_or_settings_calls (test_model_settings_navigation.ModelSettingsNavigationTests.test_first_launch_targets_new_desktop_without_model_or_settings_calls) ... ok
+test_navigation_delivered_once_and_does_not_touch_chat_events (test_model_settings_navigation.ModelSettingsNavigationTests.test_navigation_delivered_once_and_does_not_touch_chat_events) ... ok
+test_old_entries_redirect_and_preserve_config_environment (test_model_settings_navigation.ModelSettingsNavigationTests.test_old_entries_redirect_and_preserve_config_environment) ... ok
+test_open_or_initializing_desktop_is_reused_and_each_click_is_new (test_model_settings_navigation.ModelSettingsNavigationTests.test_open_or_initializing_desktop_is_reused_and_each_click_is_new) ... ok
+test_other_pid_and_bad_record_are_ignored (test_model_settings_navigation.ModelSettingsNavigationTests.test_other_pid_and_bad_record_are_ignored) ... ok
+test_attachment_path_preview_and_no_binary_message (test_modern_app.ModernTests.test_attachment_path_preview_and_no_binary_message) ... ok
+test_background_membership_cancel_and_same_session_gate (test_modern_app.ModernTests.test_background_membership_cancel_and_same_session_gate) ... ok
+test_cancel_during_evidence_save_wins_final_commit (test_modern_app.ModernTests.test_cancel_during_evidence_save_wins_final_commit) ... ok
+test_candidate_key_redacted_from_test_response (test_modern_app.ModernTests.test_candidate_key_redacted_from_test_response) ... ok
+test_config_snapshot_and_resume_full_context_without_replay (test_modern_app.ModernTests.test_config_snapshot_and_resume_full_context_without_replay) ... ok
+test_configuration_merge_preserves_credentials_unknown_and_local (test_modern_app.ModernTests.test_configuration_merge_preserves_credentials_unknown_and_local) ... ok
+test_configured_local_model_starts_on_demand_despite_legacy_auto_start (test_modern_app.ModernTests.test_configured_local_model_starts_on_demand_despite_legacy_auto_start) ... ok
+test_context_status_modes_unknown_gateway_and_provider_reserve (test_modern_app.ModernTests.test_context_status_modes_unknown_gateway_and_provider_reserve) ... ok
+test_context_status_readonly_matches_compaction_summary_evidence_and_draft (test_modern_app.ModernTests.test_context_status_readonly_matches_compaction_summary_evidence_and_draft) ... ok
+test_context_status_text_attachment_and_input_limits (test_modern_app.ModernTests.test_context_status_text_attachment_and_input_limits) ... ok
+test_derived_token_mode_is_not_persisted_by_a_full_section_save (test_modern_app.ModernTests.test_derived_token_mode_is_not_persisted_by_a_full_section_save)
+2026-10-04��``token_mode`` �Ǹ����濴������ֵ�����Ա��治�����̡� ... ok
+test_interrupted_task_never_resumed (test_modern_app.ModernTests.test_interrupted_task_never_resumed) ... ok
+test_layout_preferences_persist_clamped_without_dropping_other_preferences (test_modern_app.ModernTests.test_layout_preferences_persist_clamped_without_dropping_other_preferences) ... ok
+test_legacy_sqlite_readonly_no_copy_or_modify (test_modern_app.ModernTests.test_legacy_sqlite_readonly_no_copy_or_modify) ... ok
+test_live_snapshot_includes_unflushed_delta_without_cross_session_overlay (test_modern_app.ModernTests.test_live_snapshot_includes_unflushed_delta_without_cross_session_overlay) ... ok
+test_local_connection_test_waits_for_model_lease (test_modern_app.ModernTests.test_local_connection_test_waits_for_model_lease) ... ok
+test_local_lease_deferred_stop_does_not_unload_in_use_or_unowned (test_modern_app.ModernTests.test_local_lease_deferred_stop_does_not_unload_in_use_or_unowned) ... ok
+test_local_load_failure_prevents_connection_request (test_modern_app.ModernTests.test_local_load_failure_prevents_connection_request) ... ok
+test_modern_json_planner_preserves_earliest_history (test_modern_app.ModernTests.test_modern_json_planner_preserves_earliest_history) ... ok
+test_modern_report_preserves_full_evidence_and_resumed_dialogue (test_modern_app.ModernTests.test_modern_report_preserves_full_evidence_and_resumed_dialogue) ... ok
+test_modern_unset_sampling_is_not_replaced_with_local_defaults (test_modern_app.ModernTests.test_modern_unset_sampling_is_not_replaced_with_local_defaults) ... ok
+test_new_token_modes_request_fields_and_sdk_same_policy (test_modern_app.ModernTests.test_new_token_modes_request_fields_and_sdk_same_policy) ... ok
+test_quick_partial_settings_preserve_credentials_and_running_task_strength (test_modern_app.ModernTests.test_quick_partial_settings_preserve_credentials_and_running_task_strength) ... ok
+test_qwen_provider_mode_omits_cap_and_keeps_retry_field (test_modern_app.ModernTests.test_qwen_provider_mode_omits_cap_and_keeps_retry_field) ... ok
+test_reading_anchor_column_is_added_to_an_existing_database (test_modern_app.ModernTests.test_reading_anchor_column_is_added_to_an_existing_database) ... ok
+test_reading_anchor_persists_without_disturbing_the_pixel_fallback (test_modern_app.ModernTests.test_reading_anchor_persists_without_disturbing_the_pixel_fallback) ... ok
+test_real_compaction_one_pass_all_modes_preserves_original_and_evidence (test_modern_app.ModernTests.test_real_compaction_one_pass_all_modes_preserves_original_and_evidence) ... ok
+test_rpc_allowlist_and_origin_and_cloud_authorization (test_modern_app.ModernTests.test_rpc_allowlist_and_origin_and_cloud_authorization) ... ok
+test_sensitive_content_and_binary_excluded_from_history (test_modern_app.ModernTests.test_sensitive_content_and_binary_excluded_from_history) ... ok
+test_session_pin_additive_persistence_order_and_preserved_data (test_modern_app.ModernTests.test_session_pin_additive_persistence_order_and_preserved_data) ... ok
+test_session_pin_allowed_during_task_without_capture_config_or_replay (test_modern_app.ModernTests.test_session_pin_allowed_during_task_without_capture_config_or_replay) ... ok
+test_session_pin_rejects_non_boolean_and_missing_sessions_without_side_effects (test_modern_app.ModernTests.test_session_pin_rejects_non_boolean_and_missing_sessions_without_side_effects) ... ok
+test_text_attachment_budget_included_before_execution (test_modern_app.ModernTests.test_text_attachment_budget_included_before_execution) ... ok
+test_unmanaged_endpoint_does_not_launch_configured_local_files (test_modern_app.ModernTests.test_unmanaged_endpoint_does_not_launch_configured_local_files) ... ok
+test_additive_metadata_upgrade_keeps_original_membership_and_archive_state (test_modern_archive_delete.ArchiveDeleteTests.test_additive_metadata_upgrade_keeps_original_membership_and_archive_state) ... ok
+test_modern_delete_cascades_history_but_retains_section_and_active_chats (test_modern_archive_delete.ArchiveDeleteTests.test_modern_delete_cascades_history_but_retains_section_and_active_chats) ... ok
+test_only_archived_legacy_can_be_removed_and_never_returns_after_reload (test_modern_archive_delete.ArchiveDeleteTests.test_only_archived_legacy_can_be_removed_and_never_returns_after_reload) ... ok
+test_connection_test_uses_current_enabled_settings_only_after_click (test_modern_cloud_activation.DesktopCloudActivationTests.test_connection_test_uses_current_enabled_settings_only_after_click) ... ok
+test_desktop_policy_does_not_authorize_remote_local_model (test_modern_cloud_activation.DesktopCloudActivationTests.test_desktop_policy_does_not_authorize_remote_local_model) ... ok
+test_enable_and_disable_api_take_effect_without_restart (test_modern_cloud_activation.DesktopCloudActivationTests.test_enable_and_disable_api_take_effect_without_restart) ... ok
+test_isolated_default_stays_restricted_and_explicit_flag_still_works (test_modern_cloud_activation.DesktopCloudActivationTests.test_isolated_default_stays_restricted_and_explicit_flag_still_works) ... ok
+test_malformed_or_credential_endpoints_remain_rejected (test_modern_cloud_activation.DesktopCloudActivationTests.test_malformed_or_credential_endpoints_remain_rejected) ... ok
+test_normal_menu_entry_accepts_configured_api_without_cli_flag (test_modern_cloud_activation.DesktopCloudActivationTests.test_normal_menu_entry_accepts_configured_api_without_cli_flag) ... ok
+test_saved_api_is_prepared_on_desktop_without_network_or_key_exposure (test_modern_cloud_activation.DesktopCloudActivationTests.test_saved_api_is_prepared_on_desktop_without_network_or_key_exposure) ... ok
+test_actual_graph_finite_correction_separate_report_and_evidence (test_modern_execution.ModernExecutionTests.test_actual_graph_finite_correction_separate_report_and_evidence) ... ok
+test_actual_graph_uploads_attached_wav_without_praat (test_modern_execution.ModernExecutionTests.test_actual_graph_uploads_attached_wav_without_praat) ... ok
+test_attachment_text_wav_are_real_bounded_task_owned_and_cleaned (test_modern_execution.ModernExecutionTests.test_attachment_text_wav_are_real_bounded_task_owned_and_cleaned) ... ok
+test_audio_correction_uses_supplied_path_and_identity_comparison (test_modern_execution.ModernExecutionTests.test_audio_correction_uses_supplied_path_and_identity_comparison) ... ok
+test_cancel_before_dispatch_and_during_unknown_preserves_facts (test_modern_execution.ModernExecutionTests.test_cancel_before_dispatch_and_during_unknown_preserves_facts) ... ok
+test_cancel_keeps_actual_streamed_content (test_modern_execution.ModernExecutionTests.test_cancel_keeps_actual_streamed_content) ... ok
+test_close_cancels_only_owned_active_tasks_and_forbids_new_runs (test_modern_execution.ModernExecutionTests.test_close_cancels_only_owned_active_tasks_and_forbids_new_runs) ... ok
+test_confirmed_rename_adopts_only_original_object_name (test_modern_execution.ModernExecutionTests.test_confirmed_rename_adopts_only_original_object_name) ... ok
+test_dialogue_stream_full_history_is_task_local_and_no_praat_lock (test_modern_execution.ModernExecutionTests.test_dialogue_stream_full_history_is_task_local_and_no_praat_lock) ... ok
+test_direct_measurement_no_model_and_real_events (test_modern_execution.ModernExecutionTests.test_direct_measurement_no_model_and_real_events) ... ok
+test_entire_local_tool_segment_is_atomic_including_result_read (test_modern_execution.ModernExecutionTests.test_entire_local_tool_segment_is_atomic_including_result_read) ... ok
+test_graph_policy_refusals_emit_real_tool_activity (test_modern_execution.ModernExecutionTests.test_graph_policy_refusals_emit_real_tool_activity) ... ok
+test_local_reuses_turn_constraints_with_task_private_atomic_hook (test_modern_execution.ModernExecutionTests.test_local_reuses_turn_constraints_with_task_private_atomic_hook) ... ok
+test_no_stale_snapshot_when_praat_unavailable (test_modern_execution.ModernExecutionTests.test_no_stale_snapshot_when_praat_unavailable) ... ok
+test_not_delivered_allows_distinct_followup (test_modern_execution.ModernExecutionTests.test_not_delivered_allows_distinct_followup) ... ok
+test_original_selection_and_range_never_follow_current (test_modern_execution.ModernExecutionTests.test_original_selection_and_range_never_follow_current) ... ok
+test_refresh_failure_never_returns_old_target (test_modern_execution.ModernExecutionTests.test_refresh_failure_never_returns_old_target) ... ok
+test_reused_pid_does_not_replace_session (test_modern_execution.ModernExecutionTests.test_reused_pid_does_not_replace_session) ... ok
+test_submission_real_refresh_and_explicit_range (test_modern_execution.ModernExecutionTests.test_submission_real_refresh_and_explicit_range) ... ok
+test_unknown_inside_segment_preserves_each_delivery_fact (test_modern_execution.ModernExecutionTests.test_unknown_inside_segment_preserves_each_delivery_fact) ... ok
+test_unknown_operation_blocks_later_tasks_even_after_close (test_modern_execution.ModernExecutionTests.test_unknown_operation_blocks_later_tasks_even_after_close) ... ok
+test_unknown_refresh_poisons_all_executors (test_modern_execution.ModernExecutionTests.test_unknown_refresh_poisons_all_executors) ... ok
+test_unselected_original_identity_is_checked (test_modern_execution.ModernExecutionTests.test_unselected_original_identity_is_checked) ... ok
+test_legacy_direct_entry_uses_same_gate (test_modern_host.ModernHostTests.test_legacy_direct_entry_uses_same_gate) ... ok
+test_modern_model_request_never_follows_redirect (test_modern_host.ModernHostTests.test_modern_model_request_never_follows_redirect) ... FAIL
+test_offline_assets_origin_headers_and_no_directory_listing (test_modern_host.ModernHostTests.test_offline_assets_origin_headers_and_no_directory_listing) ... ok
+test_parent_watch_closes_on_replaced_process_identity (test_modern_host.ModernHostTests.test_parent_watch_closes_on_replaced_process_identity) ... ok
+test_parent_watch_stops_when_window_is_closed (test_modern_host.ModernHostTests.test_parent_watch_stops_when_window_is_closed) ... ok
+test_parent_watch_without_explicit_parent_does_not_guess (test_modern_host.ModernHostTests.test_parent_watch_without_explicit_parent_does_not_guess) ... ok
+test_shared_gate_excludes_another_process_and_releases (test_modern_host.ModernHostTests.test_shared_gate_excludes_another_process_and_releases) ... ok
+test_archive_section_is_atomic_for_running_members_and_restorable (test_modern_organization.HistoryOrganizationTests.test_archive_section_is_atomic_for_running_members_and_restorable) ... ok
+test_fork_copies_independent_ids_context_and_evidence_without_execution (test_modern_organization.HistoryOrganizationTests.test_fork_copies_independent_ids_context_and_evidence_without_execution) ... ok
+test_fork_live_snapshot_does_not_attach_parent_task (test_modern_organization.HistoryOrganizationTests.test_fork_live_snapshot_does_not_attach_parent_task) ... ok
+test_fork_retains_compressed_context_cutoff_with_new_message_sequence (test_modern_organization.HistoryOrganizationTests.test_fork_retains_compressed_context_cutoff_with_new_message_sequence) ... ok
+test_invalid_fields_rejected_before_mutation (test_modern_organization.HistoryOrganizationTests.test_invalid_fields_rejected_before_mutation) ... ok
+test_legacy_organization_and_fork_leave_old_database_unchanged (test_modern_organization.HistoryOrganizationTests.test_legacy_organization_and_fork_leave_old_database_unchanged) ... ok
+test_missing_destination_cannot_silently_detach_and_default_archive_is_scoped (test_modern_organization.HistoryOrganizationTests.test_missing_destination_cannot_silently_detach_and_default_archive_is_scoped) ... ok
+test_section_order_pin_exclusion_and_invalid_move_rollback (test_modern_organization.HistoryOrganizationTests.test_section_order_pin_exclusion_and_invalid_move_rollback) ... ok
+test_sections_stable_identity_delete_only_membership_and_reopen (test_modern_organization.HistoryOrganizationTests.test_sections_stable_identity_delete_only_membership_and_reopen) ... ok
+test_batch_search_reads_only_conversation_text_and_returns_ids (test_modern_search.SearchTests.test_batch_search_reads_only_conversation_text_and_returns_ids) ... ok
+test_literal_unicode_and_validation (test_modern_search.SearchTests.test_literal_unicode_and_validation) ... ok
+test_rpc_includes_unflushed_live_text_without_executor_or_settings (test_modern_search.SearchTests.test_rpc_includes_unflushed_live_text_without_executor_or_settings) ... ok
+test_updates_deletes_archives_and_legacy_visibility_are_current (test_modern_search.SearchTests.test_updates_deletes_archives_and_legacy_visibility_are_current) ... ok
+test_grouping_survives_reopen_and_preserves_sort_and_keys (test_modern_sidebar_settings.SidebarSettingsTests.test_grouping_survives_reopen_and_preserves_sort_and_keys) ... ok
+test_invalid_sorts_are_rejected_before_any_configuration_write (test_modern_sidebar_settings.SidebarSettingsTests.test_invalid_sorts_are_rejected_before_any_configuration_write) ... ok
+test_sort_survives_service_reopen_and_preserves_other_preferences_and_keys (test_modern_sidebar_settings.SidebarSettingsTests.test_sort_survives_service_reopen_and_preserves_other_preferences_and_keys) ... ok
+test_bad_or_missing_pid_is_ignored (test_parent_watch.ParentPidTests.test_bad_or_missing_pid_is_ignored) ... ok
+test_executable_comes_from_the_environment (test_parent_watch.ParentPidTests.test_executable_comes_from_the_environment) ... ok
+test_pid_is_read_from_the_environment (test_parent_watch.ParentPidTests.test_pid_is_read_from_the_environment) ... ok
+test_grace_period_delays_the_first_check (test_parent_watch.ParentWatcherTests.test_grace_period_delays_the_first_check) ... ok
+test_on_close_callback_takes_over_the_shutdown (test_parent_watch.ParentWatcherTests.test_on_close_callback_takes_over_the_shutdown)
+�Ի�����Ҫ��˵һ���ٹأ����Ը��� on_close �Ͳ��� watcher �� destroy�� ... ok
+test_unknown_state_never_closes_the_window (test_parent_watch.ParentWatcherTests.test_unknown_state_never_closes_the_window) ... ok
+test_window_is_closed_when_praat_is_gone (test_parent_watch.ParentWatcherTests.test_window_is_closed_when_praat_is_gone) ... ok
+test_window_survives_while_praat_is_running (test_parent_watch.ParentWatcherTests.test_window_survives_while_praat_is_running) ... ok
+test_the_launcher_pid_is_authoritative (test_parent_watch.PraatAliveTests.test_the_launcher_pid_is_authoritative) ... ok
+test_watching_is_skipped_when_no_praat_is_running (test_parent_watch.PraatAliveTests.test_watching_is_skipped_when_no_praat_is_running)
+�ֹ���Ի�����������ʱû�� Praat�����Լ����Լ��ص��� ... ok
+test_without_a_pid_the_process_table_is_used (test_parent_watch.PraatAliveTests.test_without_a_pid_the_process_table_is_used) ... ok
+test_model_reply_is_used_when_present (test_planner_tools.NativePlanningTests.test_model_reply_is_used_when_present) ... ok
+test_nothing_returned_falls_back_to_the_json_planner (test_planner_tools.NativePlanningTests.test_nothing_returned_falls_back_to_the_json_planner) ... ok
+test_plain_answer_without_tools_is_not_an_action (test_planner_tools.NativePlanningTests.test_plain_answer_without_tools_is_not_an_action) ... ok
+test_tools_mode_reports_an_empty_response (test_planner_tools.NativePlanningTests.test_tools_mode_reports_an_empty_response) ... ok
+test_two_calls_become_two_actions (test_planner_tools.NativePlanningTests.test_two_calls_become_two_actions) ... ok
+test_actions_are_capped (test_planner_tools.PlanActionTests.test_actions_are_capped) ... ok
+test_actions_from_native_tool_calls_keep_their_order (test_planner_tools.PlanActionTests.test_actions_from_native_tool_calls_keep_their_order) ... ok
+test_empty_plan_has_no_actions (test_planner_tools.PlanActionTests.test_empty_plan_has_no_actions) ... ok
+test_script_only_plan_becomes_a_custom_script_action (test_planner_tools.PlanActionTests.test_script_only_plan_becomes_a_custom_script_action) ... ok
+test_single_tool_plan_is_normalised (test_planner_tools.PlanActionTests.test_single_tool_plan_is_normalised) ... ok
+test_custom_script_action_uses_the_script_argument (test_planner_tools.RenderActionTests.test_custom_script_action_uses_the_script_argument) ... ok
+test_model_script_rescues_a_bad_argument (test_planner_tools.RenderActionTests.test_model_script_rescues_a_bad_argument) ... ok
+test_tool_action_renders_a_script (test_planner_tools.RenderActionTests.test_tool_action_renders_a_script) ... ok
+test_unknown_tool_is_an_error (test_planner_tools.RenderActionTests.test_unknown_tool_is_an_error) ... ok
+test_arguments_arrive_as_a_json_string (test_planner_tools.ToolCallParsingTests.test_arguments_arrive_as_a_json_string) ... ok
+test_broken_arguments_do_not_crash (test_planner_tools.ToolCallParsingTests.test_broken_arguments_do_not_crash) ... ok
+test_message_without_calls_has_no_actions (test_planner_tools.ToolCallParsingTests.test_message_without_calls_has_no_actions) ... ok
+test_multiple_calls_are_all_kept (test_planner_tools.ToolCallParsingTests.test_multiple_calls_are_all_kept) ... ok
+test_planner_mode_env (test_planner_tools.ToolCallParsingTests.test_planner_mode_env) ... ok
+test_every_tool_has_a_schema (test_planner_tools.ToolSchemaTests.test_every_tool_has_a_schema) ... ok
+test_schema_parameters_match_the_documented_signature (test_planner_tools.ToolSchemaTests.test_schema_parameters_match_the_documented_signature)
+schema ��Ĳ�������������ڹ��ߵ� signature ���ֹ������ƫ�� ... ok
+test_schema_shape_is_valid (test_planner_tools.ToolSchemaTests.test_schema_shape_is_valid) ... ok
+test_schemas_are_openai_shaped (test_planner_tools.ToolSchemaTests.test_schemas_are_openai_shaped) ... ok
+test_tool_labels_cover_every_tool (test_planner_tools.ToolSchemaTests.test_tool_labels_cover_every_tool) ... ok
+test_install_writes_the_expected_folder (test_plugin_build.ChatLauncherTests.test_install_writes_the_expected_folder) ... ok
+test_missing_generated_script_is_reported (test_plugin_build.ChatLauncherTests.test_missing_generated_script_is_reported) ... ok
+test_praat_literal_is_reversible (test_plugin_build.ChatLauncherTests.test_praat_literal_is_reversible) ... ok
+test_checked_in_script_matches_the_table (test_plugin_build.GeneratedScriptTests.test_checked_in_script_matches_the_table) ... ok
+test_every_parameter_has_a_block (test_plugin_build.GeneratedScriptTests.test_every_parameter_has_a_block) ... ok
+test_pitch_extremes_are_guarded_against_octave_errors (test_plugin_build.GeneratedScriptTests.test_pitch_extremes_are_guarded_against_octave_errors)
+���������/��ͻ�ƵҲҪ����Ƶ���У��ͻỰģ��ͬһ���������� ... ok
+test_script_has_no_single_quote_interpolation (test_plugin_build.GeneratedScriptTests.test_script_has_no_single_quote_interpolation) ... ok
+test_script_never_opens_the_info_window (test_plugin_build.GeneratedScriptTests.test_script_never_opens_the_info_window)
+���Ҳ������ Praat Info ��д������� Table��guide ��8.5 ��Լ������ ... ok
+test_script_uses_the_plugin_range_variables (test_plugin_build.GeneratedScriptTests.test_script_uses_the_plugin_range_variables) ... ok
+test_editor_wrapper_passes_as_many_arguments_as_the_form_has_fields (test_plugin_build.MenuRegistrationTests.test_editor_wrapper_passes_as_many_arguments_as_the_form_has_fields) ... ok
+test_menu_commands_point_at_existing_scripts (test_plugin_build.MenuRegistrationTests.test_menu_commands_point_at_existing_scripts) ... ok
+test_chat_uses_the_locator (test_praat_app.ChatDelegationTests.test_chat_uses_the_locator) ... ok
+test_describe_search_lists_where_it_looked (test_praat_app.LocatorTests.test_describe_search_lists_where_it_looked) ... ok
+test_env_override_wins (test_praat_app.LocatorTests.test_env_override_wins) ... ok
+test_explicit_path_that_does_not_exist_is_empty (test_praat_app.LocatorTests.test_explicit_path_that_does_not_exist_is_empty)
+�û�ָ��·�����ļ����ڣ����ؿմ�����͵͵�ñ�� Praat�� ... ok
+test_explicit_path_wins (test_praat_app.LocatorTests.test_explicit_path_wins) ... ok
+test_first_existing_candidate_is_used (test_praat_app.LocatorTests.test_first_existing_candidate_is_used) ... ok
+test_found_result_is_cached (test_praat_app.LocatorTests.test_found_result_is_cached) ... ok
+test_not_found_is_cached_until_the_retry_interval (test_praat_app.LocatorTests.test_not_found_is_cached_until_the_retry_interval)
+û�ҵ�Ҳ���棺30 ���ڲ��ظ����̣�reset ֮�������������һ�Ρ� ... ok
+test_not_found_is_retried_after_the_interval (test_praat_app.LocatorTests.test_not_found_is_retried_after_the_interval) ... ok
+test_path_search_is_the_last_resort (test_praat_app.LocatorTests.test_path_search_is_the_last_resort) ... ok
+test_repo_build_is_tried_first (test_praat_app.LocatorTests.test_repo_build_is_tried_first)
+��� fork �Լ������� Praat.exe ������ǰ�档 ... ok
+test_apply_preset_keeps_service_when_model_already_loaded (test_presets.PresetApplyTests.test_apply_preset_keeps_service_when_model_already_loaded) ... ok
+test_apply_preset_rejects_unknown_and_missing (test_presets.PresetApplyTests.test_apply_preset_rejects_unknown_and_missing) ... ok
+test_apply_preset_restarts_when_another_model_is_served (test_presets.PresetApplyTests.test_apply_preset_restarts_when_another_model_is_served) ... ok
+test_apply_preset_updates_config_when_service_is_stopped (test_presets.PresetApplyTests.test_apply_preset_updates_config_when_service_is_stopped) ... ok
+test_apply_preset_without_presets_is_rejected (test_presets.PresetApplyTests.test_apply_preset_without_presets_is_rejected) ... ok
+test_locked_or_stopped_cloud_rejects_local_preset (test_presets.PresetApplyTests.test_locked_or_stopped_cloud_rejects_local_preset) ... ok
+test_set_model_keeps_preset_flag_in_sync (test_presets.PresetApplyTests.test_set_model_keeps_preset_flag_in_sync) ... ok
+test_status_lists_presets_for_the_frontend (test_presets.PresetApplyTests.test_status_lists_presets_for_the_frontend) ... ok
+PRAAT_PROGRESS	0.0200	�лر���ģ�ͣ��ر� API ģʽ����
+test_top_selection_can_switch_local_cloud_local_cloud (test_presets.PresetApplyTests.test_top_selection_can_switch_local_cloud_local_cloud) ... ok
+test_config_without_presets_still_loads (test_presets.PresetParsingTests.test_config_without_presets_still_loads) ... ok
+test_find_preset_accepts_id_label_and_file_name (test_presets.PresetParsingTests.test_find_preset_accepts_id_label_and_file_name) ... ok
+test_preset_config_values_merge_mmproj_mapping (test_presets.PresetParsingTests.test_preset_config_values_merge_mmproj_mapping) ... ok
+test_preset_config_values_reject_missing_files (test_presets.PresetParsingTests.test_preset_config_values_reject_missing_files) ... ok
+test_preset_overrides_runtime_profile (test_presets.PresetParsingTests.test_preset_overrides_runtime_profile) ... ok
+test_preset_view_reports_availability_and_vision (test_presets.PresetParsingTests.test_preset_view_reports_availability_and_vision) ... ok
+test_presets_are_parsed_with_defaults (test_presets.PresetParsingTests.test_presets_are_parsed_with_defaults) ... ok
+test_presets_can_be_written_as_a_mapping (test_presets.PresetParsingTests.test_presets_can_be_written_as_a_mapping) ... ok
+test_pidfd_open_failure_falls_back_to_identity_checked_kill (test_process_termination.ProcessTerminationTests.test_pidfd_open_failure_falls_back_to_identity_checked_kill) ... ok
+test_pidfd_path_checks_identity_before_signalling (test_process_termination.ProcessTerminationTests.test_pidfd_path_checks_identity_before_signalling) ... ok
+test_pidfd_path_signals_a_verified_process_once (test_process_termination.ProcessTerminationTests.test_pidfd_path_signals_a_verified_process_once) ... ok
+test_posix_fallback_does_not_signal_a_reused_pid (test_process_termination.ProcessTerminationTests.test_posix_fallback_does_not_signal_a_reused_pid) ... ok
+test_posix_fallback_signals_a_verified_process_once (test_process_termination.ProcessTerminationTests.test_posix_fallback_signals_a_verified_process_once) ... ok
+test_windows_does_not_terminate_a_reused_pid (test_process_termination.ProcessTerminationTests.test_windows_does_not_terminate_a_reused_pid) ... ok
+test_windows_terminates_a_verified_process (test_process_termination.ProcessTerminationTests.test_windows_terminates_a_verified_process) ... ok
+test_shifted_phone_has_error (test_pronunciation.PronunciationTests.test_shifted_phone_has_error) ... ok
+test_similar_phone_has_no_error (test_pronunciation.PronunciationTests.test_similar_phone_has_no_error) ... ok
+test_a_remote_endpoint_gets_no_local_service_hint (test_qwen.ConnectionHintTests.test_a_remote_endpoint_gets_no_local_service_hint) ... ok
+test_other_transport_errors_are_not_mistaken_for_a_stopped_service (test_qwen.ConnectionHintTests.test_other_transport_errors_are_not_mistaken_for_a_stopped_service) ... ok
+test_refused_local_connection_points_at_the_menu (test_qwen.ConnectionHintTests.test_refused_local_connection_points_at_the_menu) ... ok
+test_url_error_wrapping_a_refusal_is_recognized (test_qwen.ConnectionHintTests.test_url_error_wrapping_a_refusal_is_recognized) ... ok
+test_json_object_is_extracted_from_explanation (test_qwen.QwenTests.test_json_object_is_extracted_from_explanation) ... ok
+test_json_object_is_extracted_from_markdown (test_qwen.QwenTests.test_json_object_is_extracted_from_markdown) ... ok
+test_both_tools_agree_on_the_alias_set (test_range_aliases.RangeAliasTests.test_both_tools_agree_on_the_alias_set)
+ͬһ�� ``from``/``to`` �ڽ�ȡ�ͱ�ע������䵽ͬһ�����䡣 ... ok
+test_extract_part_prefers_start_over_from (test_range_aliases.RangeAliasTests.test_extract_part_prefers_start_over_from) ... ok
+test_extract_part_uses_finish_alias_for_end (test_range_aliases.RangeAliasTests.test_extract_part_uses_finish_alias_for_end) ... ok
+test_extract_part_uses_nonzero_from_to_aliases (test_range_aliases.RangeAliasTests.test_extract_part_uses_nonzero_from_to_aliases) ... ok
+test_non_numeric_alias_value_is_rejected (test_range_aliases.RangeAliasTests.test_non_numeric_alias_value_is_rejected) ... ok
+test_range_beyond_object_duration_is_not_silently_swapped (test_range_aliases.RangeAliasTests.test_range_beyond_object_duration_is_not_silently_swapped)
+����Խ��� from/to ֮�����˻����Σ������ýű��Լ�ʧ�ܡ� ... ok
+test_statistics_still_accept_start_end_aliases (test_range_aliases.RangeAliasTests.test_statistics_still_accept_start_end_aliases) ... ok
+test_statistics_use_nonzero_from_to_aliases (test_range_aliases.RangeAliasTests.test_statistics_use_nonzero_from_to_aliases) ... ok
+test_textgrid_set_interval_accepts_from_to_aliases (test_range_aliases.RangeAliasTests.test_textgrid_set_interval_accepts_from_to_aliases) ... ok
+test_textgrid_set_interval_still_accepts_start_end (test_range_aliases.RangeAliasTests.test_textgrid_set_interval_still_accepts_start_end) ... ok
+test_textgrid_set_interval_uses_finish_alias_for_end (test_range_aliases.RangeAliasTests.test_textgrid_set_interval_uses_finish_alias_for_end) ... ok
+test_generated_textgrid_can_be_read_by_praat (test_report.ReportTests.test_generated_textgrid_can_be_read_by_praat) ... ok
+test_textgrid_and_overlay (test_report.ReportTests.test_textgrid_and_overlay) ... ok
+test_context_indexes_have_roles_without_duplicate_values (test_report_guards.ReportGuardsTests.test_context_indexes_have_roles_without_duplicate_values) ... ok
+test_coverage_explanations_are_checked_too (test_report_guards.ReportGuardsTests.test_coverage_explanations_are_checked_too) ... ok
+test_defined_ordered_segments_support_trajectory (test_report_guards.ReportGuardsTests.test_defined_ordered_segments_support_trajectory) ... ok
+test_defined_slope_supports_variability_but_absolute_slope_not_direction (test_report_guards.ReportGuardsTests.test_defined_slope_supports_variability_but_absolute_slope_not_direction) ... ok
+test_defined_start_end_pair_same_target_and_range (test_report_guards.ReportGuardsTests.test_defined_start_end_pair_same_target_and_range) ... ok
+test_derivation_cannot_launder_f1_into_mean_pitch (test_report_guards.ReportGuardsTests.test_derivation_cannot_launder_f1_into_mean_pitch) ... ok
+test_derivation_cannot_launder_other_recording_as_original_target (test_report_guards.ReportGuardsTests.test_derivation_cannot_launder_other_recording_as_original_target) ... ok
+test_derivation_checks_reference_units_arithmetic_and_no_code (test_report_guards.ReportGuardsTests.test_derivation_checks_reference_units_arithmetic_and_no_code) ... ok
+test_deterministic_transparent_percentage_derivation (test_report_guards.ReportGuardsTests.test_deterministic_transparent_percentage_derivation) ... ok
+test_fabricated_number_without_or_with_unrelated_citation (test_report_guards.ReportGuardsTests.test_fabricated_number_without_or_with_unrelated_citation) ... ok
+test_general_knowledge_and_ordinary_dialogue_need_no_tool (test_report_guards.ReportGuardsTests.test_general_knowledge_and_ordinary_dialogue_need_no_tool) ... ok
+test_honest_missing_measurement_is_not_a_prosody_claim (test_report_guards.ReportGuardsTests.test_honest_missing_measurement_is_not_a_prosody_claim) ... ok
+test_matching_number_from_f1_is_not_mean_pitch (test_report_guards.ReportGuardsTests.test_matching_number_from_f1_is_not_mean_pitch) ... ok
+test_mean_alone_cannot_support_prosody (test_report_guards.ReportGuardsTests.test_mean_alone_cannot_support_prosody) ... ok
+test_next_step_parameters_are_not_fabricated_measurements (test_report_guards.ReportGuardsTests.test_next_step_parameters_are_not_fabricated_measurements) ... ok
+test_non_pitch_directions_and_noise_recommendations_are_not_prosody (test_report_guards.ReportGuardsTests.test_non_pitch_directions_and_noise_recommendations_are_not_prosody) ... ok
+test_numeric_object_and_range_must_match (test_report_guards.ReportGuardsTests.test_numeric_object_and_range_must_match) ... ok
+test_percentage_and_milliseconds_from_real_measurement (test_report_guards.ReportGuardsTests.test_percentage_and_milliseconds_from_real_measurement) ... ok
+test_real_measurement_with_range_and_unit_conversion (test_report_guards.ReportGuardsTests.test_real_measurement_with_range_and_unit_conversion) ... ok
+test_report_cannot_invent_object_identifier (test_report_guards.ReportGuardsTests.test_report_cannot_invent_object_identifier) ... ok
+test_undefined_irrelevant_and_nonmeasurement_do_not_support_prosody (test_report_guards.ReportGuardsTests.test_undefined_irrelevant_and_nonmeasurement_do_not_support_prosody) ... ok
+test_whole_mean_cannot_relabel_segment_mean (test_report_guards.ReportGuardsTests.test_whole_mean_cannot_relabel_segment_mean) ... ok
+test_whole_recording_conclusion_cannot_use_two_tiny_unrelated_segments (test_report_guards.ReportGuardsTests.test_whole_recording_conclusion_cannot_use_two_tiny_unrelated_segments) ... ok
+test_wrong_units_are_not_the_same_quantity (test_report_guards.ReportGuardsTests.test_wrong_units_are_not_the_same_quantity) ... ok
+test_chat_delivers_through_sendpraat (test_sendpraat.ChatIntegrationTests.test_chat_delivers_through_sendpraat) ... ok
+test_cancel_pending_replaces_the_message (test_sendpraat.DeliverTests.test_cancel_pending_replaces_the_message) ... ok
+test_cancel_pending_without_message_does_nothing (test_sendpraat.DeliverTests.test_cancel_pending_without_message_does_nothing) ... ok
+test_deliver_reports_a_closed_window (test_sendpraat.DeliverTests.test_deliver_reports_a_closed_window) ... ok
+test_deliver_without_praat_is_reported (test_sendpraat.DeliverTests.test_deliver_without_praat_is_reported) ... ok
+test_deliver_writes_message_and_posts_once (test_sendpraat.DeliverTests.test_deliver_writes_message_and_posts_once) ... ok
+test_backslashes_and_quotes_are_escaped (test_sendpraat.MessageTests.test_backslashes_and_quotes_are_escaped) ... ok
+test_consume_can_be_turned_off_for_comparison (test_sendpraat.MessageTests.test_consume_can_be_turned_off_for_comparison)
+``consume=False`` ʱ�� ``--send`` �Լ�д������һ�£�ֻ���ڶ���/���ϣ��� ... ok
+test_consume_statement_is_empty_without_a_message_file (test_sendpraat.MessageTests.test_consume_statement_is_empty_without_a_message_file) ... ok
+test_failure_file_is_part_of_the_delivery_contract (test_sendpraat.MessageTests.test_failure_file_is_part_of_the_delivery_contract)
+Praat ����ʱд�µ� chat_failure.txt��ÿ��Ͷ��ǰҪ������ܶ������� ... ok
+test_message_consumes_itself_before_running_the_script (test_sendpraat.MessageTests.test_message_consumes_itself_before_running_the_script)
+��Ϣ��һ���Ҫ�� Message.txt ���ɿղ������ظ�ִ�еĸ��ΰ취���� ... ok
+test_message_starts_with_the_trust_marker_and_the_script (test_sendpraat.MessageTests.test_message_starts_with_the_trust_marker_and_the_script) ... ok
+test_noop_message_has_trust_marker_and_does_nothing (test_sendpraat.MessageTests.test_noop_message_has_trust_marker_and_does_nothing) ... ok
+test_the_message_marks_itself_as_the_frontends (test_sendpraat.MessageTests.test_the_message_marks_itself_as_the_frontends)
+Praat �Ǳ߿�����������ϳ����ǶԻ�ǰ�˷����ġ�������Ҫ��Ҫ������򣩡� ... ok
+test_default_mode_is_window (test_sendpraat.ModeTests.test_default_mode_is_window) ... ok
+test_env_var_switches_to_argv (test_sendpraat.ModeTests.test_env_var_switches_to_argv) ... ok
+test_message_file_follows_appdata (test_sendpraat.ModeTests.test_message_file_follows_appdata) ... ok
+test_non_windows_falls_back_to_argv (test_sendpraat.ModeTests.test_non_windows_falls_back_to_argv)
+macOS/Linux ��û�� Message.txt + WM_APP ����Э�飬���ϵ� --send�� ... ok
+test_non_windows_has_no_message_file (test_sendpraat.ModeTests.test_non_windows_has_no_message_file) ... ok
+test_explicit_process_wins (test_sendpraat.WindowChoiceTests.test_explicit_process_wins) ... ok
+test_newest_praat_wins (test_sendpraat.WindowChoiceTests.test_newest_praat_wins) ... ok
+test_no_window_returns_none (test_sendpraat.WindowChoiceTests.test_no_window_returns_none) ... ok
+test_objects_window_is_preferred (test_sendpraat.WindowChoiceTests.test_objects_window_is_preferred) ... ok
+test_praat_window_class_prefix (test_sendpraat.WindowChoiceTests.test_praat_window_class_prefix) ... ok
+test_existing_sessions_upgrade_without_overwriting_known_remote_origin (test_sidebar_origins.OriginTests.test_existing_sessions_upgrade_without_overwriting_known_remote_origin) ... ok
+test_fork_retains_source_project_and_connection_origin (test_sidebar_origins.OriginTests.test_fork_retains_source_project_and_connection_origin) ... ok
+test_real_project_origin_survives_reopen_and_keeps_content (test_sidebar_origins.OriginTests.test_real_project_origin_survives_reopen_and_keeps_content) ... ok
+test_acoustic_model_picker_select_and_delete_preserve_dictionary (test_speech_dictionaries.SpeechDictionaryTests.test_acoustic_model_picker_select_and_delete_preserve_dictionary) ... ok
+test_add_deduplicates_and_preserves_latest_unrelated_settings (test_speech_dictionaries.SpeechDictionaryTests.test_add_deduplicates_and_preserves_latest_unrelated_settings) ... ok
+test_dictionary_changes_keep_model_selection_and_list (test_speech_dictionaries.SpeechDictionaryTests.test_dictionary_changes_keep_model_selection_and_list) ... ok
+test_first_added_path_is_used_by_existing_aligner (test_speech_dictionaries.SpeechDictionaryTests.test_first_added_path_is_used_by_existing_aligner) ... ok
+test_invalid_add_and_cancel_do_not_modify_config (test_speech_dictionaries.SpeechDictionaryTests.test_invalid_add_and_cancel_do_not_modify_config) ... ok
+test_legacy_model_is_listed_and_picker_cancel_is_lossless (test_speech_dictionaries.SpeechDictionaryTests.test_legacy_model_is_listed_and_picker_cancel_is_lossless) ... ok
+test_legacy_path_is_listed_without_rewriting_configuration (test_speech_dictionaries.SpeechDictionaryTests.test_legacy_path_is_listed_without_rewriting_configuration) ... ok
+test_menu_launcher_detaches_the_window (test_speech_dictionaries.SpeechDictionaryTests.test_menu_launcher_detaches_the_window) ... ok
+test_mfa_alignment_command_uses_selected_dictionary (test_speech_dictionaries.SpeechDictionaryTests.test_mfa_alignment_command_uses_selected_dictionary) ... ok
+test_missing_configured_path_can_be_removed (test_speech_dictionaries.SpeechDictionaryTests.test_missing_configured_path_can_be_removed) ... ok
+test_native_file_picker_adds_paths_and_cancel_is_lossless (test_speech_dictionaries.SpeechDictionaryTests.test_native_file_picker_adds_paths_and_cancel_is_lossless) ... ok
+test_remove_active_then_last_path_never_deletes_files (test_speech_dictionaries.SpeechDictionaryTests.test_remove_active_then_last_path_never_deletes_files) ... ok
+test_select_rejects_missing_and_unconfigured_paths_without_saving (test_speech_dictionaries.SpeechDictionaryTests.test_select_rejects_missing_and_unconfigured_paths_without_saving) ... ok
+test_select_updates_only_current_dictionary_and_persists (test_speech_dictionaries.SpeechDictionaryTests.test_select_updates_only_current_dictionary_and_persists) ... ok
+test_continue_keeps_goal_evidence_and_failed_branches (test_staircase.PolicyTests.test_continue_keeps_goal_evidence_and_failed_branches) ... ok
+test_new_evidence_resets_stagnation_duplicate_does_not (test_staircase.PolicyTests.test_new_evidence_resets_stagnation_duplicate_does_not) ... ok
+test_one_distinct_repair_across_modes (test_staircase.PolicyTests.test_one_distinct_repair_across_modes) ... ok
+test_report_reserve_and_physical_boundary (test_staircase.PolicyTests.test_report_reserve_and_physical_boundary) ... ok
+test_two_stagnant_rounds (test_staircase.PolicyTests.test_two_stagnant_rounds) ... ok
+test_audio_observation_and_previous_report_survive_continuation (test_staircase_review_fixes.ReviewFixTests.test_audio_observation_and_previous_report_survive_continuation) ... ok
+test_confirmed_rename_does_not_accept_disappeared_id_or_changed_class (test_staircase_review_fixes.ReviewFixTests.test_confirmed_rename_does_not_accept_disappeared_id_or_changed_class) ... ok
+test_confirmed_rename_keeps_bound_id_range_for_next_save (test_staircase_review_fixes.ReviewFixTests.test_confirmed_rename_keeps_bound_id_range_for_next_save) ... ok
+test_create_rename_save_keeps_successful_operation_records (test_staircase_review_fixes.ReviewFixTests.test_create_rename_save_keeps_successful_operation_records) ... ok
+test_external_rename_still_rejected (test_staircase_review_fixes.ReviewFixTests.test_external_rename_still_rejected) ... ok
+test_failed_automatic_audio_retains_the_valid_l2_report (test_staircase_review_fixes.ReviewFixTests.test_failed_automatic_audio_retains_the_valid_l2_report) ... ok
+test_general_continuation_with_no_evidence_routes_to_l4 (test_staircase_review_fixes.ReviewFixTests.test_general_continuation_with_no_evidence_routes_to_l4) ... ok
+test_general_continue_preflight_matches_actual_dialogue_context (test_staircase_review_fixes.ReviewFixTests.test_general_continue_preflight_matches_actual_dialogue_context) ... ok
+test_input_capability_errors_exclude_output_and_tts (test_staircase_review_fixes.ReviewFixTests.test_input_capability_errors_exclude_output_and_tts) ... ok
+test_invalid_report_still_records_audio_request_and_response (test_staircase_review_fixes.ReviewFixTests.test_invalid_report_still_records_audio_request_and_response) ... ok
+test_limited_continuation_excerpts_long_previous_analysis (test_staircase_review_fixes.ReviewFixTests.test_limited_continuation_excerpts_long_previous_analysis) ... ok
+test_limited_or_disabled_audio_does_not_escalate (test_staircase_review_fixes.ReviewFixTests.test_limited_or_disabled_audio_does_not_escalate) ... ok
+test_missing_snapshot_does_not_add_an_audio_report (test_staircase_review_fixes.ReviewFixTests.test_missing_snapshot_does_not_add_an_audio_report) ... ok
+test_output_only_rejection_does_not_correct_input_setting (test_staircase_review_fixes.ReviewFixTests.test_output_only_rejection_does_not_correct_input_setting) ... ok
+test_output_retry_leaves_too_little_budget_for_automatic_audio (test_staircase_review_fixes.ReviewFixTests.test_output_retry_leaves_too_little_budget_for_automatic_audio) ... ok
+test_persisted_input_fact_does_not_depend_on_report_success (test_staircase_review_fixes.ReviewFixTests.test_persisted_input_fact_does_not_depend_on_report_success) ... ok
+test_reference_gap_does_not_upload_audio (test_staircase_review_fixes.ReviewFixTests.test_reference_gap_does_not_upload_audio) ... ok
+test_rejected_or_failed_transport_records_attempt_without_acceptance (test_staircase_review_fixes.ReviewFixTests.test_rejected_or_failed_transport_records_attempt_without_acceptance) ... ok
+test_successful_measurement_gap_escalates_once_on_shared_budget (test_staircase_review_fixes.ReviewFixTests.test_successful_measurement_gap_escalates_once_on_shared_budget) ... ok
+test_transport_retry_preserves_first_mutation_authorization (test_staircase_review_fixes.ReviewFixTests.test_transport_retry_preserves_first_mutation_authorization) ... ok
+test_blank_model_path_identifies_the_setting (test_startup_config.StartupConfigTests.test_blank_model_path_identifies_the_setting) ... ok
+test_blank_server_path_identifies_the_setting (test_startup_config.StartupConfigTests.test_blank_server_path_identifies_the_setting) ... ok
+test_environment_paths_allow_start_without_a_config_file (test_startup_config.StartupConfigTests.test_environment_paths_allow_start_without_a_config_file) ... ok
+test_missing_config_identifies_the_file_and_setup_step (test_startup_config.StartupConfigTests.test_missing_config_identifies_the_file_and_setup_step) ... ok
+test_budget_never_goes_negative (test_token_budget.BudgetReserveTests.test_budget_never_goes_negative) ... ok
+test_output_tokens_and_reserve_count_the_reasoning_allowance (test_token_budget.BudgetReserveTests.test_output_tokens_and_reserve_count_the_reasoning_allowance) ... ok
+test_reasoning_allowance_closes_the_tool_budget_earlier (test_token_budget.BudgetReserveTests.test_reasoning_allowance_closes_the_tool_budget_earlier) ... ok
+test_history_budget_subtracts_the_instructions_and_the_answer (test_token_budget.BudgetTests.test_history_budget_subtracts_the_instructions_and_the_answer) ... ok
+test_ascii_is_cheaper_than_cjk (test_token_budget.EstimateTests.test_ascii_is_cheaper_than_cjk) ... ok
+test_empty_text_is_free (test_token_budget.EstimateTests.test_empty_text_is_free) ... ok
+test_dropped_zero_when_everything_fits (test_token_budget.HistoryTrimTests.test_dropped_zero_when_everything_fits) ... ok
+test_history_keeps_valid_prefixes_only (test_token_budget.HistoryTrimTests.test_history_keeps_valid_prefixes_only)
+���µı����ĳ���û���Ϣ��ʼ���س����İ�ػش𣨿�ͷ�� assistant��Ҫ������ ... ok
+test_long_history_is_trimmed_by_tokens_and_reports_the_drop (test_token_budget.HistoryTrimTests.test_long_history_is_trimmed_by_tokens_and_reports_the_drop) ... ok
+test_short_history_is_kept_whole (test_token_budget.HistoryTrimTests.test_short_history_is_kept_whole) ... ok
+test_header_stays_even_when_everything_else_is_trimmed (test_token_budget.ObjectContextTrimTests.test_header_stays_even_when_everything_else_is_trimmed) ... ok
+test_long_list_keeps_the_selection_and_says_what_was_hidden (test_token_budget.ObjectContextTrimTests.test_long_list_keeps_the_selection_and_says_what_was_hidden) ... ok
+test_short_list_is_untouched (test_token_budget.ObjectContextTrimTests.test_short_list_is_untouched) ... ok
+test_short_conversation_has_no_notes (test_token_budget.TurnNoteTests.test_short_conversation_has_no_notes) ... ok
+test_trimmed_history_is_announced (test_token_budget.TurnNoteTests.test_trimmed_history_is_announced) ... ok
+test_trimmed_object_list_is_announced (test_token_budget.TurnNoteTests.test_trimmed_object_list_is_announced) ... ok
+test_alias_ranges_reuse_success_instead_of_repeating_operation (test_tool_guards.NativeHookTests.test_alias_ranges_reuse_success_instead_of_repeating_operation) ... ok
+test_created_object_is_usable_only_after_confirmed_refresh (test_tool_guards.NativeHookTests.test_created_object_is_usable_only_after_confirmed_refresh) ... ok
+test_custom_script_cannot_invent_name (test_tool_guards.NativeHookTests.test_custom_script_cannot_invent_name) ... ok
+test_custom_script_cannot_select_invented_or_different_target (test_tool_guards.NativeHookTests.test_custom_script_cannot_select_invented_or_different_target) ... ok
+test_custom_script_without_selection_is_bound_to_original_target (test_tool_guards.NativeHookTests.test_custom_script_without_selection_is_bound_to_original_target) ... ok
+test_different_failure_repair_can_execute_once (test_tool_guards.NativeHookTests.test_different_failure_repair_can_execute_once) ... ok
+test_existing_complete_name_resolves_to_real_id (test_tool_guards.NativeHookTests.test_existing_complete_name_resolves_to_real_id) ... ok
+test_invented_new_name_rejects_and_omission_can_repair (test_tool_guards.NativeHookTests.test_invented_new_name_rejects_and_omission_can_repair) ... ok
+test_legacy_script_selection_cannot_switch_user_target (test_tool_guards.NativeHookTests.test_legacy_script_selection_cannot_switch_user_target) ... ok
+test_negated_old_segment_is_not_an_explicit_segment_authorization (test_tool_guards.NativeHookTests.test_negated_old_segment_is_not_an_explicit_segment_authorization) ... ok
+test_nonexistent_object_is_rejected_before_dispatch (test_tool_guards.NativeHookTests.test_nonexistent_object_is_rejected_before_dispatch) ... ok
+test_other_languages_do_not_reach_praat (test_tool_guards.NativeHookTests.test_other_languages_do_not_reach_praat) ... ok
+test_partial_object_name_does_not_guess (test_tool_guards.NativeHookTests.test_partial_object_name_does_not_guess) ... ok
+test_persisted_successful_measurement_is_reused (test_tool_guards.NativeHookTests.test_persisted_successful_measurement_is_reused) ... ok
+test_praat_script_can_query_actual_object (test_tool_guards.NativeHookTests.test_praat_script_can_query_actual_object) ... ok
+test_repeating_failure_with_explicit_default_does_not_execute_again (test_tool_guards.NativeHookTests.test_repeating_failure_with_explicit_default_does_not_execute_again) ... ok
+test_report_failure_keeps_real_evidence_and_discards_fabricated_output (test_tool_guards.NativeHookTests.test_report_failure_keeps_real_evidence_and_discards_fabricated_output) ... ok
+test_report_guard_native_hook_retries_without_repeating_measurement (test_tool_guards.NativeHookTests.test_report_guard_native_hook_retries_without_repeating_measurement) ... ok
+test_successful_measurement_is_reused_across_equivalent_defaults (test_tool_guards.NativeHookTests.test_successful_measurement_is_reused_across_equivalent_defaults) ... ok
+test_user_provided_name_is_allowed (test_tool_guards.NativeHookTests.test_user_provided_name_is_allowed) ... ok
+test_user_specified_id_and_class_mismatch_rejects (test_tool_guards.NativeHookTests.test_user_specified_id_and_class_mismatch_rejects) ... ok
+test_user_specified_id_is_not_replaced_by_other_real_object (test_tool_guards.NativeHookTests.test_user_specified_id_is_not_replaced_by_other_real_object) ... ok
+test_whole_and_explicit_segment_request_can_use_both_scopes (test_tool_guards.NativeHookTests.test_whole_and_explicit_segment_request_can_use_both_scopes) ... ok
+test_whole_point_query_defaults_to_actual_object_midpoint (test_tool_guards.NativeHookTests.test_whole_point_query_defaults_to_actual_object_midpoint) ... ok
+test_whole_prosody_can_measure_verified_subdivisions (test_tool_guards.NativeHookTests.test_whole_prosody_can_measure_verified_subdivisions) ... ok
+test_whole_request_copy_of_old_selection_rejects (test_tool_guards.NativeHookTests.test_whole_request_copy_of_old_selection_rejects) ... ok
+test_whole_request_default_does_not_use_editor_selection (test_tool_guards.NativeHookTests.test_whole_request_default_does_not_use_editor_selection) ... ok
+test_whole_request_verified_full_range_is_allowed (test_tool_guards.NativeHookTests.test_whole_request_verified_full_range_is_allowed) ... ok
+test_wrong_tool_object_type_rejects_before_dispatch (test_tool_guards.NativeHookTests.test_wrong_tool_object_type_rejects_before_dispatch) ... ok
+test_one_hundred_and_fifty_percent (test_ui_theme.ScaleTests.test_one_hundred_and_fifty_percent) ... ok
+test_one_hundred_and_twentyfive_percent (test_ui_theme.ScaleTests.test_one_hundred_and_twentyfive_percent) ... ok
+test_one_hundred_percent (test_ui_theme.ScaleTests.test_one_hundred_percent) ... ok
+test_silly_values_are_clamped (test_ui_theme.ScaleTests.test_silly_values_are_clamped) ... ok
+test_broken_registry_falls_back_to_light (test_ui_theme.SystemThemeTests.test_broken_registry_falls_back_to_light) ... ok
+test_dark_system (test_ui_theme.SystemThemeTests.test_dark_system) ... ok
+test_garbage_value_falls_back_to_light (test_ui_theme.SystemThemeTests.test_garbage_value_falls_back_to_light) ... ok
+test_light_system (test_ui_theme.SystemThemeTests.test_light_system) ... ok
+test_missing_value_falls_back_to_light (test_ui_theme.SystemThemeTests.test_missing_value_falls_back_to_light) ... ok
+test_without_winreg_module_it_is_light (test_ui_theme.SystemThemeTests.test_without_winreg_module_it_is_light) ... ok
+test_colours_and_metrics (test_ui_theme.ThemeTests.test_colours_and_metrics) ... ok
+test_dark_mode_switches_the_palette (test_ui_theme.ThemeTests.test_dark_mode_switches_the_palette) ... ok
+test_fonts_fall_back_without_a_tk_root (test_ui_theme.ThemeTests.test_fonts_fall_back_without_a_tk_root) ... ok
+test_listeners_fire_on_switch_and_survive_failures (test_ui_theme.ThemeTests.test_listeners_fire_on_switch_and_survive_failures) ... ok
+test_remove_listener (test_ui_theme.ThemeTests.test_remove_listener) ... ok
+test_unknown_token_is_reported (test_ui_theme.ThemeTests.test_unknown_token_is_reported) ... ok
+test_it_reports_changes_and_keeps_polling (test_ui_theme.ThemeWatcherTests.test_it_reports_changes_and_keeps_polling) ... ok
+test_probe_failure_keeps_the_previous_value (test_ui_theme.ThemeWatcherTests.test_probe_failure_keeps_the_previous_value) ... ok
+test_stop_prevents_further_polling (test_ui_theme.ThemeWatcherTests.test_stop_prevents_further_polling) ... ok
+test_accent_headers_pass_the_large_text_threshold (test_ui_theme.TokenTests.test_accent_headers_pass_the_large_text_threshold)
+ǿ�����ǼӴ�С���⣨WCAG ��"���ֺ�"������������ 3:1�� ... ok
+test_both_palettes_have_the_same_keys (test_ui_theme.TokenTests.test_both_palettes_have_the_same_keys) ... ok
+test_contrast_ratio_matches_wcag_examples (test_ui_theme.TokenTests.test_contrast_ratio_matches_wcag_examples) ... ok
+test_every_token_is_a_hex_colour (test_ui_theme.TokenTests.test_every_token_is_a_hex_colour) ... ok
+test_text_is_readable_on_every_surface (test_ui_theme.TokenTests.test_text_is_readable_on_every_surface)
+���� vs �����ɫ����Ҫ�� WCAG AA��4.5:1��������ɫ��ҲҪ�����塣 ... ok
+test_card_has_a_body_and_unregisters_itself (test_ui_widgets.CardTests.test_card_has_a_body_and_unregisters_itself) ... ok
+test_card_redraws_on_theme_change (test_ui_widgets.CardTests.test_card_redraws_on_theme_change) ... can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+ok
+test_chip_kind_switches_palette (test_ui_widgets.ChipAndSnackbarTests.test_chip_kind_switches_palette) ... ok
+test_snackbar_follows_the_theme (test_ui_widgets.ChipAndSnackbarTests.test_snackbar_follows_the_theme) ... ok
+test_it_wraps_a_real_ttk_entry (test_ui_widgets.FieldCardTests.test_it_wraps_a_real_ttk_entry)
+``key_entry.cget("show")`` ��Щ�ǻع�ű����ģ����ܱ������Ի�ؼ��� ... ok
+test_wrapped_entry_does_not_draw_a_second_border (test_ui_widgets.FieldCardTests.test_wrapped_entry_does_not_draw_a_second_border) ... ok
+test_wrapped_entry_focus_is_shown_on_the_rounded_shell (test_ui_widgets.FieldCardTests.test_wrapped_entry_focus_is_shown_on_the_rounded_shell) ... invalid command name "2247965876224flush_messages"
+    while executing
+"2247965876224flush_messages"
+    ("after" script)
+invalid command name "2247965878336focus_set"
+    while executing
+"2247965878336focus_set"
+    ("after" script)
+invalid command name "2247966012160flush_messages"
+    while executing
+"2247966012160flush_messages"
+    ("after" script)
+invalid command name "2247966002496focus_set"
+    while executing
+"2247966002496focus_set"
+    ("after" script)
+invalid command name "2247965671040flush_messages"
+    while executing
+"2247965671040flush_messages"
+    ("after" script)
+invalid command name "2247965660544focus_set"
+    while executing
+"2247965660544focus_set"
+    ("after" script)
+invalid command name "2247964988608flush_messages"
+    while executing
+"2247964988608flush_messages"
+    ("after" script)
+invalid command name "2247964998208focus_set"
+    while executing
+"2247964998208focus_set"
+    ("after" script)
+ok
+test_disabled_button_never_fires (test_ui_widgets.RoundedButtonTests.test_disabled_button_never_fires) ... ok
+test_outlined_hover_and_pressed_states_use_distinct_colors (test_ui_widgets.RoundedButtonTests.test_outlined_hover_and_pressed_states_use_distinct_colors) ... ok
+test_press_and_release_inside_the_button_clicks (test_ui_widgets.RoundedButtonTests.test_press_and_release_inside_the_button_clicks) ... ok
+test_release_outside_the_button_does_not_click (test_ui_widgets.RoundedButtonTests.test_release_outside_the_button_does_not_click) ... ok
+test_text_can_be_changed (test_ui_widgets.RoundedButtonTests.test_text_can_be_changed) ... ok
+test_ttk_style_api (test_ui_widgets.RoundedButtonTests.test_ttk_style_api) ... ok
+test_destroy_cancels_the_animation (test_ui_widgets.RoundedProgressBarTests.test_destroy_cancels_the_animation) ... ok
+test_indeterminate_mode_is_ignored_gracefully (test_ui_widgets.RoundedProgressBarTests.test_indeterminate_mode_is_ignored_gracefully) ... ok
+test_ttk_value_semantics (test_ui_widgets.RoundedProgressBarTests.test_ttk_value_semantics) ... ok
+test_values_are_clamped (test_ui_widgets.RoundedProgressBarTests.test_values_are_clamped) ... ok
+test_destroy_stops_it (test_ui_widgets.SpinnerTests.test_destroy_stops_it) ... ok
+test_start_and_stop (test_ui_widgets.SpinnerTests.test_start_and_stop) ... ok
+test_reasoning_without_final_answer_is_not_shown_as_answer (test_vot_dispatch.TruncatedResponseTests.test_reasoning_without_final_answer_is_not_shown_as_answer) ... ok
+test_truncated_connection_probe_still_confirms_connectivity (test_vot_dispatch.TruncatedResponseTests.test_truncated_connection_probe_still_confirms_connectivity) ... ok
+test_truncated_explanation_preserves_completed_tool_results (test_vot_dispatch.TruncatedResponseTests.test_truncated_explanation_preserves_completed_tool_results) ... ok
+test_truncated_first_response_executes_nothing (test_vot_dispatch.TruncatedResponseTests.test_truncated_first_response_executes_nothing) ... ok
+test_truncated_response_is_rejected_even_with_partial_tool_call (test_vot_dispatch.TruncatedResponseTests.test_truncated_response_is_rejected_even_with_partial_tool_call) ... ok
+test_cancelled_request_does_not_execute (test_vot_dispatch.VotDispatchTests.test_cancelled_request_does_not_execute) ... ok
+test_explicit_landmarks_and_object_are_preserved (test_vot_dispatch.VotDispatchTests.test_explicit_landmarks_and_object_are_preserved) ... ok
+test_explicit_object_is_never_replaced_by_another_sound (test_vot_dispatch.VotDispatchTests.test_explicit_object_is_never_replaced_by_another_sound) ... ok
+test_explicit_range_is_search_window_not_two_landmarks (test_vot_dispatch.VotDispatchTests.test_explicit_range_is_search_window_not_two_landmarks) ... ok
+test_explicit_selection_requires_a_selection (test_vot_dispatch.VotDispatchTests.test_explicit_selection_requires_a_selection) ... ok
+test_explicit_zero_landmarks_never_become_auto_detection (test_vot_dispatch.VotDispatchTests.test_explicit_zero_landmarks_never_become_auto_detection) ... ok
+test_failure_or_metadata_cannot_count_as_vot_measurement (test_vot_dispatch.VotDispatchTests.test_failure_or_metadata_cannot_count_as_vot_measurement) ... ok
+test_invalid_range_does_not_measure_the_whole_sound (test_vot_dispatch.VotDispatchTests.test_invalid_range_does_not_measure_the_whole_sound) ... ok
+test_json_planner_setting_also_uses_vot (test_vot_dispatch.VotDispatchTests.test_json_planner_setting_also_uses_vot) ... ok
+test_measurement_uses_real_vot_and_editor_selection (test_vot_dispatch.VotDispatchTests.test_measurement_uses_real_vot_and_editor_selection) ... ok
+test_missing_landmark_does_not_silently_use_auto_detection (test_vot_dispatch.VotDispatchTests.test_missing_landmark_does_not_silently_use_auto_detection) ... ok
+test_model_chosen_vot_also_checks_result_and_adds_formula (test_vot_dispatch.VotDispatchTests.test_model_chosen_vot_also_checks_result_and_adds_formula) ... ok
+test_questions_negation_and_multi_step_requests_still_use_planner (test_vot_dispatch.VotDispatchTests.test_questions_negation_and_multi_step_requests_still_use_planner) ... ok
+test_short_editor_selection_is_not_replaced_by_whole_recording (test_vot_dispatch.VotDispatchTests.test_short_editor_selection_is_not_replaced_by_whole_recording) ... ok
+test_large_gpu_can_enable_vision (test_vram.VramTests.test_large_gpu_can_enable_vision) ... ok
+test_midrange_gpu_disables_vision (test_vram.VramTests.test_midrange_gpu_disables_vision) ... ok
+test_small_gpu_selects_cpu_text_mode (test_vram.VramTests.test_small_gpu_selects_cpu_text_mode) ... ok
+test_protocol_two_waits_until_matching_callback_finished (test_workflow_context.CompletionTests.test_protocol_two_waits_until_matching_callback_finished) ... ok
+test_extra_columns_are_not_truncated (test_workflow_context.RequestContextTests.test_extra_columns_are_not_truncated)
+������ 6 �ࣨ�Ժ�Э���ټ��У�ʱ���ܰѶ�������гԵ��� ... ok
+test_four_column_legacy_lines_are_untouched (test_workflow_context.RequestContextTests.test_four_column_legacy_lines_are_untouched) ... ok
+test_local_prefix_of_whole_does_not_count (test_workflow_context.RequestContextTests.test_local_prefix_of_whole_does_not_count) ... ok
+test_non_recording_request_keeps_the_editor_selection (test_workflow_context.RequestContextTests.test_non_recording_request_keeps_the_editor_selection) ... ok
+test_only_the_selection_columns_are_cleared (test_workflow_context.RequestContextTests.test_only_the_selection_columns_are_cleared) ... ok
+test_whole_recording_phrasings_are_recognised (test_workflow_context.RequestContextTests.test_whole_recording_phrasings_are_recognised) ... ok
+test_api_allows_more_steps_and_followup_analysis_preparation (test_workflow_context.WorkflowTests.test_api_allows_more_steps_and_followup_analysis_preparation) ... ok
+test_corrected_retry_clears_recovered_failure (test_workflow_context.WorkflowTests.test_corrected_retry_clears_recovered_failure) ... ok
+test_created_object_is_resolvable_in_next_round (test_workflow_context.WorkflowTests.test_created_object_is_resolvable_in_next_round) ... ok
+test_default_selection_in_the_analysed_batch_uses_the_refreshed_state (test_workflow_context.WorkflowTests.test_default_selection_in_the_analysed_batch_uses_the_refreshed_state)
+û�� explicitly �� object ʱ��Ĭ�϶���Ҫ��ˢ�º��ѡ���ߡ� ... ok
+test_invalid_parameters_never_execute_default_mutation (test_workflow_context.WorkflowTests.test_invalid_parameters_never_execute_default_mutation) ... ok
+test_json_refresh_and_empty_reply_recovery_keep_observations (test_workflow_context.WorkflowTests.test_json_refresh_and_empty_reply_recovery_keep_observations) ... ok
+test_large_api_observation_is_clipped_without_losing_call_pairs (test_workflow_context.WorkflowTests.test_large_api_observation_is_clipped_without_losing_call_pairs) ... ok
+test_legacy_json_top_level_script_is_executed (test_workflow_context.WorkflowTests.test_legacy_json_top_level_script_is_executed) ... ok
+test_refresh_failure_stops_remaining_actions_and_pairs_calls (test_workflow_context.WorkflowTests.test_refresh_failure_stops_remaining_actions_and_pairs_calls) ... ok
+test_repeated_failure_stays_failed (test_workflow_context.WorkflowTests.test_repeated_failure_stays_failed) ... ok
+test_same_batch_uses_current_selection_and_next_round_sees_it (test_workflow_context.WorkflowTests.test_same_batch_uses_current_selection_and_next_round_sees_it) ... ok
+test_step_budget_pairs_all_pending_calls (test_workflow_context.WorkflowTests.test_step_budget_pairs_all_pending_calls) ... ok
+test_unlimited_api_keeps_full_observation (test_workflow_context.WorkflowTests.test_unlimited_api_keeps_full_observation) ... ok
+test_user_failure_chain_never_analyses_the_harmonicity (test_workflow_context.WorkflowTests.test_user_failure_chain_never_analyses_the_harmonicity)
+���� 2026-09-29 �û����Ĺ������� ... ok
+test_whole_recording_ignores_editor_selection (test_workflow_context.WorkflowTests.test_whole_recording_ignores_editor_selection) ... ok
+test_wrap_up_failure_recovers_on_retry (test_workflow_context.WorkflowTests.test_wrap_up_failure_recovers_on_retry)
+���Գɹ�ʱ����ģ�͸����Ļش𣬲���ժҪ�� ... ok
+test_wrap_up_failure_still_returns_measured_results (test_workflow_context.WorkflowTests.test_wrap_up_failure_still_returns_measured_results)
+��β��������ʧ�ܣ����ܰ��Ѿ��⵽�Ľ��������2026-09-30 ������շ��֣��� ... ok
+
+======================================================================
+FAIL: test_modern_model_request_never_follows_redirect (test_modern_host.ModernHostTests.test_modern_model_request_never_follows_redirect)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\praat_ai\qwen.py", line 789, in _post
+    with opener(
+         ^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\praat_ai\qwen.py", line 30, in _open_no_redirect
+    return urllib.request.build_opener(_NoRedirect()).open(request, timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py", line 532, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py", line 1373, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py", line 1348, in do_open
+    r = h.getresponse()
+        ^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py", line 1478, in getresponse
+    response.begin()
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py", line 343, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py", line 304, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py", line 720, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+ConnectionAbortedError: [WinError 10053] ��������е�������ֹ��һ���ѽ��������ӡ�
+
+The above exception was the direct cause of the following exception:
+
+praat_ai.qwen.QwenError: Qwen request failed: [WinError 10053] ��������е�������ֹ��һ���ѽ��������ӡ�
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_modern_host.py", line 79, in test_modern_model_request_never_follows_redirect
+    with self.assertRaisesRegex(qwen.QwenError, 'HTTP 302'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "HTTP 302" does not match "Qwen request failed: [WinError 10053] ��������е�������ֹ��һ���ѽ��������ӡ�"
+
+----------------------------------------------------------------------
+Ran 1006 tests in 150.812s
+
+FAILED (failures=1)

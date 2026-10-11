@@ -1,0 +1,13 @@
+{
+  "realWebView2": true,
+  "productionAssets": true,
+  "checks": [
+    "detach-group-retains-modern-and-readonly-content",
+    "archive-group-excludes-other-origins-and-custom-sections",
+    "archived-group-content-restores-through-existing-page",
+    "readonly-session-deletes-through-existing-confirmation",
+    "delete-group-only-target-members-and-preserves-legacy-source"
+  ],
+  "passed": true,
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36 Edg/154.0.0.0"
+}

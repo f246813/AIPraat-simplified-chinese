@@ -1,0 +1,78 @@
+.............................................................................................................................................................................................................................................................................................................................F....F...............................................................................................................................................................................................................................................................................................................................................................................................F............................................................................................................................................................................................................................................................................................................................................................................................................................................
+======================================================================
+FAIL: test_argv_timeout_kills_the_send_process (test_chat_window.SendScriptTests.test_argv_timeout_kills_the_send_process)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_chat_window.py", line 363, in test_argv_timeout_kills_the_send_process
+    self.assertIn("没有执行这个脚本", output)
+AssertionError: '没有执行这个脚本' not found in 'Praat 在 0 秒内没有交出这条脚本的完成标记。两种情况都可能：Praat 里有没关掉的对话框或错误提示、编辑器正在播放或被模态窗口挡住，脚本没开始跑；或者脚本已经跑完，但结果文件没能写回来。关掉那些窗口后再发一次即可；下一次请求会先做一次显式核对，不会把上一次的结果算到新请求上。'
+
+======================================================================
+FAIL: test_praat_that_never_answers_is_reported_in_chinese (test_chat_window.SendScriptTests.test_praat_that_never_answers_is_reported_in_chinese)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_chat_window.py", line 339, in test_praat_that_never_answers_is_reported_in_chinese
+    self.assertIn("没有执行这个脚本", output)
+AssertionError: '没有执行这个脚本' not found in 'Praat 在 0 秒内没有交出这条脚本的完成标记。两种情况都可能：Praat 里有没关掉的对话框或错误提示、编辑器正在播放或被模态窗口挡住，脚本没开始跑；或者脚本已经跑完，但结果文件没能写回来。关掉那些窗口后再发一次即可；下一次请求会先做一次显式核对，不会把上一次的结果算到新请求上。'
+
+======================================================================
+FAIL: test_modern_model_request_never_follows_redirect (test_modern_host.ModernHostTests.test_modern_model_request_never_follows_redirect)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\qwen.py", line 789, in _post
+    with opener(
+         ^^^^^^^
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\qwen.py", line 30, in _open_no_redirect
+    return urllib.request.build_opener(_NoRedirect()).open(request, timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py", line 532, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py", line 1373, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\urllib\request.py", line 1348, in do_open
+    r = h.getresponse()
+        ^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py", line 1478, in getresponse
+    response.begin()
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py", line 343, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\client.py", line 304, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py", line 720, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+ConnectionAbortedError: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+
+The above exception was the direct cause of the following exception:
+
+praat_ai.qwen.QwenError: Qwen request failed: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_modern_host.py", line 79, in test_modern_model_request_never_follows_redirect
+    with self.assertRaisesRegex(qwen.QwenError, 'HTTP 302'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "HTTP 302" does not match "Qwen request failed: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。"
+
+----------------------------------------------------------------------
+Ran 1135 tests in 158.252s
+
+FAILED (failures=3)
+
+
+== 汇总 ==
+runs=1135 failures=3 errors=0 skipped=0 expectedFailures=0
+FAIL: test_argv_timeout_kills_the_send_process (test_chat_window.SendScriptTests.test_argv_timeout_kills_the_send_process)
+FAIL: test_praat_that_never_answers_is_reported_in_chinese (test_chat_window.SendScriptTests.test_praat_that_never_answers_is_reported_in_chinese)
+FAIL: test_modern_model_request_never_follows_redirect (test_modern_host.ModernHostTests.test_modern_model_request_never_follows_redirect)

@@ -4,7 +4,7 @@ test_advanced_checkbox_is_collected_and_survives_reopening (test_dialogue_fastpa
 FAIL: test_advanced_checkbox_is_collected_and_survives_reopening (test_dialogue_fastpath.ForceSettingTests.test_advanced_checkbox_is_collected_and_survives_reopening)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 92, in test_advanced_checkbox_is_collected_and_survives_reopening
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 92, in test_advanced_checkbox_is_collected_and_survives_reopening
     self.assertLessEqual(dialog.window.winfo_reqheight(), dialog.window.winfo_screenheight()-80,
 AssertionError: 1185 not less than or equal to 1000 : Advanced settings and Save must fit inside the screen
 

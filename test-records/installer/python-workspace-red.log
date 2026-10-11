@@ -1,0 +1,24 @@
+test_low_process_can_create_and_write_workspace (__main__.PythonWorkspaceTests.test_low_process_can_create_and_write_workspace) ... FAIL
+test_low_process_does_not_depend_on_inaccessible_temp (__main__.PythonWorkspaceTests.test_low_process_does_not_depend_on_inaccessible_temp) ... FAIL
+test_normal_process_keeps_standard_temp (__main__.PythonWorkspaceTests.test_normal_process_keeps_standard_temp) ... ok
+
+======================================================================
+FAIL: test_low_process_can_create_and_write_workspace (__main__.PythonWorkspaceTests.test_low_process_can_create_and_write_workspace)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\installer\tests\PythonWorkspaceTests.py", line 138, in test_low_process_can_create_and_write_workspace
+    self.assertEqual(error, 0, f'Low process could not write {workspace}; Win32 error={error}')
+AssertionError: 5 != 0 : Low process could not write C:\Users\USER\AppData\Local\Temp\praat_py_workspace_7880; Win32 error=5
+
+======================================================================
+FAIL: test_low_process_does_not_depend_on_inaccessible_temp (__main__.PythonWorkspaceTests.test_low_process_does_not_depend_on_inaccessible_temp)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\installer\tests\PythonWorkspaceTests.py", line 145, in test_low_process_does_not_depend_on_inaccessible_temp
+    self.assertEqual(error, 0, f'Low process used unavailable temp: {workspace}')
+AssertionError: 20 != 0 : Low process used unavailable temp: .
+
+----------------------------------------------------------------------
+Ran 3 tests in 2.098s
+
+FAILED (failures=2)

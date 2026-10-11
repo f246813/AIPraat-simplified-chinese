@@ -7,7 +7,7 @@ test_turns_toggle_independently_and_keep_hints_after_the_answer (test_chat_proce
 FAIL: test_real_process_hints_survive_stream_finalization_and_collapse (test_dialogue_ui.StreamUiTests.test_real_process_hints_survive_stream_finalization_and_collapse)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_ui.py", line 65, in test_real_process_hints_survive_stream_finalization_and_collapse
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_ui.py", line 65, in test_real_process_hints_survive_stream_finalization_and_collapse
     self.assertEqual(window.transcript.tag_cget(block.body_tag,'elide'),'1')
     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 1 != '1'

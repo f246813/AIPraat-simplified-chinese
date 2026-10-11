@@ -4,26 +4,26 @@ test_duration_uses_verified_template_without_model_or_audio_material (test_dialo
 FAIL: test_duration_uses_verified_template_without_model_or_audio_material (test_dialogue_measurement.DurationWorkflowTests.test_duration_uses_verified_template_without_model_or_audio_material)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_measurement.py", line 34, in test_duration_uses_verified_template_without_model_or_audio_material
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_measurement.py", line 34, in test_duration_uses_verified_template_without_model_or_audio_material
     try: cloud_workflow.process_cloud(window,'测量当前声音的时长')
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_workflow.py", line 127, in process_cloud
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_workflow.py", line 127, in process_cloud
     materials = TaskMaterials(chat.runtime_dir() / 'tasks')
                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1139, in __call__
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1139, in __call__
     return self._mock_call(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1143, in _mock_call
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1143, in _mock_call
     return self._execute_mock_call(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1198, in _execute_mock_call
     raise effect
 AssertionError: No material needed
 
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_measurement.py", line 35, in test_duration_uses_verified_template_without_model_or_audio_material
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_measurement.py", line 35, in test_duration_uses_verified_template_without_model_or_audio_material
     except AssertionError as error: self.fail(str(error))
                                     ^^^^^^^^^^^^^^^^^^^^^
 AssertionError: No material needed

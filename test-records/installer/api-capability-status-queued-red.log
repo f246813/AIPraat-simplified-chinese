@@ -25,7 +25,7 @@ test_real_audio_probe_retains_code_without_claiming_unsupported (test_api_capabi
 FAIL: test_queued_old_success_cannot_undo_later_runtime_rejection (test_api_capability_status.CapabilityDialogTests.test_queued_old_success_cannot_undo_later_runtime_rejection)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_api_capability_status.py", line 252, in test_queued_old_success_cannot_undo_later_runtime_rejection
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_api_capability_status.py", line 252, in test_queued_old_success_cannot_undo_later_runtime_rejection
     self.assertFalse(load_config(self.path).api.audio_input_enabled)
 AssertionError: True is not false
 
@@ -33,7 +33,7 @@ AssertionError: True is not false
 FAIL: test_real_save_old_manual_setting_cannot_undo_later_rejection (test_api_capability_status.CapabilityDialogTests.test_real_save_old_manual_setting_cannot_undo_later_rejection)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_api_capability_status.py", line 235, in test_real_save_old_manual_setting_cannot_undo_later_rejection
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_api_capability_status.py", line 235, in test_real_save_old_manual_setting_cannot_undo_later_rejection
     self.assertFalse(load_config(self.path).api.audio_input_enabled)
 AssertionError: True is not false
 

@@ -5,7 +5,7 @@
     "parent_pid": 20300,
     "integrity": 4096,
     "message_write_access": false,
-    "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\f2468\\\\AppData\\\\Roaming\\\\Praat\\\\Message.txt'"
+    "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\USER\\\\AppData\\\\Roaming\\\\Praat\\\\Message.txt'"
   },
   {
     "executable": "Praat-model-settings.exe",
@@ -13,7 +13,7 @@
     "parent_pid": 18800,
     "integrity": 4096,
     "message_write_access": false,
-    "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\f2468\\\\AppData\\\\Roaming\\\\Praat\\\\Message.txt'"
+    "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\USER\\\\AppData\\\\Roaming\\\\Praat\\\\Message.txt'"
   },
   {
     "executable": "Praat-menu-fixed.exe",
@@ -21,6 +21,6 @@
     "parent_pid": 3404,
     "integrity": 4096,
     "message_write_access": false,
-    "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\f2468\\\\AppData\\\\Roaming\\\\Praat\\\\Message.txt'"
+    "error": "[Errno 13] Permission denied: 'C:\\\\Users\\\\USER\\\\AppData\\\\Roaming\\\\Praat\\\\Message.txt'"
   }
 ]

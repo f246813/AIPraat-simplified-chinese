@@ -9,7 +9,10 @@
     "bottom_add_action_remains_below_scrollable_list",
     "sidebar_switches_to_acoustic_models_and_retains_legacy_model",
     "model_picker_select_persists_MFA_model_without_changing_dictionary",
-    "model_delete_keeps_files_and_dictionary_sidebar_restores_current_selection"
+    "model_delete_keeps_files_and_dictionary_sidebar_restores_current_selection",
+    "Wav2Vec2_sidebar_backfills_existing_model_directory",
+    "native_Wav2Vec2_folder_picker_cancel_preserves_config",
+    "Wav2Vec2_add_select_delete_retains_directories_and_runtime_parameters"
   ],
   "errors": []
 }

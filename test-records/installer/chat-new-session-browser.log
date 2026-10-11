@@ -1,0 +1,64 @@
+[WebServer] (node:6912) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 11 tests using 1 worker
+
+(node:3456) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3456) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\browser\archived-settings.spec.ts:26:1 › archived entry lives in settings; Codex rows show dates and restore without leaving settings (5.8s)
+  ok  2 tests\browser\archived-settings.spec.ts:71:1 › archive search and source/project filters reuse host results; row delete requires confirmation (3.5s)
+  ok  3 tests\browser\archived-settings.spec.ts:135:1 › archived sections keep original grouping; group and global deletion retain active chats (3.6s)
+  ok  4 tests\browser\archived-settings.spec.ts:224:1 › opening archived history respects unsaved settings and restores legacy history as read-only (3.0s)
+  ok  5 tests\browser\archived-settings.spec.ts:290:1 › archive settings rows remain aligned in a narrow viewport (2.1s)
+  ok  6 tests\browser\organization.spec.ts:16:1 › Codex section menus: create, edit, membership, new chat and remove without deleting history (3.6s)
+  ok  7 tests\browser\organization.spec.ts:100:1 › right-click menu forks an independent legacy snapshot; archives restore from settings (3.0s)
+  ok  8 tests\browser\organization.spec.ts:147:1 › section keyboard picker, cross-section drag, ordered insertion and bulk archive restore (9.0s)
+  ok  9 tests\browser\session-menu.spec.ts:2:1 › Pi extracted session menu: toggle, keyboard, outside, scroll, right click, pin and legacy guards (3.7s)
+  ok 10 tests\browser\session-menu.spec.ts:71:1 › running session cannot delete but may pin; narrow viewport and exact 6px scrollbar (6.8s)
+  x  11 tests\browser\startup-session.spec.ts:2:1 › opening starts a blank session and keeps historical conversations accessible (7.2s)
+
+
+  1) tests\browser\startup-session.spec.ts:2:1 › opening starts a blank session and keeps historical conversations accessible 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveClass[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('[data-session-id="demo-new-1"]')
+    Expected pattern: [32m/selected/[39m
+    Received string:  [31m"thread-item session-row active  "[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toHaveClass" with timeout 5000ms[22m
+    [2m  - waiting for locator('[data-session-id="demo-new-1"]')[22m
+    [2m    9 × locator resolved to <div draggable="true" data-pinned="false" data-multi-selected="false" data-session-id="demo-new-1" data-sidebar-session-row="demo-new-1" class="thread-item session-row active  ">…</div>[22m
+    [2m      - unexpected value "thread-item session-row active  "[22m
+
+
+       7 |   await expect(page.locator('.transcript .message')).toHaveCount(0);
+       8 |   await page.getByRole('button',{name:'展开会话侧栏'}).click();
+    >  9 |   await expect(page.locator('[data-session-id="demo-new-1"]')).toHaveClass(/selected/);
+         |                                                                ^
+      10 |   await page.locator('[data-session-id="demo-history"] .session-select').click();
+      11 |   await expect(page.locator('.chat-header h1')).toHaveText('长历史与渲染夹具');
+      12 |   await expect(page.locator('.transcript .message').first()).toBeVisible();
+        at C:\Users\USER\Desktop\Praat\稳定早期版\ai\frontend\tests\browser\startup-session.spec.ts:9:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\.build-tools\dictionary-models-scratch\frontend-playwright-results\startup-session-opening-st-7cafa-al-conversations-accessible\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\.build-tools\dictionary-models-scratch\frontend-playwright-results\startup-session-opening-st-7cafa-al-conversations-accessible\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\.build-tools\dictionary-models-scratch\frontend-playwright-results\startup-session-opening-st-7cafa-al-conversations-accessible\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\.build-tools\dictionary-models-scratch\frontend-playwright-results\startup-session-opening-st-7cafa-al-conversations-accessible\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\browser\startup-session.spec.ts:2:1 › opening starts a blank session and keeps historical conversations accessible 
+  10 passed (56.7s)

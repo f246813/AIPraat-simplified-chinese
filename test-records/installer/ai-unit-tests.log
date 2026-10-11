@@ -54,18 +54,18 @@ invalid command name "2609884533056focus_set"
 .....................................................................................................................................................................................................----------------------------------------
 Exception occurred during processing of request from ('127.0.0.1', 62215)
 Traceback (most recent call last):
-  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socketserver.py", line 697, in process_request_thread
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socketserver.py", line 697, in process_request_thread
     self.finish_request(request, client_address)
-  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socketserver.py", line 362, in finish_request
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socketserver.py", line 362, in finish_request
     self.RequestHandlerClass(request, client_address, self)
-  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socketserver.py", line 766, in __init__
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socketserver.py", line 766, in __init__
     self.handle()
-  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\server.py", line 442, in handle
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\server.py", line 442, in handle
     self.handle_one_request()
-  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\server.py", line 408, in handle_one_request
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\http\server.py", line 408, in handle_one_request
     self.raw_requestline = self.rfile.readline(65537)
                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py", line 720, in readinto
+  File "C:\Users\USER\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\socket.py", line 720, in readinto
     return self._sock.recv_into(b)
            ^^^^^^^^^^^^^^^^^^^^^^^
 ConnectionAbortedError: [WinError 10053] 你的主机中的软件中止了一个已建立的连接。
@@ -155,11 +155,11 @@ invalid command name "2609965632640focus_set"
 FAIL: test_extract_part_accepts_from_to_aliases (test_analysis_object_types.AnalysisObjectTypeTests.test_extract_part_accepts_from_to_aliases)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 248, in test_extract_part_accepts_from_to_aliases
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 248, in test_extract_part_accepts_from_to_aliases
     self.run_praat(SOUND + "\n" + tools.render("extract_part", {"from": 0.2, "to": 0.7}, context) +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmp4uv0k5br\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmp4uv0k5br\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -167,11 +167,11 @@ Formula not run.
 
 Script line 19 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmp4uv0k5br/result.txt", "已截取片段：", "片段", "（id ", fixed$ (newId, 0), "）", "，区间 ", fixed$ (t1, 3), "–", fixed$ (t2, 3), " 秒，共 ", fixed$ (duration, 3), " 秒", rangeNote$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmp4uv0k5br/result.txt", "已截取片段：", "片段", "（id ", fixed$ (newId, 0), "）", "，区间 ", fixed$ (t1, 3), "–", fixed$ (t2, 3), " 秒，共 ", fixed$ (duration, 3), " 秒", rangeNote$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmp4uv0k5br\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmp4uv0k5br\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmp4uv0k5br\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmp4uv0k5br\test.praat>> not completed.
 
 
 
@@ -181,23 +181,23 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmp4uv0k5br\test.praat
 FAIL: test_longsound_extract_and_info_use_real_supported_commands (test_analysis_object_types.AnalysisObjectTypeTests.test_longsound_extract_and_info_use_real_supported_commands) (tool='object_info')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 231, in test_longsound_extract_and_info_use_real_supported_commands
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 231, in test_longsound_extract_and_info_use_real_supported_commands
     self.run_praat(prefix + tools.render(name, arguments, context))
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpsifs_c4b\input.wav”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpsifs_c4b\input.wav”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
-Sounds not concatenated and not saved to “C:\Users\f2468\AppData\Local\Temp\tmpsifs_c4b\input.wav”.
+Sounds not concatenated and not saved to “C:\Users\USER\AppData\Local\Temp\tmpsifs_c4b\input.wav”.
 
 Script line 2 not performed or completed:
 
-« Save as WAV file: "C:/Users/f2468/AppData/Local/Temp/tmpsifs_c4b/input.wav" »
+« Save as WAV file: "C:/Users/USER/AppData/Local/Temp/tmpsifs_c4b/input.wav" »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpsifs_c4b\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpsifs_c4b\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpsifs_c4b\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpsifs_c4b\test.praat>> not completed.
 
 
 
@@ -207,23 +207,23 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpsifs_c4b\test.praat
 FAIL: test_longsound_extract_and_info_use_real_supported_commands (test_analysis_object_types.AnalysisObjectTypeTests.test_longsound_extract_and_info_use_real_supported_commands) (tool='extract_part')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 231, in test_longsound_extract_and_info_use_real_supported_commands
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 231, in test_longsound_extract_and_info_use_real_supported_commands
     self.run_praat(prefix + tools.render(name, arguments, context))
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpsifs_c4b\input.wav”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpsifs_c4b\input.wav”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
-Sounds not concatenated and not saved to “C:\Users\f2468\AppData\Local\Temp\tmpsifs_c4b\input.wav”.
+Sounds not concatenated and not saved to “C:\Users\USER\AppData\Local\Temp\tmpsifs_c4b\input.wav”.
 
 Script line 2 not performed or completed:
 
-« Save as WAV file: "C:/Users/f2468/AppData/Local/Temp/tmpsifs_c4b/input.wav" »
+« Save as WAV file: "C:/Users/USER/AppData/Local/Temp/tmpsifs_c4b/input.wav" »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpsifs_c4b\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpsifs_c4b\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpsifs_c4b\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpsifs_c4b\test.praat>> not completed.
 
 
 
@@ -233,23 +233,23 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpsifs_c4b\test.praat
 FAIL: test_read_file_accepts_multiple_imported_objects_and_reports_all_ids (test_analysis_object_types.AnalysisObjectTypeTests.test_read_file_accepts_multiple_imported_objects_and_reports_all_ids)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 239, in test_read_file_accepts_multiple_imported_objects_and_reports_all_ids
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 239, in test_read_file_accepts_multiple_imported_objects_and_reports_all_ids
     self.run_praat(prefix + tools.render("read_file", {"path": str(collection)}, context) +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpzwx9ygl4\objects.Collection”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpzwx9ygl4\objects.Collection”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
-Collection: not written to text file “C:\Users\f2468\AppData\Local\Temp\tmpzwx9ygl4\objects.Collection”.
+Collection: not written to text file “C:\Users\USER\AppData\Local\Temp\tmpzwx9ygl4\objects.Collection”.
 
 Script line 4 not performed or completed:
 
-« Save as text file: "C:/Users/f2468/AppData/Local/Temp/tmpzwx9ygl4/objects.Collection" »
+« Save as text file: "C:/Users/USER/AppData/Local/Temp/tmpzwx9ygl4/objects.Collection" »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpzwx9ygl4\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpzwx9ygl4\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpzwx9ygl4\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpzwx9ygl4\test.praat>> not completed.
 
 
 
@@ -259,11 +259,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpzwx9ygl4\test.praat
 FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='pitch_statistics')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
     self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -271,11 +271,11 @@ Formula not run.
 
 Script line 74 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmprhh4ddyr/result.txt", "基频统计（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 3), " Hz，最低 ", fixed$ (minimum, 3), " Hz，最高 ", fixed$ (maximum, 3), " Hz，最高点出现在 ", fixed$ (maxtime, 3), " 秒", rangeNote$, pitchLimit$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmprhh4ddyr/result.txt", "基频统计（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 3), " Hz，最低 ", fixed$ (minimum, 3), " Hz，最高 ", fixed$ (maximum, 3), " Hz，最高点出现在 ", fixed$ (maxtime, 3), " 秒", rangeNote$, pitchLimit$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\test.praat>> not completed.
 
 
 
@@ -285,11 +285,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat
 FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='intensity_statistics')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
     self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -297,11 +297,11 @@ Formula not run.
 
 Script line 22 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmprhh4ddyr/result.txt", "强度统计（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 3), " dB，最高 ", fixed$ (maximum, 3), " dB", rangeNote$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmprhh4ddyr/result.txt", "强度统计（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 3), " dB，最高 ", fixed$ (maximum, 3), " dB", rangeNote$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\test.praat>> not completed.
 
 
 
@@ -311,11 +311,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat
 FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='formant_statistics')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
     self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -323,11 +323,11 @@ Formula not run.
 
 Script line 22 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmprhh4ddyr/result.txt", "第 2 共振峰平均（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）= ", fixed$ (mean, 1), " Hz", "（标准差 ", fixed$ (std, 1), "）", rangeNote$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmprhh4ddyr/result.txt", "第 2 共振峰平均（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）= ", fixed$ (mean, 1), " Hz", "（标准差 ", fixed$ (std, 1), "）", rangeNote$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\test.praat>> not completed.
 
 
 
@@ -337,11 +337,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat
 FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='harmonicity_statistics')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
     self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -349,11 +349,11 @@ Formula not run.
 
 Script line 25 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmprhh4ddyr/result.txt", "谐噪比 HNR（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 2), " dB，最高 ", fixed$ (maximum, 2), " dB", rangeNote$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmprhh4ddyr/result.txt", "谐噪比 HNR（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 2), " dB，最高 ", fixed$ (maximum, 2), " dB", rangeNote$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\test.praat>> not completed.
 
 
 
@@ -363,11 +363,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat
 FAIL: test_sound_statistics_cleanup_and_range_aliases_in_real_praat (test_analysis_object_types.AnalysisObjectTypeTests.test_sound_statistics_cleanup_and_range_aliases_in_real_praat) (tool='measure')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 219, in test_sound_statistics_cleanup_and_range_aliases_in_real_praat
     self.run_praat(SOUND + "\n" + tools.render(name, arguments, context) +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -375,11 +375,11 @@ Formula not run.
 
 Script line 25 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmprhh4ddyr/result.txt", "平均基频（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）= ", fixed$ (value, 2), " Hz", rangeNote$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmprhh4ddyr/result.txt", "平均基频（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）= ", fixed$ (value, 2), " Hz", rangeNote$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmprhh4ddyr\test.praat>> not completed.
 
 
 
@@ -389,11 +389,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmprhh4ddyr\test.praat
 FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='pitch')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
     self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -401,11 +401,11 @@ Formula not run.
 
 Script line 19 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmpj7_fx41i/result.txt", "基频（", fixed$ (time, 3), " 秒处）= ", fixed$ (value, 3), " Hz", note$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpj7_fx41i/result.txt", "基频（", fixed$ (time, 3), " 秒处）= ", fixed$ (value, 3), " Hz", note$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
 
 
 
@@ -415,11 +415,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat
 FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='pitch_statistics')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
     self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -427,11 +427,11 @@ Formula not run.
 
 Script line 71 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmpj7_fx41i/result.txt", "基频统计（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 3), " Hz，最低 ", fixed$ (minimum, 3), " Hz，最高 ", fixed$ (maximum, 3), " Hz，最高点出现在 ", fixed$ (maxtime, 3), " 秒", rangeNote$, pitchLimit$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpj7_fx41i/result.txt", "基频统计（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 3), " Hz，最低 ", fixed$ (minimum, 3), " Hz，最高 ", fixed$ (maximum, 3), " Hz，最高点出现在 ", fixed$ (maxtime, 3), " 秒", rangeNote$, pitchLimit$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
 
 
 
@@ -441,11 +441,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat
 FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='pitch_peak_latency')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
     self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -453,11 +453,11 @@ Formula not run.
 
 Script line 69 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmpj7_fx41i/result.txt", "基频峰值延迟 = ", fixed$ (latency, 3), "（峰值 ", fixed$ (peakTime, 3), " 秒出现在 ", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒这一段里；0.5 = 正好在中间）", rangeNote$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpj7_fx41i/result.txt", "基频峰值延迟 = ", fixed$ (latency, 3), "（峰值 ", fixed$ (peakTime, 3), " 秒出现在 ", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒这一段里；0.5 = 正好在中间）", rangeNote$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
 
 
 
@@ -467,11 +467,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat
 FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='intensity')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
     self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -479,11 +479,11 @@ Formula not run.
 
 Script line 19 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmpj7_fx41i/result.txt", "强度（", fixed$ (time, 3), " 秒处）= ", fixed$ (value, 3), " dB", note$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpj7_fx41i/result.txt", "强度（", fixed$ (time, 3), " 秒处）= ", fixed$ (value, 3), " dB", note$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
 
 
 
@@ -493,11 +493,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat
 FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='intensity_statistics')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
     self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -505,11 +505,11 @@ Formula not run.
 
 Script line 19 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmpj7_fx41i/result.txt", "强度统计（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 3), " dB，最高 ", fixed$ (maximum, 3), " dB", rangeNote$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpj7_fx41i/result.txt", "强度统计（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 3), " dB，最高 ", fixed$ (maximum, 3), " dB", rangeNote$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
 
 
 
@@ -519,11 +519,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat
 FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='intensity_slope')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
     self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -531,11 +531,11 @@ Formula not run.
 
 Script line 17 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmpj7_fx41i/result.txt", "强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= ", fixed$ (slope, 2), " dB/s（", fixed$ (colsNum, 0), " 个点，步长 ", fixed$ (timeStep, 6), " 秒）", rangeNote$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpj7_fx41i/result.txt", "强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= ", fixed$ (slope, 2), " dB/s（", fixed$ (colsNum, 0), " 个点，步长 ", fixed$ (timeStep, 6), " 秒）", rangeNote$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
 
 
 
@@ -545,11 +545,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat
 FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='formant_frequency')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
     self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -557,11 +557,11 @@ Formula not run.
 
 Script line 24 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmpj7_fx41i/result.txt", "第 2 共振峰（", fixed$ (time, 3), " 秒处）：频率 ", fixed$ (value, 3), " Hz", bandwidthText$, note$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpj7_fx41i/result.txt", "第 2 共振峰（", fixed$ (time, 3), " 秒处）：频率 ", fixed$ (value, 3), " Hz", bandwidthText$, note$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
 
 
 
@@ -571,11 +571,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat
 FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='formant_bandwidth')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
     self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -583,11 +583,11 @@ Formula not run.
 
 Script line 19 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmpj7_fx41i/result.txt", "第 2 共振峰带宽（", fixed$ (time, 3), " 秒处）= ", fixed$ (value, 3), " Hz", note$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpj7_fx41i/result.txt", "第 2 共振峰带宽（", fixed$ (time, 3), " 秒处）= ", fixed$ (value, 3), " Hz", note$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
 
 
 
@@ -597,11 +597,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat
 FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='formant_statistics')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
     self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -609,11 +609,11 @@ Formula not run.
 
 Script line 19 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmpj7_fx41i/result.txt", "第 2 共振峰平均（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）= ", fixed$ (mean, 1), " Hz", "（标准差 ", fixed$ (std, 1), "）", rangeNote$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpj7_fx41i/result.txt", "第 2 共振峰平均（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）= ", fixed$ (mean, 1), " Hz", "（标准差 ", fixed$ (std, 1), "）", rangeNote$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
 
 
 
@@ -623,11 +623,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat
 FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='harmonicity_statistics')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
     self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -635,11 +635,11 @@ Formula not run.
 
 Script line 22 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmpj7_fx41i/result.txt", "谐噪比 HNR（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 2), " dB，最高 ", fixed$ (maximum, 2), " dB", rangeNote$ »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpj7_fx41i/result.txt", "谐噪比 HNR（", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒）：平均 ", fixed$ (mean, 2), " dB，最高 ", fixed$ (maximum, 2), " dB", rangeNote$ »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
 
 
 
@@ -649,11 +649,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat
 FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='hl_ratio')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
     self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -661,11 +661,11 @@ Formula not run.
 
 Script line 10 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmpj7_fx41i/result.txt", "H/L = ", fixed$ (hl, 4), "（高频 4000–8000 Hz 能量 ÷ 低频 ", "0–4000 Hz 能量）" »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpj7_fx41i/result.txt", "H/L = ", fixed$ (hl, 4), "（高频 4000–8000 Hz 能量 ÷ 低频 ", "0–4000 Hz 能量）" »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
 
 
 
@@ -675,11 +675,11 @@ Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat
 FAIL: test_supported_existing_analysis_objects_survive_real_queries (test_analysis_object_types.AnalysisObjectTypeTests.test_supported_existing_analysis_objects_survive_real_queries) (tool='hammarberg_index')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 210, in test_supported_existing_analysis_objects_survive_real_queries
     self.run_praat(SOUND + "\n" + conversions[class_name] + "\n" + script +
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_analysis_object_types.py", line 275, in run_praat
     self.assertEqual(completed.returncode, 0, output.decode(encoding, errors="replace"))
-AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
+AssertionError: 4294967295 != 0 : Error: No permission to create file “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\result.txt”.
 
 Not-so-useful hint: unexpected error 13 (5).
 
@@ -687,11 +687,11 @@ Formula not run.
 
 Script line 7 not performed or completed:
 
-« appendFileLine: "C:/Users/f2468/AppData/Local/Temp/tmpj7_fx41i/result.txt", "Hammarberg 指数 = ", fixed$ (hammarberg, 2), " dB（0–2000 Hz 最大电平 ", fixed$ (lowBand, 2), " dB − 2000–5000 Hz 最大电平 ", fixed$ (highBand, 2), " dB）" »
+« appendFileLine: "C:/Users/USER/AppData/Local/Temp/tmpj7_fx41i/result.txt", "Hammarberg 指数 = ", fixed$ (hammarberg, 2), " dB（0–2000 Hz 最大电平 ", fixed$ (lowBand, 2), " dB − 2000–5000 Hz 最大电平 ", fixed$ (highBand, 2), " dB）" »
 
-Script “C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
+Script “C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat” not completed.
 
-Praat: script command <<C:\Users\f2468\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
+Praat: script command <<C:\Users\USER\AppData\Local\Temp\tmpj7_fx41i\test.praat>> not completed.
 
 
 

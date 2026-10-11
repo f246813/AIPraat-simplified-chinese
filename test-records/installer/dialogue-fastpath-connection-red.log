@@ -6,7 +6,7 @@ test_same_socket_reused_and_changed_force_setting_applies_immediately (test_dial
 FAIL: test_same_socket_reused_and_changed_force_setting_applies_immediately (test_dialogue_protocol.DialogueProtocolTests.test_same_socket_reused_and_changed_force_setting_applies_immediately)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_protocol.py", line 76, in test_same_socket_reused_and_changed_force_setting_applies_immediately
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_protocol.py", line 76, in test_same_socket_reused_and_changed_force_setting_applies_immediately
     self.assertEqual(len(set(ports)),1)
 AssertionError: 3 != 1
 

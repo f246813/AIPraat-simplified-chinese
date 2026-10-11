@@ -1,0 +1,6 @@
+test_modern_model_request_never_follows_redirect (tests.test_modern_host.ModernHostTests.test_modern_model_request_never_follows_redirect) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.603s
+
+OK

@@ -20,7 +20,7 @@ test_transport_retry_preserves_first_mutation_authorization (ai.tests.test_stair
 FAIL: test_audio_observation_and_previous_report_survive_continuation (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_audio_observation_and_previous_report_survive_continuation)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 131, in test_audio_observation_and_previous_report_survive_continuation
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 131, in test_audio_observation_and_previous_report_survive_continuation
     self.assertEqual(continued.mode, 'L2')
 AssertionError: 'L4' != 'L2'
 - L4
@@ -31,7 +31,7 @@ AssertionError: 'L4' != 'L2'
 FAIL: test_missing_snapshot_does_not_add_an_audio_report (ai.tests.test_staircase_review_fixes.ReviewFixTests.test_missing_snapshot_does_not_add_an_audio_report)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 136, in test_missing_snapshot_does_not_add_an_audio_report
+  File "C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\ai\tests\test_staircase_review_fixes.py", line 136, in test_missing_snapshot_does_not_add_an_audio_report
     self.assertEqual(inputs, [False, False, False])
 AssertionError: Lists differ: [False, False, False, False] != [False, False, False]
 

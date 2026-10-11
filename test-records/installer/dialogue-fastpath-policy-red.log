@@ -49,10 +49,10 @@ test_service_auto_stays_default_and_unknown_gateway_keeps_compatibility (test_di
 FAIL: test_capability_questions_do_not_need_a_greeting_prefix (test_dialogue_fastpath.DialoguePolicyTests.test_capability_questions_do_not_need_a_greeting_prefix) (text='Hello,what can u do for me?')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 21, in test_capability_questions_do_not_need_a_greeting_prefix
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 21, in test_capability_questions_do_not_need_a_greeting_prefix
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'conversation')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -60,10 +60,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_capability_questions_do_not_need_a_greeting_prefix (test_dialogue_fastpath.DialoguePolicyTests.test_capability_questions_do_not_need_a_greeting_prefix) (text='what can u do for me?')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 21, in test_capability_questions_do_not_need_a_greeting_prefix
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 21, in test_capability_questions_do_not_need_a_greeting_prefix
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'conversation')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -71,10 +71,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_capability_questions_do_not_need_a_greeting_prefix (test_dialogue_fastpath.DialoguePolicyTests.test_capability_questions_do_not_need_a_greeting_prefix) (text='你能帮我做什么')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 21, in test_capability_questions_do_not_need_a_greeting_prefix
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 21, in test_capability_questions_do_not_need_a_greeting_prefix
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'conversation')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -82,10 +82,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_capability_questions_do_not_need_a_greeting_prefix (test_dialogue_fastpath.DialoguePolicyTests.test_capability_questions_do_not_need_a_greeting_prefix) (text='你有哪些功能？')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 21, in test_capability_questions_do_not_need_a_greeting_prefix
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 21, in test_capability_questions_do_not_need_a_greeting_prefix
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'conversation')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -93,10 +93,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_concepts_and_analysis_keep_selected_high_level (test_dialogue_fastpath.DialoguePolicyTests.test_concepts_and_analysis_keep_selected_high_level) (kind='concept')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 57, in test_concepts_and_analysis_keep_selected_high_level
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 57, in test_concepts_and_analysis_keep_selected_high_level
     with self.subTest(kind=kind): self.assertEqual(self.effective('high', False, kind), 'high')
                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
     self.assertTrue(callable(decide), 'Missing per-request thinking policy')
 AssertionError: False is not true : Missing per-request thinking policy
 
@@ -104,10 +104,10 @@ AssertionError: False is not true : Missing per-request thinking policy
 FAIL: test_concepts_and_analysis_keep_selected_high_level (test_dialogue_fastpath.DialoguePolicyTests.test_concepts_and_analysis_keep_selected_high_level) (kind=None)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 57, in test_concepts_and_analysis_keep_selected_high_level
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 57, in test_concepts_and_analysis_keep_selected_high_level
     with self.subTest(kind=kind): self.assertEqual(self.effective('high', False, kind), 'high')
                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
     self.assertTrue(callable(decide), 'Missing per-request thinking policy')
 AssertionError: False is not true : Missing per-request thinking policy
 
@@ -115,10 +115,10 @@ AssertionError: False is not true : Missing per-request thinking policy
 FAIL: test_force_setting_does_not_upgrade_other_manual_levels (test_dialogue_fastpath.DialoguePolicyTests.test_force_setting_does_not_upgrade_other_manual_levels) (level='low')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 53, in test_force_setting_does_not_upgrade_other_manual_levels
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 53, in test_force_setting_does_not_upgrade_other_manual_levels
     with self.subTest(level=level): self.assertEqual(self.effective(level, True, 'conversation'), level)
                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
     self.assertTrue(callable(decide), 'Missing per-request thinking policy')
 AssertionError: False is not true : Missing per-request thinking policy
 
@@ -126,10 +126,10 @@ AssertionError: False is not true : Missing per-request thinking policy
 FAIL: test_force_setting_does_not_upgrade_other_manual_levels (test_dialogue_fastpath.DialoguePolicyTests.test_force_setting_does_not_upgrade_other_manual_levels) (level='medium')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 53, in test_force_setting_does_not_upgrade_other_manual_levels
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 53, in test_force_setting_does_not_upgrade_other_manual_levels
     with self.subTest(level=level): self.assertEqual(self.effective(level, True, 'conversation'), level)
                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
     self.assertTrue(callable(decide), 'Missing per-request thinking policy')
 AssertionError: False is not true : Missing per-request thinking policy
 
@@ -137,10 +137,10 @@ AssertionError: False is not true : Missing per-request thinking policy
 FAIL: test_force_setting_does_not_upgrade_other_manual_levels (test_dialogue_fastpath.DialoguePolicyTests.test_force_setting_does_not_upgrade_other_manual_levels) (level='off')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 53, in test_force_setting_does_not_upgrade_other_manual_levels
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 53, in test_force_setting_does_not_upgrade_other_manual_levels
     with self.subTest(level=level): self.assertEqual(self.effective(level, True, 'conversation'), level)
                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
     self.assertTrue(callable(decide), 'Missing per-request thinking policy')
 AssertionError: False is not true : Missing per-request thinking policy
 
@@ -148,10 +148,10 @@ AssertionError: False is not true : Missing per-request thinking policy
 FAIL: test_force_setting_does_not_upgrade_other_manual_levels (test_dialogue_fastpath.DialoguePolicyTests.test_force_setting_does_not_upgrade_other_manual_levels) (level='auto')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 53, in test_force_setting_does_not_upgrade_other_manual_levels
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 53, in test_force_setting_does_not_upgrade_other_manual_levels
     with self.subTest(level=level): self.assertEqual(self.effective(level, True, 'conversation'), level)
                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
     self.assertTrue(callable(decide), 'Missing per-request thinking policy')
 AssertionError: False is not true : Missing per-request thinking policy
 
@@ -159,10 +159,10 @@ AssertionError: False is not true : Missing per-request thinking policy
 FAIL: test_greetings_identity_and_ordinary_chat (test_dialogue_fastpath.DialoguePolicyTests.test_greetings_identity_and_ordinary_chat) (text='你好')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'conversation')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -170,10 +170,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_greetings_identity_and_ordinary_chat (test_dialogue_fastpath.DialoguePolicyTests.test_greetings_identity_and_ordinary_chat) (text='Hi!')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'conversation')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -181,10 +181,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_greetings_identity_and_ordinary_chat (test_dialogue_fastpath.DialoguePolicyTests.test_greetings_identity_and_ordinary_chat) (text='thanks')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'conversation')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -192,10 +192,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_greetings_identity_and_ordinary_chat (test_dialogue_fastpath.DialoguePolicyTests.test_greetings_identity_and_ordinary_chat) (text='Who are you?')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'conversation')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -203,10 +203,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_greetings_identity_and_ordinary_chat (test_dialogue_fastpath.DialoguePolicyTests.test_greetings_identity_and_ordinary_chat) (text='你是什么模型')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'conversation')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -214,10 +214,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_greetings_identity_and_ordinary_chat (test_dialogue_fastpath.DialoguePolicyTests.test_greetings_identity_and_ordinary_chat) (text='How are you?')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'conversation')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -225,10 +225,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_greetings_identity_and_ordinary_chat (test_dialogue_fastpath.DialoguePolicyTests.test_greetings_identity_and_ordinary_chat) (text='讲个笑话')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 25, in test_greetings_identity_and_ordinary_chat
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'conversation')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -236,10 +236,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_high_ordinary_dialogue_relaxes_unless_forced (test_dialogue_fastpath.DialoguePolicyTests.test_high_ordinary_dialogue_relaxes_unless_forced)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 48, in test_high_ordinary_dialogue_relaxes_unless_forced
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 48, in test_high_ordinary_dialogue_relaxes_unless_forced
     self.assertEqual(self.effective('high', False, 'conversation'), 'off')
                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 40, in effective
     self.assertTrue(callable(decide), 'Missing per-request thinking policy')
 AssertionError: False is not true : Missing per-request thinking policy
 
@@ -247,10 +247,10 @@ AssertionError: False is not true : Missing per-request thinking policy
 FAIL: test_material_and_mixed_requests_are_not_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_material_and_mixed_requests_are_not_dialogue) (text='Hello，请测量当前声音的基频')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                                     ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -258,10 +258,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_material_and_mixed_requests_are_not_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_material_and_mixed_requests_are_not_dialogue) (text='Hi, measure the selected sound duration')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                                     ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -269,10 +269,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_material_and_mixed_requests_are_not_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_material_and_mixed_requests_are_not_dialogue) (text='打开文件 C:/fixture/test.wav')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                                     ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -280,10 +280,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_material_and_mixed_requests_are_not_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_material_and_mixed_requests_are_not_dialogue) (text='分析一下这个声音')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                                     ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -291,10 +291,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_material_and_mixed_requests_are_not_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_material_and_mixed_requests_are_not_dialogue) (text='what is the pitch of this recording?')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                                     ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -302,10 +302,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_material_and_mixed_requests_are_not_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_material_and_mixed_requests_are_not_dialogue) (text='删除 Sound 3')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                                     ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -313,10 +313,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_material_and_mixed_requests_are_not_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_material_and_mixed_requests_are_not_dialogue) (text='Compare these two recordings')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                                     ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -324,10 +324,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_material_and_mixed_requests_are_not_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_material_and_mixed_requests_are_not_dialogue) (text='继续刚才的分析')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                                     ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -335,10 +335,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_material_and_mixed_requests_are_not_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_material_and_mixed_requests_are_not_dialogue) (text='这个怎么样？')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                                     ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -346,10 +346,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_material_and_mixed_requests_are_not_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_material_and_mixed_requests_are_not_dialogue) (text='你能帮我测量基频吗')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                                     ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -357,10 +357,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_material_and_mixed_requests_are_not_dialogue (test_dialogue_fastpath.DialoguePolicyTests.test_material_and_mixed_requests_are_not_dialogue) (text='measure intensity between 0.1 and 0.3 seconds')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 36, in test_material_and_mixed_requests_are_not_dialogue
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                                     ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -368,10 +368,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_pure_concept_discussion (test_dialogue_fastpath.DialoguePolicyTests.test_pure_concept_discussion) (text='什么是基频？')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 29, in test_pure_concept_discussion
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 29, in test_pure_concept_discussion
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'concept')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -379,10 +379,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_pure_concept_discussion (test_dialogue_fastpath.DialoguePolicyTests.test_pure_concept_discussion) (text='Explain what a formant is')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 29, in test_pure_concept_discussion
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 29, in test_pure_concept_discussion
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'concept')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -390,10 +390,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_pure_concept_discussion (test_dialogue_fastpath.DialoguePolicyTests.test_pure_concept_discussion) (text='什么是 VOT')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 29, in test_pure_concept_discussion
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 29, in test_pure_concept_discussion
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'concept')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -401,10 +401,10 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_pure_concept_discussion (test_dialogue_fastpath.DialoguePolicyTests.test_pure_concept_discussion) (text='如何理解共振峰？')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 29, in test_pure_concept_discussion
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 29, in test_pure_concept_discussion
     with self.subTest(text=text): self.assertEqual(self.classify(text), 'concept')
                                                    ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 16, in classify
     self.assertTrue(callable(classify), 'Missing conservative ordinary-dialogue route')
 AssertionError: False is not true : Missing conservative ordinary-dialogue route
 
@@ -412,7 +412,7 @@ AssertionError: False is not true : Missing conservative ordinary-dialogue route
 FAIL: test_advanced_checkbox_is_collected_and_survives_reopening (test_dialogue_fastpath.ForceSettingTests.test_advanced_checkbox_is_collected_and_survives_reopening)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 88, in test_advanced_checkbox_is_collected_and_survives_reopening
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 88, in test_advanced_checkbox_is_collected_and_survives_reopening
     self.assertIsNotNone(variable, 'Missing advanced checkbox')
 AssertionError: unexpectedly None : Missing advanced checkbox
 
@@ -420,7 +420,7 @@ AssertionError: unexpectedly None : Missing advanced checkbox
 FAIL: test_force_setting_roundtrips_through_real_save (test_dialogue_fastpath.ForceSettingTests.test_force_setting_roundtrips_through_real_save)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 108, in test_force_setting_roundtrips_through_real_save
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 108, in test_force_setting_roundtrips_through_real_save
     self.assertIs(getattr(load_config(path).api, 'force_deep_thinking', None), True)
 AssertionError: None is not True
 
@@ -428,7 +428,7 @@ AssertionError: None is not True
 FAIL: test_old_configuration_defaults_to_not_forcing_high (test_dialogue_fastpath.ForceSettingTests.test_old_configuration_defaults_to_not_forcing_high)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 101, in test_old_configuration_defaults_to_not_forcing_high
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 101, in test_old_configuration_defaults_to_not_forcing_high
     self.assertIs(getattr(AppConfig().api, 'force_deep_thinking', None), False)
 AssertionError: None is not False
 
@@ -436,7 +436,7 @@ AssertionError: None is not False
 FAIL: test_official_qwen_high_enables_thinking_without_openai_effort (test_dialogue_fastpath.ThinkingFieldsTests.test_official_qwen_high_enables_thinking_without_openai_effort)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 68, in test_official_qwen_high_enables_thinking_without_openai_effort
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 68, in test_official_qwen_high_enables_thinking_without_openai_effort
     self.assertEqual(self.fields('high'), {'enable_thinking':True})
 AssertionError: {'reasoning_effort': 'high'} != {'enable_thinking': True}
 - {'reasoning_effort': 'high'}
@@ -446,7 +446,7 @@ AssertionError: {'reasoning_effort': 'high'} != {'enable_thinking': True}
 FAIL: test_official_qwen_low_and_medium_have_bounded_thinking (test_dialogue_fastpath.ThinkingFieldsTests.test_official_qwen_low_and_medium_have_bounded_thinking)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 71, in test_official_qwen_low_and_medium_have_bounded_thinking
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 71, in test_official_qwen_low_and_medium_have_bounded_thinking
     self.assertEqual(self.fields('low'), {'enable_thinking':True, 'thinking_budget':1024})
 AssertionError: {'reasoning_effort': 'low'} != {'enable_thinking': True, 'thinking_budget': 1024}
 - {'reasoning_effort': 'low'}
@@ -456,7 +456,7 @@ AssertionError: {'reasoning_effort': 'low'} != {'enable_thinking': True, 'thinki
 FAIL: test_official_qwen_off_explicitly_disables_thinking (test_dialogue_fastpath.ThinkingFieldsTests.test_official_qwen_off_explicitly_disables_thinking)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 65, in test_official_qwen_off_explicitly_disables_thinking
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 65, in test_official_qwen_off_explicitly_disables_thinking
     self.assertEqual(self.fields('off'), {'enable_thinking':False})
 AssertionError: {} != {'enable_thinking': False}
 - {}

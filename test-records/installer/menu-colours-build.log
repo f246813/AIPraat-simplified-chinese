@@ -1,0 +1,14 @@
+Compiled sys/PraatAiControl.cpp
+Compiled sys/GuiMenuItem.cpp
+C:\Users\USER\Desktop\Praat\稳定早期版\sys\motifEmulator.cpp:1787:65: warning: '/*' within block comment [-Wcomment]
+ 1787 |         /*if (my widgetClass == xmScrolledWindowWidgetClass) return;   /* Ignore. */
+      |                                                                        ^
+1 warning generated.
+Compiled sys/motifEmulator.cpp
+Compiled foned/FunctionEditor.cpp
+processed file: C:\Users\USER\Desktop\Praat\�ȶ����ڰ�\.build-tools\frontend-model-settings-20261005\Praat.exe
+Successfully processed 1 files; Failed processing 0 files
+
+Path : C:\Users\USER\Desktop\Praat\稳定早期版\.build-tools\frontend-model-settings-20261005\Praat.exe
+Hash : DCEF65ADF12E644ECFBC37B70CAB257A27531B69B5995561E47FCE0D54DAFF5D
+

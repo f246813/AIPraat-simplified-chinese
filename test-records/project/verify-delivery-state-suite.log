@@ -1,4 +1,4 @@
-﻿python.exe : ..............................................................................C:\Users\f2468\AppData\Local
+python.exe : ..............................................................................C:\Users\USER\AppData\Local
 \Python\pythoncore-3.14-64\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <HTTPError 422: 'Unprocessable 
 Entity'>
 所在位置 行:1 字符: 435
@@ -8,10 +8,10 @@ Entity'>
     + FullyQualifiedErrorId : NativeCommandError
  
   _warnings.warn(self.warn_message, ResourceWarning)
-.C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <H
+.C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <H
 TTPError 400: 'Bad Request'>
   _warnings.warn(self.warn_message, ResourceWarning)
-.C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <H
+.C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\tempfile.py:484: ResourceWarning: Implicitly cleaning up <H
 TTPError 401: 'Unauthorized'>
   _warnings.warn(self.warn_message, ResourceWarning)
 PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
@@ -147,7 +147,7 @@ ERROR: test_audio_rejection_redirects_once_without_audio (test_cloud_protocol.Pr
 cts_once_without_audio)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 388, in nor
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 388, in nor
 malize_port
     port_as_int = int(port)
 ValueError: invalid literal for int() with base 10: ':1]'
@@ -155,28 +155,28 @@ ValueError: invalid literal for int() with base 10: ':1]'
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 109, in test_audio_rejection_redirect
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 109, in test_audio_rejection_redirect
 s_once_without_audio
     state, corrections = self.run_audio(base)
                          ~~~~~~~~~~~~~~^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 87, in run_audio
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 87, in run_audio
     run_cloud_turn(config,state,execute_action=lambda *_:self.fail('No Praat operation required'),
     ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                    cancel=threading.Event(), materials=material,
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                    correct_audio=corrections.append, **kwargs)
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 679, in run_cloud_turn
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 679, in run_cloud_turn
     session = CloudSession(config, state, execute_action, cancel, progress, model, tool_schemas,
                            materials, prepare_audio, correct_audio)
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 206, in __init__
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 206, in __init__
     self.model = model or create_model(config)
                           ~~~~~~~~~~~~^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 185, in create_model
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 185, in create_model
     client = AsyncOpenAI(base_url=config.api.base_url.strip().rstrip('/'),
                          api_key=config.api.api_key or 'EMPTY', max_retries=0,
                          timeout=config.api.request_timeout_sec)
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_client.py", line 1095, in __in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_client.py", line 1095, in __in
 it__
     super().__init__(
     ~~~~~~~~~~~~~~~~^
@@ -187,7 +187,7 @@ it__
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1638, in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1638, in
  __init__
     self._client = http_client or AsyncHttpxClientWrapper(
                                   ~~~~~~~~~~~~~~~~~~~~~~~^
@@ -199,26 +199,26 @@ it__
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1534, in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1534, in
  __init__
     super().__init__(**kwargs)
     ~~~~~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_client.py", line 1510, in __in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_client.py", line 1510, in __in
 it__
     URLPattern(key): None
     ~~~~~~~~~~^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_utils.py", line 182, in __init
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_utils.py", line 182, in __init
 __
     url = URL(pattern)
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urls.py", line 126, in __init_
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urls.py", line 126, in __init_
 _
     self._uri_reference = urlparse(url, **kwargs)
                           ~~~~~~~~^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 302, in url
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 302, in url
 parse
     parsed_port: int | None = normalize_port(port, scheme)
                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 390, in nor
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 390, in nor
 malize_port
     raise InvalidURL(f"Invalid port: {port!r}")
 httpx2.InvalidURL: Invalid port: ':1]'
@@ -227,7 +227,7 @@ httpx2.InvalidURL: Invalid port: ':1]'
 ERROR: test_qwen_stream_uri_and_text_output (test_cloud_protocol.ProtocolTests.test_qwen_stream_uri_and_text_output)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 388, in nor
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 388, in nor
 malize_port
     port_as_int = int(port)
 ValueError: invalid literal for int() with base 10: ':1]'
@@ -235,28 +235,28 @@ ValueError: invalid literal for int() with base 10: ':1]'
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 95, in test_qwen_stream_uri_and_text_
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 95, in test_qwen_stream_uri_and_text_
 output
     state, _ = self.run_audio(base)
                ~~~~~~~~~~~~~~^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 87, in run_audio
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 87, in run_audio
     run_cloud_turn(config,state,execute_action=lambda *_:self.fail('No Praat operation required'),
     ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                    cancel=threading.Event(), materials=material,
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                    correct_audio=corrections.append, **kwargs)
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 679, in run_cloud_turn
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 679, in run_cloud_turn
     session = CloudSession(config, state, execute_action, cancel, progress, model, tool_schemas,
                            materials, prepare_audio, correct_audio)
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 206, in __init__
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 206, in __init__
     self.model = model or create_model(config)
                           ~~~~~~~~~~~~^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 185, in create_model
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 185, in create_model
     client = AsyncOpenAI(base_url=config.api.base_url.strip().rstrip('/'),
                          api_key=config.api.api_key or 'EMPTY', max_retries=0,
                          timeout=config.api.request_timeout_sec)
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_client.py", line 1095, in __in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_client.py", line 1095, in __in
 it__
     super().__init__(
     ~~~~~~~~~~~~~~~~^
@@ -267,7 +267,7 @@ it__
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1638, in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1638, in
  __init__
     self._client = http_client or AsyncHttpxClientWrapper(
                                   ~~~~~~~~~~~~~~~~~~~~~~~^
@@ -279,26 +279,26 @@ it__
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1534, in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1534, in
  __init__
     super().__init__(**kwargs)
     ~~~~~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_client.py", line 1510, in __in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_client.py", line 1510, in __in
 it__
     URLPattern(key): None
     ~~~~~~~~~~^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_utils.py", line 182, in __init
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_utils.py", line 182, in __init
 __
     url = URL(pattern)
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urls.py", line 126, in __init_
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urls.py", line 126, in __init_
 _
     self._uri_reference = urlparse(url, **kwargs)
                           ~~~~~~~~^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 302, in url
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 302, in url
 parse
     parsed_port: int | None = normalize_port(port, scheme)
                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 390, in nor
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 390, in nor
 malize_port
     raise InvalidURL(f"Invalid port: {port!r}")
 httpx2.InvalidURL: Invalid port: ':1]'
@@ -308,7 +308,7 @@ ERROR: test_rate_limit_does_not_correct_capability_or_loop (test_cloud_protocol.
 correct_capability_or_loop)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 388, in nor
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 388, in nor
 malize_port
     port_as_int = int(port)
 ValueError: invalid literal for int() with base 10: ':1]'
@@ -316,28 +316,28 @@ ValueError: invalid literal for int() with base 10: ':1]'
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 125, in test_rate_limit_does_not_corr
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 125, in test_rate_limit_does_not_corr
 ect_capability_or_loop
     state, corrections = self.run_audio(base, model='gemini-3.8-flash')
                          ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 87, in run_audio
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 87, in run_audio
     run_cloud_turn(config,state,execute_action=lambda *_:self.fail('No Praat operation required'),
     ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                    cancel=threading.Event(), materials=material,
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                    correct_audio=corrections.append, **kwargs)
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 679, in run_cloud_turn
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 679, in run_cloud_turn
     session = CloudSession(config, state, execute_action, cancel, progress, model, tool_schemas,
                            materials, prepare_audio, correct_audio)
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 206, in __init__
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 206, in __init__
     self.model = model or create_model(config)
                           ~~~~~~~~~~~~^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 185, in create_model
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 185, in create_model
     client = AsyncOpenAI(base_url=config.api.base_url.strip().rstrip('/'),
                          api_key=config.api.api_key or 'EMPTY', max_retries=0,
                          timeout=config.api.request_timeout_sec)
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_client.py", line 1095, in __in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_client.py", line 1095, in __in
 it__
     super().__init__(
     ~~~~~~~~~~~~~~~~^
@@ -348,7 +348,7 @@ it__
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1638, in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1638, in
  __init__
     self._client = http_client or AsyncHttpxClientWrapper(
                                   ~~~~~~~~~~~~~~~~~~~~~~~^
@@ -360,26 +360,26 @@ it__
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1534, in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1534, in
  __init__
     super().__init__(**kwargs)
     ~~~~~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_client.py", line 1510, in __in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_client.py", line 1510, in __in
 it__
     URLPattern(key): None
     ~~~~~~~~~~^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_utils.py", line 182, in __init
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_utils.py", line 182, in __init
 __
     url = URL(pattern)
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urls.py", line 126, in __init_
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urls.py", line 126, in __init_
 _
     self._uri_reference = urlparse(url, **kwargs)
                           ~~~~~~~~^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 302, in url
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 302, in url
 parse
     parsed_port: int | None = normalize_port(port, scheme)
                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 390, in nor
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 390, in nor
 malize_port
     raise InvalidURL(f"Invalid port: {port!r}")
 httpx2.InvalidURL: Invalid port: ':1]'
@@ -388,7 +388,7 @@ httpx2.InvalidURL: Invalid port: ':1]'
 ERROR: test_reasoning_rejected_field_retry (test_cloud_protocol.ProtocolTests.test_reasoning_rejected_field_retry)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 388, in nor
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 388, in nor
 malize_port
     port_as_int = int(port)
 ValueError: invalid literal for int() with base 10: ':1]'
@@ -396,28 +396,28 @@ ValueError: invalid literal for int() with base 10: ':1]'
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 118, in test_reasoning_rejected_field
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 118, in test_reasoning_rejected_field
 _retry
     state, _ = self.run_audio(base, model='gemini-3.8-flash')
                ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 87, in run_audio
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_cloud_protocol.py", line 87, in run_audio
     run_cloud_turn(config,state,execute_action=lambda *_:self.fail('No Praat operation required'),
     ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                    cancel=threading.Event(), materials=material,
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                    correct_audio=corrections.append, **kwargs)
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 679, in run_cloud_turn
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 679, in run_cloud_turn
     session = CloudSession(config, state, execute_action, cancel, progress, model, tool_schemas,
                            materials, prepare_audio, correct_audio)
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 206, in __init__
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 206, in __init__
     self.model = model or create_model(config)
                           ~~~~~~~~~~~~^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 185, in create_model
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\praat_ai\cloud_agent.py", line 185, in create_model
     client = AsyncOpenAI(base_url=config.api.base_url.strip().rstrip('/'),
                          api_key=config.api.api_key or 'EMPTY', max_retries=0,
                          timeout=config.api.request_timeout_sec)
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_client.py", line 1095, in __in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_client.py", line 1095, in __in
 it__
     super().__init__(
     ~~~~~~~~~~~~~~~~^
@@ -428,7 +428,7 @@ it__
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1638, in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1638, in
  __init__
     self._client = http_client or AsyncHttpxClientWrapper(
                                   ~~~~~~~~~~~~~~~~~~~~~~~^
@@ -440,26 +440,26 @@ it__
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1534, in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\openai\_base_client.py", line 1534, in
  __init__
     super().__init__(**kwargs)
     ~~~~~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_client.py", line 1510, in __in
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_client.py", line 1510, in __in
 it__
     URLPattern(key): None
     ~~~~~~~~~~^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_utils.py", line 182, in __init
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_utils.py", line 182, in __init
 __
     url = URL(pattern)
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urls.py", line 126, in __init_
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urls.py", line 126, in __init_
 _
     self._uri_reference = urlparse(url, **kwargs)
                           ~~~~~~~~^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 302, in url
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 302, in url
 parse
     parsed_port: int | None = normalize_port(port, scheme)
                               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 390, in nor
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\httpx2\_urlparse.py", line 390, in nor
 malize_port
     raise InvalidURL(f"Invalid port: {port!r}")
 httpx2.InvalidURL: Invalid port: ':1]'
@@ -469,13 +469,13 @@ ERROR: test_report (unittest.loader._FailedTest.test_report)
 ----------------------------------------------------------------------
 ImportError: Failed to import test module: test_report
 Traceback (most recent call last):
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 433, in _find_test_path
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 433, in _find_test_path
     module = self._get_module_from_name(name)
-  File "C:\Users\f2468\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 374, in _get_module_from_n
+  File "C:\Users\USER\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 374, in _get_module_from_n
 ame
     __import__(name)
     ~~~~~~~~~~^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_report.py", line 5, in <module>
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report.py", line 5, in <module>
     import parselmouth
 ModuleNotFoundError: No module named 'parselmouth'
 

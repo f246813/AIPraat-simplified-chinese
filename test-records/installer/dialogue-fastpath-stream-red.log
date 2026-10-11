@@ -9,10 +9,10 @@ test_reuses_same_loop_and_model_then_replaces_changed_identity (test_dialogue_st
 FAIL: test_cancellation_does_not_publish_partial_as_complete (test_dialogue_stream.DialogueStreamTests.test_cancellation_does_not_publish_partial_as_complete)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 69, in test_cancellation_does_not_publish_partial_as_complete
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 69, in test_cancellation_does_not_publish_partial_as_complete
     state, _, chunks = self.run_dialogue(cancel=cancel, delta=lambda _:cancel.set())
                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 32, in run_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 32, in run_dialogue
     self.assertTrue(callable(run), 'Missing single-request text streaming path')
 AssertionError: False is not true : Missing single-request text streaming path
 
@@ -20,10 +20,10 @@ AssertionError: False is not true : Missing single-request text streaming path
 FAIL: test_failure_after_first_chunk_does_not_retry_or_duplicate_text (test_dialogue_stream.DialogueStreamTests.test_failure_after_first_chunk_does_not_retry_or_duplicate_text)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 75, in test_failure_after_first_chunk_does_not_retry_or_duplicate_text
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 75, in test_failure_after_first_chunk_does_not_retry_or_duplicate_text
     state, _, chunks = self.run_dialogue(fail_after_first=True)
                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 32, in run_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 32, in run_dialogue
     self.assertTrue(callable(run), 'Missing single-request text streaming path')
 AssertionError: False is not true : Missing single-request text streaming path
 
@@ -31,7 +31,7 @@ AssertionError: False is not true : Missing single-request text streaming path
 FAIL: test_fast_workflow_does_not_prepare_praat_or_task_materials (test_dialogue_stream.DialogueStreamTests.test_fast_workflow_does_not_prepare_praat_or_task_materials)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 82, in test_fast_workflow_does_not_prepare_praat_or_task_materials
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 82, in test_fast_workflow_does_not_prepare_praat_or_task_materials
     self.assertTrue(callable(runtime_type), 'Missing window scoped runtime')
 AssertionError: False is not true : Missing window scoped runtime
 
@@ -39,10 +39,10 @@ AssertionError: False is not true : Missing window scoped runtime
 FAIL: test_forced_high_is_sent_for_ordinary_conversation (test_dialogue_stream.DialogueStreamTests.test_forced_high_is_sent_for_ordinary_conversation)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 63, in test_forced_high_is_sent_for_ordinary_conversation
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 63, in test_forced_high_is_sent_for_ordinary_conversation
     state, settings, _ = self.run_dialogue(cfg)
                          ^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 32, in run_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 32, in run_dialogue
     self.assertTrue(callable(run), 'Missing single-request text streaming path')
 AssertionError: False is not true : Missing single-request text streaming path
 
@@ -50,10 +50,10 @@ AssertionError: False is not true : Missing single-request text streaming path
 FAIL: test_one_plain_request_streams_before_completion (test_dialogue_stream.DialogueStreamTests.test_one_plain_request_streams_before_completion)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 51, in test_one_plain_request_streams_before_completion
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 51, in test_one_plain_request_streams_before_completion
     state, settings, chunks = self.run_dialogue()
                               ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 32, in run_dialogue
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 32, in run_dialogue
     self.assertTrue(callable(run), 'Missing single-request text streaming path')
 AssertionError: False is not true : Missing single-request text streaming path
 
@@ -61,7 +61,7 @@ AssertionError: False is not true : Missing single-request text streaming path
 FAIL: test_reuses_same_loop_and_model_then_replaces_changed_identity (test_dialogue_stream.RuntimeTests.test_reuses_same_loop_and_model_then_replaces_changed_identity)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 107, in test_reuses_same_loop_and_model_then_replaces_changed_identity
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_stream.py", line 107, in test_reuses_same_loop_and_model_then_replaces_changed_identity
     self.assertTrue(callable(runtime_type), 'Missing loop-safe client reuse')
 AssertionError: False is not true : Missing loop-safe client reuse
 

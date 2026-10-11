@@ -5,7 +5,7 @@ test_partial_text_is_visible_and_replaced_by_one_final_message (test_dialogue_ui
 FAIL: test_late_delta_after_final_is_ignored (test_dialogue_ui.StreamUiTests.test_late_delta_after_final_is_ignored)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_ui.py", line 41, in test_late_delta_after_final_is_ignored
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_ui.py", line 41, in test_late_delta_after_final_is_ignored
     self.assertTrue(callable(begin), 'Missing UI streaming renderer')
 AssertionError: False is not true : Missing UI streaming renderer
 
@@ -13,7 +13,7 @@ AssertionError: False is not true : Missing UI streaming renderer
 FAIL: test_partial_text_is_visible_and_replaced_by_one_final_message (test_dialogue_ui.StreamUiTests.test_partial_text_is_visible_and_replaced_by_one_final_message)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_ui.py", line 24, in test_partial_text_is_visible_and_replaced_by_one_final_message
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_ui.py", line 24, in test_partial_text_is_visible_and_replaced_by_one_final_message
     self.assertTrue(callable(begin), 'Missing UI streaming renderer')
 AssertionError: False is not true : Missing UI streaming renderer
 

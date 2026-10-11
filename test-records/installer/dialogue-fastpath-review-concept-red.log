@@ -19,7 +19,7 @@ test_unknown_operations_and_references_keep_analysis_pipeline (test_dialogue_fas
 FAIL: test_concept_prefix_does_not_override_operations_targets_or_ranges (test_dialogue_fastpath.DialoguePolicyTests.test_concept_prefix_does_not_override_operations_targets_or_ranges) (text='什么是基频？顺便复制一份')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 56, in test_concept_prefix_does_not_override_operations_targets_or_ranges
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 56, in test_concept_prefix_does_not_override_operations_targets_or_ranges
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 'concept' is not None
@@ -28,7 +28,7 @@ AssertionError: 'concept' is not None
 FAIL: test_concept_prefix_does_not_override_operations_targets_or_ranges (test_dialogue_fastpath.DialoguePolicyTests.test_concept_prefix_does_not_override_operations_targets_or_ranges) (text='解释0.1到0.3秒的基频变化')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 56, in test_concept_prefix_does_not_override_operations_targets_or_ranges
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 56, in test_concept_prefix_does_not_override_operations_targets_or_ranges
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 'concept' is not None
@@ -37,7 +37,7 @@ AssertionError: 'concept' is not None
 FAIL: test_concept_prefix_does_not_override_operations_targets_or_ranges (test_dialogue_fastpath.DialoguePolicyTests.test_concept_prefix_does_not_override_operations_targets_or_ranges) (text='解释 Sound 3 的共振峰')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 56, in test_concept_prefix_does_not_override_operations_targets_or_ranges
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 56, in test_concept_prefix_does_not_override_operations_targets_or_ranges
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 'concept' is not None
@@ -46,7 +46,7 @@ AssertionError: 'concept' is not None
 FAIL: test_concept_prefix_does_not_override_operations_targets_or_ranges (test_dialogue_fastpath.DialoguePolicyTests.test_concept_prefix_does_not_override_operations_targets_or_ranges) (text='Explain formant values for Sound 3')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 56, in test_concept_prefix_does_not_override_operations_targets_or_ranges
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 56, in test_concept_prefix_does_not_override_operations_targets_or_ranges
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 'concept' is not None
@@ -55,7 +55,7 @@ AssertionError: 'concept' is not None
 FAIL: test_concept_prefix_does_not_override_operations_targets_or_ranges (test_dialogue_fastpath.DialoguePolicyTests.test_concept_prefix_does_not_override_operations_targets_or_ranges) (text='解释基频，然后翻转信号')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 56, in test_concept_prefix_does_not_override_operations_targets_or_ranges
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 56, in test_concept_prefix_does_not_override_operations_targets_or_ranges
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 'concept' is not None

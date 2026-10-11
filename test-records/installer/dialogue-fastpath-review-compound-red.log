@@ -8,7 +8,7 @@ test_concept_prefix_does_not_override_operations_targets_or_ranges (test_dialogu
 FAIL: test_concept_prefix_does_not_override_operations_targets_or_ranges (test_dialogue_fastpath.DialoguePolicyTests.test_concept_prefix_does_not_override_operations_targets_or_ranges) (text='解释基频并拼接两段')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 58, in test_concept_prefix_does_not_override_operations_targets_or_ranges
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 58, in test_concept_prefix_does_not_override_operations_targets_or_ranges
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 'concept' is not None
@@ -17,7 +17,7 @@ AssertionError: 'concept' is not None
 FAIL: test_concept_prefix_does_not_override_operations_targets_or_ranges (test_dialogue_fastpath.DialoguePolicyTests.test_concept_prefix_does_not_override_operations_targets_or_ranges) (text='What is a formant and join the two clips')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 58, in test_concept_prefix_does_not_override_operations_targets_or_ranges
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 58, in test_concept_prefix_does_not_override_operations_targets_or_ranges
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 'concept' is not None
@@ -26,7 +26,7 @@ AssertionError: 'concept' is not None
 FAIL: test_concept_prefix_does_not_override_operations_targets_or_ranges (test_dialogue_fastpath.DialoguePolicyTests.test_concept_prefix_does_not_override_operations_targets_or_ranges) (text='Explain pitch and merge both clips')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 58, in test_concept_prefix_does_not_override_operations_targets_or_ranges
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 58, in test_concept_prefix_does_not_override_operations_targets_or_ranges
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 'concept' is not None
@@ -35,7 +35,7 @@ AssertionError: 'concept' is not None
 FAIL: test_concept_prefix_does_not_override_operations_targets_or_ranges (test_dialogue_fastpath.DialoguePolicyTests.test_concept_prefix_does_not_override_operations_targets_or_ranges) (text='解释0.1秒处基频')
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\f2468\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 58, in test_concept_prefix_does_not_override_operations_targets_or_ranges
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_dialogue_fastpath.py", line 58, in test_concept_prefix_does_not_override_operations_targets_or_ranges
     with self.subTest(text=text): self.assertIsNone(self.classify(text))
                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 'concept' is not None

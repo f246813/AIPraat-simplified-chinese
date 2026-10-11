@@ -1,0 +1,197 @@
+test_failed_draft_is_stored_only_as_incomplete_context (test_report_chain_regressions.ReportChainTests.test_failed_draft_is_stored_only_as_incomplete_context) ... ok
+test_latest_draft_does_not_inherit_prior_rejected_values (test_report_chain_regressions.ReportChainTests.test_latest_draft_does_not_inherit_prior_rejected_values) ... FAIL
+test_permanent_error_message_alone_does_not_authorize_retry (test_report_chain_regressions.ReportChainTests.test_permanent_error_message_alone_does_not_authorize_retry) ... ok
+test_real_sdk_wrapped_timeout_has_no_stacked_sdk_retries (test_report_chain_regressions.ReportChainTests.test_real_sdk_wrapped_timeout_has_no_stacked_sdk_retries) ... FAIL
+test_rescue_masks_numeric_tokens_without_corrupting_ids_decimals_or_labels (test_report_chain_regressions.ReportChainTests.test_rescue_masks_numeric_tokens_without_corrupting_ids_decimals_or_labels) ... FAIL
+test_rescue_matches_full_quantity_with_flexible_whitespace (test_report_chain_regressions.ReportChainTests.test_rescue_matches_full_quantity_with_flexible_whitespace) ... FAIL
+test_rescue_preserves_equal_verified_value_and_known_identifier (test_report_chain_regressions.ReportChainTests.test_rescue_preserves_equal_verified_value_and_known_identifier) ... ERROR
+test_stream_timeout_before_text_resumes_without_duplicate_prompt (test_report_chain_regressions.ReportChainTests.test_stream_timeout_before_text_resumes_without_duplicate_prompt) ... FAIL
+test_timeout_after_tool_does_not_reexecute_tool (test_report_chain_regressions.ReportChainTests.test_timeout_after_tool_does_not_reexecute_tool) ... FAIL
+test_timeout_during_guard_correction_keeps_single_output_retry (test_report_chain_regressions.ReportChainTests.test_timeout_during_guard_correction_keeps_single_output_retry) ... FAIL
+test_total_budget_and_cancel_prevent_retry (test_report_chain_regressions.ReportChainTests.test_total_budget_and_cancel_prevent_retry) ... ok
+test_visible_text_blocks_wrapped_timeout_retry (test_report_chain_regressions.ReportChainTests.test_visible_text_blocks_wrapped_timeout_retry) ... ok
+test_wrapped_connection_error_and_timeout_do_not_exceed_one_retry (test_report_chain_regressions.ReportChainTests.test_wrapped_connection_error_and_timeout_do_not_exceed_one_retry) ... FAIL
+test_wrapped_timeout_retries_pending_request_once (test_report_chain_regressions.ReportChainTests.test_wrapped_timeout_retries_pending_request_once) ... FAIL
+test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) ... 
+  test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) (label='ID: 1') ... ERROR
+  test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) (label='id：1') ... ERROR
+  test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) (label='object: 1') ... ERROR
+  test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) (label='ID: 99') ... FAIL
+  test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) (label='id：99') ... FAIL
+  test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) (label='object: 99') ... FAIL
+
+======================================================================
+ERROR: test_rescue_preserves_equal_verified_value_and_known_identifier (test_report_chain_regressions.ReportChainTests.test_rescue_preserves_equal_verified_value_and_known_identifier)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_chain_regressions.py", line 91, in test_rescue_preserves_equal_verified_value_and_known_identifier
+    result = rescued_report(draft, '数值“220 Hz”未匹配', ['220 Hz'], state=state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: rescued_report() got an unexpected keyword argument 'state'
+
+======================================================================
+ERROR: test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) (label='ID: 1')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_guards.py", line 37, in test_vot_report_accepts_known_id_colon_but_rejects_unknown_id
+    self.accepts(state, f'本次分析针对对象 Sound あなた（{label}）。\nVOT 估计值为 38.0 毫秒。[E1]')
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_guards.py", line 49, in accepts
+    return validate_report(state, report(text))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "backups\report-chain-20261006\report_guards.py", line 695, in validate_report
+    analysis = _validate_text(state, report.analysis, records)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "backups\report-chain-20261006\report_guards.py", line 680, in _validate_text
+    _check_numeric_line(state, evidence_line, records)
+  File "backups\report-chain-20261006\report_guards.py", line 443, in _check_numeric_line
+    _block(state, failure[0], failure[1])
+  File "backups\report-chain-20261006\report_guards.py", line 38, in _block
+    raise ModelRetry(message)
+pydantic_ai.exceptions.ModelRetry: 数值“1 ”未匹配同对象/范围/量名的测量。逐行引证；推导用calc占位式，缺测量就说明。
+
+======================================================================
+ERROR: test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) (label='id：1')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_guards.py", line 37, in test_vot_report_accepts_known_id_colon_but_rejects_unknown_id
+    self.accepts(state, f'本次分析针对对象 Sound あなた（{label}）。\nVOT 估计值为 38.0 毫秒。[E1]')
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_guards.py", line 49, in accepts
+    return validate_report(state, report(text))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "backups\report-chain-20261006\report_guards.py", line 695, in validate_report
+    analysis = _validate_text(state, report.analysis, records)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "backups\report-chain-20261006\report_guards.py", line 680, in _validate_text
+    _check_numeric_line(state, evidence_line, records)
+  File "backups\report-chain-20261006\report_guards.py", line 443, in _check_numeric_line
+    _block(state, failure[0], failure[1])
+  File "backups\report-chain-20261006\report_guards.py", line 38, in _block
+    raise ModelRetry(message)
+pydantic_ai.exceptions.ModelRetry: 数值“1 ”未匹配同对象/范围/量名的测量。逐行引证；推导用calc占位式，缺测量就说明。
+
+======================================================================
+ERROR: test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) (label='object: 1')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_guards.py", line 37, in test_vot_report_accepts_known_id_colon_but_rejects_unknown_id
+    self.accepts(state, f'本次分析针对对象 Sound あなた（{label}）。\nVOT 估计值为 38.0 毫秒。[E1]')
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_guards.py", line 49, in accepts
+    return validate_report(state, report(text))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "backups\report-chain-20261006\report_guards.py", line 695, in validate_report
+    analysis = _validate_text(state, report.analysis, records)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "backups\report-chain-20261006\report_guards.py", line 680, in _validate_text
+    _check_numeric_line(state, evidence_line, records)
+  File "backups\report-chain-20261006\report_guards.py", line 443, in _check_numeric_line
+    _block(state, failure[0], failure[1])
+  File "backups\report-chain-20261006\report_guards.py", line 38, in _block
+    raise ModelRetry(message)
+pydantic_ai.exceptions.ModelRetry: 数值“1 ”未匹配同对象/范围/量名的测量。逐行引证；推导用calc占位式，缺测量就说明。
+
+======================================================================
+FAIL: test_latest_draft_does_not_inherit_prior_rejected_values (test_report_chain_regressions.ReportChainTests.test_latest_draft_does_not_inherit_prior_rejected_values)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_chain_regressions.py", line 229, in test_latest_draft_does_not_inherit_prior_rejected_values
+    self.assertIn('示例频率为 999 Hz', state.report)
+AssertionError: '示例频率为 999 Hz' not found in '平均基频 [未通过核对的数值]。[E1]\n一般知识：示例频率为 [未通过核对的数值]，仍缺少对照材料。\n\n（这份回答没有通过自动数值核对：Exceeded maximum output retries (1)。上面保留的是模型已经写好的内容，其中没通过核对的数值已标成 [未通过核对的数值]；请按这条提示核对引用的数值和范围。）'
+
+======================================================================
+FAIL: test_real_sdk_wrapped_timeout_has_no_stacked_sdk_retries (test_report_chain_regressions.ReportChainTests.test_real_sdk_wrapped_timeout_has_no_stacked_sdk_retries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_chain_regressions.py", line 241, in test_real_sdk_wrapped_timeout_has_no_stacked_sdk_retries
+    self.assertEqual(len(requests), 2)
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_rescue_masks_numeric_tokens_without_corrupting_ids_decimals_or_labels (test_report_chain_regressions.ReportChainTests.test_rescue_masks_numeric_tokens_without_corrupting_ids_decimals_or_labels)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_chain_regressions.py", line 74, in test_rescue_masks_numeric_tokens_without_corrupting_ids_decimals_or_labels
+    self.assertIn('ID: 1', result)
+AssertionError: 'ID: 1' not found in 'ID: [未通过核对的数值]；计数 [未通过核对的数值]；爆破 0.55[未通过核对的数值] 秒；范围 0.446[未通过核对的数值]94 秒；[未通过核对的数值]8.4 dB；[未通过核对的数值]3.4 dB；VOT 38.0 毫秒。[E[未通过核对的数值]] F[未通过核对的数值]\n\n（这份回答没有通过自动数值核对：数值“[未通过核对的数值] ”未匹配；Request timed out.。上面保留的是模型已经写好的内容，其中没通过核对的数值已标成 [未通过核对的数值]；请按这条提示核对引用的数值和范围。）'
+
+======================================================================
+FAIL: test_rescue_matches_full_quantity_with_flexible_whitespace (test_report_chain_regressions.ReportChainTests.test_rescue_matches_full_quantity_with_flexible_whitespace)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_chain_regressions.py", line 82, in test_rescue_matches_full_quantity_with_flexible_whitespace
+    self.assertNotIn('999\tHz', result)
+AssertionError: '999\tHz' unexpectedly found in '平均基频 999\tHz；编号 ID: 1；合法数值 1[未通过核对的数值]；F1 [E1]；0.999 秒。\n\n（这份回答没有通过自动数值核对：数值“[未通过核对的数值]”未匹配。上面保留的是模型已经写好的内容，其中没通过核对的数值已标成 [未通过核对的数值]；请按这条提示核对引用的数值和范围。）'
+
+======================================================================
+FAIL: test_stream_timeout_before_text_resumes_without_duplicate_prompt (test_report_chain_regressions.ReportChainTests.test_stream_timeout_before_text_resumes_without_duplicate_prompt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_chain_regressions.py", line 196, in test_stream_timeout_before_text_resumes_without_duplicate_prompt
+    self.assertEqual(len(requests), 2, state.reason)
+AssertionError: 1 != 2 : Request timed out.
+
+======================================================================
+FAIL: test_timeout_after_tool_does_not_reexecute_tool (test_report_chain_regressions.ReportChainTests.test_timeout_after_tool_does_not_reexecute_tool)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_chain_regressions.py", line 168, in test_timeout_after_tool_does_not_reexecute_tool
+    self.assertEqual(calls.count('report'), 2)
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_timeout_during_guard_correction_keeps_single_output_retry (test_report_chain_regressions.ReportChainTests.test_timeout_during_guard_correction_keeps_single_output_retry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_chain_regressions.py", line 213, in test_timeout_during_guard_correction_keeps_single_output_retry
+    self.assertEqual(len(requests), 3, state.reason)
+AssertionError: 2 != 3 : Request timed out.
+
+======================================================================
+FAIL: test_wrapped_connection_error_and_timeout_do_not_exceed_one_retry (test_report_chain_regressions.ReportChainTests.test_wrapped_connection_error_and_timeout_do_not_exceed_one_retry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_chain_regressions.py", line 119, in test_wrapped_connection_error_and_timeout_do_not_exceed_one_retry
+    self.assertEqual(len(calls), 2)
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_wrapped_timeout_retries_pending_request_once (test_report_chain_regressions.ReportChainTests.test_wrapped_timeout_retries_pending_request_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_chain_regressions.py", line 105, in test_wrapped_timeout_retries_pending_request_once
+    self.assertEqual(len(requests), 2)
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) (label='ID: 99')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_guards.py", line 42, in test_vot_report_accepts_known_id_colon_but_rejects_unknown_id
+    self.assertEqual(state.metrics['guard_blocks'], {'report.object_unknown':1})
+AssertionError: {'report.number_unmatched': 1} != {'report.object_unknown': 1}
+- {'report.number_unmatched': 1}
++ {'report.object_unknown': 1}
+
+======================================================================
+FAIL: test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) (label='id：99')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_guards.py", line 42, in test_vot_report_accepts_known_id_colon_but_rejects_unknown_id
+    self.assertEqual(state.metrics['guard_blocks'], {'report.object_unknown':1})
+AssertionError: {'report.number_unmatched': 1} != {'report.object_unknown': 1}
+- {'report.number_unmatched': 1}
++ {'report.object_unknown': 1}
+
+======================================================================
+FAIL: test_vot_report_accepts_known_id_colon_but_rejects_unknown_id (test_report_guards.ReportGuardsTests.test_vot_report_accepts_known_id_colon_but_rejects_unknown_id) (label='object: 99')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\USER\Desktop\Praat\稳定早期版\ai\tests\test_report_guards.py", line 42, in test_vot_report_accepts_known_id_colon_but_rejects_unknown_id
+    self.assertEqual(state.metrics['guard_blocks'], {'report.object_unknown':1})
+AssertionError: {'report.number_unmatched': 1} != {'report.object_unknown': 1}
+- {'report.number_unmatched': 1}
++ {'report.object_unknown': 1}
+
+----------------------------------------------------------------------
+Ran 15 tests in 1.415s
+
+FAILED (failures=12, errors=4)

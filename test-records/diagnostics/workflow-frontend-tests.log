@@ -1,0 +1,36 @@
+
+ RUN  v3.2.4 C:/Users/USER/Desktop/Praat/稳定早期版/ai/frontend
+
+ ✓ tests/bridge-store.test.ts (17 tests) 100ms
+ ✓ tests/search.test.ts (8 tests) 106ms
+ ✓ tests/startup-session.test.ts (3 tests) 56ms
+ ✓ tests/organization-store.test.ts (9 tests) 435ms
+ ✓ tests/layout.test.ts (7 tests) 45ms
+ ✓ tests/session-menu.test.ts (7 tests) 80ms
+ ✓ tests/composer-status.test.tsx (5 tests) 1164ms
+   ✓ debounces real host estimates and ignores stale session replies  553ms
+   ✓ unknown windows and RPC failures never fabricate a percentage  361ms
+ ✓ tests/workflow-settings.test.tsx (2 tests) 957ms
+   ✓ workflow presets, custom edit, host save and reopen never start model tests  951ms
+ ✓ tests/archived-settings.test.tsx (2 tests) 1067ms
+   ✓ failed restore keeps history visible, reports the error and permits a successful retry  797ms
+ ✓ tests/model-settings-navigation.test.tsx (2 tests) 1304ms
+   ✓ repeated menu requests select Model/API and keep unsaved settings  1286ms
+ ✓ tests/modern-boundaries.test.ts (2 tests) 18ms
+ ✓ tests/transcript-menu.test.ts (5 tests) 16ms
+ ✓ tests/archived-groups.test.ts (2 tests) 34ms
+ ✓ tests/transcript-window.test.ts (6 tests) 14ms
+ ✓ tests/editor.test.ts (10 tests) 35ms
+ ✓ tests/sidebar-search.test.tsx (5 tests) 1710ms
+   ✓ searches unopened messages with one compact host request and no full history hydration  696ms
+   ✓ discards old responses and clears pending search without changing the input or active chat  332ms
+ ✓ tests/minimap.test.ts (6 tests) 15ms
+ ✓ tests/completions.test.ts (4 tests) 8ms
+ ✓ tests/scroll.test.ts (5 tests) 6ms
+ ✓ tests/sidebar-origins.test.ts (2 tests) 7ms
+
+ Test Files  20 passed (20)
+      Tests  109 passed (109)
+   Start at  18:54:47
+   Duration  9.15s (transform 4.05s, setup 0ms, collect 16.29s, tests 7.18s, environment 41.03s, prepare 8.29s)
+
