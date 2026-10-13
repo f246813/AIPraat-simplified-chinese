@@ -4,7 +4,7 @@
 
 ## 启动
 
-安装 Python 3.10 或更高版本，并在 Praat 的 Python 设置中选择解释器。安装依赖：
+安装 Python 3.10–3.12 x64（推荐 3.12），并在 Praat 的路径配置中选择解释器。安装器与路径配置共用“运行库配置（必需）”，支持逐项选择本地 wheel 和依赖包文件夹，也支持 PowerShell 联网补齐；全部运行库检测通过后才能安装或保存。路径配置的 Python 区域下方还提供 FFmpeg 路径、自动查找、实际解码检测和一键安装；FFmpeg 检测通过后才能保存路径。安装依赖：
 
 ```powershell
 python -m pip install -r ai/requirements.txt
@@ -70,6 +70,14 @@ powershell -ExecutionPolicy Bypass -File ai/plugin/install.ps1
 Windows GUI 投递共用 `%APPDATA%\Praat\Message.txt`，多个进程或实例可能相互影响。消息文件不可写属于环境权限问题；检查实际文件权限与目标进程。`PRAAT_AI_SEND_MODE=argv` 可使用命令行投递排障，但可能激活 Praat 窗口。
 
 ## 本地纠音报告
+
+表单的“音位判据”可选择英语（美式）或日语（标准语），均为实验性声学观察。
+元音比较 F1/F2，擦音比较频谱，塞音检查 VOT 测量是否可用；相对时长按相邻音素归一化。
+日语保留长度、无声化与 N/cl 等标签。比例定位、低质量区间和缺失测量标为证据不足。
+这一步没有独立音素识别或校准后的判错阈值，也没有日语拍结构分析。
+新路径不使用统一“旧式对比阈值”。JSON 请求显式设置 profile_id 为 en-US-general-v1
+或 ja-JP-standard-v1；不设置时沿用旧式对比，不自动改变历史语言请求。
+详细规则、来源与使用例子见 [音位判据实施说明](../docs/2026-10-13-音位判据实施说明.md)。
 
 运行 `ai/run_ai_tutor.py`，选择标准 Sound 与学习者 Sound，填写音位、对象和阈值。报告默认保存在用户主目录 `Praat AI Reports` 下的独立文件夹，包含 `ai_report.json`、`ai_errors.TextGrid` 和安装 Pillow 后的 `ai_overlay.png`。Info 窗口列出完整路径。
 

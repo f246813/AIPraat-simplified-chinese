@@ -635,6 +635,14 @@ class ModernApplication:
             if method == 'settings.get': return self.settings.get()
             if method == 'settings.save': return self.settings.save(param(params, 'settings'))
             if method == 'settings.test': return self.test_connection(param(params, 'kind'), param(params, 'settings'))
+            if method == 'settings.choose_model':
+                if self.window is None: raise RuntimeError('原生文件选择器需要桌面宿主')
+                import webview
+                current = self.settings.get()['server']['model_path']
+                directory = str(Path(current).parent) if current and Path(current).parent.is_dir() else ''
+                paths = self.window.create_file_dialog(webview.FileDialog.OPEN, directory=directory,
+                    allow_multiple=False, file_types=('GGUF 模型 (*.gguf)',)) or []
+                return dict(path=str(paths[0]) if paths else None)
             if method == 'attachments.import':
                 raw = str(param(params, 'data'))
                 if len(raw) > Attachments.LIMIT * 4 // 3 + 4:

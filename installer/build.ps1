@@ -8,18 +8,18 @@ $compiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 if (-not (Test-Path -LiteralPath $compiler)) { throw 'The Windows .NET Framework C# compiler is missing.' }
 $sourceRoot = Join-Path $projectRoot 'installer\src'
 $references = @('System.Windows.Forms.dll','System.Drawing.dll','System.Web.Extensions.dll','System.IO.Compression.dll','System.IO.Compression.FileSystem.dll')
-$common = @('InstallModel.cs','PathValidation.cs','AlignmentPaths.cs','Configuration.cs','InstallEngine.cs') | ForEach-Object { Join-Path $sourceRoot $_ }
+$common = @('InstallModel.cs','RuntimeDependencies.cs','FfmpegDependencies.cs','PathValidation.cs','AlignmentPaths.cs','Configuration.cs','InstallEngine.cs') | ForEach-Object { Join-Path $sourceRoot $_ }
 $options = @('/nologo','/optimize+','/platform:x64')
 $options += $references | ForEach-Object { '/reference:' + $_ }
 $options += '/win32manifest:' + (Join-Path $projectRoot 'installer\app.manifest')
 $options += '/win32icon:' + (Join-Path $projectRoot 'favicon.ico')
+$options += & (Join-Path $PSScriptRoot 'runtime-resources.ps1') -ProjectDirectory $projectRoot
 $launcher = Join-Path $buildRoot 'AIPraat.exe'
 & $compiler @options '/target:winexe' "/out:$launcher" @common (Join-Path $sourceRoot 'Launcher.cs')
 if ($LASTEXITCODE -ne 0) { throw "Launcher compilation failed: $LASTEXITCODE" }
-$setupResource = '/resource:' + (Join-Path $sourceRoot 'ConfigurePython.ps1') + ',AIPraat.ConfigurePython.ps1'
-$pathSources = @('OutlineButton.cs','FilePathField.cs','AlignmentPathFields.cs','PythonSetup.cs','PythonSetupGuide.cs','PathSettings.cs','PathSettingsForm.cs','PathSettingsProgram.cs') | ForEach-Object { Join-Path $sourceRoot $_ }
+$pathSources = @('OutlineButton.cs','FilePathField.cs','DependencyDiscovery.cs','DependencyPanel.cs','RuntimeDependenciesForm.cs','PythonSetup.cs','PythonSetupGuide.cs','PathSettings.cs','PathSettingsForm.cs','PathSettingsProgram.cs') | ForEach-Object { Join-Path $sourceRoot $_ }
 $pathDialog = Join-Path $projectRoot 'AIPraat-paths.exe'
-& $compiler @options '/target:winexe' "/out:$pathDialog" $setupResource @common @pathSources
+& $compiler @options '/target:winexe' "/out:$pathDialog" @common @pathSources
 if ($LASTEXITCODE -ne 0) { throw "Path dialog compilation failed: $LASTEXITCODE" }
 
 $files = [ordered]@{}
@@ -29,6 +29,7 @@ $files['AIPraat-paths.exe'] = $pathDialog
 $files['LICENSE'] = Join-Path $projectRoot 'LICENSE'
 $files['CREDITS.zh-CN.md'] = Join-Path $projectRoot 'CREDITS.zh-CN.md'
 $files['AIPraat-使用说明.md'] = Join-Path $projectRoot 'installer\README.zh-CN.md'
+$files['ai/ConfigurePython.ps1'] = Join-Path $sourceRoot 'ConfigurePython.ps1'
 $aiRoot = Join-Path $projectRoot 'ai'
 Get-ChildItem -LiteralPath $aiRoot -File | Where-Object {
     $_.Extension -eq '.py' -or $_.Name -match '^requirements.*\.txt$' -or
@@ -37,7 +38,7 @@ Get-ChildItem -LiteralPath $aiRoot -File | Where-Object {
 foreach ($relative in @('praat_ai','anki_addon','plugin','tools','skills','third_party/pi-context','third_party/prompt-cache-skills')) {
     $base = Join-Path $aiRoot $relative
     Get-ChildItem -LiteralPath $base -Recurse -File | Where-Object {
-        ($_.Extension -in @('.py','.js','.tsv','.praat','.in','.ps1','.md') -or $_.Name -eq 'LICENSE') -and $_.FullName -notmatch '\\__pycache__\\'
+        ($_.Extension -in @('.py','.js','.tsv','.csv','.praat','.in','.ps1','.md') -or $_.Name -eq 'LICENSE') -and $_.FullName -notmatch '\\__pycache__\\'
     } | ForEach-Object {
         $name = $_.FullName.Substring($projectRoot.Length+1).Replace('\','/')
         $files[$name] = $_.FullName
@@ -49,7 +50,7 @@ Get-ChildItem -LiteralPath $frontendDist -Recurse -File | ForEach-Object {
     $name = $_.FullName.Substring($projectRoot.Length+1).Replace('\','/')
     $files[$name] = $_.FullName
 }
-$template = '{"qwen":{"base_url":"http://127.0.0.1:8000/v1","model":"local-model","api_key":"EMPTY","enable_thinking":false,"limit_tokens":true,"max_context_tokens":32768,"plan_max_tokens":4096},"api":{"enabled":false,"locked":false,"limit_tokens":false,"api_key":""},"server":{"llama_server":"","model_path":"","mmproj_path":"","host":"127.0.0.1","port":8000,"n_gpu_layers":-1,"threads":8,"parallel":1,"auto_start":false,"presets":[],"active_preset":"","mmproj_by_model":{}},"alignment":{"backend":"auto","mfa":{"enabled":false},"wav2vec2":{"enabled":false}}}'
+$template = '{"qwen":{"base_url":"http://127.0.0.1:8000/v1","model":"local-model","api_key":"EMPTY","enable_thinking":false,"limit_tokens":true,"max_context_tokens":32768,"plan_max_tokens":4096},"api":{"enabled":false,"locked":false,"limit_tokens":false,"api_key":""},"server":{"llama_server":"","model_path":"","mmproj_path":"","host":"127.0.0.1","port":8000,"n_gpu_layers":-1,"threads":8,"parallel":1,"auto_start":false,"presets":[],"active_preset":"","mmproj_by_model":{}},"audio":{"ffmpeg":""},"alignment":{"backend":"auto","mfa":{"enabled":false},"wav2vec2":{"enabled":false}}}'
 $templateFile = Join-Path $buildRoot 'ai_config.example.json'
 [IO.File]::WriteAllText($templateFile,$template,[Text.UTF8Encoding]::new($false))
 $files['ai/ai_config.example.json'] = $templateFile
@@ -94,8 +95,8 @@ try {
     } finally { $archive.Dispose() }
 } finally { $stream.Dispose() }
 $installer = Join-Path $projectRoot 'AIPraat-install.exe'
-$wizard = @('OutlineButton.cs','FilePathField.cs','AlignmentPathFields.cs','PythonSetup.cs','PythonSetupGuide.cs','WizardForm.cs','Program.cs') | ForEach-Object { Join-Path $sourceRoot $_ }
-& $compiler @options '/target:winexe' "/out:$installer" "/resource:$zipPath,AIPraat.Payload.zip" $setupResource @common @wizard
+$wizard = @('OutlineButton.cs','FilePathField.cs','DependencyDiscovery.cs','DependencyPanel.cs','RuntimeDependenciesForm.cs','PythonSetup.cs','PythonSetupGuide.cs','WizardForm.cs','Program.cs') | ForEach-Object { Join-Path $sourceRoot $_ }
+& $compiler @options '/target:winexe' "/out:$installer" "/resource:$zipPath,AIPraat.Payload.zip" @common @wizard
 if ($LASTEXITCODE -ne 0) { throw "Installer compilation failed: $LASTEXITCODE" }
 $report = [ordered]@{
     installer = [IO.Path]::GetFileName($installer)

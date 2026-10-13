@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+import math
 from typing import Any
 
 
@@ -14,7 +15,9 @@ class FeatureTrack:
     minimum_tolerance: float = 0.05
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        payload = asdict(self)
+        payload["values"] = [value if math.isfinite(value) else None for value in self.values]
+        return payload
 
 
 @dataclass(slots=True)
@@ -27,6 +30,7 @@ class PhoneSpec:
     learner_end: float | None = None
     alignment_confidence: float = 1.0
     alignment_source: str = ""
+    phone_index: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -69,6 +73,10 @@ class PronunciationError:
     learner_value: float
     unit: str = ""
     alignment_confidence: float = 1.0
+    issue_type: str = "legacy_acoustic_difference"
+    rule_id: str = ""
+    evaluation_status: str = "experimental"
+    evidence: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -82,11 +90,11 @@ class AnalysisRequest:
     phonemes: list[PhoneSpec]
     transcript: str = ""
     error_threshold: float = 1.25
-    minimum_error_duration_sec: float = 0.04
     maximum_errors_per_phone: int = 3
     qwen_explain: bool = True
     qwen_vision: bool = False
     output_prefix: str = "ai"
+    profile_id: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -109,6 +117,10 @@ class AnalysisResult:
     alignment_source: str = ""
     alignment_confidence: float = 1.0
     warnings: list[str] = field(default_factory=list)
+    profile_snapshot: dict[str, Any] | None = None
+    observations: list[PronunciationError] = field(default_factory=list)
+    phone_assessments: list[dict[str, Any]] = field(default_factory=list)
+    check_statuses: dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -125,6 +137,11 @@ class AnalysisResult:
             "alignment_source": self.alignment_source,
             "alignment_confidence": self.alignment_confidence,
             "warnings": self.warnings,
+            "analysis_mode": "phone_rules" if self.profile_snapshot else "legacy_acoustic_comparison",
+            "profile_snapshot": self.profile_snapshot,
+            "observations": [item.to_dict() for item in self.observations],
+            "phone_assessments": self.phone_assessments,
+            "check_statuses": self.check_statuses,
         }
 
 

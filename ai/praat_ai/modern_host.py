@@ -67,6 +67,8 @@ def create_window(application, *, assets=None, hidden=False):
     # Adapt the pywebview examples/events.py closed-event subscription (BSD-3-Clause).
     from .desktop_launch import clear_own_records
     window.events.closed += clear_own_records
+    from .desktop_window import focus_existing_window
+    window.events.shown += lambda: focus_existing_window(os.getpid())
     return window, server
 
 

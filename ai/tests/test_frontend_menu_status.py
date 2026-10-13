@@ -96,5 +96,32 @@ class FrontendMenuStatusTests(unittest.TestCase):
         self.raw['server']['presets'][0]['label'] = '已切换'
         self.assertEqual(self.collect()['frontend_model'], '已切换')
 
+    def test_failed_probe_writes_diagnostic_and_failed_snapshot(self):
+        output = self.root / 'frontend-menu-123.json'
+        for error in (FileNotFoundError('No usable temporary directory'), RuntimeError('probe failed')):
+            with self.subTest(error=error), patch.object(status, 'detect_gpu', return_value=None), \
+                    patch.object(status, 'collect_menu_status', side_effect=error):
+                self.assertEqual(status.main(['--output', str(output)]), 1)
+            self.assertFalse(json.loads(output.read_text(encoding='utf8'))['success'])
+            self.assertIn(type(error).__name__, (self.root / 'frontend-menu-error.txt').read_text(encoding='utf8'))
+            self.assertIn(str(error), (self.root / 'frontend-menu-error.txt').read_text(encoding='utf8'))
+
+    def test_record_write_failure_is_logged_and_propagated(self):
+        output = self.root / 'frontend-menu-123.json'
+        with patch.object(status, 'detect_gpu', return_value=None), \
+                patch.object(status, 'collect_menu_status', return_value={'success': True}), \
+                patch.object(status, 'write_record', side_effect=PermissionError('record denied')):
+            with self.assertRaisesRegex(PermissionError, 'record denied'):
+                status.main(['--output', str(output)])
+        self.assertIn('PermissionError: record denied', (self.root / 'frontend-menu-error.txt').read_text())
+
+    def test_diagnostic_write_denial_does_not_mask_original_failure(self):
+        with patch.object(status, 'detect_gpu', return_value=None), \
+                patch.object(status, 'collect_menu_status', return_value={'success': True}), \
+                patch.object(status, 'write_record', side_effect=FileNotFoundError('original error')), \
+                patch.object(Path, 'write_text', side_effect=PermissionError('diagnostic denied')):
+            with self.assertRaisesRegex(FileNotFoundError, 'original error'):
+                status.main(['--output', str(self.root / 'menu.json')])
+
 
 if __name__ == '__main__': unittest.main()

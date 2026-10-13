@@ -11,6 +11,7 @@ using AIPraat.Setup;
 
 public static class ContractTests
 {
+    static string readyPython;
     static int passed, failed;
     static void Assert(bool ok, string detail) { if (!ok) throw new Exception(detail); }
     static void Case(string name, Action test)
@@ -22,7 +23,8 @@ public static class ContractTests
     {
         return new InstallRequest { InstallDirectory = Path.Combine(root, "AIPraat 中文 目录"),
             ProfileDirectory = Path.Combine(root, "profile"), ProgramsDirectory = Path.Combine(root, "programs"),
-            DesktopDirectory = Path.Combine(root, "desktop"), CreateDesktopShortcut = false };
+            DesktopDirectory = Path.Combine(root, "desktop"), CreateDesktopShortcut = false,
+            ConfigurePrerequisites=true, PythonPath=readyPython, RuntimeDevice="cpu" };
     }
     static MemoryStream Payload(Dictionary<string,string> files)
     {
@@ -43,6 +45,7 @@ public static class ContractTests
     [STAThread]
     public static int Main(string[] args)
     {
+        readyPython=args[0];
         string root = Path.Combine(Path.GetTempPath(), "AIPraat-contract-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
         Case("default_exact_C_drive_folder", () => Assert(PathValidation.DefaultDirectory == @"C:\AIPraat", "wrong default"));
@@ -108,18 +111,16 @@ public static class ContractTests
             var flags=BindingFlags.NonPublic|BindingFlags.Instance;
             using(var form=new WizardForm(Request(root),()=>Payload(Files()))) {
                 var next=(OutlineButton)typeof(WizardForm).GetField("next",flags).GetValue(form);
-                var configure=(RadioButton)typeof(WizardForm).GetField("configure",flags).GetValue(form);
                 typeof(WizardForm).GetMethod("ShowStep",flags).Invoke(form,new object[]{1});
-                Assert(next.Enabled && next.OutlineColor==Color.Black,"skip next not black");
-                configure.Checked=true;
-                Assert(!next.Enabled && next.OutlineColor==Color.FromArgb(170,170,170),"pending next not gray");
-                var generation=typeof(WizardForm).GetField("pythonGeneration",flags);
+                Assert(!next.Enabled&&next.Primary&&next.OutlineColor==Color.FromArgb(204,211,221),"pending primary action not disabled");
+                var panel=(DependencyPanel)form.Controls.Find("DependencyPanel",true)[0];
+                var generation=typeof(DependencyPanel).GetField("pythonVersion",flags);
                 Assert(generation!=null,"probe generation missing");
-                int before=(int)generation.GetValue(form); configure.Checked=false;configure.Checked=true;
-                Assert((int)generation.GetValue(form)>before,"old probe not invalidated");
+                int before=(int)generation.GetValue(panel);form.Controls.Find("PythonPath",true)[0].Text="new-python.exe";
+                Assert((int)generation.GetValue(panel)>before,"old probe not invalidated");
                 typeof(WizardForm).GetField("installing",flags).SetValue(form,true);
                 typeof(WizardForm).GetMethod("ShowStep",flags).Invoke(form,new object[]{2});
-                Assert(!next.Enabled && next.Text=="安装中","installation presents retry prematurely");
+                Assert(!next.Enabled&&next.Text=="安装中…","installation presents retry prematurely");
                 typeof(WizardForm).GetField("installing",flags).SetValue(form,false);
             }
         });
@@ -177,7 +178,7 @@ public static class ContractTests
         });
         if(args.Length>1) Case("real_python_without_dependencies_is_rejected",()=> {
             var result=PathValidation.ProbePython(args[1]);
-            Assert(!result.Valid && result.Message.Contains("numpy") && result.Message.Contains("PIL"),"missing dependency environment accepted or not explained: "+result.Message);
+            Assert(!result.Valid && result.Message.Contains("NumPy") && result.Message.Contains("Pillow"),"missing dependency environment accepted or not explained: "+result.Message);
         });
         Console.WriteLine("RESULT "+passed+" passed, "+failed+" failed; artifacts="+root);
         return failed==0?0:1;

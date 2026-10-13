@@ -6,3 +6,4 @@ pydantic-graph==2.52.0
 jsonschema==4.26.0
 pywebview==6.2.1
 pythonnet==3.2.0; sys_platform == "win32"
+-r requirements-wav2vec2.txt

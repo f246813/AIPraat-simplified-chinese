@@ -49,3 +49,32 @@ test('compact dark layout and context updates from draft/attachments',async({pag
   const p=await popup.boundingBox();expect(p!.x).toBeGreaterThanOrEqual(0);expect(p!.x+p!.width).toBeLessThanOrEqual(390);
   if(process.env.PI_SCRATCH_DIR)await page.screenshot({path:join(process.env.PI_SCRATCH_DIR,'composer-narrow-dark-demo.png')});
 });
+
+test('typing keeps the context ring and number visible until a debounced estimate replaces them',async({page})=>{
+  await page.goto('/?demo=1');
+  const context=page.getByRole('button',{name:'上下文用量'});
+  await expect(context).toContainText('%');
+  const before=await context.innerText();
+  const beforeRing=await context.locator('.ring-value').getAttribute('stroke-dasharray');
+  await page.evaluate(()=>{
+    const trigger=document.querySelector('.composer-context-trigger')!;
+    const changes:string[]=[];
+    const observer=new MutationObserver(()=>changes.push(trigger.textContent||''));
+    observer.observe(trigger,{childList:true,subtree:true,characterData:true,attributes:true});
+    (window as unknown as {contextTypingProbe:{changes:string[];observer:MutationObserver}}).contextTypingProbe={changes,observer};
+  });
+  const input=page.getByRole('textbox',{name:'消息输入'});
+  await input.focus();
+  await input.pressSequentially('上下文占用测试',{delay:100});
+  await expect(context).toHaveText(before);
+  await expect(context.locator('.ring-value')).toHaveAttribute('stroke-dasharray',beforeRing!);
+  // A much larger draft must still produce a fresh host estimate after typing.
+  await input.fill('新的上下文材料'.repeat(1000));
+  await expect(context).not.toHaveText(before);
+  await expect(context).toContainText('%');
+  const changes=await page.evaluate(()=>{
+    const probe=(window as unknown as {contextTypingProbe:{changes:string[];observer:MutationObserver}}).contextTypingProbe;
+    probe.observer.disconnect();return probe.changes;
+  });
+  expect(changes.every(text=>/^\d+%$/.test(text))).toBe(true);
+});

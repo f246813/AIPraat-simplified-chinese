@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AIPraat 路径配置 · 设计预览</title>
+  <style>
+    :root { --surface:#fff; --canvas:#edf1f5; --text:#202938; --muted:#56647a; --line:#d8dfe7; --control:#8795a6; --blue:#245db5; --green:#187046; --red:#b3261e; --amber:#845109; --wash:#f6f8fa; }
+    * { box-sizing:border-box; }
+    body { margin:0; padding:28px 24px; background:var(--canvas); color:var(--text); font:14px/1.5 "Microsoft YaHei UI","Segoe UI",sans-serif; }
+    button,input,select { font:inherit; }
+    button,summary,select { cursor:pointer; }
+    button { border:1px solid var(--control); border-radius:4px; height:40px; padding:0 16px; background:#fff; color:var(--text); white-space:nowrap; transition:background .12s; }
+    button:hover { background:#f0f4f8; }
+    button:active { background:#e5ebf3; }
+    button:disabled { color:#697586; border-color:#ccd3dd; background:#f4f5f7; cursor:default; }
+    :focus-visible { outline:3px solid var(--blue); outline-offset:3px; }
+    svg { width:18px; height:18px; flex-shrink:0; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .review { max-width:900px; margin:0 auto 16px; display:flex; justify-content:space-between; align-items:center; gap:24px; }
+    .review strong { font-size:15px; font-weight:600; }
+    .review p { margin:4px 0 0; color:var(--muted); font-size:12px; }
+    .scenario { display:flex; align-items:center; gap:8px; flex-shrink:0; font-size:12px; }
+    select { border:1px solid var(--control); border-radius:4px; height:36px; color:var(--text); background:#fff; padding:0 30px 0 10px; }
+    .window { width:min(900px,100%); height:720px; margin:auto; border:1px solid #aeb9c7; background:var(--surface); display:flex; flex-direction:column; box-shadow:0 12px 40px #22324814; }
+    .titlebar { height:30px; flex-shrink:0; border-bottom:1px solid #e4e8ee; background:#f9fafb; padding:0 14px; display:flex; align-items:center; gap:8px; font-size:12px; }
+    .titlebar svg { width:14px; height:14px; color:var(--blue); }
+    .window-header { min-height:86px; padding:18px 24px 16px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; gap:24px; border-bottom:1px solid var(--line); }
+    h1 { font-size:22px; line-height:1.3; margin:0 0 5px; font-weight:650; }
+    .subtitle { color:var(--muted); margin:0; font-size:13px; }
+    .toolbar { display:flex; gap:8px; }
+    .toolbar button { font-size:13px; height:36px; padding:0 12px; }
+    .content { flex:1; min-height:0; overflow:auto; padding:16px 24px; scroll-padding:16px; }
+    h2 { font-size:14px; margin:0 0 12px; font-weight:650; }
+    .field { display:grid; grid-template-columns:144px minmax(0,1fr) 88px; gap:14px; align-items:center; min-height:56px; }
+    .field-title { min-width:0; }
+    label { display:block; font-weight:600; font-size:14px; }
+    .field-status { display:block; font-size:12px; color:var(--muted); margin-top:2px; }
+    .field-status.ok { color:var(--green); }
+    .field-status.error { color:var(--red); }
+    .path { width:100%; min-width:0; height:40px; border:1px solid var(--control); border-radius:4px; color:var(--text); padding:0 10px; background:#fff; font:13px "Segoe UI","Microsoft YaHei UI",sans-serif; }
+    .path::placeholder { color:#657286; }
+    .path[aria-invalid="true"] { border-color:var(--red); }
+    .runtime { margin:8px 0 16px 158px; background:var(--wash); border:1px solid var(--line); border-radius:4px; min-height:56px; padding:9px 12px; display:flex; align-items:center; gap:10px; }
+    .runtime > svg { color:var(--green); }
+    .runtime-copy { flex:1; min-width:0; }
+    .runtime-title { display:flex; gap:12px; align-items:center; flex-wrap:wrap; font-size:13px; font-weight:600; }
+    .runtime-count { font-weight:400; color:var(--muted); font-size:12px; font-variant-numeric:tabular-nums; }
+    .runtime-note { margin:2px 0 0; color:var(--muted); font-size:12px; }
+    .runtime button { padding:0 10px; height:32px; font-size:12px; }
+    .runtime.error { background:#fff5f4; border-color:#d8a4a0; }
+    .runtime.error > svg { color:var(--red); }
+    .retry { border:0; background:none; padding:0 !important; height:auto !important; color:var(--blue); text-decoration:underline; }
+    #ffmpeg-recovery { display:flex; align-items:center; gap:12px; margin:5px 0 8px 158px; color:var(--red); font-size:12px; }
+    #ffmpeg-recovery[hidden] { display:none; }
+    #ffmpeg-recovery button { height:32px; font-size:12px; }
+    details.optional { margin-top:24px; border-top:1px solid var(--line); }
+    summary { list-style:none; display:flex; align-items:center; gap:8px; min-height:48px; font-weight:600; }
+    summary::-webkit-details-marker { display:none; }
+    summary svg { width:16px; height:16px; color:var(--muted); }
+    details[open] summary svg { transform:rotate(90deg); }
+    .optional-count { margin-left:auto; font-size:12px; color:var(--muted); font-weight:400; }
+    .optional .field { border-top:1px solid #edf0f4; }
+    .helper { margin:7px 0 0 158px; font-size:12px; color:var(--muted); }
+    .footer { min-height:70px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; gap:20px; border-top:1px solid var(--line); padding:14px 24px; background:#fff; }
+    .summary-status { display:flex; align-items:center; gap:8px; color:var(--green); font-size:13px; }
+    .summary-status.error { color:var(--red); }
+    .footer-actions { display:flex; gap:8px; }
+    .footer button { min-width:88px; }
+    .primary { background:var(--blue); border-color:var(--blue); color:#fff; }
+    .primary:hover { background:#1d4e97; }
+    .primary:active { background:#183f7a; }
+    .preview-caption { max-width:900px; margin:14px auto 0; color:var(--muted); font-size:12px; display:flex; gap:12px; justify-content:space-between; }
+    .preview-caption a { color:var(--blue); }
+    #preview-event { min-height:18px; }
+    dialog { width:min(650px,calc(100vw - 48px)); max-height:85vh; padding:0; border:1px solid #aeb9c7; border-radius:6px; color:var(--text); }
+    dialog::backdrop { background:#1d293b66; }
+    .dialog-header { padding:20px 24px 16px; border-bottom:1px solid var(--line); }
+    .dialog-header h2 { font-size:18px; margin-bottom:4px; }
+    .dialog-body { padding:16px 24px; }
+    .dialog-note { color:var(--muted); font-size:12px; margin:0 0 12px; }
+    .dependency-grid { width:100%; border-collapse:collapse; font-size:12px; }
+    .dependency-grid th { text-align:left; color:var(--muted); background:var(--wash); font-weight:500; }
+    .dependency-grid td,.dependency-grid th { padding:5px 10px; border-bottom:1px solid #e7ebf0; }
+    .dependency-grid td:last-child { color:var(--green); }
+    .dialog-footer { padding:14px 24px; border-top:1px solid var(--line); display:flex; align-items:center; gap:8px; }
+    .dialog-footer button { font-size:13px; }
+    .dialog-footer .close { margin-left:auto; }
+    @media (max-width:820px) { body { padding:16px 12px; } .window-header { align-items:flex-start; flex-wrap:wrap; gap:12px; } .field { grid-template-columns:116px minmax(0,1fr) 80px; gap:10px; } .runtime { margin-left:126px; flex-wrap:wrap; } .helper,#ffmpeg-recovery { margin-left:126px; } .review { align-items:flex-start; gap:12px; flex-wrap:wrap; } .content { padding:16px; } .window-header,.footer { padding-left:16px; padding-right:16px; } }
+    @media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
+  </style>
+</head>
+<body>
+  <svg style="position:absolute;width:0;height:0" aria-hidden="true"><defs>
+    <symbol id="check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.7 2.7L16 9"/></symbol>
+    <symbol id="alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6m0 4h.01"/></symbol>
+    <symbol id="chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="path-icon" viewBox="0 0 24 24"><path d="M3 7h7l2 3h9v10H3zM3 7V4h7l2 3"/></symbol>
+  </defs></svg>
+  <div class="review">
+    <div><strong>路径配置 · 设计预览</strong><p>示例数据，不执行检测、安装或配置保存。可展开可选区并切换状态。</p></div>
+    <div class="scenario"><label for="scenario">示例状态</label><select id="scenario"><option value="ready">已就绪</option><option value="failure">运行库检测失败</option><option value="ffmpeg">FFmpeg 缺失</option><option value="no-log">日志未保存</option></select></div>
+  </div>
+  <main class="window" aria-labelledby="window-heading">
+    <div class="titlebar"><svg aria-hidden="true"><use href="#path-icon"/></svg>AIPraat 路径配置</div>
+    <header class="window-header">
+      <div><h1 id="window-heading">路径配置</h1><p class="subtitle">设置程序位置，查看环境检测结果。</p></div>
+      <div class="toolbar"><button data-preview="自动查找已配置位置、托管目录和已注册程序。">自动查找</button><button data-preview="打开文件夹选择器，识别该文件夹中的程序和安装包。">从文件夹识别…</button></div>
+    </header>
+    <div class="content">
+      <section aria-labelledby="required-heading">
+        <h2 id="required-heading">必需环境</h2>
+        <div class="field">
+          <div class="field-title"><label for="python-path">Python 环境</label><span class="field-status ok">Python 3.12 · x64</span></div>
+          <input class="path" id="python-path" value="D:\Praat-work\venv-ai-modern\Scripts\python.exe" title="D:\Praat-work\venv-ai-modern\Scripts\python.exe" spellcheck="false" aria-describedby="runtime-note">
+          <button aria-label="浏览 Python 环境" data-preview="打开 python.exe 文件选择器。">浏览…</button>
+        </div>
+        <div class="runtime" id="runtime-panel">
+          <svg aria-hidden="true"><use id="runtime-icon" href="#check"/></svg>
+          <div class="runtime-copy"><div class="runtime-title"><span id="runtime-title">运行库已就绪</span><span class="runtime-count" id="runtime-count">13/13 · CPU</span></div><p class="runtime-note" id="runtime-note">全部必需运行库检测通过。</p><button class="retry" id="inline-retry" hidden data-preview="重新执行真实运行库检测，保留当前输入。">重新检测</button></div>
+          <button id="runtime-details">运行库明细…</button>
+        </div>
+        <div class="field">
+          <div class="field-title"><label for="ffmpeg-path">FFmpeg</label><span class="field-status ok" id="ffmpeg-status">实际音频解码通过</span></div>
+          <input class="path" id="ffmpeg-path" value="C:\Users\f2468\AppData\Local\AIPraat\ffmpeg\ffmpeg.exe" title="C:\Users\f2468\AppData\Local\AIPraat\ffmpeg\ffmpeg.exe" spellcheck="false" aria-describedby="ffmpeg-status">
+          <button aria-label="浏览 FFmpeg 程序" data-preview="打开 ffmpeg.exe 文件选择器。">浏览…</button>
+        </div>
+        <div id="ffmpeg-recovery" hidden><span>请选择 ffmpeg.exe，或安装托管版本。</span><button data-preview="启动 FFmpeg 安装流程，完成后进行实际音频解码检测。">安装 FFmpeg…</button></div>
+      </section>
+      <details class="optional" id="optional-tools" open>
+        <summary><svg aria-hidden="true"><use href="#chevron"/></svg>可选工具与资源<span class="optional-count">已配置 2 项</span></summary>
+        <div class="field"><div class="field-title"><label for="llama-path">llama.cpp</label><span class="field-status ok">已验证可用</span></div><input class="path" id="llama-path" value="D:\llama.cpp-Qwen\llama.cpp b11030cuda12\llama-server.exe" title="D:\llama.cpp-Qwen\llama.cpp b11030cuda12\llama-server.exe" spellcheck="false"><button aria-label="浏览 llama.cpp 程序" data-preview="打开 llama-server.exe 文件选择器。">浏览…</button></div>
+        <div class="field"><div class="field-title"><label for="mfa-path">MFA</label><span class="field-status">未配置</span></div><input class="path" id="mfa-path" placeholder="选择 MFA 程序（可选）" spellcheck="false"><button aria-label="浏览 MFA 程序" data-preview="打开 MFA 程序文件选择器。">浏览…</button></div>
+        <div class="field"><div class="field-title"><label for="projection-path">视觉投影</label><span class="field-status">已设置</span></div><input class="path" id="projection-path" value="D:\models\mmproj-F16.gguf" title="D:\models\mmproj-F16.gguf" spellcheck="false"><button aria-label="浏览视觉投影文件" data-preview="打开视觉投影 GGUF 文件选择器。">浏览…</button></div>
+        <p class="helper">视觉投影与语言模型的配套关系在模型菜单中确认。</p>
+      </details>
+    </div>
+    <footer class="footer">
+      <div class="summary-status" id="summary-status" role="status" aria-live="polite" aria-atomic="true"><svg aria-hidden="true"><use id="summary-icon" href="#check"/></svg><span id="summary-text">必需环境已就绪</span></div>
+      <div class="footer-actions"><button id="cancel" data-preview="关闭窗口，放弃本次未保存的路径修改。">取消</button><button class="primary" id="save" data-preview="再次验证必需环境，成功后保存路径配置。">保存</button></div>
+    </footer>
+  </main>
+  <div class="preview-caption"><span>已有可选配置时展开；全部未配置时收起。可选区仅保留 3 项。</span><a href="path-settings-design-20261014.md">设计说明</a></div>
+  <p class="preview-caption" id="preview-event" role="status" aria-live="polite"></p>
+  <dialog id="runtime-dialog" aria-labelledby="runtime-dialog-heading">
+    <div class="dialog-header"><h2 id="runtime-dialog-heading">运行库明细</h2><p class="subtitle" id="dialog-subtitle">13 项检测通过 · CPU</p></div>
+    <div class="dialog-body"><p class="dialog-note">当前 Python：D:\Praat-work\venv-ai-modern\Scripts\python.exe</p><table class="dependency-grid"><thead><tr><th scope="col">运行库</th><th scope="col">示例检测状态</th></tr></thead><tbody id="dependency-rows"></tbody></table><p class="dialog-note" id="log-note" style="margin:12px 0 0">本次日志已保存，可用于排查检测过程。</p></div>
+    <div class="dialog-footer"><button data-preview="在运行库明细中选择需要配置的项目并执行配置。">配置运行库…</button><button data-preview="重新执行真实运行库检测并更新明细。">重新检测</button><button id="open-log" data-preview="打开本次检测日志。">查看本次日志</button><button class="close" id="close-dialog">关闭</button></div>
+  </dialog>
+  <script>
+    const $ = id => document.getElementById(id);
+    const dependencies = ['NumPy','Pillow','praat-parselmouth','pydantic-ai-slim','pydantic-graph','jsonschema','pywebview','pythonnet','PyTorch','Transformers','Safetensors','WebView2 Runtime','Tcl/Tk'];
+    $('dependency-rows').innerHTML = dependencies.map(name => `<tr><td>${name}</td><td>检测通过</td></tr>`).join('');
+    document.querySelectorAll('[data-preview]').forEach(button => button.addEventListener('click', () => { $('preview-event').textContent = '预览操作：' + button.dataset.preview; }));
+    $('runtime-details').addEventListener('click', () => $('runtime-dialog').showModal());
+    $('close-dialog').addEventListener('click', () => $('runtime-dialog').close());
+    $('scenario').addEventListener('change', updateState);
+    function updateState() {
+      const state = $('scenario').value, failure = state === 'failure', noLog = state === 'no-log', missing = state === 'ffmpeg';
+      $('runtime-panel').classList.toggle('error', failure);
+      $('runtime-icon').setAttribute('href', failure ? '#alert' : '#check');
+      $('runtime-title').textContent = failure ? '运行库检测未完成' : '运行库已就绪';
+      $('runtime-count').textContent = failure ? '' : '13/13 · CPU';
+      $('runtime-note').textContent = failure ? '检测进程未返回完整结果，请重新检测。' : noLog ? '日志未保存，不影响检测。' : '全部必需运行库检测通过。';
+      $('inline-retry').hidden = !failure;
+      $('ffmpeg-status').textContent = missing ? '未找到可用 FFmpeg' : '实际音频解码通过';
+      $('ffmpeg-status').className = 'field-status ' + (missing ? 'error' : 'ok');
+      $('ffmpeg-path').value = missing ? '' : 'C:\\Users\\f2468\\AppData\\Local\\AIPraat\\ffmpeg\\ffmpeg.exe';
+      $('ffmpeg-path').title = $('ffmpeg-path').value;
+      $('ffmpeg-path').placeholder = '选择 ffmpeg.exe';
+      $('ffmpeg-path').setAttribute('aria-invalid', String(missing));
+      $('ffmpeg-recovery').hidden = !missing;
+      $('save').disabled = failure || missing;
+      $('summary-status').classList.toggle('error', failure || missing);
+      $('summary-icon').setAttribute('href', failure || missing ? '#alert' : '#check');
+      $('summary-text').textContent = failure ? '请先重新完成运行库检测' : missing ? '请配置 FFmpeg 后保存' : '必需环境已就绪';
+      $('dialog-subtitle').textContent = failure ? '检测未完成 · 保留已返回的项目结果' : '13 项检测通过 · CPU';
+      $('dependency-rows').innerHTML = failure ? dependencies.map(name => `<tr><td>${name}</td><td style="color:var(--muted)">本例未返回结果</td></tr>`).join('') : dependencies.map(name => `<tr><td>${name}</td><td>检测通过</td></tr>`).join('');
+      $('log-note').textContent = noLog ? '日志未保存，不影响检测。查看本次日志已禁用。' : '本次日志已保存，可用于排查检测过程。';
+      $('open-log').disabled = noLog;
+      $('preview-event').textContent = '';
+    }
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !$('runtime-dialog').open) $('cancel').click();
+      if (event.key === 'Enter' && event.target.tagName === 'INPUT' && !$('save').disabled) { event.preventDefault(); $('save').click(); }
+    });
+  </script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 import math
+import io
 import json
 import os
 import shutil
@@ -28,6 +29,30 @@ def write_tone(path: Path, frequency: float) -> None:
 
 
 class BridgePipelineTests(unittest.TestCase):
+    def test_cli_request_profile_errors_are_readable_and_do_not_start_model(self) -> None:
+        from run_ai_tutor import main
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            helper = types.SimpleNamespace(get_selected=lambda: [
+                {"id": 1, "name": "reference", "class": "Sound", "file": str(root / "reference.wav")},
+                {"id": 2, "name": "learner", "class": "Sound", "file": str(root / "learner.wav")},
+            ])
+            for profile_id, expected in (("ja-JP-standard-v1", "与目标语言 en 不匹配"),
+                                         ("unknown-profile", "未知纠音判据预设")):
+                with self.subTest(profile_id=profile_id):
+                    path = root / "request.json"
+                    path.write_text(json.dumps(dict(reference_object=1, learner_object=2,
+                        language="en", profile_id=profile_id, phonemes=[dict(ipa="a")])), encoding="utf-8")
+                    stderr = io.StringIO()
+                    with patch.dict(sys.modules, {"praat": helper}), patch.object(sys, "argv", [
+                        "run_ai_tutor.py", "--request", str(path), "--config", str(root / "missing.json"),
+                        "--no-gui"]), patch("sys.stderr", stderr), patch(
+                        "praat_ai.tutor.QwenServerManager.ensure_started", return_value=False) as start_model:
+                        self.assertEqual(main(), 1)
+                    self.assertIn(expected, stderr.getvalue())
+                    self.assertNotIn("Traceback", stderr.getvalue())
+                    start_model.assert_not_called()
+
     def test_tutor_rejects_report_root_inside_temporary_import_dir(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

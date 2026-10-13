@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import sys
+from uuid import uuid4
 
 
 def runtime_directory():
@@ -31,13 +32,28 @@ def model_settings_request(previous_id='', *, runtime=None):
 
 def write_record(path, values):
     path = Path(path)
+    content = json.dumps(values, ensure_ascii=False, indent=2)
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(path.name + f'.{os.getpid()}.tmp')
+    temporary = path.with_name(f'{path.name}.{os.getpid()}.{uuid4().hex}.tmp')
+    created = False
     try:
-        temporary.write_text(json.dumps(values, ensure_ascii=False, indent=2), encoding='utf8')
-        os.replace(temporary, path)
+        # One exclusive create, no tempfile retry loop on Windows ACL denial.
+        # A unique suffix also avoids stale PID files and concurrent writers.
+        try:
+            with temporary.open('x', encoding='utf8') as handle:
+                created = True
+                handle.write(content)
+            os.replace(temporary, path)
+        except OSError:
+            # An existing target may be writable even when creating a sibling
+            # or replacing the target is denied. Try it once, then propagate.
+            path.write_text(content, encoding='utf8')
     finally:
-        temporary.unlink(missing_ok=True)
+        if created:
+            try:
+                temporary.unlink(missing_ok=True)
+            except OSError:
+                pass  # Cleanup must not replace the actual write error.
 
 
 def safe_launch_error(error, config_path=None):
@@ -113,8 +129,11 @@ def menu_control_main(arguments=None):
                 frontend_model_source='desktop', model_service_started=False, error=''))
             return 0
         except Exception as error:
-            write_record(runtime / 'status.json', dict(success=False, frontend_running=False,
-                frontend_status='desktop launch failed', error=safe_launch_error(error)))
+            try:
+                write_record(runtime / 'status.json', dict(success=False, frontend_running=False,
+                    frontend_status='desktop launch failed', error=safe_launch_error(error)))
+            except OSError:
+                pass  # A failed status write cannot depend on another status write.
             # The native Python callback displays stderr; avoid a second modal dialog here.
             if sys.stderr is not None:
                 print('新前端准备失败：' + safe_launch_error(error), file=sys.stderr)

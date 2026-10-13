@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+import math
 
 from .alignment import dtw_align, mean_and_stddev
 from .audio import extract_phone_tracks
@@ -9,11 +10,11 @@ from .forced_alignment import CompositeAligner, build_aligner
 from .models import (
     AnalysisRequest,
     AnalysisResult,
-    FeatureTrack,
     PhoneFeatureTracks,
     PhoneSpec,
     PronunciationError,
 )
+from .pronunciation_rules import evaluate_phone_rules, profile_snapshot, resolve_profile
 
 
 def infer_learner_segments(
@@ -32,6 +33,7 @@ def infer_learner_segments(
             PhoneSpec(
                 ipa=phone.ipa,
                 label=phone.label,
+                phone_index=phone.phone_index,
                 reference_start=phone.reference_start,
                 reference_end=phone.reference_end,
                 learner_start=max(
@@ -47,10 +49,10 @@ def infer_learner_segments(
     return result
 
 
-def _valid_track(track: FeatureTrack) -> bool:
-    if len(track.values) < 2:
+def _valid_values(values: list[float]) -> bool:
+    if len(values) < 2:
         return False
-    return any(abs(value) > 1e-9 for value in track.values)
+    return any(abs(value) > 1e-9 for value in values)
 
 
 def _direction(delta: float, unit: str) -> str:
@@ -72,9 +74,13 @@ def compare_phone(
     errors: list[PronunciationError] = []
     for feature_name, reference_track in reference.tracks.items():
         learner_track = learner.tracks.get(feature_name)
-        if learner_track is None or not _valid_track(reference_track):
+        if learner_track is None:
             continue
-        if not _valid_track(learner_track):
+        reference_values = [value for value in reference_track.values if math.isfinite(value)]
+        learner_values = [value for value in learner_track.values if math.isfinite(value)]
+        if not _valid_values(reference_values):
+            continue
+        if not _valid_values(learner_values):
             errors.append(
                 PronunciationError(
                     phone_index=reference.phone_index,
@@ -95,8 +101,8 @@ def compare_phone(
             continue
 
         aligned_reference, aligned_learner, normalized_distance = dtw_align(
-            reference_track.values,
-            learner_track.values,
+            reference_values,
+            learner_values,
         )
         if not aligned_reference:
             continue
@@ -162,6 +168,8 @@ def align_learner_phones(
     aligned_by_index = {phone.phone_index: phone for phone in result.phones}
     aligned_phones: list[PhoneSpec] = []
     for index, phone in enumerate(phones, start=1):
+        # Aligner indices address its input positions. Keep the original label
+        # when a backend omits an input phone from its result.
         aligned = aligned_by_index.get(index)
         if aligned is None:
             continue
@@ -169,6 +177,7 @@ def align_learner_phones(
             PhoneSpec(
                 ipa=phone.ipa,
                 label=phone.label,
+                phone_index=phone.phone_index if phone.phone_index is not None else index,
                 reference_start=phone.reference_start,
                 reference_end=phone.reference_end,
                 learner_start=aligned.start,
@@ -234,6 +243,10 @@ def analyze_pronunciation(
     request: AnalysisRequest,
     alignment_config: AlignmentConfig | None = None,
 ) -> AnalysisResult:
+    rule_profile = resolve_profile(request.profile_id, request.language)
+    request = replace(request, phonemes=[
+        replace(phone, phone_index=phone.phone_index if phone.phone_index is not None else index)
+        for index, phone in enumerate(request.phonemes, start=1)])
     reference_path = str(request.reference_object)
     learner_path = str(request.learner_object)
 
@@ -336,12 +349,48 @@ def analyze_pronunciation(
         learner=True,
     )
 
-    learner_by_index = {item.phone_index: item for item in learner_tracks}
+    invalid_intervals = set()
+    for role, tracks, duration in (("参考", reference_tracks, reference_sound.duration),
+                                   ("学习者", learner_tracks, learner_sound.duration)):
+        for track in tracks:
+            if not (math.isfinite(track.start) and math.isfinite(track.end)
+                    and 0 <= track.start < track.end <= duration):
+                invalid_intervals.add(track.phone_index)
+                track.alignment_confidence = 0.0
+                warnings.append(f"{role} /{track.ipa}/ 的区间无效或超出音频范围，未评估。")
+
     errors: list[PronunciationError] = []
-    for reference in reference_tracks:
-        learner = learner_by_index.get(reference.phone_index)
-        if learner is not None:
-            errors.extend(compare_phone(request, reference, learner))
+    observations = []
+    assessments = []
+    checks = {}
+    if rule_profile:
+        observations, assessments = evaluate_phone_rules(rule_profile, reference_tracks, learner_tracks)
+        for feature, name in (("relative_duration", "relative_duration"), (None, "phone_acoustics")):
+            statuses = [check["status"] for assessment in assessments for check in assessment["checks"]
+                        if (check["feature"] == feature if feature else check["feature"] not in {"relative_duration", "phone_class", "alignment"})]
+            not_applicable = bool(statuses) and all(status == "not_applicable" for status in statuses)
+            statuses = [status for status in statuses if status != "not_applicable"]
+            if any(check["feature"] in {"alignment", "phone_class"} for assessment in assessments for check in assessment["checks"]):
+                statuses.append("insufficient_evidence")
+            checks[name] = ("not_applicable" if not_applicable and not statuses else
+                            "observed" if statuses and all(status == "observed" for status in statuses) else
+                            "partial" if "observed" in statuses else "not_evaluated")
+        checks["independent_phone_recognition"] = "not_evaluated"
+        checks["stress_or_pitch_accent"] = "not_evaluated"
+        if rule_profile.language == "ja":
+            checks["mora_structure"] = "not_evaluated"
+        warnings.append("音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。")
+    else:
+        learner_by_index = {item.phone_index: item for item in learner_tracks}
+        for reference in reference_tracks:
+            learner = learner_by_index.get(reference.phone_index)
+            if learner is not None:
+                if reference.phone_index in invalid_intervals:
+                    assessments.append(dict(phone_index=reference.phone_index, ipa=reference.ipa,
+                        status="insufficient_evidence", checks=[dict(feature="alignment",
+                            status="insufficient_evidence", reason="参考或学习者区间无效或超出音频范围，未评估。")]))
+                    continue
+                errors.extend(compare_phone(request, reference, learner))
 
     return AnalysisResult(
         language=request.language,
@@ -356,4 +405,8 @@ def analyze_pronunciation(
         alignment_source=alignment_source,
         alignment_confidence=alignment_confidence,
         warnings=warnings,
+        profile_snapshot=profile_snapshot(rule_profile) if rule_profile else None,
+        observations=observations,
+        phone_assessments=assessments,
+        check_statuses=checks,
     )

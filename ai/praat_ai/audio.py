@@ -151,7 +151,7 @@ def _parselmouth_tracks(
         formant = sound.to_formant_burg(time_step=0.01, max_number_of_formants=5)
 
         def sampled(values: list[float]) -> list[float]:
-            return [0.0 if math.isnan(value) else float(value) for value in values]
+            return [float(value) for value in values]
 
         pitch_values = sampled([pitch.get_value_at_time(time) for time in times])
         intensity_values = sampled(
@@ -226,7 +226,7 @@ def extract_phone_tracks(
         )
         result.append(
             PhoneFeatureTracks(
-                phone_index=index,
+                phone_index=phone.phone_index if phone.phone_index is not None else index,
                 ipa=phone.ipa,
                 start=start,
                 end=end,

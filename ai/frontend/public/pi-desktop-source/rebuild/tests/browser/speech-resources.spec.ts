@@ -37,7 +37,7 @@ test('dictionary and model navigation reuse the assistant layout at desktop and 
     await expect(page.getByRole('button',{name:'添加Wav2Vec2声学模型'})).toBeVisible();
     await expect(page.getByRole('button',{name:/中文Wav2Vec2模型/})).toHaveClass(/is-active/);
     expect(await page.evaluate(() => document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-    await page.screenshot({path:`../../installer/verification/dictionary-models-${width}.png`});
+    await page.screenshot({path:`../../test-records/installer/dictionary-models-${width}.png`});
     await page.getByRole('button',{name:'MFA语音词典',exact:true}).click();
     await expect(page.getByRole('button',{name:'添加MFA语音词典'})).toBeVisible();
   }

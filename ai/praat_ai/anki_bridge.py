@@ -72,9 +72,10 @@ def time_range(start=0, end=0):
 
 
 def decode_wav(source, target, executable=''):
-    ffmpeg = executable or settings()['ffmpeg'] or shutil.which('ffmpeg')
+    from .audio_decoder import resolve_ffmpeg
+    ffmpeg = executable or resolve_ffmpeg()
     if not ffmpeg:
-        raise ValueError('原生读取失败，且未找到 FFmpeg。请在 Anki 连接中指定 ffmpeg.exe，或关闭备用解码。')
+        raise ValueError('未找到 FFmpeg。请在路径配置中检测或一键安装 FFmpeg。')
     result = subprocess.run([str(ffmpeg), '-nostdin', '-v', 'error', '-i', str(source),
                              '-map', '0:a:0', '-vn', '-c:a', 'pcm_s24le', '-y', str(target)],
                             capture_output=True, timeout=120,
@@ -158,15 +159,11 @@ def open_audio(audio, media_dir='', start=0, end=0, **_):
         with tempfile.TemporaryDirectory(prefix='aipraat-anki-') as temporary:
             directory = Path(temporary)
             error = _open_native(source, source, start, end, pid, directory)
-            converted = False
             if error:
-                if not settings()['fallback'] or source.suffix.lower() not in ('.m4a', '.ogg', '.opus', '.oga', '.aac'):
-                    raise ValueError(error)
-                wav = decode_wav(source, directory / 'decoded.wav')
-                error = _open_native(wav, source, start, end, pid, directory)
-                converted = True
-                if error:
-                    raise ValueError(error)
+                raise ValueError(error)
+            # The shared native reader owns the retry and temporary WAV lifetime.
+            result_file = directory / 'result.txt'
+            converted = result_file.is_file() and 'converted' in result_file.read_text(encoding='utf-8-sig').splitlines()[1:]
     return dict(ok=True, converted=converted, audio=str(source))
 
 

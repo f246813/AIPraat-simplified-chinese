@@ -11,6 +11,7 @@ namespace AIPraat.Setup
     {
         public string Wav2Vec2ModelPath {get;set;}
         public string MfaExecutablePath {get;set;}
+        // MfaAcousticModelPath/MfaDictionaryPath are retained for config preservation; speech resource management writes them.
         public string MfaAcousticModelPath {get;set;}
         public string MfaDictionaryPath {get;set;}
         public AlignmentPaths(){Wav2Vec2ModelPath=MfaExecutablePath=MfaAcousticModelPath=MfaDictionaryPath="";}

@@ -9,6 +9,7 @@ namespace AIPraat.Setup
         public string InstallDirectory { get; set; }
         public bool ConfigurePrerequisites { get; set; }
         public string PythonPath { get; set; }
+        public string FfmpegPath { get; set; }
         public string LlamaServerPath { get; set; }
         public string ModelPath { get; set; }
         public string MmprojPath { get; set; }
@@ -19,7 +20,8 @@ namespace AIPraat.Setup
         public string DesktopDirectory { get; set; }
         public string UserSid { get; set; }
         public bool CreateDesktopShortcut { get; set; }
-        public InstallRequest() { PythonPath=LlamaServerPath=ModelPath=MmprojPath=""; }
+        public string RuntimeDevice { get; set; }
+        public InstallRequest() { PythonPath=FfmpegPath=LlamaServerPath=ModelPath=MmprojPath=""; }
         public static InstallRequest ForCurrentUser()
         {
             return new InstallRequest { InstallDirectory=PathValidation.DefaultDirectory,
@@ -48,6 +50,7 @@ namespace AIPraat.Setup
         public bool Valid { get; private set; }
         public string Message { get; private set; }
         public bool CanConfigure { get; private set; }
+        public RuntimeReport Report { get; set; }
         public PythonProbe(bool valid,string message) : this(valid,message,false) { }
         public PythonProbe(bool valid,string message,bool canConfigure) { Valid=valid; Message=message; CanConfigure=canConfigure; }
     }

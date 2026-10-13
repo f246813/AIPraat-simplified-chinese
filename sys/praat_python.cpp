@@ -660,7 +660,7 @@ static void ensure_helper_module (const std::filesystem::path& tempDir) {
 	}
 }
 
-static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring32 optionalWorkingDir) {
+static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring32 optionalWorkingDir, unsigned int maximumWaitMilliseconds) {
 	if (! filePath || filePath [0] == U'\0')
 		Melder_throw (U"No Python script file specified.");
 
@@ -862,7 +862,7 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 			nullptr,
 			nullptr,
 			TRUE,
-			CREATE_NO_WINDOW,
+			CREATE_NO_WINDOW | (maximumWaitMilliseconds ? CREATE_SUSPENDED : 0),
 			nullptr,
 			cwd,
 			& si,
@@ -892,6 +892,21 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 			CloseHandle (hPipeRead);
 			Melder_throw (U"Cannot start Python subprocess: <<", pyExec, U">>.\nPlease check your Python executable path in Praat -> Python settings.");
 		}
+		HANDLE controlJob = nullptr;
+		if (maximumWaitMilliseconds) {
+			// A venv python.exe can be a shim that starts the actual interpreter.
+			// Suspend first so the timeout owns that whole helper process tree.
+			controlJob = CreateJobObjectW (nullptr, nullptr);
+			if (! controlJob || ! AssignProcessToJobObject (controlJob, pi.hProcess) || ResumeThread (pi.hThread) == static_cast <DWORD> (-1)) {
+				const DWORD launchError = GetLastError ();
+				TerminateProcess (pi.hProcess, launchError);
+				if (controlJob) CloseHandle (controlJob);
+				CloseHandle (pi.hThread);
+				CloseHandle (pi.hProcess);
+				CloseHandle (hPipeRead);
+				Melder_throw (U"无法设置前端控制程序的超时保护（Windows 错误 ", launchError, U"）。");
+			}
+		}
 
 		// Read output continuously
 		std::string outputAccum, pendingOutput;
@@ -899,7 +914,28 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 		char buffer [4096];
 		DWORD bytesRead = 0;
 
-		while (ReadFile (hPipeRead, buffer, sizeof (buffer) - 1, & bytesRead, NULL) && bytesRead > 0) {
+		const ULONGLONG started = GetTickCount64 ();
+		bool timedOut = false;
+		for (;;) {
+			if (maximumWaitMilliseconds && GetTickCount64 () - started >= maximumWaitMilliseconds) {
+				timedOut = true;
+				break;
+			}
+			DWORD available = 0;
+			if (! PeekNamedPipe (hPipeRead, nullptr, 0, nullptr, & available, nullptr))
+				break;
+			if (! available) {
+				if (WaitForSingleObject (pi.hProcess, 10) == WAIT_OBJECT_0) {
+					// Drain the last bytes after exit; descendants may still hold
+					// inherited write handles, so EOF is not a completion signal.
+					if (! PeekNamedPipe (hPipeRead, nullptr, 0, nullptr, & available, nullptr) || ! available)
+						break;
+				}
+				if (! available)
+					continue;
+			}
+			if (! ReadFile (hPipeRead, buffer, std::min <DWORD> (available, sizeof (buffer) - 1), & bytesRead, nullptr) || ! bytesRead)
+				break;
 			buffer [bytesRead] = '\0';
 			pendingOutput.append (buffer, bytesRead);
 			size_t newlinePosition;
@@ -916,13 +952,33 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 		if (progressWasShown)
 			finishProgressWindow ();
 
-		WaitForSingleObject (pi.hProcess, INFINITE);
+		if (! timedOut) {
+			const ULONGLONG elapsed = GetTickCount64 () - started;
+			const DWORD remaining = maximumWaitMilliseconds ?
+				(elapsed >= maximumWaitMilliseconds ? 0 : maximumWaitMilliseconds - static_cast <DWORD> (elapsed)) : INFINITE;
+			timedOut = WaitForSingleObject (pi.hProcess, remaining) == WAIT_TIMEOUT;
+		}
+		if (timedOut) {
+			if (! TerminateJobObject (controlJob, ERROR_TIMEOUT))
+				TerminateProcess (pi.hProcess, ERROR_TIMEOUT);
+			WaitForSingleObject (pi.hProcess, 1000);
+			std::error_code directoryError;
+			const auto runtime = std::filesystem::path (cwdW) / "runtime";
+			std::filesystem::create_directories (runtime, directoryError);
+			std::ofstream diagnostic (runtime / "frontend-startup-error.json");
+			diagnostic << "{\"error\":\"Python menu control timed out\",\"timeout_ms\":"
+				<< maximumWaitMilliseconds << ",\"pid\":" << pi.dwProcessId << "}\n";
+		}
 		DWORD exitCode = 0;
 		GetExitCodeProcess (pi.hProcess, & exitCode);
 
 		CloseHandle (pi.hProcess);
 		CloseHandle (pi.hThread);
 		CloseHandle (hPipeRead);
+		if (controlJob) CloseHandle (controlJob);
+		if (timedOut)
+			Melder_throw (U"前端控制程序在 ", maximumWaitMilliseconds,
+				U" 毫秒内未完成，已停止等待。诊断见 runtime/frontend-startup-error.json。");
 
 		autostring32 out32 = Melder_8to32_e (outputAccum.c_str());
 
@@ -1119,8 +1175,12 @@ static void guardPythonRunner (conststring32 action, Callback &&callback) {
 }
 
 void praat_runPythonScriptFile (conststring32 filePath, conststring32 optionalWorkingDir) {
+	praat_runPythonScriptFile (filePath, optionalWorkingDir, 0);
+}
+
+void praat_runPythonScriptFile (conststring32 filePath, conststring32 optionalWorkingDir, unsigned int maximumWaitMilliseconds) {
 	guardPythonRunner (U"运行脚本文件", [&] () {
-		praat_runPythonScriptFile_impl (filePath, optionalWorkingDir);
+		praat_runPythonScriptFile_impl (filePath, optionalWorkingDir, maximumWaitMilliseconds);
 	});
 }
 

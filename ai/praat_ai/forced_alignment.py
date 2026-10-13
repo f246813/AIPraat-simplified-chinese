@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import tempfile
 from abc import ABC, abstractmethod
+from difflib import SequenceMatcher
 from pathlib import Path
 
 import numpy as np
@@ -80,11 +81,11 @@ def parse_mfa_textgrid(
     interval_pattern = re.compile(
         r"xmin\s*=\s*([0-9.+-eE]+)\s*"
         r"xmax\s*=\s*([0-9.+-eE]+)\s*"
-        r'text\s*=\s*"((?:\\.|[^"])*)"',
+        r'text\s*=\s*"((?:\\.|""|[^"])*)"',
         re.DOTALL,
     )
     intervals = [
-        (float(start), float(end), bytes(label, "utf-8").decode("unicode_escape"))
+        (float(start), float(end), label.replace('""', '"'))
         for start, end, label in interval_pattern.findall(tier_text)
     ]
     ignored = {"", "sp", "sil", "silence", "<eps>", "<unk>"}
@@ -93,18 +94,24 @@ def parse_mfa_textgrid(
         raise AlignmentError(
             f"MFA returned {len(spoken)} phones, expected {len(phones)}."
         )
-    if len(spoken) > len(phones):
-        expected = [phone.ipa for phone in phones]
-        spoken = [
-            item
-            for item in spoken
-            if item[2].strip().rstrip("0123456789") in expected
-        ]
-    if len(spoken) != len(phones):
+    expected = [phone.ipa for phone in phones]
+    labels = [item[2].strip() for item in spoken]
+    matcher = SequenceMatcher(None, expected, labels, autojunk=False)
+    matched = [spoken[block.b + offset] for block in matcher.get_matching_blocks()
+               for offset in range(block.size)]
+    if len(matched) != len(expected):
+        # SequenceMatcher favors contiguous blocks. Repeated tokens may still
+        # form a complete ordered subsequence across those blocks.
+        matched = []
+        for interval in spoken:
+            if len(matched) < len(expected) and interval[2].strip() == expected[len(matched)]:
+                matched.append(interval)
+    if len(matched) != len(phones):
         raise AlignmentError(
             f"MFA phone sequence does not match the requested sequence "
-            f"({len(spoken)} != {len(phones)})."
+            f"({len(matched)} ordered matches != {len(phones)} requested)."
         )
+    spoken = matched
 
     aligned = [
         AlignedPhone(

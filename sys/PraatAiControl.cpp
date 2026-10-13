@@ -10,6 +10,7 @@
 #include "praat_python.h"
 #include "praat_translate.h"
 #include "Preferences.h"
+#include "Sound.h"
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -164,6 +165,43 @@ namespace {
 		);
 	}
 
+	autostring32 audioDecoderPath () {
+		if (conststring32 overridePath = Melder_getenv (U"PRAAT_AI_FFMPEG"))
+			if (overridePath [0]) return Melder_dup (overridePath);
+		auto configPath = projectDirectoryPath () / "ai_config.json";
+		if (conststring32 overrideConfig = Melder_getenv (U"PRAAT_AI_CONFIG_PATH"))
+			if (overrideConfig [0]) configPath = std::filesystem::u8path (Melder_peek32to8 (overrideConfig));
+		bool sharedSetting = false;
+		if (auto text = readTextFile (configPath)) {
+			picojson::value config;
+			if (! picojson::parse (config, *text).empty () || ! config.is<picojson::object> ()) Melder_throw (U"AI 配置不是有效 JSON 对象。");
+			const auto &audio = config.get ("audio");
+			if (audio.is<picojson::object> () && audio.contains ("ffmpeg")) {
+				sharedSetting = true;
+				const auto &path = audio.get ("ffmpeg");
+				if (path.is<std::string> () && ! path.get<std::string> ().empty ())
+					return Melder_8to32_e (path.get<std::string> ().c_str ());
+			}
+		}
+		if (! sharedSetting) {
+			if (auto text = readTextFile (configPath.parent_path () / "anki_config.json")) {
+				picojson::value legacy;
+				if (picojson::parse (legacy, *text).empty () && legacy.is<picojson::object> ()) {
+					const auto &path = legacy.get ("ffmpeg");
+					if (path.is<std::string> () && ! path.get<std::string> ().empty ())
+						return Melder_8to32_e (path.get<std::string> ().c_str ());
+				}
+			}
+		}
+		#if defined (_WIN32)
+			if (conststring32 local = Melder_getenv (U"LOCALAPPDATA")) {
+				const auto managed = std::filesystem::u8path (Melder_peek32to8 (local)) / "AIPraat" / "ffmpeg" / "ffmpeg.exe";
+				if (std::filesystem::is_regular_file (managed)) return Melder_8to32_e (managed.u8string ().c_str ());
+			}
+		#endif
+		return Melder_dup (U"ffmpeg");
+	}
+
 	void setEnvironmentUtf8 (const char *name, const std::string &value) {
 		#if defined (_WIN32)
 			const int nameLength = MultiByteToWideChar (CP_UTF8, 0, name, -1, nullptr, 0);
@@ -218,7 +256,8 @@ namespace {
 		try {
 			praat_runPythonScriptFile (
 				script32 ? script32. get() : U"",
-				directory32 ? directory32. get() : nullptr
+				directory32 ? directory32. get() : nullptr,
+				10000
 			);
 		} catch (...) {
 			clearEnvironmentUtf8 ("PRAAT_AI_CONTROL_COMMAND");
@@ -386,42 +425,61 @@ namespace {
 	#endif
 
 	/*
-		跑一个「脱离」的 Python 启动器：Praat 只等它几百毫秒（它把真正的窗口进程
-		拉起来就退出了）。
+		跑一个「脱离」的 Python 启动器：Windows 创建进程后立即返回 GUI。
 
 		顺便告诉那个窗口「是谁启动了你」——Praat 的进程号 + Praat.exe 路径。前端
 		按这两条线索盯着：Praat 关掉之后，对话窗口和 API 配置小窗都自己退出
 		（见 ai/praat_ai/parent_watch.py）。
 	*/
 	void runDetachedLauncher (const std::filesystem::path &launcher) {
+		#if defined (_WIN32)
+			const auto project = projectDirectoryPath ();
+			if (! std::filesystem::is_regular_file (launcher))
+				Melder_throw (U"没有找到前端启动程序，请确认 ai 目录完整。");
+			autostring8 python8 = Melder_32to8 (praat_python_getExecutablePath ());
+			auto python = std::filesystem::u8path (python8 ? python8. get() : "python");
+			if (conststring32 configuredPython = Melder_getenv (U"PRAAT_PYTHON_EXECUTABLE"))
+				if (configuredPython [0]) python = std::filesystem::u8path (Melder_peek32to8 (configuredPython));
+			const std::vector<std::pair<std::string, std::string>> values {
+				{ "PRAAT_AI_PRAAT_PID", std::to_string (praatProcessId ()) },
+				{ "PRAAT_AI_PRAAT_EXECUTABLE", praatExecutablePath (). u8string() }
+			};
+			std::vector<std::pair<std::string, std::optional<std::string>>> previous;
+			for (const auto &value : values) {
+				autostring32 name = Melder_8to32_e (value. first. c_str());
+				conststring32 old = Melder_getenv (name. get());
+				autostring8 old8 = Melder_32to8 (old ? old : U"");
+				previous.push_back ({ value. first, old ? std::optional<std::string> (old8. get()) : std::nullopt });
+				setEnvironmentUtf8 (value. first. c_str(), value. second);
+			}
+			std::wstring command = L"\"" + python. wstring() + L"\" \"" + launcher. wstring() + L"\"";
+			STARTUPINFOW startup { }; startup.cb = sizeof (startup);
+			PROCESS_INFORMATION process { };
+			const BOOL launched = CreateProcessW (nullptr, command. data(), nullptr, nullptr, FALSE,
+				CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP, nullptr, project. c_str(), & startup, & process);
+			const DWORD launchError = launched ? 0 : GetLastError ();
+			for (const auto &value : previous) {
+				if (value. second) setEnvironmentUtf8 (value. first. c_str(), *value. second);
+				else clearEnvironmentUtf8 (value. first. c_str());
+			}
+			if (! launched) {
+				std::error_code directoryError;
+				std::filesystem::create_directories (project / "runtime", directoryError);
+				std::ofstream diagnostic (project / "runtime" / "frontend-startup-error.json");
+				diagnostic << "{\"error\":\"CreateProcess failed\",\"win32_error\":" << launchError << "}\n";
+				Melder_throw (U"无法启动前端，请检查路径配置中的 Python（Windows 错误 ", launchError, U"）。");
+			}
+			CloseHandle (process.hThread);
+			CloseHandle (process.hProcess);
+		#else
 		const std::string launcher8 = launcher. u8string();
 		const std::string directory8 = projectDirectoryPath(). u8string();
 		autostring32 launcher32 = Melder_8to32_e (launcher8. c_str());
 		autostring32 directory32 = Melder_8to32_e (directory8. c_str());
-		const std::filesystem::path executable = praatExecutablePath ();
-		#if defined (_WIN32)
-			const std::wstring pidText = std::to_wstring (praatProcessId ());
-			SetEnvironmentVariableW (
-				L"PRAAT_AI_PRAAT_EXECUTABLE",
-				executable. empty() ? nullptr : executable. wstring(). c_str()
-			);
-			SetEnvironmentVariableW (L"PRAAT_AI_PRAAT_PID", pidText. c_str());
-		#endif
-		try {
-			praat_runPythonScriptFile (
-				launcher32 ? launcher32. get() : U"",
-				directory32 ? directory32. get() : nullptr
-			);
-		} catch (...) {
-			#if defined (_WIN32)
-				SetEnvironmentVariableW (L"PRAAT_AI_PRAAT_EXECUTABLE", nullptr);
-				SetEnvironmentVariableW (L"PRAAT_AI_PRAAT_PID", nullptr);
-			#endif
-			throw;
-		}
-		#if defined (_WIN32)
-			SetEnvironmentVariableW (L"PRAAT_AI_PRAAT_EXECUTABLE", nullptr);
-			SetEnvironmentVariableW (L"PRAAT_AI_PRAAT_PID", nullptr);
+		praat_runPythonScriptFile (
+			launcher32 ? launcher32. get() : U"",
+			directory32 ? directory32. get() : nullptr
+		);
 		#endif
 	}
 
@@ -481,6 +539,7 @@ namespace {
 }
 
 void PraatAiControl_initPreferences () {
+	Sound_setFfmpegPathProvider (audioDecoderPath);
 	Preferences_addString (U"AI.projectDirectory", theAiProjectDirectory, U"ai");
 	Preferences_addString (U"AI.alignmentMode", theAiAlignmentMode, U"auto");
 	MelderString_copy (& statusFrontendModel, defaultFrontendModel);
@@ -506,12 +565,21 @@ bool PraatAiControl_refreshStatus () {
 	#if defined (_WIN32)
 		// Sample in a hidden child; never block the editor or export its selected audio.
 		static HANDLE sampler = nullptr;
+		static ULONGLONG sampleStarted = 0;
 		static ULONGLONG nextSample = 0;
 		const auto project = projectDirectoryPath ();
 		menuStatusPath = project / "runtime" / ("frontend-menu-" + std::to_string (GetCurrentProcessId ()) + ".json");
 		if (sampler && WaitForSingleObject (sampler, 0) == WAIT_OBJECT_0) {
 			CloseHandle (sampler);
 			sampler = nullptr;
+		}
+		if (sampler && GetTickCount64 () - sampleStarted >= 10000) {
+			TerminateProcess (sampler, ERROR_TIMEOUT);
+			CloseHandle (sampler);
+			sampler = nullptr;
+			std::ofstream diagnostic (menuStatusPath.parent_path () / "frontend-menu-error.txt");
+			diagnostic << "TimeoutError: frontend status probe exceeded 10 seconds\n";
+			nextSample = GetTickCount64 () + 1800;
 		}
 		if (! sampler && GetTickCount64 () >= nextSample) {
 			autostring8 python8 = Melder_32to8 (praat_python_getExecutablePath ());
@@ -523,6 +591,7 @@ bool PraatAiControl_refreshStatus () {
 			if (CreateProcessW (nullptr, command.data (), nullptr, nullptr, FALSE, CREATE_NO_WINDOW,
 				nullptr, project.c_str (), & startup, & process)) {
 				sampler = process.hProcess;
+				sampleStarted = GetTickCount64 ();
 				CloseHandle (process.hThread);
 			} else {
 				const DWORD launchError = GetLastError ();

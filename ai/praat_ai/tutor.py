@@ -15,6 +15,7 @@ from .bridge import PraatBridge, object_payload
 from .config import AppConfig, load_config
 from .models import AnalysisRequest, AnalysisResult, PhoneSpec
 from .pronunciation import analyze_pronunciation
+from .pronunciation_rules import resolve_profile
 from .qwen import QwenClient, QwenError
 from .report import write_json, write_overlay_png, write_textgrid
 from .server import QwenServerError, QwenServerManager
@@ -35,6 +36,7 @@ def request_from_dict(payload: dict[str, Any]) -> AnalysisRequest:
         PhoneSpec(
             ipa=str(item["ipa"]),
             label=str(item.get("label", "")),
+            phone_index=int(item["phone_index"]) if item.get("phone_index") is not None else None,
             reference_start=float(item.get("reference_start", 0.0)),
             reference_end=float(item.get("reference_end", 0.0)),
             learner_start=(
@@ -63,13 +65,11 @@ def request_from_dict(payload: dict[str, Any]) -> AnalysisRequest:
         phonemes=phonemes,
         transcript=str(payload.get("transcript", "")),
         error_threshold=float(payload.get("error_threshold", 1.25)),
-        minimum_error_duration_sec=float(
-            payload.get("minimum_error_duration_sec", 0.04)
-        ),
         maximum_errors_per_phone=int(payload.get("maximum_errors_per_phone", 3)),
         qwen_explain=bool(payload.get("qwen_explain", True)),
         qwen_vision=bool(payload.get("qwen_vision", False)),
         output_prefix=str(payload.get("output_prefix", "ai")),
+        profile_id=str(payload["profile_id"]) if payload.get("profile_id") else None,
     )
 
 
@@ -134,6 +134,7 @@ def run_tutor(
         request_payload["resolved_reference"] = reference.to_dict()
         request_payload["resolved_learner"] = learner.to_dict()
 
+    resolve_profile(request.profile_id, request.language)
     gpu = detect_gpu()
     profile = select_runtime_profile(
         gpu.free_mb if gpu else None,
@@ -154,7 +155,7 @@ def run_tutor(
 
         report(0.32, "音素对齐与声学特征提取")
         result = analyze_pronunciation(request, config.alignment)
-        report(0.68, "生成偏差评分")
+        report(0.68, "汇总音位判据与证据状态" if request.profile_id else "生成偏差评分")
         output_dir = bridge.output_dir()
         output_dir.mkdir(parents=True, exist_ok=True)
         prefix = re.sub(r"[^\w.-]+", "_", request.output_prefix).strip("._") or "ai"
@@ -250,13 +251,21 @@ def run_from_praat(
         request = values.request
         if request is None:
             return 0
-    outputs = run_tutor(
-        config_path=config_path,
-        request_path=request_path,
-        user_text=user_text,
-        request=request,
-    )
-    print(f"AI 纠音完成，发现 {len(outputs.result.errors)} 个偏差。")
+    try:
+        outputs = run_tutor(
+            config_path=config_path,
+            request_path=request_path,
+            user_text=user_text,
+            request=request,
+        )
+    except ValueError as error:
+        print(f"无法开始 AI 纠音：{error}", file=sys.stderr)
+        return 1
+    if outputs.result.profile_snapshot:
+        print(f"音位声学对比完成，生成 {len(outputs.result.observations)} 项观察（实验性）。")
+        print("未执行独立音素识别；观察不代表发音对错。")
+    else:
+        print(f"旧式声学对比完成，发现 {len(outputs.result.errors)} 个偏差。")
     print(
         f"对齐：{outputs.result.alignment_source or 'unknown'}，"
         f"置信度 {outputs.result.alignment_confidence:.2f}"

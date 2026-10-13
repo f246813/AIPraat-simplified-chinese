@@ -5,7 +5,7 @@
 import {useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent} from 'react';
 import {AudioLines, ChevronDown, ChevronLeft, ChevronRight,FolderPlus, LoaderCircle, Plus, Search, Settings, Trash2, X} from 'lucide-react';
 import {ChatStore, useChatState} from '../../store';
-import {activeTask, type Session} from '../../types';
+import {activeTask, type Session, type RetainedTimeGroup} from '../../types';
 import {IconButton} from '../../ui';
 import {SessionRow} from '../../SessionRow';
 import {SidebarResizer} from '../../Panes';
@@ -79,12 +79,16 @@ export function SessionSidebar({store, expanded, onToggle, width, maxWidth, onPr
   const pinnedIds=new Set(pinnedSessions.map(s=>s.id));
   const history=rows.filter(s=>!pinnedIds.has(s.id)&&(!s.sectionId||!customIds.has(s.sectionId)));
   const origins=groupSidebarOrigins(history,grouping);
-  const timeGroups=(sessions:SessionSummary[])=>sort==='name'||query.trim()?[{group:'all' as const,sessions}]:[
+  const retained=(state.boot?.settings.preferences.sidebar_retained_time_groups||[]) as RetainedTimeGroup[];
+  if(!query.trim()&&sort!=='name')for(const item of retained){
+    if(item.mode===grouping&&item.origin&&!origins.some(origin=>origin.id===item.origin!.id))origins.push({...item.origin,sessions:[]});
+  }
+  const timeGroups=(sessions:SessionSummary[],originId='')=>sort==='name'||query.trim()?[{group:'all' as const,sessions}]:[
     ...(sessions.some(s=>s.timeGroupDetached)?[{group:'ungrouped' as const,sessions:sessions.filter(s=>s.timeGroupDetached)}]:[]),
-    ...groupSidebarSessionsByTime(sessions.filter(s=>!s.timeGroupDetached)),
+    ...groupSidebarSessionsByTime(sessions.filter(s=>!s.timeGroupDetached),new Date(),retained.filter(item=>item.mode===grouping&&(item.origin?.id||'')===originId).map(item=>item.group)),
   ];
   const groups=timeGroups(history);
-  const visibleHistory=grouping==='list'?groups.flatMap(g=>collapsed[g.group]?[]:g.sessions):origins.flatMap(g=>collapsed[g.id]?[]:timeGroups(g.sessions).flatMap(time=>collapsed[`${g.id}:${time.group}`]?[]:time.sessions));
+  const visibleHistory=grouping==='list'?groups.flatMap(g=>collapsed[g.group]?[]:g.sessions):origins.flatMap(g=>collapsed[g.id]?[]:timeGroups(g.sessions,g.id).flatMap(time=>collapsed[`${g.id}:${time.group}`]?[]:time.sessions));
   const flatSessionOrder=[...(collapsed[`section:${pinnedSection.id}`]?[]:pinnedSessions.map(s=>s.id)),...sectionRows.flatMap(({section,sessions})=>collapsed[`section:${section.id}`]?[]:sessions.map(s=>s.id)),...(collapsed.ordinary?[]:visibleHistory.map(s=>s.id))];
 
   // Original Sidebar::handleMultiSelectClick: modifier toggle and anchored range.
@@ -119,11 +123,11 @@ export function SessionSidebar({store, expanded, onToggle, width, maxWidth, onPr
   const move=(id:string,sectionId:string|null,before?:string)=>{hover.hide();if(state.sessions.some(s=>s.id===id))void store.moveToSection(id,sectionId,sectionId?before:undefined).catch(store.report);};
   const renderSessionRows=(sessions:SessionSummary[],sectionId:string|null=null)=>sessions.map(session=><SessionRow key={session.id} store={store} session={session} selected={state.selected===session.id} multiSelected={selectedIds.has(session.id)} onSelect={handleMultiSelectClick} onRename={onRename} onDelete={onDelete} onMove={organization.move} onDropBefore={(id,before)=>move(id,sectionId,before)} onHover={target=>{if(!optionsOpen)hover.show({session,target,temporary:true,space:'本地工作空间'});}} onHidePreview={hover.scheduleHide} onContextSelection={id=>{if(selectedIds.size&&!selectedIds.has(id))setSelectedIds(prev=>new Set([...prev,id]));}}/>);
   const header=(section:typeof ordinarySection,count:number,key:string)=><HistorySectionHeader section={section} count={count} collapsed={Boolean(collapsed[key])} onToggle={()=>{hover.hide();setCollapsed(old=>({...old,[key]:!old[key]}));}} onMenu={event=>{hover.hide();organization.openMenu(section,event);}} onDrop={id=>move(id,section.id||null)}/>;
-  const renderTimeGroups=(sessions:SessionSummary[],prefix='',origin='')=>timeGroups(sessions).map(group=>{
+  const renderTimeGroups=(sessions:SessionSummary[],prefix='',origin:RetainedTimeGroup['origin']=null)=>timeGroups(sessions,origin?.id).map(group=>{
     const key=`${prefix}${group.group}`;
     return <section className="sidebar-session-group" key={key} data-time-group={key}>
-      {group.group!=='all'&&group.group!=='ungrouped'&&<button onContextMenu={event=>{hover.hide();organization.openGroupMenu([origin,groupLabels[group.group]].filter(Boolean).join(' · '),group.sessions,event);}} onKeyDown={event=>{if(event.key==='ContextMenu'||event.shiftKey&&event.key==='F10'){hover.hide();organization.openGroupMenu([origin,groupLabels[group.group]].filter(Boolean).join(' · '),group.sessions,event);}}} className="sidebar-time-group-header sidebar-group-toggle" aria-label={`${collapsed[key]?'展开':'折叠'} ${groupLabels[group.group]}`} aria-expanded={!collapsed[key]} onClick={()=>{hover.hide();setCollapsed(old=>({...old,[key]:!old[key]}));}}><ChevronDown className={collapsed[key]?'collapsed':''} size={12}/>{groupLabels[group.group]}<span>{group.sessions.length}</span></button>}
-      {!collapsed[key]&&<div className="sidebar-session-group-body">{renderSessionRows(group.sessions)}</div>}
+      {group.group!=='all'&&group.group!=='ungrouped'&&<button onContextMenu={event=>{hover.hide();organization.openGroupMenu([origin?.label,groupLabels[group.group]].filter(Boolean).join(' · '),group.sessions,event,{mode:grouping,origin,group:group.group});}} onKeyDown={event=>{if(event.key==='ContextMenu'||event.shiftKey&&event.key==='F10'){hover.hide();organization.openGroupMenu([origin?.label,groupLabels[group.group]].filter(Boolean).join(' · '),group.sessions,event,{mode:grouping,origin,group:group.group});}}} className="sidebar-time-group-header sidebar-group-toggle" aria-label={`${collapsed[key]?'展开':'折叠'} ${groupLabels[group.group]}`} aria-expanded={!collapsed[key]} onClick={()=>{hover.hide();setCollapsed(old=>({...old,[key]:!old[key]}));}}><ChevronDown className={collapsed[key]?'collapsed':''} size={12}/>{groupLabels[group.group]}<span>{group.sessions.length}</span></button>}
+      {!collapsed[key]&&<div className="sidebar-session-group-body">{group.sessions.length?renderSessionRows(group.sessions):<p className="history-section-empty">暂无会话</p>}</div>}
     </section>;
   });
   return <aside className="sidebar sidebar-surface pi-session-sidebar" aria-label="会话侧栏">
@@ -138,7 +142,7 @@ export function SessionSidebar({store, expanded, onToggle, width, maxWidth, onPr
       {sectionRows.filter(({sessions})=>!query.trim()||sessions.length).map(({section,sessions})=><section key={section.id} data-history-section={section.id}>{header(section,sessions.length,`section:${section.id}`)}{!collapsed[`section:${section.id}`]&&(sessions.length?<div className="sidebar-session-group-body">{renderSessionRows(sessions,section.id)}</div>:<p className="history-section-empty">暂无会话</p>)}</section>)}
       <section data-history-section="ordinary">{header(ordinarySection,history.length,'ordinary')}{!collapsed.ordinary&&(grouping==='list'?renderTimeGroups(history):origins.map(group=><section className="sidebar-origin-group" key={group.id} data-sidebar-origin={group.id}>
         <button className="sidebar-origin-header sidebar-group-toggle" title={group.detail} aria-label={`${collapsed[group.id]?'展开':'折叠'}${grouping==='project'?'项目':'连接'} ${group.label}`} aria-expanded={!collapsed[group.id]} onClick={()=>{hover.hide();setCollapsed(old=>({...old,[group.id]:!old[group.id]}));}}><ChevronDown className={collapsed[group.id]?'collapsed':''} size={12}/><span className="sidebar-origin-name">{group.label}</span><span>{group.sessions.length}</span></button>
-        {!collapsed[group.id]&&renderTimeGroups(group.sessions,`${group.id}:`,group.label)}
+        {!collapsed[group.id]&&renderTimeGroups(group.sessions,`${group.id}:`,{id:group.id,label:group.label,detail:group.detail})}
       </section>))}</section>
       {!rows.length&&<p className="sidebar-session-empty">{query?'没有匹配记录':'暂无会话，创建一个开始探索'}</p>}
     </>}</div>

@@ -13,18 +13,28 @@ namespace AIPraat.Setup
         readonly string openedModel, openedPreset;
         static readonly Encoding utf8=new UTF8Encoding(false);
         public string PythonPath {get;private set;}
+        public string FfmpegPath {get;private set;}
         public string LlamaServerPath {get;private set;}
+        public string ModelPath {get;private set;}
         public string MmprojPath {get;private set;}
         public AlignmentPaths AlignmentPaths {get;private set;}
+        public string RuntimeDevice {get;private set;}
         public PathSettings(string aiDirectory,string configPath,string profileDirectory,string currentPython)
         {
             this.aiDirectory=Path.GetFullPath(aiDirectory); this.configPath=Path.GetFullPath(configPath);
             this.profileDirectory=Path.GetFullPath(profileDirectory);
             installSettings=Path.Combine(Path.GetDirectoryName(this.aiDirectory),"install-settings.json");
             var config=ReadObject(this.configPath,Configuration.DefaultJson); var server=Configuration.Object(config,"server");
+            var audio=Configuration.Object(config,"audio");
+            FfmpegPath=Value(audio,"ffmpeg");
+            string legacy=Path.Combine(this.aiDirectory,"anki_config.json");
+            if(!audio.ContainsKey("ffmpeg")&&File.Exists(legacy))FfmpegPath=Value(ReadObject(legacy,"{}"),"ffmpeg");
             openedModel=Value(server,"model_path");openedPreset=Value(server,"active_preset");
+            ModelPath=openedModel;
             LlamaServerPath=Value(server,"llama_server"); MmprojPath=Value(server,"mmproj_path");
             AlignmentPaths=AIPraat.Setup.AlignmentPaths.Read(config);
+            RuntimeDevice=Value(Configuration.Object(Configuration.Object(config,"alignment"),"wav2vec2"),"device");
+            if(RuntimeDevice!="cuda")RuntimeDevice="cpu";
             PythonPath=currentPython??"";
             if(PythonPath=="" || PythonPath=="python" || PythonPath=="python3") {
                 string installed=File.Exists(installSettings)?Value(ReadObject(installSettings,"{}"),"python_path"):"";
@@ -75,8 +85,18 @@ namespace AIPraat.Setup
         }
         public void SavePaths(string python,string llama,string mmproj,string resultPath,AlignmentPaths alignmentPaths)
         {
+            SavePaths(python,llama,mmproj,resultPath,alignmentPaths,RuntimeDevice);
+        }
+        public void SavePaths(string python,string llama,string mmproj,string resultPath,AlignmentPaths alignmentPaths,string device)
+        {
+            SavePaths(python,llama,mmproj,resultPath,alignmentPaths,device,null);
+        }
+        public void SavePaths(string python,string llama,string mmproj,string resultPath,AlignmentPaths alignmentPaths,string device,string ffmpeg)
+        {
+            FfmpegProbe audioProbe=null;
+            if(ffmpeg!=null) {audioProbe=FfmpegDependencies.Probe(ffmpeg);if(!audioProbe.Ready)throw new IOException(audioProbe.Message);}
             python=PathValidation.Clean(python); llama=PathValidation.Clean(llama); mmproj=PathValidation.Clean(mmproj);
-            var probe=PathValidation.ProbePython(python); if(!probe.Valid) throw new IOException(probe.Message);
+            var probe=RuntimeDependencies.Probe(python,device,true,null); if(!probe.Valid) throw new IOException(probe.Message);
             string error=PathValidation.OptionalPathsError(new InstallRequest {LlamaServerPath=llama,MmprojPath=mmproj,AlignmentPaths=alignmentPaths,OriginalAlignmentPaths=AlignmentPaths});
             if(error!=null) throw new IOException(error);
             Directory.CreateDirectory(Path.Combine(aiDirectory,"runtime"));
@@ -98,7 +118,9 @@ namespace AIPraat.Setup
                         throw new IOException("模型或预设已在其他窗口中切换，请关闭并重新打开路径配置后再保存。");
                     var writes=new List<KeyValuePair<string,string>>();
                     var merged=MergeConfig(existing,llama,mmproj);
+                    if(audioProbe!=null)Configuration.Object(merged,"audio")["ffmpeg"]=audioProbe.Executable;
                     if(alignmentPaths!=null)alignmentPaths.Apply(merged,AlignmentPaths);
+                    Configuration.Object(Configuration.Object(merged,"alignment"),"wav2vec2")["device"]=device;
                     writes.Add(new KeyValuePair<string,string>(configPath,serializer.Serialize(merged)));
                     if(File.Exists(installSettings)) {
                         var installation=ReadObject(installSettings,"{}"); installation["python_path"]=python;
@@ -109,6 +131,8 @@ namespace AIPraat.Setup
                     if(!string.IsNullOrEmpty(resultPath)) writes.Add(new KeyValuePair<string,string>(Path.GetFullPath(resultPath),python));
                     WriteTransaction(writes);
                     PythonPath=python; LlamaServerPath=llama; MmprojPath=mmproj;
+                    RuntimeDevice=device;
+                    if(audioProbe!=null)FfmpegPath=audioProbe.Executable;
                     AlignmentPaths=AIPraat.Setup.AlignmentPaths.Read(merged);
                     } finally {configGate.Unlock(0,1);}
                   }

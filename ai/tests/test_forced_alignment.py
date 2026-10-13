@@ -6,6 +6,7 @@ import numpy as np
 
 from praat_ai.config import MfaAlignmentConfig
 from praat_ai.forced_alignment import (
+    AlignmentError,
     AlignmentBackend,
     AlignmentResult,
     CompositeAligner,
@@ -48,6 +49,41 @@ class FixedAligner(AlignmentBackend):
 
 
 class ForcedAlignmentTests(unittest.TestCase):
+    def parse_labels(self, labels, expected):
+        text = 'name = "phones"\n' + "\n".join(
+            f'xmin = {index / 10}\nxmax = {(index + 1) / 10}\ntext = "{label}"'
+            for index, label in enumerate(labels))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "test.TextGrid"
+            path.write_text(text, encoding="utf-8")
+            return parse_mfa_textgrid(path, [PhoneSpec(ipa) for ipa in expected])
+
+    def test_repeated_extra_tokens_match_ordered_requested_sequence(self):
+        for expected, starts in ((["a", "s"], [0.0, 0.1]),
+                                 (["a", "s", "a"], [0.0, 0.1, 0.2]),
+                                 (["s", "a", "s"], [0.1, 0.2, 0.3]),
+                                 (["a", "s", "a", "s"], [0.0, 0.1, 0.2, 0.3])):
+            with self.subTest(expected=expected):
+                result = self.parse_labels(["a", "s", "a", "s"], expected)
+                self.assertEqual([phone.ipa for phone in result.phones], expected)
+                self.assertEqual([phone.start for phone in result.phones], starts)
+
+    def test_unmatched_or_reordered_tokens_are_not_relabelled(self):
+        for labels, expected in ((["s", "a"], ["a", "s"]),
+                                 (["a", "s", "a", "s"], ["s", "i", "s"])):
+            with self.subTest(labels=labels, expected=expected):
+                with self.assertRaises(AlignmentError):
+                    self.parse_labels(labels, expected)
+
+    def test_repeated_tokens_can_match_noncontiguous_subsequence(self):
+        result = self.parse_labels(["a", "s", "a", "s"], ["a", "a", "s"])
+        self.assertEqual([phone.start for phone in result.phones], [0.0, 0.2, 0.3])
+
+    def test_extra_tokens_and_silence_preserve_unicode_ipa(self):
+        result = self.parse_labels(["sil", "s", "ɯ̥ː", "sp", "ɴ", "s"], ["ɯ̥ː", "ɴ"])
+        self.assertEqual([phone.start for phone in result.phones], [0.2, 0.4])
+        self.assertEqual([phone.ipa for phone in result.phones], ["ɯ̥ː", "ɴ"])
+
     def test_textgrid_parser_reads_phone_tier(self) -> None:
         text = """
         item [1]:

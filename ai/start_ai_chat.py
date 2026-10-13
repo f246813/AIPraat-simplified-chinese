@@ -6,6 +6,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from praat_ai.desktop_window import focus_existing_window
+
 
 try:   # 正常情况下来自包内实现（os.kill 在本机不可用，见 praat_ai/process.py）
     from praat_ai.process import process_alive
@@ -45,55 +47,6 @@ def start_new_chat_window(directory: Path, pid_path: Path) -> int:
     return 0
 
 
-def focus_existing_window(process_id: int) -> bool:
-    """Bring the chat window of an already running frontend to the front.
-
-    菜单点「启动前端」时，如果对话窗口本来就开着，之前会静默返回；现在改成
-    把已存在的窗口还原并置前，用户至少能看到反馈。
-    """
-
-    if os.name != "nt":
-        return False
-    try:
-        import ctypes
-        from ctypes import wintypes
-    except ImportError:
-        return False
-
-    user32 = ctypes.windll.user32
-    handles: list[int] = []
-
-    @ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
-    def collect(hwnd, _param):   # type: ignore[no-untyped-def]
-        owner = wintypes.DWORD()
-        user32.GetWindowThreadProcessId(hwnd, ctypes.byref(owner))
-        title = ctypes.create_unicode_buffer(256)
-        user32.GetWindowTextW(hwnd, title, len(title))
-        if owner.value == process_id and user32.IsWindowVisible(hwnd) and title.value in ('AIPraat · AI 工作台', 'Praat AI 对话'):
-            handles.append(hwnd)
-        return True
-
-    user32.EnumWindows(collect, 0)
-    if not handles:
-        return False
-
-    hwnd = handles[0]
-    user32.ShowWindow(hwnd, 9)   # SW_RESTORE
-    foreground = user32.GetForegroundWindow()
-    current_thread = ctypes.windll.kernel32.GetCurrentThreadId()
-    target_thread = user32.GetWindowThreadProcessId(hwnd, None)
-    attached = False
-    if foreground and user32.GetWindowThreadProcessId(foreground, None) != current_thread:
-        attached = bool(user32.AttachThreadInput(current_thread, target_thread, True))
-    try:
-        if not user32.SetForegroundWindow(hwnd):
-            user32.BringWindowToTop(hwnd)
-    finally:
-        if attached:
-            user32.AttachThreadInput(current_thread, target_thread, False)
-    return True
-
-
 def main(runtime: Path | None = None, *, model_settings=False) -> int:
     """Native menu entry: quick detached spawn or identity-checked window reuse."""
     from praat_ai.desktop_launch import check_desktop_dependencies, report_failure, request_model_settings
@@ -106,6 +59,18 @@ def main(runtime: Path | None = None, *, model_settings=False) -> int:
         check_desktop_dependencies()
         with service_transition_lock(runtime / 'chat-launch.lock', timeout=2):
             pid_path = runtime / 'chat.pid'
+            # Windows venv python.exe is a shim; the connected desktop owns
+            # its window in a different PID. Use its verified ready record.
+            try:
+                ready = json.loads((runtime / 'frontend-ready.json').read_text(encoding='utf8'))
+                desktop_pid = int(ready['pid'])
+                if (identities_match(ready.get('identity') or {}, process_identity(desktop_pid))
+                        and focus_existing_window(desktop_pid)):
+                    if model_settings:
+                        request_model_settings(runtime, desktop_pid)
+                    return 0
+            except (OSError, ValueError, KeyError, TypeError, AttributeError):
+                pass
             if pid_path.is_file():
                 try:
                     process_id = int(pid_path.read_text(encoding='utf8').strip())

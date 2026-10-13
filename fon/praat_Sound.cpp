@@ -67,6 +67,7 @@ DO
 		for (char32 *p = original.path; *p; p ++) if (*p == U'/') *p = U'\\';
 	#endif
 	integer index = 0;
+	bool converted = false;
 	for (integer i = 1; i <= theCurrentPraatObjects -> n; i ++) {
 		auto &object = theCurrentPraatObjects -> list [i];
 		if (Thing_isa (object.object, classSound) && str32equ (MelderFile_peekPath (& object.file), MelderFile_peekPath (& original))) {
@@ -75,7 +76,7 @@ DO
 		}
 	}
 	if (! index) {
-		autoSound sound = Sound_readFromSoundFile (& file);
+		autoSound sound = Sound_readFromSoundFile (& file, & converted);
 		praat_newWithFile (sound.move(), & original, MelderFile_name (& original));
 		praat_updateSelection ();
 		index = theCurrentPraatObjects -> n;
@@ -105,7 +106,7 @@ DO
 	if (resultFile [0]) {
 		structMelderFile result;
 		Melder_pathToFile (resultFile, & result);
-		MelderFile_writeText_e (& result, U"ok\n", kMelder_textOutputEncoding::UTF8);
+		MelderFile_writeText_e (& result, converted ? U"ok\nconverted\n" : U"ok\nnative\n", kMelder_textOutputEncoding::UTF8);
 	}
 	} catch (MelderError) {
 		if (! resultFile [0]) throw;
@@ -2268,6 +2269,8 @@ DIRECT (HELP__FilteringTutorial) {
 /***** file recognizers *****/
 
 static autoDaata soundFileRecognizer (integer nread, const char *header, MelderFile file) {
+	if (Sound_isAudioFileName (MelderFile_name (file)))
+		return Sound_readFromSoundFile (file);
 	if (nread < 16)
 		return autoDaata ();
 	#if defined (_WIN32)

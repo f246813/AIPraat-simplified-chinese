@@ -14,6 +14,6 @@
 
 ## 当前实现限制
 
-当前比较器遍历可用通用特征；聊天 VOT 工具不能被当作纠音评分已采用音素类别专用 VOT／CPP／HNR 的证明。`minimum_error_duration_sec` 未在当前比较器中参与短错误过滤。既有 TextGrid、多个标准范本及叠加展示能力应逐入口核对，不能由目标描述推断已实现。语言音素映射、声调和模型依赖见 [对齐模块](ALIGNMENT-VERIFICATION.zh-CN.md)。
+当前比较器遍历可用通用特征；聊天 VOT 工具不能被当作纠音评分已采用音素类别专用 VOT／CPP／HNR 的证明。未生效的 `minimum_error_duration_sec` 已从配置、请求与设置面板移除，旧 JSON 字段会被忽略。既有 TextGrid、多个标准范本及叠加展示能力应逐入口核对，不能由目标描述推断已实现。语言音素映射、声调和模型依赖见 [对齐模块](ALIGNMENT-VERIFICATION.zh-CN.md)。
 
 可复现检查入口为 `ai/tests/test_pronunciation.py`、`test_alignment.py`、`test_report.py`、`test_report_chain_regressions.py`。隔离数据检查不保证真实人声或所有语言的准确率。

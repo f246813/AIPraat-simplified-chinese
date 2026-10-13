@@ -310,7 +310,9 @@ void Sound_saveAsAudioFile (constSound me, MelderFile file, int audioFileType, i
 void Sound_saveAsKayFile (constSound me, MelderFile file);   // 16-bit
 void Sound_saveAsSesamFile (constSound me, MelderFile file);   // 12-bit SESAM/LVS
 
-autoSound Sound_readFromSoundFile (MelderFile file);   // AIFF, WAV, NeXT/Sun, or NIST
+void Sound_setFfmpegPathProvider (autostring32 (*provider) ());
+bool Sound_isAudioFileName (conststring32 name);
+autoSound Sound_readFromSoundFile (MelderFile file, bool *converted = nullptr);
 autoDaata Sound_readFromAnyKayFile (MelderFile file);   // 16-bit
 autoSound Sound_readFromSesamFile (MelderFile file);   // 12-bit SESAM/LVS
 autoSound Sound_readFromBellLabsFile (MelderFile file);   // 16-bit

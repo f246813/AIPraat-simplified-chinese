@@ -41,10 +41,15 @@ it('debounces real host estimates and ignores stale session replies', async () =
   const view=render(<ComposerStatus {...props} session={session('a')}/>);
   await act(async () => { await vi.advanceTimersByTimeAsync(350); });
   expect(rpc.mock.calls.find(([m])=>m==='sessions.context')?.[1]).toEqual({sessionId:'a',text:'draft',attachmentIds:['complete']});
+  await act(async () => { pending[0](status('a',1000)); });
+  expect(screen.getByRole('button',{name:'上下文用量'}).textContent).toBe('10%');
+  await act(async () => {fixture.current.text='changed-a';fixture.listeners.forEach(fn=>fn());});
+  await act(async () => {await vi.advanceTimersByTimeAsync(350);});
   view.rerender(<ComposerStatus {...props} session={session('b')}/>);
-  await act(async () => { await vi.advanceTimersByTimeAsync(350); pending[1](status('b',2000)); });
+  expect(screen.getByRole('button',{name:'上下文用量'}).textContent).toBe('…');
+  await act(async () => { await vi.advanceTimersByTimeAsync(350); pending[2](status('b',2000)); });
   expect(screen.getByRole('button',{name:'上下文用量'}).textContent).toContain('20%');
-  await act(async () => { pending[0](status('a',9000)); });
+  await act(async () => { pending[1](status('a',9000)); });
   expect(screen.getByRole('button',{name:'上下文用量'}).textContent).toContain('20%');
   expect(screen.getByRole('button',{name:'切换模型与推理强度'}).textContent).toContain('api-model · high');
   view.unmount(); expect(fixture.listeners.size).toBe(0);
@@ -65,6 +70,79 @@ it('unknown windows and RPC failures never fabricate a percentage', async () => 
   await act(async () => {await vi.advanceTimersByTimeAsync(350);});
   expect(screen.getByRole('button',{name:'上下文用量'}).textContent).toBe('—');
   expect(screen.getByRole('alert').textContent).toBe('host unavailable');
+});
+it('keeps the displayed budget throughout typing, debounce and pending refresh; ignores obsolete replies', async () => {
+  vi.useFakeTimers(); const pending: ((value: ContextStatus) => void)[] = [];
+  const rpc = vi.fn(async (method:string, params:any) => {
+    if (method==='bootstrap') return structuredClone(boot);
+    if (method==='sessions.get') return {session:session(params.sessionId),messages:[]};
+    if (method==='sessions.context') return new Promise<ContextStatus>(resolve => pending.push(resolve));
+    throw Error(method);
+  });
+  const store=new ChatStore(rpc as Rpc); await store.initialize(); const fixture=composerFixture();
+  render(<ComposerStatus store={store} session={session('a')} composer={fixture.runtime} onSettings={vi.fn()}/>);
+  await act(async () => {await vi.advanceTimersByTimeAsync(350);pending[0](status('a',2000));});
+  const trigger=screen.getByRole('button',{name:'上下文用量'});
+  const ring=trigger.querySelector('.ring-value')!;
+  const contextCalls=()=>rpc.mock.calls.filter(([method])=>method==='sessions.context');
+  for (const text of ['草','草稿','草稿材料']) {
+    await act(async () => {fixture.current.text=text;fixture.listeners.forEach(fn=>fn());});
+    await act(async () => {await vi.advanceTimersByTimeAsync(100);});
+    expect(trigger.textContent).toBe('20%');
+    expect(ring.getAttribute('stroke-dasharray')).toBe('20 100');
+  }
+  expect(contextCalls()).toHaveLength(1);
+  await act(async () => {await vi.advanceTimersByTimeAsync(250);});
+  expect(contextCalls()).toHaveLength(2);
+  expect(contextCalls()[1][1]).toEqual({sessionId:'a',text:'草稿材料',attachmentIds:['complete']});
+  expect(trigger.textContent).toBe('20%');
+  await act(async () => {fixture.current.text='更新材料';fixture.listeners.forEach(fn=>fn());});
+  await act(async () => {pending[1](status('a',9000));await vi.advanceTimersByTimeAsync(350);});
+  expect(trigger.textContent).toBe('20%');
+  await act(async () => {pending[2](status('a',3000));});
+  expect(trigger.textContent).toBe('30%');
+  expect(ring.getAttribute('stroke-dasharray')).toBe('30 100');
+});
+it('keeps the previous estimate while attachments change but reveals a refresh failure', async () => {
+  vi.useFakeTimers(); let fail=false;
+  const rpc=vi.fn(async(method:string,params:any)=>{
+    if(method==='bootstrap')return structuredClone(boot);
+    if(method==='sessions.get')return {session:session(params.sessionId),messages:[]};
+    if(method==='sessions.context'){if(fail)throw Error('refresh unavailable');return status('a',2000);}
+    throw Error(method);
+  });
+  const store=new ChatStore(rpc as Rpc);await store.initialize();const fixture=composerFixture();
+  render(<ComposerStatus store={store} session={session('a')} composer={fixture.runtime} onSettings={vi.fn()}/>);
+  await act(async()=>{await vi.advanceTimersByTimeAsync(350);});
+  fail=true;
+  await act(async()=>{fixture.current.attachments=[];fixture.listeners.forEach(fn=>fn());});
+  expect(screen.getByRole('button',{name:'上下文用量'}).textContent).toBe('20%');
+  await act(async()=>{await vi.advanceTimersByTimeAsync(350);});
+  expect(screen.getByRole('button',{name:'上下文用量'}).textContent).toBe('—');
+  expect(screen.getByRole('alert').textContent).toBe('refresh unavailable');
+});
+it('invalidates the old budget and pending replies when model settings change',async()=>{
+  vi.useFakeTimers();const pending:((value:ContextStatus)=>void)[]=[];
+  const settings=structuredClone(boot.settings);settings.api.model='new-model';
+  const rpc=vi.fn(async(method:string,params:any)=>{
+    if(method==='bootstrap')return structuredClone(boot);
+    if(method==='sessions.get')return {session:session(params.sessionId),messages:[]};
+    if(method==='sessions.context')return new Promise<ContextStatus>(resolve=>pending.push(resolve));
+    if(method==='settings.save')return settings;
+    throw Error(method);
+  });
+  const store=new ChatStore(rpc as Rpc);await store.initialize();const fixture=composerFixture();
+  render(<ComposerStatus store={store} session={session('a')} composer={fixture.runtime} onSettings={vi.fn()}/>);
+  await act(async()=>{await vi.advanceTimersByTimeAsync(350);pending[0](status('a',2000));});
+  await act(async()=>{fixture.current.text='changed';fixture.listeners.forEach(fn=>fn());});
+  await act(async()=>{await vi.advanceTimersByTimeAsync(350);});
+  await act(async()=>{await store.save({api:{model:'new-model'}});});
+  expect(screen.getByRole('button',{name:'上下文用量'}).textContent).toBe('…');
+  expect(screen.getByRole('button',{name:'切换模型与推理强度'}).textContent).toContain('new-model');
+  await act(async()=>{pending[1](status('a',9000));await vi.advanceTimersByTimeAsync(350);});
+  expect(screen.getByRole('button',{name:'上下文用量'}).textContent).toBe('…');
+  await act(async()=>{pending[2]({...status('a',3000),model:'new-model'});});
+  expect(screen.getByRole('button',{name:'上下文用量'}).textContent).toBe('30%');
 });
 it('failed quick-save shows an error without optimistic configuration changes', async () => {
   const rpc=vi.fn(async(method:string,params:any)=>{

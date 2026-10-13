@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from .audio import read_wav
 from .bridge import SelectedObject
 from .models import AnalysisRequest, PhoneSpec
+from .pronunciation_rules import PROFILES
 from . import ui_theme, ui_widgets, ui_windows
 
 
@@ -62,6 +63,9 @@ def show_tutor_form(sound_objects: list[SelectedObject]) -> TutorFormValues:
     phoneme_text = tk.StringVar(value="m a n")
     transcript_text = tk.StringVar(value="")
     threshold = tk.StringVar(value="1.25")
+    legacy_label = "旧式声学对比"
+    rule_profiles = {f"{profile.name}音位判据（实验性）": profile for profile in PROFILES}
+    rule_choice = tk.StringVar(value=legacy_label)
     qwen_explain = tk.BooleanVar(value=True)
     qwen_vision = tk.BooleanVar(value=False)
 
@@ -118,8 +122,8 @@ def show_tutor_form(sound_objects: list[SelectedObject]) -> TutorFormValues:
     add_label("参考文本", row=5)
     add_entry(transcript_text, 5)
     add_label("使用 MFA 词典时填写，例如 hello world", row=6, muted=True, column=1)
-    add_label("错误阈值", row=7)
-    add_entry(threshold, 7, width=12, columnspan=1)
+    add_label("旧式对比阈值", row=7)
+    threshold_entry = add_entry(threshold, 7, width=12, columnspan=1)
 
     ttk.Checkbutton(
         body,
@@ -132,6 +136,27 @@ def show_tutor_form(sound_objects: list[SelectedObject]) -> TutorFormValues:
         variable=qwen_vision,
     ).grid(row=9, column=1, sticky="w", pady=4)
 
+    add_label("音位判据", row=10)
+    rule_combo = ttk.Combobox(body, textvariable=rule_choice,
+        values=[legacy_label, *rule_profiles], state="readonly", width=46, font=theme.font("body"))
+    rule_combo.grid(row=10, column=1, columnspan=2, sticky="ew", pady=5)
+    rule_note = tk.StringVar(value="旧请求沿用声学对比；英语/日语可选择音位判据。")
+    tk.Label(body, textvariable=rule_note, background=theme.color("surface"),
+        foreground=theme.color("textMuted"), font=theme.font("small"), wraplength=420, justify="left"
+    ).grid(row=11, column=0, columnspan=3, sticky="w", pady=5)
+
+    def choose_rules(event=None):
+        profile = rule_profiles.get(rule_choice.get())
+        threshold_entry.configure(state="disabled" if profile else "normal")
+        if profile:
+            language.set(profile.language)
+        note = "按音类输出观察；需可靠对齐。未执行独立音素识别，判错阈值未校准。"
+        if profile and profile.language == "ja":
+            note += "日语拍结构：未评估。"
+        rule_note.set(note if profile else "旧请求沿用声学对比；英语/日语可选择音位判据。")
+
+    rule_combo.bind("<<ComboboxSelected>>", choose_rules)
+
     def analyze() -> None:
         by_label = {f"{item.id}: {item.name}": item for item in sound_objects}
         reference = by_label[reference_name.get()]
@@ -140,10 +165,14 @@ def show_tutor_form(sound_objects: list[SelectedObject]) -> TutorFormValues:
         if not phonemes:
             messagebox.showerror("错误", "至少输入一个 IPA 音位。")
             return
+        selected_profile = rule_profiles.get(rule_choice.get())
         try:
-            error_threshold = float(threshold.get())
+            error_threshold = 1.25 if selected_profile else float(threshold.get())
         except ValueError:
             messagebox.showerror("错误", "错误阈值必须是数字。")
+            return
+        if selected_profile and language.get().strip() != selected_profile.language:
+            messagebox.showerror("错误", "目标语言与所选音位判据不一致。")
             return
 
         reference_audio = read_wav(reference.file)
@@ -156,11 +185,12 @@ def show_tutor_form(sound_objects: list[SelectedObject]) -> TutorFormValues:
             error_threshold=error_threshold,
             qwen_explain=qwen_explain.get(),
             qwen_vision=qwen_vision.get(),
+            profile_id=selected_profile.id if selected_profile else None,
         )
         root.destroy()
 
     button_row = tk.Frame(body, background=theme.color("surface"))
-    button_row.grid(row=10, column=0, columnspan=3, pady=(16, 0), sticky="e")
+    button_row.grid(row=12, column=0, columnspan=3, pady=(16, 0), sticky="e")
     ui_widgets.RoundedButton(
         button_row, theme, "取消", root.destroy, kind="text", background="surface"
     ).pack(side="right", padx=(8, 0))

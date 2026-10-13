@@ -15,7 +15,7 @@ from .model_capabilities import initialize_audio
 from .service_lock import service_transition_lock
 from .workflow_policy import WorkflowPolicy
 
-PREFERENCES = dict(theme='system', font_size=15, send_key='enter', smooth_stream=True, sidebar_width=272, conversation_width=850, sidebar_sort='recent', sidebar_grouping='project')
+PREFERENCES = dict(theme='system', font_size=15, send_key='enter', smooth_stream=True, sidebar_width=272, conversation_width=850, sidebar_sort='recent', sidebar_grouping='project', sidebar_retained_time_groups=[])
 # Window partition sizes are layout preferences, not model parameters: they are
 # clamped here so a hand-edited config cannot produce an unusable shell.
 PREFERENCE_RANGES = {'font_size': (12, 24), 'sidebar_width': (240, 520), 'conversation_width': (560, 4000)}
@@ -81,7 +81,7 @@ class SettingsService:
                 section['token_mode'] = derived_token_mode(section)
             # Diagnostic responses could contain credentials; never expose raw records.
             api.pop('audio_test_result', None)
-            return dict(api=api, local=local, preferences={**PREFERENCES, **raw.get('modern', {}).get('preferences', {})},
+            return dict(api=api, local=local, server=dict(model_path=config.server.model_path), preferences={**PREFERENCES, **raw.get('modern', {}).get('preferences', {})},
                         analysis=asdict(config.analysis), alignment=asdict(config.alignment),
                         workflow=asdict(WorkflowPolicy.validate(raw.get("modern", {}).get("workflow"))))
 
@@ -108,6 +108,23 @@ class SettingsService:
             result['api_key'] = str(incoming['api_key'])
         return result
 
+    @staticmethod
+    def local_model_update(config, settings):
+        incoming = settings.get('server', {})
+        if not isinstance(incoming, dict):
+            raise ValueError('本地模型路径设置无效')
+        value = incoming.get('model_path', config.server.model_path)
+        if not isinstance(value, str):
+            raise ValueError('本地模型路径必须是文本')
+        value = value.strip().strip('"')
+        if value == config.server.model_path:
+            return None
+        if value and (Path(value).suffix.lower() != '.gguf' or not Path(value).is_file()):
+            raise ValueError('请选择存在的 GGUF 本地模型文件')
+        from .presets import find_preset
+        preset = find_preset(config, value)
+        return dict(model_path=value, active_preset=preset.id if preset else '')
+
     def candidate(self, settings=None):
         with self.guard:
             cfg = copy.deepcopy(load_config(self.path))
@@ -117,6 +134,12 @@ class SettingsService:
                                                 derived_token_mode=derived_token_mode(obj))
                     for key, value in merged.items():
                         setattr(obj, key, value)
+                model_update = self.local_model_update(cfg, settings)
+                if model_update:
+                    for key, value in model_update.items():
+                        setattr(cfg.server, key, value)
+                    if model_update['model_path']:
+                        cfg.local_qwen.model = Path(model_update['model_path']).name
             raw_workflow = self.raw().get("modern", {}).get("workflow", {})
             incoming_workflow = (settings or {}).get('workflow', {})
             if not isinstance(incoming_workflow, dict):
@@ -139,6 +162,11 @@ class SettingsService:
                                                  ('local', 'qwen', LOCAL_EDITABLE, local_effective)]:
                 raw[dest] = self.merge_section(raw.get(dest, {}), settings.get(name, {}), allowed,
                                                derived_token_mode=derived_token_mode(section))
+            model_update = self.local_model_update(effective, settings)
+            if model_update:
+                raw.setdefault('server', {}).update(model_update)
+                if model_update['model_path']:
+                    raw['qwen']['model'] = Path(model_update['model_path']).name
             if raw['api'].get('locked') and raw['api'].get('enabled') is False:
                 raise ValueError('云端锁定时不能切换本地模型')
             for name in ('analysis', 'alignment'):

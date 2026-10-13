@@ -10,6 +10,11 @@ import numpy as np
 
 from praat_ai.models import AlignedPhone, AlignmentResult, AnalysisRequest, PhoneSpec
 from praat_ai.pronunciation import analyze_pronunciation
+from praat_ai.audio import extract_phone_tracks
+from praat_ai.pronunciation_rules import PROFILES
+from praat_ai.report import write_textgrid
+import parselmouth
+from parselmouth.praat import call
 from praat_ai.tutor import request_from_dict
 from praat_ai.ui import _equal_segments
 
@@ -52,6 +57,69 @@ class FixedBoundaryAligner:
 
 
 class AudioPipelineTests(unittest.TestCase):
+    def test_extraction_preserves_explicit_phone_indices(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            audio = Path(directory) / "tone.wav"
+            write_tone(audio, 16000, 220.0)
+            phones = [PhoneSpec("a", reference_start=0, reference_end=0.06,
+                                learner_start=0, learner_end=0.06, phone_index=10),
+                      PhoneSpec("u", reference_start=0.12, reference_end=0.2,
+                                learner_start=0.12, learner_end=0.2, phone_index=30)]
+            for learner in (False, True):
+                with self.subTest(learner=learner):
+                    tracks = extract_phone_tracks(audio, phones, learner=learner)
+                    self.assertEqual([phone.phone_index for phone in tracks], [10, 30])
+
+    def test_missing_alignment_phone_keeps_original_index_and_report_status(self) -> None:
+        for missing, ipa, original_indices in ((2, ["a", "i", "u"], None),
+                (1, ["a", "i", "u"], None), (1, ["?", "i", "u"], None),
+                (2, ["a", "i", "u"], [10, 20, 30])):
+            with self.subTest(missing=missing, ipa=ipa, original_indices=original_indices), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                reference, learner = root / "reference.wav", root / "learner.wav"
+                write_tone(reference, 16000, 220.0)
+                write_tone(learner, 16000, 900.0)
+                bounds = [(0.0, 0.06), (0.06, 0.12), (0.12, 0.2)]
+                survivors = [index for index in (1, 2, 3) if index != missing]
+                alignment = AlignmentResult([AlignedPhone(index, ipa[index - 1],
+                    *bounds[index - 1], 0.9, "verified") for index in survivors], "verified", 0.9)
+                class PartialAligner:
+                    def align(self, *args):
+                        return alignment
+                request = AnalysisRequest(str(reference), str(learner), "en", [
+                    PhoneSpec(label, reference_start=start, reference_end=end,
+                              phone_index=original_indices[position] if original_indices else None)
+                    for position, (label, (start, end)) in enumerate(zip(ipa, bounds))], profile_id=PROFILES[0].id)
+                with patch("praat_ai.pronunciation.build_aligner", return_value=PartialAligner()):
+                    result = analyze_pronunciation(request)
+                indices = original_indices or [1, 2, 3]
+                self.assertEqual([phone.phone_index for phone in result.learner_phones],
+                                 [indices[index - 1] for index in survivors])
+                self.assertEqual([item["learner_phone_index"] for item in result.phone_assessments],
+                                 [None if index == missing else indices[index - 1] for index in (1, 2, 3)])
+                self.assertEqual(result.observations, [])
+                path = root / "report.TextGrid"
+                write_textgrid(result, path)
+                grid = parselmouth.read(str(path))
+                for time in (0.03, 0.09, 0.16):
+                    interval = call(grid, "Get interval at time", 3, time)
+                    self.assertEqual(call(grid, "Get label of interval", 3, interval), "证据不足")
+
+    def test_legacy_out_of_audio_boundary_is_not_scored(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            reference = Path(directory) / "reference.wav"
+            learner = Path(directory) / "learner.wav"
+            write_tone(reference, 16000, 220.0)
+            write_tone(learner, 16000, 900.0)
+            result = analyze_pronunciation(AnalysisRequest(
+                reference_object=str(reference), learner_object=str(learner),
+                language="en", phonemes=[PhoneSpec("a", reference_start=0.0,
+                    reference_end=9.0, learner_start=0.0, learner_end=0.2)],
+                profile_id=None))
+        self.assertEqual(result.errors, [])
+        self.assertTrue(any("超出音频范围" in warning for warning in result.warnings))
+        self.assertEqual(result.phone_assessments[0]["status"], "insufficient_evidence")
+
     def test_null_alignment_metadata_uses_defaults(self) -> None:
         request = request_from_dict(
             {

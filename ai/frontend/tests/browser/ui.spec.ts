@@ -26,7 +26,7 @@ test('settings categories, key preservation, separate fixture tests and unknown 
   await expect(page.getByRole('button',{name:'搜索 / 浏览历史会话',exact:true})).toHaveCount(0);
   await page.getByRole('button',{name:'打开设置'}).click();
   await expect(page.getByRole('navigation',{name:'设置分类'})).toBeVisible();
-  await expect(page.getByRole('heading',{name:'会话状态',exact:true})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'模型',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'模型',exact:true}).click();
   await expect(page.getByLabel('API Key',{exact:true})).toHaveValue('');
   await page.getByRole('button',{name:'测试文字连接'}).click();await expect(page.locator('.test-result').first()).toContainText('demo-not-verified');await expect(page.locator('.test-result').nth(1)).toContainText('未测试');

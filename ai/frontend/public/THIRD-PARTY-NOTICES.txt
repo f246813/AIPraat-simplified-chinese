@@ -13492,62 +13492,23 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --- Codex NOTICE.md ---
 # Codex public thread-section protocol / Apache-2.0
 
-Desktop cloud activation fix (2026-10-04): the modified host now honors an
-enabled API configuration in the interactive desktop entry without requiring
-a CLI flag. Startup/save never call a provider; the existing explicit test
-confirmation, request configuration snapshots, endpoint validation and
-restricted standalone service default remain. This is a local host adapter
-fix, not upstream Codex UI or agent code.
-
-Archive page completion (2026-10-04): the user's current Codex screenshot is
-the layout reference for top search/source/project filters, original group
-headers, a no-project bucket, row Delete/Unarchive actions, group menus and
-Delete all. Additional complete public `ThreadDeleteParams.ts`,
-`ThreadSourceKind.ts` and `ThreadListParams.ts` are preserved/consumed unchanged
-with pinned Git blob/SHA-256 records in `upstream/archived-settings/`. Public
-sourceKinds filtering maps to the host's desktop chats (appServer) and legacy
-records of unknown origin; no cloud/CLI/agent history source is invented.
-Menus reuse the existing Pi ContextMenu and installed Radix RadioGroup;
-search reuses the existing Codex debounce/generation/compact-ID adapter.
-Deletion calls existing sessions.delete. Legacy archive removal uses an
-additive deleted flag in modern sidecar metadata; source legacy SQLite remains
-read-only and unchanged. Removed legacy entries are absent from list/search
-after restart. Modern deletion continues to delete local history/evidence via
-the existing cascade. Group/global operations aggregate existing host methods,
-with explicit confirmation and partial-failure reporting. The desktop renderer
-is not part of the public repository; these are documented local adapters.
-
-Archived settings migration (2026-10-04): the complete generated
-`ThreadUnarchiveParams.ts` is preserved unchanged in `upstream/archived-settings/`
-with Git blob/SHA-256 provenance and consumed from `src/codex/protocol/`.
-`ArchivedSessions.tsx` / `archived-sessions.css` adapt the public settings
-documentation and the archive-page screenshot in openai/codex issue #13018:
-title, date/project context and trailing neutral Unarchive button. The public
-repository does not publish that desktop React settings renderer; no claim is
-made that its private UI source was copied. The adapter calls existing Praat
-archive/restore RPC, retaining legacy read-only state and section membership.
-The entry moves from the Pi sidebar to the existing settings navigation.
-Opening a historical chat uses existing session loading with the unsaved-settings
-guard. Section-wide restore remains available in the existing section menu.
-No new storage, dependency, agent or model runtime is introduced.
-
 Upstream: https://github.com/openai/codex
 Fixed revision: `ab45264919aaeb8a421cc156f1a5459ef9d60b72`.
 Copyright and author notice: see `UPSTREAM-NOTICE`. License: Apache-2.0 (`LICENSE`).
 
 `upstream/` preserves the listed original files unchanged. `SOURCE.json` records the exact revision, Git blob identities and SHA-256 checksums, verified against that Git tree. The two generated TypeScript files `ThreadSection.ts` and `ThreadSectionAppearance.ts` are copied byte-for-byte into `ai/frontend/src/codex/protocol/` and included in `modified/protocol/` in built assets. The generated headers are retained.
 
-Local adaptation (2026-10-04):
+Local adaptation:
 - `HistoryOrganization.tsx` and `organization.css` render section headers, menus, editing, move selection and drag targets using this project's existing React/Pi renderer. The public repository does not supply the Codex desktop React sidebar/menu source. These are local rendering, not copied Codex desktop components.
 - `modern_organization.py` implements stable section identity, nullable single membership, append/insert-before ordering with a 1,000,000 position gap, protected built-in pinned section, trimmed nonempty names, 64-byte icon/color limits, and detach-on-section-delete from the public protocol/SQLite/thread-store behavior. UUID generation uses the existing local host UUID4 helper instead of upstream UUID7; section names are additionally limited to 100 characters. Python/storage names and transaction plumbing are adapted to Praat's existing store.
 - Public `thread/fork` establishes the independent history-fork operation. The local host snapshots full conversation history into new session/message/activity identities, preserves compressed context and historical evidence, resets draft/reading state, marks live fragments interrupted, and records parent provenance. Optional cutoff-turn and Codex process/worktree options are not implemented in this conversation-menu scope.
 - Per-section archive/restore is a local aggregation of conversation archive operations, not a claimed upstream `sections.archive` API. Archiving retains membership and the section; deleting a section detaches conversations without deleting history. Legacy records use modern sidecar metadata; the old database remains read-only.
 
-Sidebar options integration (2026-10-04): `upstream/sidebar-options/` retains
+Sidebar options: `upstream/sidebar-options/` retains
 `ThreadSortKey.ts`, `SortDirection.ts` and `ThreadListParams.ts` unchanged, with
 Git blob/SHA-256 provenance. The first two are copied byte-for-byte into
 `src/codex/protocol/` and consumed by the existing history comparator.
-`SidebarOptions.tsx` replaces the old sort icon with the requested Codex menu
+`SidebarOptions.tsx` renders a local menu
 hierarchy: organize by project/remote connection/list, and a sort submenu with
 the four existing project choices (including exactly one recent-update choice).
 The public repository has no desktop React menu/grouping renderer to copy.
@@ -13564,7 +13525,7 @@ legacy project paths remain unknown. Model API endpoints are not connections.
 
 No Codex app-server/CLI/agent/model runtime or Pi Agent kernel is imported or started. The frontend continues to use assistant-ui and explicit Praat host RPC through pywebview/WebView2.
 
-Search replacement (2026-10-04): four complete original Rust files are retained unchanged in
+Search adapters: four complete original Rust files are retained unchanged in
 `upstream/search/`, verified by its `SOURCE.json` against pinned Git blobs.
 `src/codex/useSessionSearch.ts` translates `tui/src/task_mentions.rs::spawn_search`:
 100ms debounce, generation checks before dispatch/after response, host search and title matches.
@@ -13582,15 +13543,18 @@ matches while navigating. Mounted-message counting/window-reveal behavior is pre
 Complete modified frontend/host source ships with originals and notices. These are source
 ports with explicit language/storage adaptations, not private Codex desktop React UI.
 
-Search scroll repair (2026-10-04): the local React dependency previously used
-the entire session array identity. Reading-position/draft writes and Pi preview
-loads replaced that array and unnecessarily restarted the Codex search flow,
-temporarily unmounting body-only matches. `useSessionSearch.ts` now derives a
-stable key from session identity, title, persisted update time and archive state,
-independent of array order. View/preview changes retain results; actual history
-changes still invalidate them. The upstream debounce/generation/RPC matcher is
-unchanged. This is a repair of the local host-to-React adapter, not new upstream
-source or a replacement search engine.
+Search result invalidation uses a stable key derived from session identity,
+title, persisted update time and archive state, independent of array order.
+Reading-position, draft and preview changes retain results; history changes
+invalidate them. This belongs to the local React/host adapter.
+
+Archive settings use complete public ThreadUnarchiveParams, ThreadDeleteParams,
+ThreadSourceKind and ThreadListParams types retained in upstream/archived-settings/.
+The local ArchivedSessions.tsx renderer adapts public settings documentation and
+layout references; public Codex does not publish its desktop React renderer.
+The host stores legacy deletion state in modern metadata and keeps the original
+legacy database read-only. Modern deletion uses existing history/evidence cascades.
+Archive/restore and grouped operations call the project's own host methods.
 
 Built assets distribute this notice, original notice/license, pinned source excerpts and modified renderer source in `codex-source/`. Complete frontend build inputs are distributed in `pi-desktop-source/rebuild/` because the used Pi renderer remains under LGPL-3.0; see its own notice for replacement/rebuild instructions. The unpacked project also provides the Python host adaptations and tests. This record makes no claim that inaccessible desktop UI source was copied or that the current checkout is a release/installer.
 
@@ -13811,14 +13775,6 @@ Copyright (c) 2023-2025 The Ratatui Developers
 --- PI-Desktop NOTICE.md ---
 # PI-Desktop renderer excerpts / LGPL-3.0
 
-Archived settings followup (2026-10-04): the local archived-history toggle and
-entry are removed from `Sidebar.tsx`; its existing session rendering now shows
-active history only. The archive manager uses the existing Settings dashboard
-and host RPC. Pi preview, selection, grouping, search, resizing and the native
-scrollbar rules are retained. See `codex-source/NOTICE.md` for the archive-page
-layout reference and public protocol boundary. The current exact renderer and
-complete frontend build inputs remain distributed below.
-
 This distribution uses renderer-only excerpts from **PI-Desktop**, by its upstream authors/contributors, licensed under GNU LGPL version 3. The excerpts and our modifications remain under LGPL-3.0. See `LICENSE` (LGPL-3.0) and `COPYING` (GPL-3.0, incorporated by LGPL).
 
 Source: https://github.com/vastsa/PI-Desktop
@@ -13831,15 +13787,15 @@ Original files are preserved in `upstream/`:
 - `apps/desktop/src/styles/base.css` (scrollbar rules, lines 126–161)
 - `apps/desktop/src/styles/ui-kit.css` (context menu, lines 256–340)
 
-Local modifications (2026-10-03):
+Local modifications:
 - ContextMenu: direct React body portal; remove transcript/TeX selection integrations; explicit sidebar point/trigger; preserve viewport placement, dismissal, focus restoration and keyboard navigation; prevent the trigger's pointerdown from defeating click-to-toggle; avoid refocusing on metadata renders.
 - Placement: retain Pi's viewport clamp/rounding, expose only renderer types needed here.
 - Scrollbar reveal: logic unchanged, comments/formatting shortened; capture passive scroll and 300ms hold, including timer/attribute cleanup.
 - CSS: map Pi theme variables to this project's tokens; reset local button defaults; restore `scrollbar-width/color: auto` to prevent older project rules from overriding the 6px WebKit scrollbar. Quiet transparent track/thumb; hover/focus/scroll reveal.
 
-Project-local `SessionRow` and `sessions.pin` implement dialogue operations using the Praat host, not Pi's Sidebar/store/IPC/Agent runtime. The earlier composer status was project-local adaptation, not this source extraction.
+Project-local `SessionRow` and `sessions.pin` implement dialogue operations using the Praat host, not Pi's Sidebar/store/IPC/Agent runtime. Composer status is project-local code.
 
-## Conversation sidebar extraction (2026-10-04)
+## Conversation sidebar extraction
 
 The complete upstream `Sidebar.tsx` and its sidebar dependencies are preserved
 unchanged in `upstream/sidebar/`, at the same fixed revision above. That directory
@@ -13852,7 +13808,7 @@ The used renderer source is `ai/frontend/src/pi/sidebar/` (also shipped in
 - `sidebar-session-groups.ts`: original logic; type imports point to the Praat
   session projection, with an SPDX header added.
 - `useSessionHoverCard.ts`: original hook and timings, redirected session type
-  import and SPDX header. One local repair cancels pending dismissal before the
+  import and SPDX header. The adapted hook cancels pending dismissal before the
   same-target early return, so reentering a row keeps its preview visible.
 - `use-armed-delete.ts`: original timed confirmation helper.
 - `preview.ts`: upstream preview truncation and viewport placement logic,
@@ -13874,7 +13830,7 @@ The used renderer source is `ai/frontend/src/pi/sidebar/` (also shipped in
   edge with a proportional thumb, but has a 14px pointer lane instead of Pi's
   6px lane. Its quiet thumb is 6px and grows to 10px on direct hover/press. The
   resize handle sits outside this lane. Pi's reveal/hold behavior is retained.
-  Subsequent user adjustment sets only the sidebar thumb's minimum height to
+  The sidebar style sets the sidebar thumb's minimum height to
   68px (the measured 17px original native minimum plus three times that length).
 
 The existing `SessionRow.tsx` consumes these LGPL renderer interactions and is
@@ -13882,22 +13838,21 @@ supplied in `rebuild/src/`: 120ms prefetch, preview hooks, compact rows, modifie
 selection and the extracted context menu. The App/sidebar integration, host
 validation and complete build inputs are likewise supplied in `rebuild/`.
 No Pi Agent kernel, global Pi store, Electron IPC, project-management or
-notification subsystem is bundled into the application runtime. Subsequent
-conversation archive operations are implemented by this project's own host.
+notification subsystem is bundled into the application runtime. Conversation archive operations are implemented by this project's own host.
 
-## Codex history organization integration (2026-10-04)
+## Codex history organization integration
 
 `ContextMenu.tsx` additionally supports submenu/back markers and ArrowRight /
 ArrowLeft navigation. `Sidebar.tsx` integrates local stable section headers,
 per-section menus, nullable single membership, private conversation drag payloads,
-ordered drop-before and an archived-history view. Existing Pi preview, modifiers,
+ordered drop-before and archive actions linked to the settings archive manager. Existing Pi preview, modifiers,
 focus navigation, sorting and resizing remain connected to the local host.
 The scrollbar lane/minimum thumb settings above are unchanged.
 `SessionRow.tsx` adds move/fork/archive actions; `HistoryOrganization.tsx` is a
 project-local renderer for public Codex section semantics, not copied Codex
 desktop React code. Source/Apache notices are separately in `codex-source/`.
 
-## Search input integration (2026-10-04)
+## Search input integration
 
 `upstream/search/` preserves original `SearchDialog.tsx`,
 `features/app/useAppShellRuntime.tsx` and `styles/overlays.css`, verified against
@@ -13916,22 +13871,21 @@ All used local source is provided in `rebuild/src/`; this section records the
 actual copied interaction fragments rather than claiming the full SearchDialog
 and its separate search service execute here.
 
-## Sidebar options / origin grouping (2026-10-04)
+## Sidebar options / origin grouping
 
 `upstream/sidebar-options/` additionally retains the unchanged
 `apps/desktop/src/lib/project-name.ts`, with Git blob/SHA-256 provenance at the
 same fixed revision. `modified/sidebar/project-name.ts` extracts its exact
 `folderNameFromPath` function with an SPDX/source header; origin grouping also
 reuses the previously copied `normalizeProjectPath` helper.
-`Sidebar.tsx` now delegates the toolbar to the Radix dropdown submenu component,
+`Sidebar.tsx` delegates the toolbar to the Radix dropdown submenu component,
 groups ordinary history by recorded project/connection or a single list, and
 preserves the existing custom sections, pinned area, time grouping, previews,
 selection, scroll and resizing. The original four sort choices are retained.
 Menu source/host adapters ship in `rebuild/`; Radix retains its own MIT license.
 No Pi project manager or remote execution runtime is imported.
 
-Collapsed rail follow-up (2026-10-04): `Sidebar.tsx` removes only the collapsed
-search/browse shortcut. Its gear delegates to the existing host settings
+Collapsed rail: `Sidebar.tsx` supplies a settings shortcut. Its gear delegates to the existing host settings
 dashboard with the initial conversation/storage category. The existing model
 settings entry retains the model category. No Pi navigation/runtime is added;
 the current App/Settings source and unchanged expanded search are supplied in

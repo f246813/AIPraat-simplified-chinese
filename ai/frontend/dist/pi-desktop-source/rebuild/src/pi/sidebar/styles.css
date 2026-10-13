@@ -32,6 +32,9 @@
 .pi-session-sidebar .sidebar-selection-bar>span{flex:1}
 .pi-session-sidebar .sidebar-selection-bar>button{background:none;padding:3px 5px;font-size:11px;border:0}
 .pi-session-sidebar .sidebar-bottom{margin:10px 10px 0;padding:10px 0 12px}
+.pi-session-sidebar .task-count{font-size:9px;line-height:1;min-width:0;padding:0 1px;border:0;border-radius:0;background:none;font-variant-numeric:tabular-nums}
+.app:not(.sidebar-expanded) .pi-session-sidebar .sidebar-bottom>button{justify-content:center;padding-inline:0}
+.app:not(.sidebar-expanded) .pi-session-sidebar .sidebar-bottom .task-count{right:auto;left:calc(50% + 6px);top:6px}
 .sidebar-session-hover-card{background:var(--panel);color:var(--text);border-color:var(--border);box-shadow:var(--ds-shadow-dialog);max-height:calc(100vh - 16px);overflow-y:auto}
 .sidebar-session-hover-card-meta{font-size:10px;color:var(--muted);margin-top:4px}
 .sidebar-preview-open{margin-top:8px;padding:4px 8px;font-size:11px;background:var(--soft);border:1px solid var(--border);border-radius:5px}

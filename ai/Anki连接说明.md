@@ -29,7 +29,9 @@ const AIPRAAT_MAGNIFIER = ".Search, .search a, .dict-link, #dict-link";
 
 Windows 的普通“打开文件”和 Anki 入口都支持原生读取 M4A：使用系统 Media Foundation 解码为浮点 PCM，直接创建 Praat Sound，保持解码器输出的采样率和声道；不启动外部转码程序，不生成中间 WAV。AAC M4A 已用实际文件验证。M4A 是容器，其他编码是否支持取决于 Windows 提供的解码器。
 
-保留“原生读取失败时按需解码为临时 WAV”。备用路线需要 `ffmpeg.exe`，可在设置中选择，或通过 PATH 查找。仅在 Praat 明确返回读取失败后转换；不会在结果未知的超时情况下重投。转换选择第一条音频流，使用 24 位 PCM WAV，不指定重采样或声道混合；Praat 读入完成后删除临时文件，并以原文件作为对象关联路径。原音频不会被修改。
+普通打开、拖放、脚本 `Read from file` 和 Anki 入口共用“原生读取 → 明确失败后转临时 WAV → 原生再读入”。备用路线需要 `ffmpeg.exe`，在“前端 → 路径配置”的 Python 区域下方选择、检测或一键安装，统一存入 `ai/ai_config.json` 的 `audio.ffmpeg`。留空时先查找 `%LOCALAPPDATA%\AIPraat\ffmpeg\ffmpeg.exe`，再查找 PATH；尚未保存共享设置时兼容旧 Anki FFmpeg 路径。转换选择第一条音频流，使用 24 位 PCM WAV，不指定重采样或声道混合；成功和失败均清理临时目录，Anki 保留原文件作为对象关联路径。原音频不会被修改。
+
+Anki 后台只投递一次读取命令，备用转换由 Praat 执行；超时不会触发重复投递。OGG Vorbis/Opus 优先使用 Praat 自带解码器，不要求先转 WAV。
 
 连接设置存放于 `ai/anki_config.json`，与 AI 模型配置分开。从 GitHub Release 下载的插件会读取当前 Windows 用户的 `Preferences.txt`，自动定位 AIPraat 安装目录和已配置的 Python；请先启动一次 AIPraat 并完成 Python 配置，再重启 Anki。在 AIPraat 中导出的插件会写入当前 Python 和桥接程序路径；移动安装目录后重新导出安装插件。
 
@@ -41,7 +43,7 @@ Windows 的普通“打开文件”和 Anki 入口都支持原生读取 M4A：�
 Open Anki audio: "音频路径", 0.2, 0.8, "结果文件路径", "原音频路径"
 ```
 
-结果写入 `ok` 或 `error`。命令必须在 GUI 实例执行，通过现有 Message.txt / WM_APP 通道定向投递。Anki 和 AI 共享跨进程命令锁，并保持到结果确认，避免覆盖彼此的消息。
+结果首行写入 `ok` 或 `error`；成功的第二行为 `native` 或 `converted`，供后台记录实际读取路线。命令必须在 GUI 实例执行，通过现有 Message.txt / WM_APP 通道定向投递。Anki 和 AI 共享跨进程命令锁，并保持到结果确认，避免覆盖彼此的消息。
 
 源码依据：[Anki 声音标签接口](https://github.com/ankitects/anki/blob/main/pylib/anki/sound.py)、[JLPT 放大镜模板](https://github.com/5mdld/anki-jlpt-decks/blob/main/deck-source/templates/eggrolls-JLPT10k-v3.5-%E6%97%A5-%E4%B8%AD-front.html)、[Microsoft 音频解码教程](https://learn.microsoft.com/en-us/windows/win32/medfound/tutorial--decoding-audio)。
 

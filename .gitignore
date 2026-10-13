@@ -46,6 +46,7 @@ __pycache__/
 ai/logs/
 ai/ai_config.json
 ai/runtime/
+logs/runtime/
 
 # Local zip packages/releases
 *.zip
@@ -57,3 +58,9 @@ gui_candidates.txt
 translation_candidates.txt
 translation_check_report.md
 scratch/
+
+# Isolated runtime acceptance environments and downloaded wheels
+installer/verification/runtime-*-env/
+installer/verification/runtime-wheelhouse/
+installer/verification/runtime-local-plan.json
+installer/verification/runtime-constraints.txt

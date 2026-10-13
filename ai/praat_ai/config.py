@@ -143,7 +143,6 @@ class ServerConfig:
 @dataclass(slots=True)
 class AnalysisConfig:
     default_error_threshold: float = 1.25
-    minimum_error_duration_sec: float = 0.04
     maximum_errors_per_phone: int = 3
 
 
@@ -166,7 +165,7 @@ class Wav2Vec2AlignmentConfig:
     enabled: bool = False
     model: str = ""
     models: list[str] = field(default_factory=list)
-    device: str = "cuda"
+    device: str = "cpu"
     blank_token_id: int = 0
     sample_rate: int = 16000
     do_phonemize: bool = False
@@ -185,7 +184,13 @@ class AlignmentConfig:
 
 
 @dataclass(slots=True)
+class AudioDecoderConfig:
+    ffmpeg: str = ""
+
+
+@dataclass(slots=True)
 class AppConfig:
+    audio: AudioDecoderConfig = field(default_factory=AudioDecoderConfig)
     qwen: QwenConfig = field(default_factory=QwenConfig)
     server: ServerConfig = field(default_factory=ServerConfig)
     api: ApiConfig = field(default_factory=ApiConfig)
@@ -343,8 +348,10 @@ def apply_api_to_qwen(config: AppConfig) -> None:
 def load_config(path: str | Path | None = None) -> AppConfig:
     config = AppConfig()
     candidate = Path(path) if path else default_config_path()
+    raw = {}
     if candidate.is_file():
         raw = json.loads(candidate.read_text(encoding="utf-8"))
+        _merge_dataclass(config.audio, raw.get("audio", {}))
         local_values = raw.get("qwen") or {}
         _merge_dataclass(config.qwen, local_values)
         # Upgrade the old shipped pair only; preserve individually tuned limits.
@@ -402,6 +409,12 @@ def load_config(path: str | Path | None = None) -> AppConfig:
     if env_mmproj:
         config.server.mmproj_path = env_mmproj
 
+    # Preserve an existing Anki decoder path when a model/settings save first
+    # serializes the shared audio section. An explicit empty value means auto.
+    if "ffmpeg" not in raw.get("audio", {}):
+        legacy = candidate.parent / "anki_config.json"
+        if legacy.is_file():
+            config.audio.ffmpeg = str(json.loads(legacy.read_text(encoding="utf-8-sig")).get("ffmpeg", ""))
     from .model_capabilities import initialize_audio
     initialize_audio(config.api)
     config.local_qwen = deepcopy(config.qwen)

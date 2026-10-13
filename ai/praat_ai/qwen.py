@@ -1074,6 +1074,7 @@ tool 只能是工具清单中的名称或 custom_script；自定义脚本放 arg
                 "content": (
                     f"请求：{json.dumps(request, ensure_ascii=False)}\n"
                     f"分析结果：{json.dumps(result, ensure_ascii=False)}"
+                    + ("\n音位判据说明：观察不等于发音错误；保持实验性、未评估及证据不足状态，不得推断未执行的音素识别或给出总分。" if result.get("profile_snapshot") else "")
                 ),
             },
         ]
@@ -1117,7 +1118,8 @@ tool 只能是工具清单中的名称或 custom_script；自定义脚本放 arg
                         "type": "text",
                         "text": (
                             f"请求：{json.dumps(request, ensure_ascii=False)}\n"
-                            f"错误摘要：{json.dumps(result.get('errors', []), ensure_ascii=False)}"
+                            f"分析结果：{json.dumps(result, ensure_ascii=False)}"
+                            + ("\n音位判据说明：图表仅为实验性声学观察，不能判定发音对错；保留未评估与证据不足状态。" if result.get("profile_snapshot") else "")
                         ),
                     },
                 ],

@@ -27,6 +27,12 @@
 
 ## 直接复用或移植的源码贡献者
 
+音位声学判据复用 [PanPhon](https://github.com/dmort27/panphon) 的 IPA 特征表和
+FeatureTable 的 Unicode 归一化、最长音段匹配代码（MIT，固定版本
+a49c242d3307864312a2701055faefa4e548501c）。数据与薄适配放在
+ai/praat_ai/_vendor/panphon/；完整许可和修改范围见
+[PanPhon NOTICE](ai/praat_ai/_vendor/panphon/NOTICE.md)。语言声学规则仍为实验性。
+
 以下补充现代 AI 前端及上下文管理中实际提取、复制或移植的上游代码贡献者；名字按固定源码版本中相关文件的提交记录核对。它不是这些大型项目的完整贡献者名册。逐文件来源、哈希、修改范围与许可证见 [前端源码清单](docs/ai-frontend/FRONTEND-SOURCES.md)、[PI-Desktop NOTICE](ai/third_party/pi-desktop/NOTICE.md) 和 [Codex NOTICE](ai/third_party/codex/NOTICE.md)。
 
 | 上游源码 | 本项目复用范围 | 相关贡献者 |

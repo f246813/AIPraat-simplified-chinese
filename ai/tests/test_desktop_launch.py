@@ -2,6 +2,7 @@
 import ctypes
 import json
 import os
+import io
 from pathlib import Path
 import tempfile
 import unittest
@@ -36,6 +37,70 @@ class DesktopLaunchTests(unittest.TestCase):
         self.assertEqual(status['frontend_start_phase'], 'ready-to-launch')
         self.assertFalse(status['model_service_started'])
         self.assertEqual(status['frontend_model_source'], 'desktop')
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows read-only temporary file')
+    def test_status_write_does_not_reuse_unwritable_pid_temporary_file(self):
+        status = self.root / 'status.json'
+        stale = status.with_name(status.name + f'.{os.getpid()}.tmp')
+        stale.write_text('old unfinished record', encoding='utf8')
+        stale.chmod(0o444)
+        try:
+            launch.write_record(status, {'success': True})
+            self.assertEqual(json.loads(status.read_text(encoding='utf8')), {'success': True})
+            self.assertEqual(stale.read_text(encoding='utf8'), 'old unfinished record')
+        finally:
+            stale.chmod(0o666)
+
+    def test_status_write_failure_reports_original_error_without_second_exception(self):
+        error = PermissionError('status.json.8064.tmp access denied')
+        stderr = io.StringIO()
+        with patch.dict(os.environ, PRAAT_AI_CONTROL_COMMAND='start', PRAAT_AI_CONTROL_QUIET='1'), \
+                patch.object(launch, 'runtime_directory', return_value=self.root), \
+                patch.object(launch, 'check_desktop_dependencies'), \
+                patch.object(launch, 'write_record', side_effect=error), \
+                patch.object(launch.sys, 'stderr', stderr):
+            self.assertEqual(launch.menu_control_main([]), 1)
+        self.assertIn('status.json.8064.tmp access denied', stderr.getvalue())
+
+    def test_record_write_never_uses_tempfile_even_when_temp_creation_is_denied(self):
+        with patch('tempfile._mkstemp_inner', side_effect=PermissionError('ACL denied')):
+            launch.write_record(self.root / 'status.json', {'label': '前端'})
+        self.assertEqual(json.loads((self.root / 'status.json').read_text(encoding='utf8')), {'label': '前端'})
+        self.assertEqual(list(self.root.glob('*.tmp')), [])
+
+    def test_denied_sibling_creation_falls_back_once_to_existing_target(self):
+        target = self.root / 'status.json'
+        target.write_text('{}', encoding='utf8')
+        original_open = Path.open
+        attempts = []
+        def open_record(path, mode='r', *args, **kwargs):
+            attempts.append((path, mode))
+            if mode == 'x':
+                raise PermissionError('sibling creation denied')
+            return original_open(path, mode, *args, **kwargs)
+        with patch.object(Path, 'open', open_record):
+            launch.write_record(target, {'success': True})
+        self.assertEqual([mode for _, mode in attempts], ['x', 'w'])
+        self.assertEqual(json.loads(target.read_text()), {'success': True})
+
+    def test_denied_record_directory_has_two_attempts_and_propagates_error(self):
+        with patch.object(Path, 'open', side_effect=PermissionError('ACL denied')) as opener:
+            with self.assertRaisesRegex(PermissionError, 'ACL denied'):
+                launch.write_record(self.root / 'status.json', {'success': True})
+        self.assertEqual(opener.call_count, 2)
+
+    def test_replace_denial_falls_back_and_cleans_owned_temporary(self):
+        with patch.object(launch.os, 'replace', side_effect=PermissionError('replace denied')):
+            launch.write_record(self.root / 'status.json', {'success': True})
+        self.assertEqual(json.loads((self.root / 'status.json').read_text()), {'success': True})
+        self.assertEqual(list(self.root.glob('*.tmp')), [])
+
+    def test_invalid_record_does_not_truncate_existing_target(self):
+        target = self.root / 'status.json'
+        target.write_text('original', encoding='utf8')
+        with self.assertRaises(TypeError):
+            launch.write_record(target, {'invalid': object()})
+        self.assertEqual(target.read_text(), 'original')
 
     def test_explicit_service_cli_keeps_legacy_behavior(self):
         with patch.dict(os.environ, PRAAT_AI_CONTROL_COMMAND='start', PRAAT_AI_CONTROL_QUIET='1'), \

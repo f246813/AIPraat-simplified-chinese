@@ -4,13 +4,14 @@ export type HistorySection = ThreadSection & {builtin?: boolean};
 export interface OrganizationSnapshot {sessions: Session[]; sections: HistorySection[]}
 export interface WorkflowPolicy extends Config {schema_version:1; preset:'fast'|'balanced'|'deep'|'chat'|'custom'; l0_enabled:boolean; l1_repair_limit:0|1; l2_mode:'off'|'on_demand'|'always'; l2_detail:'brief'|'full'; l2_deadline_sec:number; l2_request_limit:1|2; l3_mode:'off'|'manual'|'auto'; l4_enabled:boolean}
 export interface ResultFact {id:string; tool:string; arguments:Config; rows:string[]; status:string; execution:string; source:string; evidence_ref:number|null; result_valid?:boolean; object?:{id:number;class_name:string;name:string}|null; quantities?:{name:string;value:number;unit:string}[]; range:Config; reason:string}
-export interface Settings { workflow?: WorkflowPolicy; api: Config; local: Config; preferences: Config; analysis: Config; alignment: Config; [key: string]: unknown }
+export interface Settings { workflow?: WorkflowPolicy; server?: Config; api: Config; local: Config; preferences: Config; analysis: Config; alignment: Config; [key: string]: unknown }
 /** The durable reading position: a message id plus the viewport offset of its top edge. */
 export interface ReadingAnchor { messageId: string; offset: number }
 export interface Session { id: string; title: string; created: string; updated: string; readOnly: boolean; pinned?: boolean; draft: string; scroll: number; anchor?: ReadingAnchor | null; sectionId?: string | null; sectionPosition?: number | null; archived?: boolean; forkedFrom?: string | null; forkedFromTitle?: string | null }
 export interface Session { projectPath?: string|null; connectionId?: string; connectionLabel?: string }
 export interface Session { timeGroupDetached?: boolean }
 export type HistoryGroupAction = 'delete' | 'detach' | 'archive';
+export interface RetainedTimeGroup {mode:'list'|'project'|'connection'; origin:{id:string;label:string;detail:string}|null; group:'today'|'yesterday'|'thisWeek'|'older14d'|'archived'}
 export interface Attachment { id: string; name: string; mime: string; size: number }
 export interface Activity { id: string; type: 'progress' | 'thinking' | 'tool' | 'compression'; text?: string; name?: string; args?: object; result?: unknown; status?: string; execution?: string }
 export interface Message { results?:ResultFact[]; result_content?:string; analysis_content?:string; followup_actions?:('L2'|'L3'|'L4')[]; id: string; role: 'user' | 'assistant'; content: string; status?: 'running' | 'complete' | 'partial' | 'cancelled' | 'failed' | 'interrupted'; taskId?: string; attachments?: Attachment[]; activities?: Activity[] }
@@ -46,6 +47,7 @@ export interface Methods {
   'settings.get': [{}, Settings];
   'settings.save': [{settings: Partial<Settings>}, Settings];
   'settings.test': [{kind: 'text' | 'audio'; settings: Settings}, TestResult];
+  'settings.choose_model': [{}, {path: string|null}];
   'attachments.choose': [{}, Attachment[]];
   'attachments.import': [{name: string; mime: string; data: string}, Attachment];
   'attachments.preview': [{attachmentId: string}, Preview];

@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 from .config import api_is_active, load_config
-from .desktop_launch import runtime_directory, write_record
+from .desktop_launch import runtime_directory, safe_launch_error, write_record
 from .presets import active_preset
 from .process import identities_match, process_identity
 from .vram import detect_gpu
@@ -57,14 +57,30 @@ def collect_menu_status(config_path=None, *, runtime=None, gpu=None) -> dict:
                 vram_free_gb=None if free_mb is None else max(free_mb, 0) / 1024)
 
 
+def report_menu_error(error, output):
+    """Preserve probe/write failures even when the snapshot cannot be updated."""
+    path = Path(output).parent / 'frontend-menu-error.txt'
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(type(error).__name__ + ': ' + safe_launch_error(error), encoding='utf8')
+    except OSError:
+        pass  # Keep the original exception when the diagnostic directory is denied too.
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args(argv)
     try:
         status = collect_menu_status(gpu=detect_gpu())
-    except (OSError, ValueError, TypeError, AttributeError):
+    except Exception as error:
+        report_menu_error(error, args.output)
         status = dict(success=False, frontend_model='未配置', frontend_status='未配置',
-                      frontend_running=False, vram_warning='unknown')
-    write_record(args.output, status)
-    return 0
+                      frontend_running=False, frontend_local=False, vram_warning='unknown',
+                      error=safe_launch_error(error))
+    try:
+        write_record(args.output, status)
+    except Exception as error:
+        report_menu_error(error, args.output)
+        raise
+    return 0 if status['success'] else 1
