@@ -93,6 +93,7 @@ f.section('A 后处理 · 所有实际结果回到桌面宿主','本地 Qwen 也
 ]);
 f.note('API 跨阶段共享：每轮 12 次模型请求、20 次工具尝试；各阶段和 token 预算另行核对。');
 f.save('backend-steps.svg');
+fs.copyFileSync(path.join(dir,'backend-steps.svg'),path.join(dir,'backend-workflow.svg'));
 
 f=new Figure('B · 工具、Praat 脚本与结果回读','GUI 工具投递与社区脚本批处理分开；社区脚本导出输入时仍使用左侧 GUI 投递步骤。');
 f.section('一次工具提案进入实际执行层','来自 L0 或直接测量快路径；本地模型也通过相同执行适配器。',[

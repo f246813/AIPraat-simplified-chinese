@@ -10,7 +10,7 @@
 | `pronunciation-form.png` | 调用生产代码 `show_tutor_form` 打开真实 Tk 表单，以现有 hello 样本作为两个输入对象，通过仓库既有 `capture_png` / PrintWindow 捕获窗口。显示默认旧式比较选项，尚未提交分析。 |
 | `frontend-workflow.svg` | 根据现代宿主、执行器、工具与 AI 使用说明绘制，可直接编辑的 SVG。 |
 | `pronunciation-workflow.svg` | 根据 `tutor.py`、`pronunciation.py`、音位判据与报告实现绘制，可直接编辑的 SVG。 |
-| `backend-workflow.svg` | 根据 `modern_app.py`、`modern_execution.py`、`cloud_agent.py`、`escape_policy.py`、`workflow_policy.py` 和工具／报告守卫绘制。展开 API L0–L4 路由、纠正、证据解释、音频升级、本地 Qwen 分支与结果交付。 |
+| `backend-workflow.svg` | 与 `backend-steps.svg` 内容一致，替换原来的后端总览，兼容之前的图像链接。 |
 | `backend-steps.svg` | A 图：逐步展开提交、上下文准备、API 阶梯、本地 Qwen 与后处理。 |
 | `script-workflow.svg` | B 图：依据 `chat.py`、`tools.py`、`sendpraat.py`、`modern_execution.py` 与 `external_script.py` 展开 GUI 脚本投递及社区脚本批处理。 |
 | `alignment-workflow.svg` | C 图：依据 `forced_alignment.py` 展开 MFA 子进程、TextGrid 解析、wav2vec2 前向与 CTC 强制对齐、融合和回退。 |
