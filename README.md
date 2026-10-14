@@ -44,11 +44,9 @@
 
 截图取自 2026-10-14 打开的 Windows 软件界面。纠音图展示输入表单；截图来源与捕获方式见[图像说明](docs/pictures/aipraat/README.md)。
 
-## AI 前端怎样工作？
+## AI 对话后端流程总览
 
-用户提供目标与材料，宿主读取 Praat 对象和选区，模型选择工具；工具返回实际测量与执行结果，模型可据此继续调用，最后形成报告。支持音频输入的模型也可在启用后直接观察音频。
-
-![AI 前端流程：目标与材料、宿主上下文、模型规划、Praat 工具执行、证据回传与报告](docs/pictures/aipraat/frontend-workflow.svg)
+![AI 对话后端总览：桌面宿主、任务路由、L0–L4、本地 Qwen 与结果交付](docs/pictures/aipraat/backend-overview.svg)
 
 ### AI 对话窗口的后端
 
