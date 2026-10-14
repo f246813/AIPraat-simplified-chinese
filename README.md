@@ -7,6 +7,17 @@
 
 用自然语言调用 Praat 的测量工具，把标准音与学习者录音放在一起比较，也可以从 Anki 卡片一键打开语图。声学测量由 Praat 和分析程序完成，模型负责规划与解释。
 
+## 基座与上游
+
+本项目基于 [KasumiKitsune/praat-simplified-chinese](https://github.com/KasumiKitsune/praat-simplified-chinese) 的 modern 分支：中文界面、中文手册及现代版原生界面来自该项目。原版 Praat 是 Paul Boersma 与 David Weenink 开发的语音学分析软件：[praat/praat](https://github.com/praat/praat) · [praat.org](https://praat.org)。
+
+<p align="center">
+  <img src="docs/pictures/praat-zh-modern-ui.png" width="55%" alt="基座项目的 Praat 中文现代版主窗口与右键菜单" />
+  <img src="docs/pictures/praat-zh-manuel.png" width="40%" alt="基座项目的中文帮助手册" />
+</p>
+
+上面两张图片沿用基座仓库。本项目由 f246813 维护，与基座及上游没有隶属关系。
+
 ## 相比基座，增加了什么？
 
 | 功能 | 可以做什么 |
@@ -99,17 +110,6 @@ MFA 展开临时语料、词典、命令构建、子进程、TextGrid 解析与�
 3. 使用 Anki 时，同页下载 **AIPraat.ankiaddon**，在 Anki 的“工具 → 插件 → 从文件安装”中安装并重启。先启动一次 AIPraat 并完成 Python 配置，插件即可定位软件。
 
 [AI 使用说明](ai/README.zh-CN.md) · [Anki 连接说明](ai/Anki连接说明.md) · [安装与打包](installer/README.zh-CN.md)
-
-## 基座与上游
-
-本项目基于 [KasumiKitsune/praat-simplified-chinese](https://github.com/KasumiKitsune/praat-simplified-chinese) 的 modern 分支：中文界面、中文手册及现代版原生界面来自该项目。原版 Praat 是 Paul Boersma 与 David Weenink 开发的语音学分析软件：[praat/praat](https://github.com/praat/praat) · [praat.org](https://praat.org)。
-
-<p align="center">
-  <img src="docs/pictures/praat-zh-modern-ui.png" width="55%" alt="基座项目的 Praat 中文现代版主窗口与右键菜单" />
-  <img src="docs/pictures/praat-zh-manuel.png" width="40%" alt="基座项目的中文帮助手册" />
-</p>
-
-上面两张图片沿用基座仓库。本项目由 f246813 维护，与基座及上游没有隶属关系。
 
 ## 借物与开发资料
 
