@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="795" viewBox="0 0 1040 795" role="img">
+<title>AI 对比纠音 · 从双音频到声学观察</title>
+<desc>基础分析在本地完成；Qwen 的文字与图表解释可按需开启。</desc>
+<defs>
+<marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+<path d="M0 0L8 4L0 8" fill="#52746c"/>
+</marker>
+</defs>
+<style>text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif}.title{font-size:28px;font-weight:700;fill:#173c33}.sub{font-size:15px;fill:#536b64}.label{font-size:19px;font-weight:700;fill:#173c33}.body{font-size:15px;fill:#4a625b}.small{font-size:14px;fill:#536b64}.edge{fill:none;stroke:#52746c;stroke-width:2;marker-end:url(#arrow)}</style>
+<rect width="1040" height="795" rx="20" fill="#f5f8f6"/>
+<text class="title" x="36" y="50">AI 对比纠音 · 从双音频到声学观察</text>
+<text class="sub" x="36" y="79">基础分析在本地完成；Qwen 的文字与图表解释可按需开启。</text>
+<rect x="36" y="115" width="280" height="110" rx="14" fill="white" stroke="#cddbd4"/>
+<text class="label" x="56" y="149">01  两份音频</text>
+<text class="body" x="56" y="178">标准音 + 学习者录音</text>
+<text class="body" x="56" y="201">目标音位、参考文本或双方边界</text>
+<rect x="370" y="115" width="280" height="110" rx="14" fill="white" stroke="#cddbd4"/>
+<text class="label" x="390" y="149">02  定位音素区间</text>
+<text class="body" x="390" y="178">使用提供的边界 / MFA / CTC</text>
+<text class="body" x="390" y="201">记录对齐来源与质量</text>
+<rect x="704" y="115" width="300" height="110" rx="14" fill="white" stroke="#cddbd4"/>
+<text class="label" x="724" y="149">03  提取适用特征</text>
+<text class="body" x="724" y="178">共振峰、频谱、时长等</text>
+<text class="body" x="724" y="201">保留缺失值与区间质量</text>
+<path class="edge" d="M316 170H370"/>
+<path class="edge" d="M650 170H704"/>
+<rect x="36" y="290" width="440" height="130" rx="14" fill="#e0efe8" stroke="#79aa95"/>
+<text class="label" x="56" y="324">04A  英语 / 日语音位判据</text>
+<text class="body" x="56" y="353">按音类选择声学与相对时长观察</text>
+<text class="body" x="56" y="376">PanPhon 提供 IPA 发音特征</text>
+<text class="body" x="56" y="399">实验性：记录测量、方法与证据状态</text>
+<rect x="564" y="290" width="440" height="130" rx="14" fill="white" stroke="#cddbd4"/>
+<text class="label" x="584" y="324">04B  旧式声学比较</text>
+<text class="body" x="584" y="353">通过 DTW 对齐有效特征曲线</text>
+<text class="body" x="584" y="376">按偏差与阈值生成候选项</text>
+<text class="body" x="584" y="399">无 profile_id 的旧请求沿用此路径</text>
+<path class="edge" d="M854 225V255H256V290"/>
+<path class="edge" d="M854 255H784V290"/>
+<text class="small" x="389" y="247">按用户选择分流</text>
+<rect x="36" y="492" width="440" height="130" rx="14" fill="#e0efe8" stroke="#79aa95"/>
+<text class="label" x="56" y="526">05  保存基础报告</text>
+<text class="body" x="56" y="555">JSON：测量、观察与证据状态</text>
+<text class="body" x="56" y="578">TextGrid：音位、观察与候选区间</text>
+<text class="body" x="56" y="601">PNG：声学叠加图 / 相对时长图</text>
+<rect x="564" y="492" width="440" height="130" rx="14" fill="white" stroke="#cddbd4"/>
+<text class="label" x="584" y="526">06  可选解释与查看</text>
+<text class="body" x="584" y="555">Qwen 文字解释 / 叠加图视觉解释</text>
+<text class="body" x="584" y="578">TextGrid 与图像回导 Praat</text>
+<text class="body" x="584" y="601">持久报告保留，临时回导文件清理</text>
+<path class="edge" d="M256 420V492"/>
+<path class="edge" d="M784 420V455H496V475H256V492"/>
+<path class="edge" d="M476 555H564"/>
+<rect x="36" y="660" width="968" height="94" rx="12" fill="#edf3ef"/>
+<text class="body" x="56" y="692">比例估算、低质量对齐与缺失测量：标记证据不足，不能当成可靠的发音结论。</text>
+<text class="body" x="56" y="720">新音位判据尚无独立音素识别或经过校准的发音总分；解释关闭时仍可生成基础报告。</text>
+</svg>

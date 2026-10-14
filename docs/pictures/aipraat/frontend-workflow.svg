@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="590" viewBox="0 0 1040 590" role="img">
+<title>AI 前端 · 从目标到可核对的结果</title>
+<desc>模型规划与解释，Praat 工具提供声学测量与执行结果。</desc>
+<defs>
+<marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+<path d="M0 0L8 4L0 8" fill="#52746c"/>
+</marker>
+</defs>
+<style>text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif}.title{font-size:28px;font-weight:700;fill:#173c33}.sub{font-size:15px;fill:#536b64}.label{font-size:19px;font-weight:700;fill:#173c33}.body{font-size:15px;fill:#4a625b}.small{font-size:14px;fill:#536b64}.edge{fill:none;stroke:#52746c;stroke-width:2;marker-end:url(#arrow)}</style>
+<rect width="1040" height="590" rx="20" fill="#f5f8f6"/>
+<text class="title" x="36" y="50">AI 前端 · 从目标到可核对的结果</text>
+<text class="sub" x="36" y="79">模型规划与解释，Praat 工具提供声学测量与执行结果。</text>
+<rect x="36" y="115" width="280" height="125" rx="14" fill="white" stroke="#cddbd4"/>
+<text class="label" x="56" y="149">01  用户目标与材料</text>
+<text class="body" x="56" y="178">自然语言、附件、音频</text>
+<text class="body" x="56" y="201">Praat Sound 对象／编辑器选区</text>
+<rect x="370" y="115" width="280" height="125" rx="14" fill="white" stroke="#cddbd4"/>
+<text class="label" x="390" y="149">02  桌面宿主准备上下文</text>
+<text class="body" x="390" y="178">读取对象、范围与分析设置</text>
+<text class="body" x="390" y="201">整理历史、摘要与工具接口</text>
+<rect x="704" y="115" width="300" height="125" rx="14" fill="#e0efe8" stroke="#79aa95"/>
+<text class="label" x="724" y="149">03  模型规划</text>
+<text class="body" x="724" y="178">本地模型 / 云端 API</text>
+<text class="body" x="724" y="201">决定调用工具或直接回答</text>
+<path class="edge" d="M316 178H370"/>
+<path class="edge" d="M650 178H704"/>
+<path class="edge" d="M854 240V310"/>
+<rect x="704" y="310" width="300" height="126" rx="14" fill="white" stroke="#cddbd4"/>
+<text class="label" x="724" y="344">04  执行与音频观察</text>
+<text class="body" x="724" y="373">Praat 测量、标注、编辑与脚本</text>
+<text class="body" x="724" y="396">可选：支持音频的模型直接观察</text>
+<rect x="370" y="310" width="280" height="126" rx="14" fill="white" stroke="#cddbd4"/>
+<text class="label" x="390" y="344">05  证据与状态回传</text>
+<text class="body" x="390" y="373">数值、单位、对象、时间范围</text>
+<text class="body" x="390" y="396">执行结果、失败原因与缺口</text>
+<rect x="36" y="310" width="280" height="126" rx="14" fill="#e0efe8" stroke="#79aa95"/>
+<text class="label" x="56" y="344">06  结果报告</text>
+<text class="body" x="56" y="373">结合实际证据解释结果</text>
+<text class="body" x="56" y="396">可核对的完成项与待补信息</text>
+<path class="edge" d="M704 373H650"/>
+<path class="edge" d="M370 373H316"/>
+<path class="edge" d="M510 310V270H690V265H854V240"/>
+<text class="small" x="440" y="260">需要更多证据：继续调用工具</text>
+<rect x="36" y="476" width="968" height="74" rx="12" fill="#edf3ef"/>
+<text class="body" x="56" y="506">数值来自测量；模型组织解释。对象和选区决定工具分析范围。</text>
+<text class="body" x="56" y="530">一般讨论可以直接回答；直接音频观察需启用能力，精确声学数值仍由工具提供。</text>
+</svg>
