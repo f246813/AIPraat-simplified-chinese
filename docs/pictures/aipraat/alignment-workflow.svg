@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="3299" viewBox="0 0 1200 3299" role="img"><title>C · MFA / wav2vec2 音素对齐逐步图</title><desc>对应 forced_alignment.py；auto 依次尝试可用后端，双列表示两种实现，不表示并行执行。</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="#52746c"/></marker></defs><style>text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif}.title{font-size:31px;font-weight:700;fill:#173c33}.section{font-size:25px;font-weight:700;fill:#173c33}.heading{font-size:22px;font-weight:700;fill:#173c33}.body{font-size:19px;fill:#405d53}.note{font-size:18px;fill:#536b64}.edge{fill:none;stroke:#52746c;stroke-width:2.2;marker-end:url(#arrow)}</style><rect width="1200" height="3299" rx="20" fill="#f5f8f6"/><text class="title" x="50" y="53">C · MFA / wav2vec2 音素对齐逐步图</text><text class="note" x="50" y="88">对应 forced_alignment.py；auto 依次尝试可用后端，双列表示两种实现，不表示并行执行。</text><text class="section" x="50" y="150">调用对齐器前的准备</text><text class="note" x="50" y="181">D 图决定哪一份音频需要对齐，并传入目标音位序列和参考文本。</text>
+<g data-node="C01"><rect x="50" y="205" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="239">C01  构造对齐输入</text><text class="body" x="72" y="274">输入 audio_path、PhoneSpec 音位序列、language、transcript，以及当前 AlignmentConfig。</text></g>
+<g data-node="C02"><rect x="50" y="357" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="391">C02  构造候选后端</text><text class="body" x="72" y="426">build_aligner：auto → MFA + wav2vec2；mfa / wav2vec2 / ctc → 对应后端；记录工程置信度参数。</text></g>
+<path class="edge" d="M600 323V357"/>
+<g data-node="C03"><rect x="50" y="509" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="543">C03  CompositeAligner 逐个尝试</text><text class="body" x="72" y="578">跳过不可用后端；调用 align；捕获 AlignmentError 并保留警告；收集成功的 AlignmentResult。</text></g>
+<path class="edge" d="M600 475V509"/>
+<text class="section" x="50" y="726">MFA：临时语料 → 子进程 → TextGrid</text><text class="section" x="650" y="726">wav2vec2：模型前向 → CTC 强制对齐</text>
+<g data-node="M01"><rect x="50" y="756" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="790">M01  检查 MFA 是否可用</text><text class="body" x="72" y="825">enabled + 启动器 + acoustic_model。</text><text class="body" x="72" y="853">使用 mfa 或 conda run -n &lt;环境&gt; mfa。</text></g>
+<g data-node="W01"><rect x="650" y="756" width="500" height="160" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="790">W01  检查依赖与加载模型</text><text class="body" x="672" y="825">检查 enabled、model、torch、transformers。</text><text class="body" x="672" y="853">AutoProcessor + AutoModelForCTC 加载。</text><text class="body" x="672" y="881">eval，移动到 device。</text></g>
+<g data-node="M02"><rect x="50" y="950" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="984">M02  建立临时语料目录</text><text class="body" x="72" y="1019">创建 corpus / output。</text><text class="body" x="72" y="1047">把待对齐音频复制或转换为 learner.wav。</text></g>
+<g data-node="W02"><rect x="650" y="950" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="984">W02  读取待对齐音频</text><text class="body" x="672" y="1019">read_wav 解码 PCM 样本并转 float32。</text><text class="body" x="672" y="1047">多声道在读取器中取均值。</text></g>
+<path class="edge" d="M300 888V950"/>
+<path class="edge" d="M900 916V950"/>
+<g data-node="M03"><rect x="50" y="1116" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1150">M03  选择文本与发音词典</text><text class="body" x="72" y="1185">有 transcript 和词典时写真实 learner.txt。</text><text class="body" x="72" y="1213">否则写 UTT，生成 UTT + IPA 序列的小词典。</text></g>
+<g data-node="W03"><rect x="650" y="1116" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1150">W03  匹配模型采样率</text><text class="body" x="672" y="1185">不匹配时按时长生成目标时间轴。</text><text class="body" x="672" y="1213">NumPy 插值重采样到配置 sample_rate。</text></g>
+<path class="edge" d="M300 1082V1116"/>
+<path class="edge" d="M900 1082V1116"/>
+<g data-node="M04"><rect x="50" y="1282" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1316">M04  构建 mfa align 命令</text><text class="body" x="72" y="1351">corpus、dictionary、acoustic_model、output。</text><text class="body" x="72" y="1379">long_textgrid、单说话人、beam / retry_beam。</text></g>
+<g data-node="W04"><rect x="650" y="1282" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1316">W04  Processor 构造模型输入</text><text class="body" x="672" y="1351">带 sampling_rate，return_tensors=pt。</text><text class="body" x="672" y="1379">input_values 移动到配置 device。</text></g>
+<path class="edge" d="M300 1248V1282"/>
+<path class="edge" d="M900 1248V1282"/>
+<g data-node="M05"><rect x="50" y="1448" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1482">M05  启动并等待 MFA 子进程</text><text class="body" x="72" y="1517">subprocess.run 捕获 stdout / stderr。</text><text class="body" x="72" y="1545">返回码非零 → AlignmentError，保留原因。</text></g>
+<g data-node="W05"><rect x="650" y="1448" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1482">W05  模型前向与概率</text><text class="body" x="672" y="1517">torch.inference_mode 获取 logits。</text><text class="body" x="672" y="1545">log_softmax → CPU NumPy 对数概率矩阵。</text></g>
+<path class="edge" d="M300 1414V1448"/>
+<path class="edge" d="M900 1414V1448"/>
+<g data-node="M06"><rect x="50" y="1614" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1648">M06  查找输出 TextGrid</text><text class="body" x="72" y="1683">优先 learner.TextGrid，否则查找候选文件。</text><text class="body" x="72" y="1711">没有输出则记录失败。</text></g>
+<g data-node="W06"><rect x="650" y="1614" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1648">W06  映射目标音位 token</text><text class="body" x="672" y="1683">token_map、IPA / label 与词表匹配。</text><text class="body" x="672" y="1711">未知音位 token 报错，不静默删除。</text></g>
+<path class="edge" d="M300 1580V1614"/>
+<path class="edge" d="M900 1580V1614"/>
+<g data-node="M07"><rect x="50" y="1780" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1814">M07  解析 phones 音素层</text><text class="body" x="72" y="1849">提取 xmin / xmax / label。</text><text class="body" x="72" y="1877">过滤空标签、静音和无效标签。</text></g>
+<g data-node="W07"><rect x="650" y="1780" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1814">W07  CTC 动态规划与回溯</text><text class="body" x="672" y="1849">在帧概率与目标 token 序列上强制对齐。</text><text class="body" x="672" y="1877">处理 blank / token 转移，回溯每个 token 的帧。</text></g>
+<path class="edge" d="M300 1746V1780"/>
+<path class="edge" d="M900 1746V1780"/>
+<g data-node="M08"><rect x="50" y="1946" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1980">M08  匹配目标音位序列</text><text class="body" x="72" y="2015">SequenceMatcher 后检查有序完整匹配。</text><text class="body" x="72" y="2043">重复音位必要时按有序子序列匹配；不匹配报错。</text></g>
+<g data-node="W08"><rect x="650" y="1946" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1980">W08  把帧转换为时间区间</text><text class="body" x="672" y="2015">起帧 / 总帧数 × 音频时长。</text><text class="body" x="672" y="2043">末帧后一个边界 / 总帧数 × 时长。</text></g>
+<path class="edge" d="M300 1912V1946"/>
+<path class="edge" d="M900 1912V1946"/>
+<g data-node="M09"><rect x="50" y="2112" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2146">M09  返回 MFA 音位边界</text><text class="body" x="72" y="2181">构造 AlignedPhone：索引、IPA、起止秒数。</text><text class="body" x="72" y="2209">附 source=mfa 和工程置信度；临时语料随后清理。</text></g>
+<g data-node="W09"><rect x="650" y="2112" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="2146">W09  返回 wav2vec2 边界</text><text class="body" x="672" y="2181">构造 AlignedPhone 与模型来源。</text><text class="body" x="672" y="2209">返回 CTC 工程置信度，不作为发音正确概率。</text></g>
+<path class="edge" d="M300 2078V2112"/>
+<path class="edge" d="M900 2078V2112"/>
+<text class="section" x="50" y="2343">成功结果合并或回退</text><text class="note" x="50" y="2374">两个后端都可用时收集双方结果；不是无条件先 MFA 失败才运行 wav2vec2。</text>
+<g data-node="C04"><rect x="50" y="2398" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2432">C04  按成功结果数量分流</text><text class="body" x="72" y="2467">0 个成功 → C05；1 个成功 → 原样保留结果和警告；多个成功 → C06。</text></g>
+<g data-node="C05"><rect x="50" y="2550" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2584">C05  没有可用强制对齐：比例定位</text><text class="body" x="72" y="2619">ProportionalAligner 按参考边界与目标音频时长缩放，工程置信度 0.25；明确 timing is approximate。</text><text class="body" x="72" y="2647">此支路直接到 C08，不把比例时间当成可靠音素边界。</text></g>
+<g data-node="C06"><rect x="50" y="2716" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2750">C06  选择可比较结果</text><text class="body" x="72" y="2785">以工程置信度选 primary，只合并音位数量一致的结果；不足两份则保留 primary 并附警告。</text></g>
+<g data-node="C07"><rect x="50" y="2868" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2902">C07  融合边界并评估分歧</text><text class="body" x="72" y="2937">按置信度加权平均起止时间；由两后端边界分歧计算 agreement，再调整逐音位置信度。</text><text class="body" x="72" y="2965">低于配置 minimum_confidence 时附警告，汇总 source=dual 和平均置信度。</text></g>
+<path class="edge" d="M600 2834V2868"/>
+<g data-node="C08"><rect x="50" y="3034" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="3068">C08  回传对齐结果</text><text class="body" x="72" y="3103">返回索引、IPA、区间、来源、置信度和警告；D 图再检查双方区间、音类适用性与有效测量帧。</text></g>
+<path class="edge" d="M600 3000V3034"/>
+<path class="edge" d="M50 2457H18V2596H50"/>
+<path class="edge" d="M1150 2477H1168V2775H1150"/>
+<path class="edge" d="M1150 2437H1188V3093H1150"/>
+<path class="edge" d="M50 2636H18V3093H50"/>
+<path class="edge" d="M1150 2795H1168V3016H1040V3034"/>
+<text class="note" x="50" y="3243">C05 为回退支路，直接返回 C08；多后端融合走 C06 → C07 → C08。</text></svg>

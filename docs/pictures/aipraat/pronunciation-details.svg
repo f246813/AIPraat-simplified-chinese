@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="3788" viewBox="0 0 1200 3788" role="img"><title>D · 标准音对比纠音的完整调用链</title><desc>独立于 AI 对话的 L0–L4；双方边界已有时可跳过强制对齐，基础报告无需 LLM。</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="#52746c"/></marker></defs><style>text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif}.title{font-size:31px;font-weight:700;fill:#173c33}.section{font-size:25px;font-weight:700;fill:#173c33}.heading{font-size:22px;font-weight:700;fill:#173c33}.body{font-size:19px;fill:#405d53}.note{font-size:18px;fill:#536b64}.edge{fill:none;stroke:#52746c;stroke-width:2.2;marker-end:url(#arrow)}</style><rect width="1200" height="3788" rx="20" fill="#f5f8f6"/><text class="title" x="50" y="53">D · 标准音对比纠音的完整调用链</text><text class="note" x="50" y="88">独立于 AI 对话的 L0–L4；双方边界已有时可跳过强制对齐，基础报告无需 LLM。</text><text class="section" x="50" y="150">Praat 菜单 → Python 桥 → 请求</text><text class="note" x="50" y="181">菜单与 JSON / 自然语言请求最终进入同一个 tutor 分析入口。</text>
+<g data-node="D01"><rect x="50" y="205" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="239">D01  选择两个 Sound，启动纠音</text><text class="body" x="72" y="274">PraatAiControl_runAnalysis 检查至少两个选中对象；praat_runPythonScriptFile 启动 run_ai_tutor.py。</text></g>
+<g data-node="D02"><rect x="50" y="357" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="391">D02  生成桥接输入与打开表单</text><text class="body" x="72" y="426">PraatBridge 读取选中对象及导出的声音文件；表单选择标准音、学习者、语言、IPA、判据与解释选项。</text></g>
+<path class="edge" d="M600 323V357"/>
+<g data-node="D03"><rect x="50" y="509" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="543">D03  形成 AnalysisRequest</text><text class="body" x="72" y="578">也可读取 request JSON，或由 Qwen 将自然语言转换为请求；按对象编号 / 名称解析真实选中 Sound。</text></g>
+<path class="edge" d="M600 475V509"/>
+<g data-node="D04"><rect x="50" y="661" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="695">D04  准备分析配置与可选模型</text><text class="body" x="72" y="730">加载对齐配置，校验 profile_id / language；仅需 Qwen 解释或视觉解释时尝试启动本地模型。</text></g>
+<path class="edge" d="M600 627V661"/>
+<text class="section" x="50" y="878">双方音素边界的取得</text><text class="note" x="50" y="909">下面的分支都由 pronunciation.py 决定，统一接到 C 图。</text>
+<g data-node="D05"><rect x="50" y="933" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="967">D05  读取双方 PCM 音频</text><text class="body" x="72" y="1002">解码波形，赋予稳定 phone_index；检查双方是否同路径或相同音频样本。</text></g>
+<g data-node="D06"><rect x="50" y="1085" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1119">D06  决定标准音是否需要对齐</text><text class="body" x="72" y="1154">可靠标准音边界已提供 → 使用；同音频且有学习者边界 → 复用其边界。</text><text class="body" x="72" y="1182">未提供或来自 ui_equal_estimate → 调用 C 图，所得边界回写为 reference_start / reference_end。</text></g>
+<path class="edge" d="M600 1051V1085"/>
+<g data-node="D07"><rect x="50" y="1251" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1285">D07  决定学习者是否需要对齐</text><text class="body" x="72" y="1320">同一音频 → 复用标准音边界；双方学习者边界已提供 → 使用 provided；否则调用 C 图。</text><text class="body" x="72" y="1348">保留真实 learner_start / learner_end、来源和工程置信度。</text></g>
+<path class="edge" d="M600 1217V1251"/>
+<text class="section" x="50" y="1482">切片 → 声学特征 → 音类或旧式曲线比较</text><text class="note" x="50" y="1513">C 图只提供时间区间；声学比较与证据筛选在这里执行。</text>
+<g data-node="D08"><rect x="50" y="1537" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1571">D08  按每个音位切片与分帧</text><text class="body" x="72" y="1606">extract_phone_tracks 按双方边界切片；默认约 25 ms 帧长、10 ms 帧移，生成带绝对时间的采样点。</text></g>
+<g data-node="D09"><rect x="50" y="1689" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1723">D09  NumPy 基础特征</text><text class="body" x="72" y="1758">Hanning 窗与 FFT；逐帧计算 RMS、过零率、频谱重心和 2 kHz 以上高频占比。</text></g>
+<path class="edge" d="M600 1655V1689"/>
+<g data-node="D10"><rect x="50" y="1841" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1875">D10  可选 Parselmouth 特征</text><text class="body" x="72" y="1910">读取 Praat Sound，生成 Pitch、Intensity、Formant Burg；按对应时间点采样 F0、强度、F1 / F2 / F3。</text><text class="body" x="72" y="1938">缺失和未定义值保持缺失，不补成可靠数值。</text></g>
+<path class="edge" d="M600 1807V1841"/>
+<g data-node="D11"><rect x="50" y="2007" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2041">D11  检查双方区间与有效证据</text><text class="body" x="72" y="2076">排除非有限、空区间、越界、低质量对齐、重叠和缺失特征；记录逐音位证据状态。</text></g>
+<path class="edge" d="M600 1973V2007"/>
+<g data-node="D12"><rect x="50" y="2159" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2193">D12  根据 profile 分流</text><text class="body" x="72" y="2228">英语 / 日语新判据 → D13；未设置 profile_id 的旧式请求 → D14；两条分支均汇总到 D15。</text></g>
+<path class="edge" d="M600 2125V2159"/>
+<g data-node="D13"><rect x="50" y="2311" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2345">D13  新音位判据</text><text class="body" x="72" y="2380">PanPhon 分解与分类 IPA；按元音、擦音、近音等选择适用特征，比较曲线与相邻音位归一化时长。</text><text class="body" x="72" y="2408">保留日语长度 / 无声化 / N / cl；输出 observations / assessments / check_statuses，不给校准总分。</text></g>
+<path class="edge" d="M600 2277V2311"/>
+<g data-node="D14"><rect x="50" y="2477" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2511">D14  旧式声学对比</text><text class="body" x="72" y="2546">对双方有效特征曲线做 DTW；计算均值偏差、容差归一化与距离分数，按旧阈值生成候选偏差。</text><text class="body" x="72" y="2574">按用户所选路径执行；新判据不经过此步骤。</text></g>
+<g data-node="D15"><rect x="50" y="2643" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2677">D15  汇总 AnalysisResult</text><text class="body" x="72" y="2712">汇总双方音位轨迹、区间、错误或观察、证据状态、对齐来源、警告与 profile_snapshot。</text></g>
+<path class="edge" d="M600 2609V2643"/>
+<path class="edge" d="M1150 2218H1180V2543H1150"/>
+<path class="edge" d="M50 2377H18V2702H50"/>
+<text class="section" x="50" y="2860">可选解释 → 报告文件 → Praat 回导</text><text class="note" x="50" y="2891">文字解释在写报告前；视觉解释需先生成叠加图；顺序按 tutor.py。</text>
+<g data-node="D16"><rect x="50" y="2915" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2949">D16  可选 Qwen 文字解释</text><text class="body" x="72" y="2984">启用且服务可用 → 请求解释实际 AnalysisResult；不可用时记录原因，基础分析结果保留。</text></g>
+<g data-node="D17"><rect x="50" y="3067" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="3101">D17  创建持久报告目录并写文件</text><text class="body" x="72" y="3136">写 TextGrid、JSON、PNG；TextGrid 和 PNG 复制到 Praat 临时回导目录，JSON 留在持久目录。</text></g>
+<path class="edge" d="M600 3033V3067"/>
+<g data-node="D18"><rect x="50" y="3219" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="3253">D18  可选 Qwen 视觉解释</text><text class="body" x="72" y="3288">有 PNG 且启用视觉解释时，发送叠加图与实际结果；追加解释后重写持久 JSON。</text></g>
+<path class="edge" d="M600 3185V3219"/>
+<g data-node="D19"><rect x="50" y="3371" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="3405">D19  Python 输出完成信息</text><text class="body" x="72" y="3440">run_from_praat 打印对齐、警告和文件路径；返回 TutorOutputs；按服务策略结束自己启动的本地模型。</text></g>
+<path class="edge" d="M600 3337V3371"/>
+<g data-node="D20"><rect x="50" y="3523" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="3557">D20  原生回导与临时清理</text><text class="body" x="72" y="3592">Praat 读取临时目录中的 TextGrid / Photo 为对象，随后清理临时回导目录；持久报告保留。</text></g>
+<path class="edge" d="M600 3489V3523"/>
+<text class="note" x="50" y="3732">D13 和 D14 是互斥支路：D13 → D15；D14 → D15。图中的阶段顺序不表示两条比较路径都执行。</text></svg>

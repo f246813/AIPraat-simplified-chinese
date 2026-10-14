@@ -58,6 +58,55 @@
 
 ![AI 对话后端详细工作图：宿主 RPC、任务路由、L0–L4 阶梯、纠正与音频回退、本地 Qwen 和证据交付](docs/pictures/aipraat/backend-workflow.svg)
 
+### 逐步骤调用详图
+
+上图是后端总览。下面五张详图展开实际函数调用、脚本与文件交接、模型请求、对齐后端和报告生成。每个节点都有编号，跨图调用在节点中注明；点击标题展开，点击图片查看完整尺寸。
+
+<details>
+<summary><strong>A · 对话后端：提交、上下文、L0–L4、本地 Qwen、结果保存与继续</strong></summary>
+
+从 HostAPI RPC 到任务、原目标快照、上下文压缩、工具规划、纠正、报告核对、原音频输入、流式回复与 SQLite 持久化，共 38 个步骤节点。各阶段的入口和退出条件单独注明。
+
+![AI 对话后端逐步骤调用链](docs/pictures/aipraat/backend-steps.svg)
+
+</details>
+
+<details>
+<summary><strong>B · 脚本调用：当前 GUI Praat 与社区脚本批处理</strong></summary>
+
+展开脚本生成、请求编号、Message.txt、WM_APP、started / finished 标记、结果回读与状态核对。社区脚本另画出 form 默认参数、Sound / TextGrid 副本导出、wrapper.praat、独立进程、超时与输出文件回收。
+
+![工具脚本生成、GUI 投递、社区脚本批处理与结果回读](docs/pictures/aipraat/script-workflow.svg)
+
+</details>
+
+<details>
+<summary><strong>C · MFA / wav2vec2：从输入音频到逐音素时间边界</strong></summary>
+
+MFA 展开临时语料、词典、命令构建、子进程、TextGrid 解析与音位匹配；wav2vec2 展开模型加载、重采样、logits、音位 token、CTC 动态规划与回溯。成功结果融合、单后端结果和比例定位回退分别连线。
+
+![MFA 与 wav2vec2 强制对齐逐步骤调用及结果融合](docs/pictures/aipraat/alignment-workflow.svg)
+
+</details>
+
+<details>
+<summary><strong>D · 标准音对比纠音：菜单、Python 桥、双方对齐、声学特征与报告回导</strong></summary>
+
+展开双方边界的选择、分帧、NumPy 频谱特征、Parselmouth 特征、新音位判据与旧式 DTW 比较，以及可选文字解释、JSON / TextGrid / PNG、视觉解释和 Praat 回导。MFA / wav2vec2 的调用发生在本流程取得音素区间时。
+
+![标准音对比纠音从 Praat 菜单到报告回导的完整步骤](docs/pictures/aipraat/pronunciation-details.svg)
+
+</details>
+
+<details>
+<summary><strong>E · 实际测量：表驱动 measure 与 AI VOT 工具</strong></summary>
+
+展开 measures.tsv 的查询与派生对象依赖，以及 VOT 的显式时刻计算／声学估计两个分支。当前 AI VOT 工具在 Praat 脚本中计算或估计事件边界；这条工具路径没有调用 MFA / wav2vec2。
+
+![表驱动声学测量与 VOT 显式计算、自动估计步骤](docs/pictures/aipraat/measurement-workflow.svg)
+
+</details>
+
 ## AI 对比纠音怎样工作？
 
 标准音与学习者录音先定位音素区间，再提取适用声学特征。旧式路径使用曲线对齐与偏差阈值；新音位判据按音类生成声学或相对时长观察，并记录证据状态。基础报告无需 LLM，Qwen 文字／视觉解释是可选步骤。

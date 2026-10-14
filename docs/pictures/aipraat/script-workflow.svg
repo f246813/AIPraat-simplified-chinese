@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="2473" viewBox="0 0 1200 2473" role="img"><title>B · 工具、Praat 脚本与结果回读</title><desc>GUI 工具投递与社区脚本批处理分开；社区脚本导出输入时仍使用左侧 GUI 投递步骤。</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="#52746c"/></marker></defs><style>text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif}.title{font-size:31px;font-weight:700;fill:#173c33}.section{font-size:25px;font-weight:700;fill:#173c33}.heading{font-size:22px;font-weight:700;fill:#173c33}.body{font-size:19px;fill:#405d53}.note{font-size:18px;fill:#536b64}.edge{fill:none;stroke:#52746c;stroke-width:2.2;marker-end:url(#arrow)}</style><rect width="1200" height="2473" rx="20" fill="#f5f8f6"/><text class="title" x="50" y="53">B · 工具、Praat 脚本与结果回读</text><text class="note" x="50" y="88">GUI 工具投递与社区脚本批处理分开；社区脚本导出输入时仍使用左侧 GUI 投递步骤。</text><text class="section" x="50" y="150">一次工具提案进入实际执行层</text><text class="note" x="50" y="181">来自 L0 或直接测量快路径；本地模型也通过相同执行适配器。</text>
+<g data-node="B01"><rect x="50" y="205" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="239">B01  校验与绑定</text><text class="body" x="72" y="274">ToolGuards 归一化参数并核对目标；_Dispatcher 持有原 Praat 身份、ToolContext、取消标记和串行锁。</text></g>
+<g data-node="B02"><rect x="50" y="357" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="391">B02  决定脚本路径</text><text class="body" x="72" y="426">内置 Tool / custom_script → 左列；run_praat_script（LocalTool）→ 右列。</text></g>
+<path class="edge" d="M600 323V357"/>
+<text class="section" x="50" y="574">当前 GUI Praat：固定工具 / 自定义脚本</text><text class="section" x="650" y="574">社区 .praat：导出输入 → 独立批处理</text>
+<g data-node="G01"><rect x="50" y="604" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="638">G01  生成工具脚本</text><text class="body" x="72" y="673">TOOL_MAP 调用对应 build 函数。</text><text class="body" x="72" y="701">measure 读 measures.tsv，建立派生对象和查询。</text></g>
+<g data-node="S01"><rect x="650" y="604" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="638">S01  读取脚本与解析 form</text><text class="body" x="672" y="673">确认脚本文件，读取源文本。</text><text class="body" x="672" y="701">解析表单字段，生成其默认值参数。</text></g>
+<g data-node="G02"><rect x="50" y="770" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="804">G02  按所选工具进行专用处理</text><text class="body" x="72" y="839">custom_script 校验语法、对象与命名。</text><text class="body" x="72" y="867">Info 输出改写到结果文件；VOT 计算或估计。</text></g>
+<g data-node="S02"><rect x="650" y="770" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="804">S02  导出 Sound 输入副本</text><text class="body" x="672" y="839">render(save_sound) → G03–G09。</text><text class="body" x="672" y="867">当前 GUI Praat 保存 work/input.wav。</text></g>
+<path class="edge" d="M300 736V770"/>
+<path class="edge" d="M900 736V770"/>
+<g data-node="G03"><rect x="50" y="936" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="970">G03  组装对象选择与结果输出</text><text class="body" x="72" y="1005">选中实际对象，带入范围和参数。</text><text class="body" x="72" y="1033">输出到结果文件，补 done 状态。</text></g>
+<g data-node="S03"><rect x="650" y="936" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="970">S03  可选导出 TextGrid</text><text class="body" x="672" y="1005">存在可用 TextGrid 时通过 GUI 脚本导出。</text><text class="body" x="672" y="1033">批处理使用副本，不读取 GUI 编辑器选区。</text></g>
+<path class="edge" d="M300 902V936"/>
+<path class="edge" d="M900 902V936"/>
+<g data-node="G04"><rect x="50" y="1102" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1136">G04  重新核对 Praat 身份与快照</text><text class="body" x="72" y="1171">PRAAT_LOCK 覆盖核对、渲染、投递和回读。</text><text class="body" x="72" y="1199">核对原 PID / 身份；ping 刷新对象列表。</text></g>
+<g data-node="S04"><rect x="650" y="1102" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1136">S04  生成 wrapper.praat</text><text class="body" x="672" y="1171">Read from file 导入输入副本。</text><text class="body" x="672" y="1199">恢复对象名称，按字段顺序准备 runScript 参数。</text></g>
+<path class="edge" d="M300 1068V1102"/>
+<path class="edge" d="M900 1068V1102"/>
+<g data-node="G05"><rect x="50" y="1268" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1302">G05  建立独立请求脚本</text><text class="body" x="72" y="1337">分配 request_id，清理旧结果。</text><text class="body" x="72" y="1365">写 commands/chat_command_&lt;id&gt;.praat。</text></g>
+<g data-node="S05"><rect x="650" y="1268" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1302">S05  记录目标文件夹执行前状态</text><text class="body" x="672" y="1337">记录脚本目录文件名与修改时间。</text><text class="body" x="672" y="1365">用于执行后报告新增 / 改动的输出文件。</text></g>
+<path class="edge" d="M300 1234V1268"/>
+<path class="edge" d="M900 1234V1268"/>
+<g data-node="G06"><rect x="50" y="1434" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1468">G06  投递到指定进程</text><text class="body" x="72" y="1503">sendpraat 写 Message.txt。</text><text class="body" x="72" y="1531">向原 Praat 窗口发送 WM_APP。</text></g>
+<g data-node="S06"><rect x="650" y="1434" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1468">S06  启动独立 Praat 批处理</text><text class="body" x="672" y="1503">Praat.exe --FULL-TRUST --run wrapper.praat。</text><text class="body" x="672" y="1531">工作目录为本次 work；捕获 stdout / stderr。</text></g>
+<path class="edge" d="M300 1400V1434"/>
+<path class="edge" d="M900 1400V1434"/>
+<g data-node="G07"><rect x="50" y="1600" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1634">G07  Praat 消费并执行消息</text><text class="body" x="72" y="1669">请求脚本前缀先消费消息，记录 started ID。</text><text class="body" x="72" y="1697">执行原生命令、对象操作与声学测量。</text></g>
+<g data-node="S07"><rect x="650" y="1600" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1634">S07  包装脚本调用社区脚本</text><text class="body" x="672" y="1669">runScript: 原脚本路径 + form 默认参数。</text><text class="body" x="672" y="1697">独立实例只含导出的 Sound / TextGrid 副本。</text></g>
+<path class="edge" d="M300 1566V1600"/>
+<path class="edge" d="M900 1566V1600"/>
+<g data-node="G08"><rect x="50" y="1766" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1800">G08  原生结束回调与完成等待</text><text class="body" x="72" y="1835">结束回调刷新上下文并记录 finished ID。</text><text class="body" x="72" y="1863">宿主轮询并核对本请求编号及完成标记。</text></g>
+<g data-node="S08"><rect x="650" y="1766" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1800">S08  等待退出或结束批处理</text><text class="body" x="672" y="1835">轮询进程；取消或超时结束该子进程。</text><text class="body" x="672" y="1863">用返回码和真实输出判断运行成功 / 失败。</text></g>
+<path class="edge" d="M300 1732V1766"/>
+<path class="edge" d="M900 1732V1766"/>
+<g data-node="G09"><rect x="50" y="1932" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1966">G09  回读结果与投递事实</text><text class="body" x="72" y="2001">读取结果行、failure 和实际执行状态。</text><text class="body" x="72" y="2029">未送达与已投递但结果不明分别记账。</text></g>
+<g data-node="S09"><rect x="650" y="1932" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1966">S09  解码输出并比较生成文件</text><text class="body" x="672" y="2001">读取脚本打印内容。</text><text class="body" x="672" y="2029">对比执行前后目录快照，列出新增 / 改动文件。</text></g>
+<path class="edge" d="M300 1898V1932"/>
+<path class="edge" d="M900 1898V1932"/>
+<g data-node="G10"><rect x="50" y="2098" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2132">G10  保存事实与必要的后续核对</text><text class="body" x="72" y="2167">生成 Evidence / Attempts，回传 activity / results。</text><text class="body" x="72" y="2195">状态不明封锁新投递；成功核对 ping 可解除。</text></g>
+<g data-node="S10"><rect x="650" y="2098" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="2132">S10  形成工具观察</text><text class="body" x="672" y="2167">返回脚本名称、默认参数、输入副本和输出路径。</text><text class="body" x="672" y="2195">进入 L0 证据回传或 L1 / L2 失败处理。</text></g>
+<path class="edge" d="M300 2064V2098"/>
+<path class="edge" d="M900 2064V2098"/>
+<text class="note" x="50" y="2321">custom_script 运行于当前 GUI；run_praat_script 的用户脚本运行于独立批处理，两者有不同调用契约。</text>
+<text class="note" x="50" y="2369">当前 AI VOT 工具使用 tools.py 的显式边界或声学估计脚本；此工具路径没有 MFA / wav2vec2 调用。</text>
+<text class="note" x="50" y="2417">MFA / wav2vec2 的实际调用来自对比纠音分析，见 C、D 图。</text></svg>

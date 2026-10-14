@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1621" viewBox="0 0 1200 1621" role="img"><title>E · 表驱动测量与 AI VOT 工具</title><desc>这是 B 图 G01–G03 中内置脚本构造与测量步骤的展开；两列按用户所选工具进入。</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="#52746c"/></marker></defs><style>text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif}.title{font-size:31px;font-weight:700;fill:#173c33}.section{font-size:25px;font-weight:700;fill:#173c33}.heading{font-size:22px;font-weight:700;fill:#173c33}.body{font-size:19px;fill:#405d53}.note{font-size:18px;fill:#536b64}.edge{fill:none;stroke:#52746c;stroke-width:2.2;marker-end:url(#arrow)}</style><rect width="1200" height="1621" rx="20" fill="#f5f8f6"/><text class="title" x="50" y="53">E · 表驱动测量与 AI VOT 工具</text><text class="note" x="50" y="88">这是 B 图 G01–G03 中内置脚本构造与测量步骤的展开；两列按用户所选工具进入。</text><text class="section" x="50" y="150">measure：表驱动的声学查询</text><text class="section" x="650" y="150">vot：显式边界或声学估计</text>
+<g data-node="E01"><rect x="50" y="180" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="214">E01  解析参数与量名</text><text class="body" x="72" y="249">从 measures.tsv 取得请求参数对应的条目。</text><text class="body" x="72" y="277">专用量单独委派到对应工具。</text></g>
+<g data-node="V01"><rect x="650" y="180" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="214">V01  判断是否有显式事件时刻</text><text class="body" x="672" y="249">同时给 burst 和 voicing → V02。</text><text class="body" x="672" y="277">仅有一个事件时报错；无事件边界走 V03 估计。</text></g>
+<g data-node="E02"><rect x="50" y="346" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="380">E02  绑定输入与分析设置</text><text class="body" x="72" y="415">核对 Sound 或已有 Pitch / Intensity 等对象。</text><text class="body" x="72" y="443">检查单位、时间范围、基频上下限及量的设置。</text></g>
+<g data-node="V02"><rect x="650" y="346" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="380">V02  显式 VOT 计算支路</text><text class="body" x="672" y="415">核对 Sound / TextGrid 与两个真实时刻。</text><text class="body" x="672" y="443">VOT = voicing − burst；此支路直接到 V07。</text></g>
+<path class="edge" d="M300 312V346"/>
+<path class="edge" d="M900 312V346"/>
+<g data-node="E03"><rect x="50" y="512" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="546">E03  计算派生对象依赖</text><text class="body" x="72" y="581">_measure_plan 收集所需派生对象。</text><text class="body" x="72" y="609">按表顺序保证依赖先建立，已有分析对象可直接用。</text></g>
+<g data-node="V03"><rect x="650" y="512" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="546">V03  确定自动估计搜索范围</text><text class="body" x="672" y="581">显式 from / to 优先；否则读取编辑器选区。</text><text class="body" x="672" y="609">给的是搜索范围，不把起止点当作两个事件。</text></g>
+<path class="edge" d="M300 478V512"/>
+<g data-node="E04"><rect x="50" y="678" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="712">E04  生成 To X 原生命令</text><text class="body" x="72" y="747">每次派生前重新 selectObject 正确来源。</text><text class="body" x="72" y="775">保存 Pitch / Formant / Harmonicity 等新对象编号。</text></g>
+<g data-node="V04"><rect x="650" y="678" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="712">V04  处理音频与确定时长</text><text class="body" x="672" y="747">选择真实 Sound，对范围和时长做检查。</text><text class="body" x="672" y="775">脚本配置高频强度检测与起浊搜索参数。</text></g>
+<path class="edge" d="M300 644V678"/>
+<path class="edge" d="M900 644V678"/>
+<g data-node="E05"><rect x="50" y="844" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="878">E05  生成实际查询</text><text class="body" x="72" y="913">按条目选择对象并展开范围、单位和参数。</text><text class="body" x="72" y="941">运行 Get mean / Get value 等对应查询命令。</text></g>
+<g data-node="V05"><rect x="650" y="844" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="878">V05  估计爆破事件</text><text class="body" x="672" y="913">依据高频能量跃升及局部候选条件找爆破。</text><text class="body" x="672" y="941">保留事件依据与脚本时间分辨率。</text></g>
+<path class="edge" d="M300 810V844"/>
+<path class="edge" d="M900 810V844"/>
+<g data-node="E06"><rect x="50" y="1010" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1044">E06  写测量行与未定义状态</text><text class="body" x="72" y="1079">输出量名、值、单位与时间范围。</text><text class="body" x="72" y="1107">未定义时返回无法计算原因，不伪造有效数值。</text></g>
+<g data-node="V06"><rect x="650" y="1010" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1044">V06  估计起浊并计算候选 VOT</text><text class="body" x="672" y="1079">在爆破后的范围检查浊音开始与连续帧。</text><text class="body" x="672" y="1107">起浊 − 爆破；找不到事件时返回诊断缺口。</text></g>
+<path class="edge" d="M300 976V1010"/>
+<path class="edge" d="M900 976V1010"/>
+<g data-node="E07"><rect x="50" y="1176" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1210">E07  清理脚本内派生对象</text><text class="body" x="72" y="1245">按模板 Remove 临时分析对象。</text><text class="body" x="72" y="1273">通过 _assemble 加入结果文件和 done 状态。</text></g>
+<g data-node="V07"><rect x="650" y="1176" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1210">V07  输出结果与范围信息</text><text class="body" x="672" y="1245">显式计算写 VOT；自动路径写 VOT 估计值。</text><text class="body" x="672" y="1273">附两时刻、范围与目标时长百分比。</text></g>
+<path class="edge" d="M300 1142V1176"/>
+<path class="edge" d="M900 1142V1176"/>
+<g data-node="E08"><rect x="50" y="1342" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1376">E08  走 GUI 投递与证据回传</text><text class="body" x="72" y="1411">进入 B 图 G04–G10；读到真实结果后保存。</text><text class="body" x="72" y="1439">L0 继续调用或 L2 使用测量证据解释。</text></g>
+<g data-node="V08"><rect x="650" y="1342" width="500" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="672" y="1376">V08  核对实际测量是否完成</text><text class="body" x="672" y="1411">B 图执行后要求真实 VOT 数值结果行。</text><text class="body" x="672" y="1439">脚本结束但无数值仍判未完成；补公式再回传。</text></g>
+<path class="edge" d="M300 1308V1342"/>
+<path class="edge" d="M900 1308V1342"/>
+<path class="edge" d="M1150 266H1180V578H1150"/>
+<path class="edge" d="M650 392H620V1242H650"/>
+<text class="note" x="50" y="1565">V02 是显式时刻支路，V03–V06 是自动估计支路；最终经 V07–V08 输出，未调用强制对齐。</text></svg>

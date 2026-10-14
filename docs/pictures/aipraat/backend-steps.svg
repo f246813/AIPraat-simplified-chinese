@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="7060" viewBox="0 0 1200 7060" role="img"><title>A · AI 对话后端逐步调用图</title><desc>与后端总览配合阅读；各段内部按箭头顺序执行，段间跳转由入口与退出条件决定。</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="#52746c"/></marker></defs><style>text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif}.title{font-size:31px;font-weight:700;fill:#173c33}.section{font-size:25px;font-weight:700;fill:#173c33}.heading{font-size:22px;font-weight:700;fill:#173c33}.body{font-size:19px;fill:#405d53}.note{font-size:18px;fill:#536b64}.edge{fill:none;stroke:#52746c;stroke-width:2.2;marker-end:url(#arrow)}</style><rect width="1200" height="7060" rx="20" fill="#f5f8f6"/><text class="title" x="50" y="53">A · AI 对话后端逐步调用图</text><text class="note" x="50" y="88">与后端总览配合阅读；各段内部按箭头顺序执行，段间跳转由入口与退出条件决定。</text><text class="section" x="50" y="150">提交 → 原目标绑定 → 路由</text><text class="note" x="50" y="181">这一段由桌面宿主执行，模型尚未开始规划。</text>
+<g data-node="A01"><rect x="50" y="205" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="239">A01  前端提交</text><text class="body" x="72" y="274">React / assistant-ui 收集文本、附件 ID 与继续动作，经 HostAPI RPC 提交到 ModernApplication.submit。</text></g>
+<g data-node="A02"><rect x="50" y="357" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="391">A02  读取会话与配置</text><text class="body" x="72" y="426">读取会话历史、已有证据、模型设置和 WorkflowPolicy；解释已有结果的追问可绑定上一轮目标。</text></g>
+<path class="edge" d="M600 323V357"/>
+<g data-node="A03"><rect x="50" y="509" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="543">A03  锁定原目标</text><text class="body" x="72" y="578">捕获 Praat 进程身份、对象 ID / 类型 / 名称与编辑器选区；继续任务使用原来保存的目标。</text></g>
+<path class="edge" d="M600 475V509"/>
+<g data-node="A04"><rect x="50" y="661" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="695">A04  建立任务与材料</text><text class="body" x="72" y="730">创建任务 ID、取消标记和消息占位；校验附件，读取文本或建立原始 WAV 片段快照。</text></g>
+<path class="edge" d="M600 627V661"/>
+<g data-node="A05"><rect x="50" y="813" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="847">A05  准备模型上下文</text><text class="body" x="72" y="882">按 dialogue / planner / report 阶段恢复模型历史；估算上下文用量，必要时生成并持久保存摘要。</text></g>
+<path class="edge" d="M600 779V813"/>
+<g data-node="A06"><rect x="50" y="965" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="999">A06  选择执行入口</text><text class="body" x="72" y="1034">明确时长 / 统计查询 → 直接工具快路径；一般对话 → L4；显式继续解释 → L2；原音频 → L3。</text><text class="body" x="72" y="1062">其余有 Praat 原目标的工具任务 → L0；本地 Qwen 获取服务租约后进入独立循环。</text></g>
+<path class="edge" d="M600 931V965"/>
+<text class="section" x="50" y="1196">L0 · 规划与专用工具循环</text><text class="note" x="50" y="1227">成功、执行结束或不可继续时进入 L2；简单测量已证明完成且无需解释时可直接交付。</text>
+<g data-node="L0.1"><rect x="50" y="1251" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1285">L0.1  建立规划 Agent</text><text class="body" x="72" y="1320">Pydantic AI 注册工具 JSON Schema、ToolGuards Hooks 与按需技能目录；Pydantic Graph 驱动任务阶段。</text></g>
+<g data-node="L0.2"><rect x="50" y="1403" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1437">L0.2  发送规划请求</text><text class="body" x="72" y="1472">带入原目标对象 / 范围、用户材料和已有成功证据；模型返回原生 function calling 工具名与参数。</text></g>
+<path class="edge" d="M600 1369V1403"/>
+<g data-node="L0.3"><rect x="50" y="1555" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1589">L0.3  执行前检查与复用</text><text class="body" x="72" y="1624">检查参数 schema、对象类型、编号、范围、命名与脚本；同目标同范围的成功测量直接复用。</text><text class="body" x="72" y="1652">相同失败调用跳过；提案错误按有限规则反馈模型，不冒充实际测量失败。</text></g>
+<path class="edge" d="M600 1521V1555"/>
+<g data-node="L0.4"><rect x="50" y="1721" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1755">L0.4  工具分流与脚本调用</text><text class="body" x="72" y="1790">内置工具 / custom_script → 当前 GUI Praat；run_praat_script → 导出副本后独立 Praat 批处理。</text><text class="body" x="72" y="1818">脚本生成、Message.txt、WM_APP、完成标记与批处理步骤在 B 图逐步展开。</text></g>
+<path class="edge" d="M600 1687V1721"/>
+<g data-node="L0.5"><rect x="50" y="1887" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="1921">L0.5  回读并保存执行事实</text><text class="body" x="72" y="1956">读取结果行与失败信息，区分 success / failed / not_executed / unknown；保存 Attempts 与 Evidence。</text><text class="body" x="72" y="1984">publish_results → SQLite 落盘 → results / activity 事件；测量结果可先于模型解释展示。</text></g>
+<path class="edge" d="M600 1853V1887"/>
+<g data-node="L0.6"><rect x="50" y="2053" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2087">L0.6  判断继续还是退出</text><text class="body" x="72" y="2122">新增有效证据 → 回 L0.2；可修复执行失败 → L1；完成、预算耗尽或分支不可继续 → L2 / 阶段交付。</text><text class="body" x="72" y="2150">连续两轮无新增有效证据停止工具分支；状态不明阻止新投递，等待明确核对。</text></g>
+<path class="edge" d="M600 2019V2053"/>
+<text class="section" x="50" y="2284">L1 · 对实际执行失败进行有限纠正</text><text class="note" x="50" y="2315">这是 L0 的纠正支路；不是每轮必须经过的阶段。</text>
+<g data-node="L1.1"><rect x="50" y="2339" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2373">L1.1  分类失败</text><text class="body" x="72" y="2408">依赖缺失、不支持、材料不可用、执行状态不明等永久原因直接退出；仅可修复失败允许继续。</text></g>
+<g data-node="L1.2"><rect x="50" y="2491" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2525">L1.2  反馈失败并请求不同修正</text><text class="body" x="72" y="2560">AnalysisState.failed 按工具问题计数；配置允许 0–1 次纠正，ModelRetry 把真实失败原因反馈模型。</text></g>
+<path class="edge" d="M600 2457V2491"/>
+<g data-node="L1.3"><rect x="50" y="2643" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2677">L1.3  重新进入 L0 的检查与执行</text><text class="body" x="72" y="2712">有依据且有区别的新参数 → L0.3 / B 图；纠正成功回 L0，重复失败或次数耗尽 → L2。</text></g>
+<path class="edge" d="M600 2609V2643"/>
+<text class="section" x="50" y="2860">L2 · 独立的证据解释与报告核对</text><text class="note" x="50" y="2891">解释已有结果也可直接从 A06 进入；本阶段没有执行工具。</text>
+<g data-node="L2.1"><rect x="50" y="2915" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="2949">L2.1  发布已经完成的工具结果</text><text class="body" x="72" y="2984">先保存并展示实测结果；测量完成且工作流程不需要解释时 finish_locally 直接交付。</text></g>
+<g data-node="L2.2"><rect x="50" y="3067" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="3101">L2.2  重建报告上下文</text><text class="body" x="72" y="3136">带入原始目标、逐项 deliveries、证据编号 / quantity_refs、操作记录、材料来源及未完成项。</text></g>
+<path class="edge" d="M600 3033V3067"/>
+<g data-node="L2.3"><rect x="50" y="3219" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="3253">L2.3  请求结构化解释</text><text class="body" x="72" y="3288">模型输出 AnalysisReport：中文分析 + coverage 完成状态 + missing_evidence；默认按需、15 秒、最多 2 次请求。</text></g>
+<path class="edge" d="M600 3185V3219"/>
+<g data-node="L2.4"><rect x="50" y="3371" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="3405">L2.4  报告守卫核对与有限纠正</text><text class="body" x="72" y="3440">核对数值、单位、量名、对象、范围和证据引用；有引用的有限算式由程序计算。</text><text class="body" x="72" y="3468">纠正仍失败时保留正文并遮蔽未核对数值；没有可用正文时交付阶段记录，不重跑对象操作。</text></g>
+<path class="edge" d="M600 3337V3371"/>
+<g data-node="L2.5"><rect x="50" y="3537" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="3571">L2.5  决定交付或升级原音频</text><text class="body" x="72" y="3606">报告确认缺原音频证据，且 auto / 音频能力 / 材料 / 预算条件均满足 → L3；否则进入 A 后处理。</text></g>
+<path class="edge" d="M600 3503V3537"/>
+<text class="section" x="50" y="3754">L3 · 原目标音频快照、发送与回退</text><text class="note" x="50" y="3785">显式请求可直接进入；无测量且已绑定音频时，auto 策略也可进入。</text>
+<g data-node="L3.1"><rect x="50" y="3809" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="3843">L3.1  验证音频分析入口</text><text class="body" x="72" y="3878">核对 WorkflowPolicy、audio_input_enabled、原始材料、取消状态与剩余请求预算。</text></g>
+<g data-node="L3.2"><rect x="50" y="3961" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="3995">L3.2  取得或核验原目标片段</text><text class="body" x="72" y="4030">已绑定 WAV → 检查来源、范围和指纹；Praat 对象 → 经 B 图导出原目标临时 PCM WAV。</text><text class="body" x="72" y="4058">使用任务已绑定的原目标，不能重新拿后来变化的选区当作原材料。</text></g>
+<path class="edge" d="M600 3927V3961"/>
+<g data-node="L3.3"><rect x="50" y="4127" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="4161">L3.3  读取音频并构建供应商输入</text><text class="body" x="72" y="4196">检查音频时长 / 字节数与供应商限制；按实际端点能力构建 BinaryContent / Base64 等音频内容。</text></g>
+<path class="edge" d="M600 4093V4127"/>
+<g data-node="L3.4"><rect x="50" y="4279" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="4313">L3.4  发送、接收并记录音频状态</text><text class="body" x="72" y="4348">分别记录 audio_sent、audio_received 与 audio_report_completed；模型定性观察注明模型和材料来源。</text></g>
+<path class="edge" d="M600 4245V4279"/>
+<g data-node="L3.5"><rect x="50" y="4431" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="4465">L3.5  核对解释与处理能力拒绝</text><text class="body" x="72" y="4500">实际不支持音频的端点错误可纠正对应配置；材料不可用或能力拒绝时回 L2 使用已有证据。</text><text class="body" x="72" y="4528">成功音频报告进入 A 后处理，听感观察不当作精确声学测量。</text></g>
+<path class="edge" d="M600 4397V4431"/>
+<text class="section" x="50" y="4662">L4 · 一般讨论与快速对话</text><text class="note" x="50" y="4693">由一般原理、科普、能力介绍或一般讨论继续动作进入；不从 L3 自动跳到本层。</text>
+<g data-node="L4.1"><rect x="50" y="4717" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="4751">L4.1  准备独立对话上下文</text><text class="body" x="72" y="4786">配置允许时建立 dialogue 阶段历史；无需 Praat 测量快照，不声称执行了工具或听过本轮音频。</text></g>
+<g data-node="L4.2"><rect x="50" y="4869" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="4903">L4.2  请求并流式回传</text><text class="body" x="72" y="4938">run_dialogue_turn → 模型响应 → delta 事件；按配置选择思考与输出预算。</text></g>
+<path class="edge" d="M600 4835V4869"/>
+<g data-node="L4.3"><rect x="50" y="5021" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="5055">L4.3  保留实际输出状态</text><text class="body" x="72" y="5090">正常完成保存正式对话；长度截断时按现有规则有限续写，失败保留已经收到的正文。</text></g>
+<path class="edge" d="M600 4987V5021"/>
+<text class="section" x="50" y="5238">本地 Qwen · 独立规划循环</text><text class="note" x="50" y="5269">A06 配置为本地模型时进入；没有把它套入云端 API 的阶段图。</text>
+<g data-node="Q01"><rect x="50" y="5293" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="5327">Q01  获取模型服务租约</text><text class="body" x="72" y="5362">宿主按配置和显存启动或复用自己管理的 llama-server；任务结束后按租约与服务策略释放。</text></g>
+<g data-node="Q02"><rect x="50" y="5445" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="5479">Q02  准备历史与工具接口</text><text class="body" x="72" y="5514">run_turn 带入用户目标、对象上下文和历史证据；明确测量 / VOT 请求可走既有直接执行分支。</text></g>
+<path class="edge" d="M600 5411V5445"/>
+<g data-node="Q03"><rect x="50" y="5597" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="5631">Q03  模型生成工具提案</text><text class="body" x="72" y="5666">按服务能力走原生 function calling 或既有结构化规划接口；解析工具名、参数和动作列表。</text></g>
+<path class="edge" d="M600 5563V5597"/>
+<g data-node="Q04"><rect x="50" y="5749" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="5783">Q04  调用既有执行器</text><text class="body" x="72" y="5818">参数检查 → _Dispatcher → B 图 GUI / 批处理执行；逐步回读真实观察，记录成功与失败。</text></g>
+<path class="edge" d="M600 5715V5749"/>
+<g data-node="Q05"><rect x="50" y="5901" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="5935">Q05  观察回灌与循环控制</text><text class="body" x="72" y="5970">把工具结果反馈模型，按默认 3 轮 / 5 个动作、取消和失败规则决定继续或收尾；后续修改受多步意图限制。</text></g>
+<path class="edge" d="M600 5867V5901"/>
+<g data-node="Q06"><rect x="50" y="6053" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="6087">Q06  形成回答与保存结果</text><text class="body" x="72" y="6122">有实测结果则带来源组织回答；没有完成的任务说明缺口；进入 A07–A10 的持久化与界面交付。</text></g>
+<path class="edge" d="M600 6019V6053"/>
+<text class="section" x="50" y="6270">A 后处理 · 所有实际结果回到桌面宿主</text><text class="note" x="50" y="6301">本地 Qwen 也共用证据与结果交付；默认最多 3 轮 / 5 个动作，使用既有执行器。</text>
+<g data-node="A07"><rect x="50" y="6325" width="1100" height="132" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="6359">A07  清理任务临时对象与音频</text><text class="body" x="72" y="6394">只清理因本任务测量而创建、并已核实的临时对象；用户明确要求创建 / 保留的对象保留。</text><text class="body" x="72" y="6422">关闭 TaskMaterials 清理任务临时音频；用户源文件保留。</text></g>
+<g data-node="A08"><rect x="50" y="6491" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="6525">A08  保存最终记录</text><text class="body" x="72" y="6560">保存消息、目标、材料元数据、Evidence、Attempts、结果和阶段模型上下文；区分完成、部分完成、失败、取消。</text></g>
+<path class="edge" d="M600 6457V6491"/>
+<g data-node="A09"><rect x="50" y="6643" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="6677">A09  回传界面与继续动作</text><text class="body" x="72" y="6712">results / activity / delta 更新对话窗口；提供 L2 继续解释、L3 分析原材料、L4 一般讨论等可用动作。</text></g>
+<path class="edge" d="M600 6609V6643"/>
+<g data-node="A10"><rect x="50" y="6795" width="1100" height="118" rx="14" fill="#fff" stroke="#cddbd4"/><text class="heading" x="72" y="6829">A10  继续时恢复原目标</text><text class="body" x="72" y="6864">下一轮恢复原目标、成功证据、执行记录与材料指纹；继续解释不会重放已完成的对象操作。</text></g>
+<path class="edge" d="M600 6761V6795"/>
+<text class="note" x="50" y="7004">API 跨阶段共享：每轮 12 次模型请求、20 次工具尝试；各阶段和 token 预算另行核对。</text></svg>
