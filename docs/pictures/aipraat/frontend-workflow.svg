@@ -39,8 +39,8 @@
 <text class="body" x="56" y="396">可核对的完成项与待补信息</text>
 <path class="edge" d="M704 373H650"/>
 <path class="edge" d="M370 373H316"/>
-<path class="edge" d="M510 310V270H690V265H854V240"/>
-<text class="small" x="440" y="260">需要更多证据：继续调用工具</text>
+<path class="edge" d="M510 310V278H678V211H704"/>
+<text class="small" x="407" y="268">需要更多证据：继续调用工具</text>
 <rect x="36" y="476" width="968" height="74" rx="12" fill="#edf3ef"/>
 <text class="body" x="56" y="506">数值来自测量；模型组织解释。对象和选区决定工具分析范围。</text>
 <text class="body" x="56" y="530">一般讨论可以直接回答；直接音频观察需启用能力，精确声学数值仍由工具提供。</text>

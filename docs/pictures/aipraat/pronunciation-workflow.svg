@@ -34,9 +34,11 @@
 <text class="body" x="584" y="353">通过 DTW 对齐有效特征曲线</text>
 <text class="body" x="584" y="376">按偏差与阈值生成候选项</text>
 <text class="body" x="584" y="399">无 profile_id 的旧请求沿用此路径</text>
-<path class="edge" d="M854 225V255H256V290"/>
-<path class="edge" d="M854 255H784V290"/>
-<text class="small" x="389" y="247">按用户选择分流</text>
+<path d="M854 225V238H520V260" fill="none" stroke="#52746c" stroke-width="2"/>
+<circle cx="520" cy="260" r="3" fill="#52746c"/>
+<path class="edge" d="M520 260H256V290"/>
+<path class="edge" d="M520 260H784V290"/>
+<text class="small" x="365" y="253">按用户选择分流</text>
 <rect x="36" y="492" width="440" height="130" rx="14" fill="#e0efe8" stroke="#79aa95"/>
 <text class="label" x="56" y="526">05  保存基础报告</text>
 <text class="body" x="56" y="555">JSON：测量、观察与证据状态</text>
@@ -48,7 +50,7 @@
 <text class="body" x="584" y="578">TextGrid 与图像回导 Praat</text>
 <text class="body" x="584" y="601">持久报告保留，临时回导文件清理</text>
 <path class="edge" d="M256 420V492"/>
-<path class="edge" d="M784 420V455H496V475H256V492"/>
+<path class="edge" d="M784 420V456H390V492"/>
 <path class="edge" d="M476 555H564"/>
 <rect x="36" y="660" width="968" height="94" rx="12" fill="#edf3ef"/>
 <text class="body" x="56" y="692">比例估算、低质量对齐与缺失测量：标记证据不足，不能当成可靠的发音结论。</text>
