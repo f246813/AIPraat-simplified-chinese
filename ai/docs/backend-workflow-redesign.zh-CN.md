@@ -232,6 +232,21 @@ classify(goal, context) -> RouterIntent(intent, needs_audio, whole_object, targe
 
 测试：新增 `ai/tests/test_execution_core.py`（10 例）、`ai/tests/test_delivery_text.py`（5 例）；全仓 discover 1528 例，除 5 个缺 `Praat.exe`/外部启动器的环境错误外全绿。
 
+### 7.2 S4 实施结果（2026-10-18）
+
+- 新增 `ai/praat_ai/delivery_text.py`：内部原因归到六类（budget / capability / transient / policy / cancelled / user_fixable），每类一句人话；`has_internal_terms()` 作为门禁判据（`INTERNAL` 覆盖阶段代号、`report.*` / `tool.*` 规则名、内部字段名、「交付项状态」「自动数值核对」等）。
+- `finish_locally` 的「尚未完成：…」、coverage 的 explanation、`_guard_note` 的行尾标注、`rescued_report` 的说明全部换成人话；内部原文只进 `metrics['reason_detail']` 与 `metrics['reason_class']`。
+
+**门禁数据**（同一套 10 条目标，用 `delivery_text.has_internal_terms` 扫描交付正文）：
+
+| 阶段 | 正文含内部术语 |
+|---|---|
+| S1 后（10 轮） | **10/10**（「交付项状态」「L2 阶段时间上限」「自动数值核对」） |
+| S2+S3 后（3 轮） | 0/3 |
+| S4+S5 后（1 轮冒烟） | 0/1 |
+
+达到设计里 S4 的验收口径（内部术语 0）。样本量偏小，完整 10 轮复测需要再跑一次基准。
+
 ## 8. P4：错误分类收敛
 
 ```python
