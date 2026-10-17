@@ -35,6 +35,7 @@ from .report_guards import (UNVERIFIED_NUMBER, mask_rejected_numbers,
                             rejected_values, report_context_data,
                             report_guard_instructions, validate_report)
 from . import report_guards
+from .report_audit import audit_report
 from .session_context import PhaseContext, native_history, evidence_projection
 from . import cloud_metrics, skill_registry
 from .workflow_policy import (finish_locally, measurement_complete, publish_results, wants_explanation,
@@ -1169,26 +1170,11 @@ class CloudSession:
             state.metrics['rejected_report'] = report.analysis
             state.metrics['rejected_coverage'] = [item.model_dump() for item in report.coverage]
 
-        report_rejections = 0
-
         def guard_report(ctx, *, output_context, output):
-            nonlocal report_rejections
+            # P0（B 方案）：数值没对上就地遮蔽，不再整份退回。只有结构性规则
+            # （编造对象、跨对象冒充、"没有音频输入"搪塞等）才交给 SDK 重试一次。
             remember(output)
-            try:
-                return validate_report(guard_state, output)
-            except ModelRetry as error:
-                # 记下没核上的数值：报告最终留不住时，把这几处遮掉再给用户。
-                state.metrics.setdefault('rejected_values', []).extend(rejected_values(str(error)))
-                report_rejections += 1
-                if report_rejections > 1:
-                    # 第二次仍未通过：保留正文、把未核对的数值换成标注，不丢弃整份回答；
-                    # 确实没有正文可保留时才回退到阶段记录。
-                    repaired = repaired_report(output, str(error), state, guard_state)
-                    if repaired is not None:
-                        return repaired
-                    from pydantic_ai.exceptions import UnexpectedModelBehavior
-                    raise UnexpectedModelBehavior('Exceeded maximum output retries (1)') from error
-                raise
+            return audit_report(guard_state, output)
 
         agent = Agent(self.model, system_prompt=instruction, output_type=PromptedOutput(AnalysisReport),
                       capabilities=[Hooks(after_output_process=guard_report, id='praat_report_guards')],
@@ -1214,15 +1200,18 @@ class CloudSession:
 
         try:
             result = await self.drive(agent, [prompt, BinaryContent(audio, media_type='audio/wav')] if audio else prompt)
-            repaired = bool(state.metrics.get('report_repaired', 0))
+            audited = state.metrics.get('audit') or {}
+            repaired = bool(state.metrics.get('report_repaired', 0)) or not audited.get('verified', True)
             state.report = result.analysis
-            # 遮过数值再交付的正文不算「核对通过」：界面与后续轮次都要看得出这一点。
+            # 遮过数值再交付的正文不算「核对通过」：界面与后续轮次都要看得出这一点
+            # （具体遮了几个在 state.metrics['audit'] 里）。
             state.metrics['report_verified'] = not repaired
             state.coverage = [item.model_dump() for item in result.coverage]
             state.metrics.pop('rejected_report', None)
             state.metrics.pop('rejected_coverage', None)
             state.metrics.pop('rejected_values', None)
-            state.status = 'partial' if repaired else (
+            # 「有遮蔽」不等于「没做完」：交付状态只按 coverage 判定（遮蔽情况记在 audit）。
+            state.status = 'partial' if state.metrics.get('report_repaired') else (
                 'complete' if all(item.status == 'complete' for item in result.coverage) else 'partial')
             state.can_continue = state.can_continue or state.status != 'complete'
             if audio is not None and not repaired:

@@ -230,35 +230,37 @@ class NativeHookTests(unittest.TestCase):
         self.assertEqual(len(actions), 2)
         self.assertEqual(refreshed, [1])
 
-    def test_report_guard_native_hook_retries_without_repeating_measurement(self):
+    def test_report_guard_masks_bad_number_without_repeating_measurement(self):
         state, actions, _, reports = self.run_case([('pitch', {'time':.5})], reports=[
             '本录音基频是 999 Hz [E1]。该数字用于评估，但仍然缺少参照录音，无法进一步判断具体缺陷。',
             '本录音基频是 220 Hz [E1]。该数字来自真实测量，仍然缺少参照录音，无法进一步判断具体缺陷。'])
         self.assertEqual(len(actions), 1)
-        self.assertEqual(len(reports), 2)
+        # P0-B：没对上的数值就地遮蔽，不再重发整包请求，所以第二份草稿用不到。
+        self.assertEqual(len(reports), 1)
         self.assertNotIn('999 Hz', state.report)
-        self.assertIn('220 Hz', state.report)
+        self.assertIn('[未通过核对的数值]', state.report)
 
-    def test_report_failure_keeps_real_evidence_and_discards_fabricated_output(self):
+    def test_report_failure_keeps_real_evidence_and_masks_fabricated_output(self):
         bad = '本录音基频是 999 Hz [E1]。这个结果能够用于评估音高，但是仍缺少可靠的参照录音材料。'
         state, actions, _, reports = self.run_case([('pitch', {'time':.5})], reports=[bad, bad])
         self.assertEqual(len(actions), 1)
-        self.assertEqual(len(reports), 2)      # 报告阶段仍然只有一次重试机会（带音频时重发太贵）
+        self.assertEqual(len(reports), 1)
         self.assertEqual(len(state.evidence), 1)
         self.assertEqual(state.status, 'partial')
         self.assertNotIn('999 Hz', state.report)
+        self.assertIn('[未通过核对的数值]', state.report)
 
     def test_report_rejections_keep_the_written_draft_instead_of_a_stage_record(self):
         bad = '本录音基频是 999 Hz [E1]。这个结果能够用于评估音高，但是仍缺少可靠的参照录音材料。'
         state, actions, _, reports = self.run_case([('pitch', {'time':.5})], reports=[bad, bad])
         self.assertEqual(len(actions), 1)
-        self.assertEqual(len(reports), 2)
+        self.assertEqual(len(reports), 1)
         # 2026-10-06 实测：守卫连拒两次后整份回答被换成「本轮仅交付阶段记录」，用户看不到
-        # 任何结论。现在正文保留、没核上的数值遮掉，并在末尾说明为什么。
+        # 任何结论。现在正文保留、没核上的数值遮掉，也不再为此多发一次请求。
         self.assertNotIn('本轮仅交付阶段记录', state.report)
         self.assertIn('这个结果能够用于评估音高', state.report)
         self.assertIn('[未通过核对的数值]', state.report)
-        self.assertIn('没有通过自动数值核对', state.report)
+        self.assertFalse(state.metrics.get('report_verified', False))
 
     def test_multi_parameter_measure_is_accepted_and_dispatched(self):
         state, actions, _, _ = self.run_case([('measure', {'parameter': 'f1,f2', 'object': 1})])

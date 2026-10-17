@@ -32,10 +32,16 @@ class CalcUnavailable(Exception):
 
 
 def _block(state: Any, rule: str, message: str) -> None:
-    """守卫里唯一允许中断报告的出口：只留客观、漏过去会真的错的规则。"""
+    """结构性守卫的唯一出口：调用方按 ``rule`` 决定重试还是就地处置。
+
+    ``rule`` 挂到异常上（``ModelRetry.rule``）：``report_audit`` 据此区分
+    「结构性错误（可以重试一次）」与「数值没对上（就地遮蔽，不许重写整份报告）」。
+    """
 
     note_guard(state, 'block', rule)
-    raise ModelRetry(message)
+    error = ModelRetry(message)
+    error.rule = rule
+    raise error
 
 
 _N = (r"[-+]?(?:\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d*)?|\.\d+)"
@@ -401,6 +407,10 @@ def _roles_match(claim: str, source: str) -> bool:
         return source in {'pitch.value', 'pitch.mean'}
     if claim.startswith('formant.') and claim.endswith('.value'):
         return source in {claim, claim.replace('.value', '.mean')}
+    # 「最高频率出现在 0.446 秒」：声明侧只说「最高」，证据侧是 max_time。量纲由
+    # _same_value 另外核对（秒 vs Hz），所以这里放行不会让频率值冒充时刻。
+    if claim.endswith(('.max', '.min')) and source == claim + '_time':
+        return True
     return False
 
 
@@ -466,9 +476,17 @@ def _identifier_number(cleaned: str, match: re.Match[str], targets: set[str]) ->
     """这个数字是编号/标签而不是量值吗（Markdown 序号、对象编号、共振峰序号）。"""
 
     # _NUMBER accepts a trailing decimal dot, so Markdown "1." is matched
+    # _NUMBER accepts a trailing decimal dot, so Markdown "1." is matched
     # including its punctuation. Identify the marker from the line instead.
-    ordinal = re.match(r'^\s*(?:#{1,6}\s*)?(\d+)[.)、](?=\s)', cleaned)
+    # 允许 Markdown 强调包裹（``**1.**``）与句中编号（``。2. xxx``）：遮蔽列表序号是纯破坏。
+    ordinal = re.match(r'^\s*(?:#{1,6}\s*)?(?:\*{1,3}|_{1,3})?\s*(\d{1,2})[.)、](?=\s)', cleaned)
     if ordinal and match.start() == ordinal.start(1) and match.end() <= ordinal.end():
+        return True
+    if re.match(r'^\s*(?:\*{1,3}|_{1,3})?\s*\d{1,2}[.)、]\s', cleaned) is None:
+        inline = re.search(r'[。；;：:]\s*(\d{1,2})[.)、](?=\s)', cleaned)
+        if inline and inline.start(1) == match.start():
+            return True
+    if re.match(r'\s*(?:\*{1,3}|_{1,3})?\s*[`\'"]?$', cleaned[match.end():]) and match[0].endswith('.'):
         return True
     if any(item.span(1) == match.span() and item[1] in targets
            for item in _OBJECT_IDENTIFIER.finditer(cleaned)):
@@ -533,30 +551,27 @@ def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record], *,
         available = [records[eid] for eid in clause_cites] if clause_cites else list(records.values())
         if targets:
             available = [r for r in available if r.target in targets]
-        if re.search(r'整段|全段|整个(?:声音|录音|音频|对象)|whole|entire', clause, re.I) and not re.search(r'中点|时刻|秒处|采样点', clause):
-            whole_ranges = _whole_ranges(state, records)
-            def full_scope(record):
-                if record.evidence.tool in {'duration', 'object_info'}:
-                    return True
-                if record.evidence.tool in {'pitch', 'intensity', 'formant_frequency', 'formant_bandwidth'}:
-                    return False
-                required = whole_ranges.get(record.target)
-                if required is not None:
-                    return record.interval is not None and abs(record.interval[0] - required[0]) <= .001 and abs(record.interval[1] - required[1]) <= .001
-                args = record.evidence.arguments
-                return args.get('_whole_object') and not any(args.get(key) is not None for key in ('from', 'to', 'start', 'end'))
-            available = [record for record in available if full_scope(record)]
-            if not available and clause_cites and re.search(r'平均|均值|统计|数值|mean|average', clause, re.I):
-                return sources, ('report.range_whole_partial', '整段量化陈述不能引用局部分段值；请保留真实范围或取得整段测量。')
         ranges = list(_RANGE.finditer(clause))
         range_parts = _range_parts(clause)
+        supported_range = False
+        range_scope = None
         if len(ranges) == 1:
             match = ranges[0]
             start = float(match['a']) * _unit(match['ua'] or match['ub'])[1]
             end = float(match['b']) * _unit(match['ub'])[1]
-            available = [r for r in available if r.interval is not None and
-                         abs(r.interval[0] - start) <= _precision(match['a']) * _unit(match['ua'] or match['ub'])[1] + .0005 and
-                         abs(r.interval[1] - end) <= _precision(match['b']) * _unit(match['ub'])[1] + .0005]
+            available = [record for record in available if _supports_range(record, start, end, match)]
+            # 范围本身已被证据确认（含 object_info/duration 的 0–duration）时，
+            # 端点不再要求各自对应一条 range.start/end 量。
+            supported_range = bool(available)
+            range_scope = (start, end, match)
+            if not supported_range:
+                # 整段范围都没有证据支持：把这一段范围整体当作未核对的值，端点不逐个遮
+                # （逐个遮会把 "0.446–0.892 秒" 拆成三个占位符，正文直接读不懂）。
+                span_start, span_end = ranges[0].start('a'), ranges[0].end()
+                return sources, ('report.number_unmatched',
+                                 f'数值“{clause[span_start:span_end]}”未匹配同对象/范围的测量。'
+                                 '逐行引证；缺测量就说明。',
+                                 (clause_match.start() + span_start, clause_match.start() + span_end))
         cleaned = _CITATION.sub(lambda m: ' ' * len(m[0]), clause)
         cleaned = _normalize_claim(cleaned)
         for match in _NUMBER.finditer(cleaned):
@@ -567,6 +582,8 @@ def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record], *,
             role = _role(cleaned[:match.start()])
             if match.span() in range_parts:
                 role, unit = range_parts[match.span()]
+            if supported_range and match.span() in range_parts:
+                continue
             # 声明侧没点名量名（只有「爆破」「浊音起始」这类出处标签）时按「同对象 +
             # 同范围 + 同量纲 + 同数值」核对；点名了量名的仍走严格规则（F1 不能冒充
             # 平均基频）。_free_label 见上。
@@ -578,6 +595,21 @@ def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record], *,
                               and _same_value(value, candidate, unit, q) for q in record.quantities)]
                 if hit:
                     break
+            if not hit:
+                # 同对象、同量名、同数值但引证漏写/写错另一条：这不是编造数据，补上正确
+                # 引证即可（「漏写引证不该判成编造」的既有口径，见上方注释）。
+                available_ids = {record.id for record in available}
+                siblings = [record for record in records.values()
+                            if record.id not in available_ids and (not targets or record.target in targets)
+                            and (range_scope is None or _supports_range(record, *range_scope))]
+                for candidate in _number_candidates(match[0]):
+                    value = float(candidate)
+                    hit = [record for record in siblings
+                           if any((_roles_match(role, q.role) or _free_label(role))
+                                  and _same_value(value, candidate, unit, q) for q in record.quantities)]
+                    if hit:
+                        state.metrics['report.sibling_citation'] = state.metrics.get('report.sibling_citation', 0) + 1
+                        break
             if not hit and verbatim and unit == '':
                 # 逐字引用可以不带单位，但必须唯一对上一条证据，否则仍然按未核对处理。
                 candidates = {(record.id, q.ref) for record in available for q in record.quantities
@@ -585,6 +617,15 @@ def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record], *,
                 if len({ref for _, ref in candidates}) == 1:
                     hit = [record for record in available
                            if any((record.id, q.ref) in candidates for q in record.quantities)]
+            phrase = bool(_DERIVED_PHRASE.search(cleaned[max(0, match.start() - 24):match.start()]))
+            if not hit and _derived_match(value, match[0], unit, role, phrase, available, targets):
+                # 透明推导：由本句引用范围内的证据四则算得，不再当编造拦下。
+                state.metrics['report_derived_accepted'] = state.metrics.get('report_derived_accepted', 0) + 1
+                continue
+            if not hit and _general_claim(clause):
+                # 典型范围属于一般知识，不是本次测量；记一次供遥测观察，不阻断。
+                state.metrics['report_general_value_assumed'] = state.metrics.get('report_general_value_assumed', 0) + 1
+                continue
             if not hit:
                 return sources, ('report.number_unmatched',
                                  f'数值“{match[0]} {unit}”未匹配同对象/范围/量名的测量。逐行引证；推导用calc占位式，缺测量就说明。',
@@ -617,6 +658,163 @@ def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record], *,
                     sources.append(record.id)
     return sources, None
 
+
+def _supports_range(record: Record, start: float, end: float, match: re.Match[str]) -> bool:
+    """这条证据能支持 ``start–end`` 这个范围吗。
+
+    ``object_info``/``duration`` 这类整对象记录没有 ``interval``，但它报告的总时长
+    就是 ``0–duration``：过去只看 ``record.interval`` 会把唯一候选删空，让
+    「本次分析覆盖了 0–0.892 秒」这种正确陈述被判成编造数值（真机事故的直接起因）。
+    """
+
+    tolerance_start = _precision(match['a']) * _unit(match['ua'] or match['ub'])[1] + .0005
+    tolerance_end = _precision(match['b']) * _unit(match['ub'])[1] + .0005
+    if record.evidence.tool in {'object_info', 'duration'} and abs(start) <= .001:
+        durations = [q for q in record.quantities
+                     if q.role == 'duration' and _unit(q.unit)[2] == (0, 1, '')]
+        if durations:
+            return abs(durations[0].value * _unit(durations[0].unit)[1] - end) <= tolerance_end
+    if record.interval is None:
+        return False
+    return (abs(record.interval[0] - start) <= tolerance_start
+            and abs(record.interval[1] - end) <= tolerance_end)
+
+
+#: 「通常 85–180 Hz」这类典型范围不是本次测量：无引证时可以出现。
+_GENERAL_HINT = re.compile(r'常见|典型|通常|一般来说|一般而言|大约|约\s*\d|文献|教科书|经验上')
+
+
+def _general_hint(text: str) -> bool:
+    return bool(_GENERAL_HINT.search(text))
+
+
+def _derived_role_ok(role: str) -> bool:
+    """点名了量名的位置不许用推导值顶上（平均基频不能拿最小值+最大值的均值冒充）。"""
+
+    if not role:
+        return True
+    if role.startswith(('pitch.', 'formant.', 'intensity.', 'vot.', 'harmonicity.', 'range.')):
+        return False
+    return role not in _NAMED_ROLES
+
+
+#: 明确在说「差、比值、占比」的位置：这些数天然是推导，不看量名。
+_DERIVED_PHRASE = re.compile(r'相差|差值|之差|差异|高出|低于|多了|少了|增加|减少|下降|上升|'
+                             r'占比|百分比|比例|变化量|幅度')
+
+
+def _derived_values(scoped: list[Record], targets: set[str]) -> list[tuple[float, str]]:
+    """同一批证据里两条同量纲实测值能四则得到的数（差值/和/均值/比例）。
+
+    报告的「透明推导」是提示词鼓励的写法，但这些数没有独立的 ``[En]``，过去一律被判成
+    编造。这里只承认**由本句引用范围内的证据算得**的组合，不放松「凭空数字」。
+    """
+
+    quantities = [q for record in scoped
+                  if (not targets or record.target in targets)
+                  for q in record.quantities if math.isfinite(q.value)]
+    pool: list[tuple[float, str]] = []
+    seen: set[tuple[float, str]] = set()
+    for index, left in enumerate(quantities):
+        _, left_scale, left_dimension = _unit(left.unit)
+        left_value = left.value * left_scale
+        for right in quantities[index + 1:]:
+            _, right_scale, right_dimension = _unit(right.unit)
+            if left_dimension != right_dimension:
+                continue
+            right_value = right.value * right_scale
+            unit = left.unit or right.unit
+            candidates = [(left_value - right_value, unit), (right_value - left_value, unit),
+                          (left_value + right_value, unit), ((left_value + right_value) / 2, unit)]
+            if left_dimension == (0, 0, ''):
+                if right_value:
+                    candidates.append((left_value / right_value * 100, '%'))
+                if left_value:
+                    candidates.append((right_value / left_value * 100, '%'))
+            for value, candidate_unit in candidates:
+                key = (round(value, 9), _unit(candidate_unit)[0])
+                if key in seen:
+                    continue
+                seen.add(key)
+                pool.append((value, candidate_unit))
+                if len(pool) >= 3000:
+                    return pool
+    return pool
+
+
+def _derived_match(value, text: str, unit: str, role: str, phrase: bool,
+                   scoped, targets) -> bool:
+    """这个数是不是由本句引用范围内的实测值四则算出来的（透明推导）。
+
+    ``phrase`` 表示这句话在说「相差/占比/变化量」这类推导表述，此时不看量名。
+    """
+
+    if value is None or not (_derived_role_ok(role) or phrase):
+        return False
+    claim_key, claim_scale, claim_dimension = _unit(unit)
+    dimensionless = claim_key in {'', '%', '倍'}
+    for candidate_value, candidate_unit in _derived_values(scoped, targets):
+        _, candidate_scale, candidate_dimension = _unit(candidate_unit)
+        if dimensionless:
+            if candidate_dimension != (0, 0, ''):
+                continue
+        elif claim_dimension != candidate_dimension:
+            continue
+        tolerance = _precision(text) * claim_scale + 1e-9
+        if abs(value * claim_scale - candidate_value * candidate_scale) <= max(tolerance, 1e-6):
+            return True
+    return False
+
+
+def _target_durations(records: dict[str, Record]) -> dict[str, float]:
+    durations: dict[str, float] = {}
+    for record in records.values():
+        for quantity in record.quantities:
+            if quantity.role == 'duration' and _unit(quantity.unit)[2] == (0, 1, ''):
+                durations.setdefault(record.target, quantity.value * _unit(quantity.unit)[1])
+    return durations
+
+
+def _check_scope_line(state: Any, line: str, records: dict[str, Record]) -> str:
+    """「整段」话术只引用了局部分段时，追加真实范围；不再否决整份报告。
+
+    这条规则拦的是措辞与引用范围不匹配，不是数值本身；凡是区间确实覆盖整对象、
+    引用了 object_info/duration、或显式声明 _whole_object 的，都不加标注。
+    """
+
+    if not re.search(r'整段|全段|整个(?:声音|录音|音频|对象)|whole|entire', line, re.I):
+        return line
+    if re.search(r'中点|时刻|秒处|采样点', line) or _general_hint(line):
+        return line
+    cites = [f'E{x}' for x in _CITATION.findall(line)]
+    chosen = [records[eid] for eid in cites if eid in records]
+    if not chosen:
+        return line
+    durations = _target_durations(records)
+    whole_ranges = _whole_ranges(state, records)
+    spans: list[tuple[float, float]] = []
+    for record in chosen:
+        if record.evidence.tool in {'object_info', 'duration'}:
+            return line
+        arguments = getattr(record.evidence, 'arguments', None) or {}
+        if arguments.get('_whole_object'):
+            return line
+        if record.interval is None:
+            continue
+        duration = durations.get(record.target)
+        if duration is not None and abs(record.interval[0]) <= .001 and abs(record.interval[1] - duration) <= .001:
+            return line
+        required = whole_ranges.get(record.target)
+        if required is not None and (record.interval[0] <= required[0] + .001
+                                     and record.interval[1] >= required[1] - .001):
+            return line
+        spans.append(record.interval)
+    if not spans:
+        return line
+    start = min(span[0] for span in spans)
+    end = max(span[1] for span in spans)
+    note_guard(state, 'repair', 'report.range_whole_partial')
+    return line.rstrip() + f'（该句引用的是 {start:g}–{end:g} 秒的局部分段测量，不是整段值）'
 
 def mask_rejected_numbers(text: str, values, marker: str, *, state=None) -> str:
     """Mask whole rejected quantities, never substrings of decimals/IDs/labels.
@@ -933,6 +1131,7 @@ def _validate_text(state: Any, text: str, records: dict[str, Record], *, fill_ci
             evidence_line = evidence_line.replace(token, ' '.join(m[0] for m in _CITATION.finditer(rendered)))
         _check_numeric_line(state, evidence_line, records, verbatim=in_fence or _verbatim_line(line))
         checked = _check_prosody_line(state, evidence_line, records)
+        checked = _check_scope_line(state, checked, records)
         if checked != evidence_line:
             # 只把追加的标注接回被遮蔽的那一行：该行的 calc 占位式已被引证替换，
             # 整行替换会丢掉程序计算的结果。
@@ -1061,3 +1260,16 @@ def guard_delivered_text(state: Any, text: str, *, values=(), verify: bool = Tru
             return _guard_note(text, detail, pending), 'rejected_masked'
         return str(getattr(validated, 'analysis', text) or ''), 'verified'
     return _guard_note(text, detail, pending), 'rejected_masked'
+
+
+def _general_claim(clause: str) -> bool:
+    """这句话是不是在讲典型范围（一般知识），而不是声称本次测到的值。
+
+    引证可能落在前一句末尾（``平均基频 999 Hz。[E1] 参考材料：…通常 85–180 Hz``），
+    所以判断时先剥掉句首的引证，再看有没有「通常/常见/文献…」这类措辞。
+    """
+
+    text = re.sub(r'^\s*(?:\[E\d+\]\s*)+', '', clause)
+    if _CITATION.search(text):
+        return False
+    return _general_hint(text)

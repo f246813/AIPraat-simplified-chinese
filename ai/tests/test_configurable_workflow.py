@@ -243,7 +243,13 @@ class L2BudgetTests(unittest.TestCase):
         state.measurement_content='tone 总时长 = 1.25 秒'
         return state
 
-    def test_balanced_default_allows_one_guard_correction(self):
+    def test_balanced_default_masks_a_bad_number_without_another_request(self):
+        """P0-B：数值没对上就地遮蔽，不再为它多发一次整包请求。
+
+        真机事故里正是这次重写撞上 15 秒的 L2 时限，整份回答被丢弃
+        （见 ai/docs/backend-workflow-redesign.zh-CN.md 第 4 节与附录 A）。
+        """
+
         state=self.state(WorkflowPolicy())
         calls=[]
         def response(messages,info):
@@ -251,8 +257,12 @@ class L2BudgetTests(unittest.TestCase):
             return ModelResponse([TextPart(report(state.goal,'99' if len(calls)==1 else '1.25'))])
         run_cloud_turn(config(),state,execute_action=lambda *_:self.fail('No remeasurement'),
                        cancel=threading.Event(),model=FunctionModel(response))
-        self.assertEqual(state.requests,2,state.reason)
-        self.assertTrue(state.metrics.get('report_verified'),state.reason)
+        self.assertEqual(state.requests,1,state.reason)
+        self.assertEqual(len(calls),1,state.reason)
+        self.assertFalse(state.metrics.get('report_verified'),state.reason)
+        self.assertEqual(state.metrics['audit']['masked_count'],1)
+        self.assertNotIn('99',state.report)
+        self.assertIn('1.25',state.measurement_content)
 
     def test_explicit_points_override_editor_selection_in_results_and_report(self):
         from praat_ai.cloud_agent import report_context
@@ -340,8 +350,10 @@ class L2BudgetTests(unittest.TestCase):
         self.assertTrue(all(settings['extra_body']['enable_thinking'] for planner,settings in observed if planner))
         self.assertFalse(next(settings for planner,settings in observed if not planner)['extra_body']['enable_thinking'])
 
-    def test_guard_correction_shares_phase_limit_and_keeps_results(self):
-        for limit,expected in [(1,1),(2,2)]:
+    def test_bad_number_does_not_consume_l2_request_budget(self):
+        """P0-B：数值没对上不再重写，L2 请求预算也不会再被守卫吃掉。"""
+
+        for limit in (1,2):
             state=self.state(replace(WorkflowPolicy(),l2_request_limit=limit))
             calls=[]
             def response(messages,info):
@@ -349,11 +361,13 @@ class L2BudgetTests(unittest.TestCase):
                 return ModelResponse([TextPart(report(state.goal, '99' if len(calls)==1 else '1.25'))])
             run_cloud_turn(config(),state,execute_action=lambda *_:self.fail('No remeasurement'),
                 cancel=threading.Event(),model=FunctionModel(response))
-            self.assertEqual(state.requests,expected,state.reason)
-            self.assertEqual(state.metrics['l2_requests'],expected)
+            self.assertEqual(state.requests,1,state.reason)
+            self.assertEqual(state.metrics['l2_requests'],1)
+            self.assertEqual(len(calls),1,state.reason)
             self.assertIn('1.25',state.measurement_content)
-            self.assertEqual(bool(state.metrics.get('report_verified')),limit==2)
-            if limit==1:self.assertNotIn('99',state.report)
+            self.assertFalse(state.metrics.get('report_verified'),state.reason)
+            self.assertEqual(state.metrics['audit']['masked_count'],1)
+            self.assertNotIn('99',state.report)
 
     def test_preparation_timeout_stops_stage_without_another_route(self):
         state=self.state(replace(WorkflowPolicy(),l2_deadline_sec=1))
@@ -397,24 +411,31 @@ class L2BudgetTests(unittest.TestCase):
         self.assertIn('1.25',state.measurement_content)
         self.assertFalse(state.metrics.get('report_verified',False))
 
-    def test_final_http_three_turns_and_guard_correction_keep_prefix_and_static_schema(self):
+    def test_final_http_three_turns_keep_prefix_and_static_schema(self):
+        """三轮回合的前缀稳定与静态 schema 指纹；坏数字只遮蔽，不再多一轮请求。"""
+
         from test_dialogue_protocol import endpoint
         from praat_ai.cloud_metrics import wire_fingerprint
         from openai import DefaultAsyncHttpxClient
         goal='解释当前声音时长'
-        for bodies in ([report(goal)]*3,[report(goal,'99'),report(goal)]):
+        cases=(([report(goal)]*3,False),([report(goal,'99')]+[report(goal)]*2,True))
+        for bodies,first_masked in cases:
             with endpoint(chunk_delay=0,bodies=bodies) as (base,requests,_), patch('openai.DefaultAsyncHttpxClient',
                     side_effect=lambda **kw:DefaultAsyncHttpxClient(trust_env=False,**kw)):
                 cfg=config();cfg.api.base_url=base;cfg.api.model='qwen3.8-omni-flash'
                 cfg.api.token_mode='manual'
                 contexts={}
-                turns=3 if len(bodies)==3 else 1
-                for _ in range(turns):
+                for turn in range(3):
                     state=self.state(replace(WorkflowPolicy(),l2_request_limit=2))
                     state.phase_contexts=contexts
                     run_cloud_turn(cfg,state,execute_action=lambda *_:self.fail('No remeasurement'),cancel=threading.Event())
-                    self.assertTrue(state.metrics.get('report_verified'),state.reason)
-                    self.assertLessEqual(state.requests,2)
+                    # P0-B：一次回合一次请求；坏数字就地遮蔽（report_verified=False）。
+                    self.assertEqual(state.requests,1,state.reason)
+                    if first_masked and turn==0:
+                        self.assertFalse(state.metrics.get('report_verified',True),state.reason)
+                        self.assertEqual(state.metrics['audit']['masked_count'],1)
+                    else:
+                        self.assertTrue(state.metrics.get('report_verified'),state.reason)
                     contexts=state.phase_contexts
                 self.assertEqual(len(requests),len(bodies))
                 self.assertEqual(len({wire_fingerprint(p)['static'] for p in requests}),1)

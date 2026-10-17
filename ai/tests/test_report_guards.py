@@ -355,12 +355,22 @@ class ReportGuardsTests(unittest.TestCase):
     def test_report_cannot_invent_object_identifier(self):
         self.rejects(self.state(pitch()), '对象 99 的平均基频为 220 Hz。[E1]')
 
-    def test_whole_mean_cannot_relabel_segment_mean(self):
+    def test_whole_mean_citing_segment_is_annotated_not_rejected(self):
+        """P0-B：措辞与范围不符只加标注，不再否决整份报告。
+
+        见 ai/docs/backend-workflow-redesign.zh-CN.md 第 4 节：这条规则在真机 10 轮里
+        触发 8 次、全是措辞问题，代价却是整份回答被丢弃。
+        """
+
         state = self.state(pitch(220, .2, .4), evidence('duration', ['target 总时长 = 1.000000 秒']))
         state.goal = '分析整个声音的音调'
-        self.rejects(state, '整段平均基频为 220 Hz。[E1]')
-        self.rejects(state, '整段平均基频为 {{calc:E1.q3|Hz}}。')
-        self.accepts(state, '在 0.200–0.400 秒的平均基频为 220 Hz。[E1]')
+        annotated = self.accepts(state, '整段平均基频为 220 Hz。[E1]')
+        self.assertIn('局部分段测量', annotated.analysis)
+        self.assertEqual(state.metrics['guard_repairs']['report.range_whole_partial'], 1)
+        self.accepts(state, '整段平均基频为 {{calc:E1.q3|Hz}}。')
+        # 写明真实范围就不加标注。
+        silent = self.accepts(state, '在 0.200–0.400 秒的平均基频为 220 Hz。[E1]')
+        self.assertNotIn('局部分段测量', silent.analysis)
 
 
 class RepairedDeliveryTests(unittest.TestCase):

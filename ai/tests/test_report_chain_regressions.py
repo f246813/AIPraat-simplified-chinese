@@ -199,35 +199,34 @@ class ReportChainTests(unittest.TestCase):
         self.assertEqual(state.status, 'complete', state.reason)
         self.assertTrue(chunks)
 
-    def test_timeout_during_guard_correction_keeps_single_output_retry(self):
+    def test_bad_number_is_masked_without_second_request(self):
+        """P0-B：守卫不再重写整份报告，因此没有 RetryPrompt、也没有额外请求。"""
+
         requests = []
         bad = '本录音基频 999 Hz。[E1] 当前缺少可靠的参照录音，因此无法据此判断具体的发音缺陷。'
         def respond(messages, info):
             requests.append(copy.deepcopy(messages))
-            if len(requests) == 2:
-                raise wrapped()
             return response(bad)
         state = AnalysisState('解释测量', CONTEXT, continuation=True, continuation_mode='L2',
                               evidence=[Evidence('pitch', {'object':1}, ['基频 = 220 Hz'], CONTEXT)])
         self.run_report(respond, state)
-        self.assertEqual(len(requests), 3, state.reason)
-        self.assertEqual(state.metrics['guard_blocks']['report.number_unmatched'], 2)
+        self.assertEqual(len(requests), 1, state.reason)
+        self.assertNotIn('report.number_unmatched', state.metrics.get('guard_blocks', {}))
+        self.assertEqual(state.metrics['audit']['masked_count'], 1)
         self.assertFalse(state.metrics.get('report_verified', False))
         self.assertNotIn('999 Hz', state.report)
-        from pydantic_ai.messages import RetryPromptPart
-        for request in requests[1:]:
-            self.assertEqual(sum(isinstance(p, RetryPromptPart) for m in request for p in m.parts), 1)
 
-    def test_latest_draft_does_not_inherit_prior_rejected_values(self):
+    def test_masking_is_scoped_to_the_unmatched_number(self):
+        """P0-B：只遮蔽没对上的那个数；同一段里的一般知识范围不受牵连。"""
+
         item = Evidence('pitch', {'object':1}, ['基频 = 220 Hz'], CONTEXT)
-        drafts = ['平均基频 999 Hz。[E1] 当前只有目标录音的测量结果，仍缺少可靠的对照材料，无法判断具体发音缺陷。',
-                  '平均基频 888 Hz。[E1]\n一般知识：示例频率为 999 Hz，仍缺少对照材料。']
-        def respond(messages, info):
-            return response(drafts.pop(0))
+        text = ('平均基频 999 Hz。[E1] 参考材料（一般知识）：成年男声通常 85–180 Hz，'
+                '本录音缺少可靠对照，无法据此判断具体发音缺陷。')
         state = AnalysisState('解释已有测量', CONTEXT, evidence=[item], continuation=True, continuation_mode='L2')
-        state = self.run_report(respond, state)
-        self.assertIn('示例频率为 999 Hz', state.report)
-        self.assertNotIn('平均基频 888 Hz', state.report)
+        state = self.run_report(lambda *_: response(text), state)
+        self.assertIn(UNVERIFIED_NUMBER, state.report)
+        self.assertIn('85–180 Hz', state.report)
+        self.assertEqual(state.metrics['audit']['masked_count'], 1)
         self.assertFalse(state.metrics.get('report_verified', False))
 
     def test_real_sdk_wrapped_timeout_has_no_stacked_sdk_retries(self):

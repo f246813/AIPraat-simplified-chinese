@@ -252,6 +252,9 @@ def run(args):
                                   guard_blocks=metrics.get('guard_blocks') or {},
                                   guard_repairs=metrics.get('guard_repairs') or {},
                                   rejected_values=metrics.get('rejected_values') or [],
+                                  audit=metrics.get('audit') or {},
+                                  derived_accepted=metrics.get('report_derived_accepted', 0),
+                                  general_assumed=metrics.get('report_general_value_assumed', 0),
                                   l2_seconds=metrics.get('l2_seconds'),
                                   content=result.get('content') or '',
                                   block_log=list(block_log))
@@ -261,7 +264,7 @@ def run(args):
                                   wall_seconds=round(time.monotonic() - begin, 1))
                 results.append(record)
                 print('    ->', json.dumps({k: record.get(k) for k in
-                      ('status', 'requests', 'report_verified', 'guard_blocks',
+                      ('status', 'requests', 'report_verified', 'audit', 'guard_blocks',
                        'guard_repairs', 'error', 'wall_seconds')}, ensure_ascii=False), flush=True)
                 Path(args.out).write_text(json.dumps(results, ensure_ascii=False, indent=1),
                                           encoding='utf-8')
