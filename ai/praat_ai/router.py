@@ -125,15 +125,23 @@ def classify(config, goal: str, *, context_text: str = '', runtime=None, cancel=
         if requester is not None:
             raw = requester(config, messages)
         else:
+            # 分类只要一小段 JSON：关掉思考档位、把正文额度压到 320 token。否则
+            # qwen 系列会把整份额度花在思考上，返回空文本 + finish_reason=length
+            # （pydantic-ai 会报「token limit exceeded before any response」）。
+            import copy as _copy
+
             from .modern_budget import text_request
-            from .cloud_agent import create_model
+            small = _copy.deepcopy(config)
+            small.api.thinking_level = 'off'
+            small.api.force_deep_thinking = False
+            small.api.plan_max_tokens = min(getattr(small.api, 'plan_max_tokens', 320) or 320, 320)
             options = dict(runtime=runtime) if runtime is not None else {}
-            raw = text_request(config, messages, cancel=cancel, phase='router', **options)
+            raw = text_request(small, messages, cancel=cancel, phase='router', **options)
         intent, confidence, needs_audio = _parse(raw)
     except Exception as error:                       # noqa: BLE001 - 路由失败必须回落
-        intent = RouterIntent(intent='analyze', dialogue=hint, source='fallback')
-        _note(state, intent, str(error))
-        return intent
+        fallback = RouterIntent(intent='analyze', dialogue=hint, source='fallback')
+        _note(state, fallback, str(error))
+        return fallback
 
     dialogue = DIALOGUE.get(intent) if confidence >= CONFIDENCE_FLOOR else None
     result = RouterIntent(intent=intent, dialogue=dialogue, confidence=confidence,

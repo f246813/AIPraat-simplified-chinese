@@ -179,6 +179,16 @@ TurnBudget(tokens=32768, output=1500, requests=8, tool_calls=20, soft_deadline=N
 - 把 `coverage`/`route_reason`/守卫术语拼进正文（`modern_execution.py:714-716`）；
 - `asyncio.wait_for` 取消后丢弃 `deltas`（`modern_execution.py:682` 的兜底路径）。
 
+### 5.3 S2 实施结果（2026-10-18）
+
+- `WorkflowPolicy` 去掉 `l2_deadline_sec` / `l2_request_limit`，改为 `l2_soft_deadline_sec`（默认 60 秒，`deep` 预设 120 秒）；旧配置文件里的这两个键被忽略，向后兼容。
+- `check()` 不再因软时限抛错；判定只留在「发请求前」（`drive` 的 L2 分支），`asyncio.wait_for` 已删除——在跑的请求写完后照常交付。
+- L2 收尾三态落在 `finish_locally` + `report()` 的 except：已有正文一律保留（`partial_with_text`），不再换成 `measurement_content`。
+- 正文不再拼接「交付项状态」：`modern_execution.run` 把 `coverage` 作为结构化字段返回，正文只留模型写的结论。
+- 顺带修掉 fallback 分支重复创建 `CloudRuntime` 导致线程池漏关的问题（现在按需复用）。
+
+观察：软时限从 15 秒提到 60 秒后，慢请求不再被砍断；单轮墙钟仍由工具阶段主导（23–52 秒）。
+
 ## 6. P2：路由去正则化
 
 新组件 `ai/praat_ai/router.py`：
@@ -195,6 +205,16 @@ classify(goal, context) -> RouterIntent(intent, needs_audio, whole_object, targe
 3. 正则保留两类用途：安全硬开关（禁止自动删除/覆盖、禁止非 Praat 脚本）、分类结果的**校验器**（分类说 `concept` 但句子里有对象编号 → 改判 `analyze`）；
 4. `dialogue_policy.py`、`workflow_policy.explicit_action`、`cloud_agent.entry_mode`、`chat._whole_recording_request` 四处判据统一收敛到 `router`，删除重复实现；
 5. session 内按 goal 文本缓存分类结果，避免重复请求。
+
+### 6.1 S3 实施结果（2026-10-18）
+
+- 新增 `ai/praat_ai/router.py`：`classify()` 一轮一次。`router_mode='off'`（代码默认）时与旧行为完全一致；`'auto'` 时，正则给不出答案才问模型，答案进 `state.router_dialogue`，对话分派与 `entry_mode` 共用。
+- 分类请求关思考档位、正文额度压到 320 token：否则 qwen 系列会把整份额度花在思考上，返回空文本 + `finish_reason=length`（实测踩到过一次，pydantic-ai 报「token limit exceeded」）。
+- 失败/低置信度（< 0.6）一律 `analyze`；解析只认 JSON，未知意图直接判失败。判定结果写 `state.metrics['router']`（intent/dialogue/confidence/source/needs_audio，失败带 error）。
+- 同模型同目标的判定做 128 条缓存；部署配置已置 `router_mode=auto`。
+- 尚未收敛的部分：`workflow_policy.explicit_action` 与 `chat._whole_recording_request` 仍是正则（它们管的是"用户显式要求"，属安全开关而非意图分类），留待 P3 合并执行核心时统一。
+
+观察：3 轮抽样里最终判定全部来自模型（analyze/analyze/explain，置信度 0.95–1.0），无回落；代价是模糊回合多一次约 1–2 秒的小请求。
 
 ## 7. P3：合并两条执行实现
 
