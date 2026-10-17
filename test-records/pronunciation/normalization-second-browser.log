@@ -1,0 +1,9 @@
+
+Running 4 tests using 1 worker
+
+  ok 1 tests\browser\normalization.spec.ts:3:34 › normalization slots, explicit confirmation, z preview and bounded layout at 1040px (1.6s)
+  ok 2 tests\browser\normalization.spec.ts:3:34 › normalization slots, explicit confirmation, z preview and bounded layout at 600px (1.2s)
+  ok 3 tests\browser\prosody.spec.ts:3:34 › independent pitch/level switches, baseline confirmation and runtime repair entry 1040 (1.3s)
+  ok 4 tests\browser\prosody.spec.ts:3:34 › independent pitch/level switches, baseline confirmation and runtime repair entry 600 (1.2s)
+
+  4 passed (7.7s)

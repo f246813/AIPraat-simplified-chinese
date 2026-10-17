@@ -1,0 +1,15 @@
+test_audio_selection_deduplicates_both_sides (test_anki_bridge.AddonTests.test_audio_selection_deduplicates_both_sides) ... ok
+test_editing_entry_changes_mode_without_restart (test_anki_bridge.AddonTests.test_editing_entry_changes_mode_without_restart) ... ok
+test_other_messages_pass_through (test_anki_bridge.AddonTests.test_other_messages_pass_through) ... ok
+test_export_contains_editable_entry_and_current_paths (test_anki_bridge.BridgeTests.test_export_contains_editable_entry_and_current_paths) ... ok
+test_ffmpeg_retains_channels_and_rate (test_anki_bridge.BridgeTests.test_ffmpeg_retains_channels_and_rate) ... ok
+test_invalid_ranges (test_anki_bridge.BridgeTests.test_invalid_ranges) ... ok
+test_media_path_and_unicode_url (test_anki_bridge.BridgeTests.test_media_path_and_unicode_url) ... ok
+test_shared_reader_failure_is_not_retried_in_python (test_anki_bridge.BridgeTests.test_shared_reader_failure_is_not_retried_in_python) ... ok
+test_shared_reader_reports_conversion_without_python_retry (test_anki_bridge.BridgeTests.test_shared_reader_reports_conversion_without_python_retry) ... ok
+test_unconfirmed_delivery_does_not_retry (test_anki_bridge.BridgeTests.test_unconfirmed_delivery_does_not_retry) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.034s
+
+OK

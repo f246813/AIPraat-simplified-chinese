@@ -1,0 +1,27 @@
+[
+  {
+    "Path": "<WORKSPACE>\\Praat.exe",
+    "Integrity": 8192,
+    "SHA256": "aa39d61c4c4222f1b4976063896916efd4349575e3207d1f4b6b409942a888af"
+  },
+  {
+    "Path": "<WORKSPACE>\\scratch\\python-bridge-fix\\Praat.exe",
+    "Integrity": 8192,
+    "SHA256": "1d560c39075bf4e6ce62605463e9c5c6328ac8608aa8ba87dbb712948c52e1ca"
+  },
+  {
+    "Path": "<WORKSPACE>\\installer\\build\\AIPraat.exe",
+    "Integrity": 8192,
+    "SHA256": "1f9b70efc708fc44f5b8f3239ce3a6812cfe3b1182f8da3823a02795ce3f5a4b"
+  },
+  {
+    "Path": "<WORKSPACE>\\AIPraat-paths.exe",
+    "Integrity": 8192,
+    "SHA256": "eb2466b9199d0d167c894eac06379379e4900218b12087081a2a3b6a3a6400b0"
+  },
+  {
+    "Path": "<WORKSPACE>\\AIPraat-install.exe",
+    "Integrity": 8192,
+    "SHA256": "a8f170175ffef9ee17a426756ac96fcab189ea06f47ba02f83ede33fed1876f2"
+  }
+]

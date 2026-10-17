@@ -52,6 +52,10 @@ it('resolves an anchor back to a scroll position, and refuses an unmounted row',
   // Round trip: the anchor read at a position resolves back to the same position.
   const anchor = anchorFor(rows, 640)!;
   expect(scrollTopFor(rows, anchor)).toBe(640);
+  const fractionalRows = [{id:'a',top:24.25},{id:'b',top:500.75}];
+  const fractional = anchorFor(fractionalRows, 640.125)!;
+  expect(fractional.offset).toBe(-139.375);
+  expect(scrollTopFor(fractionalRows, fractional)).toBe(640.125);
 });
 
 it('absorbs exactly the height a wider window prepends, and nothing when it shrinks', () => {

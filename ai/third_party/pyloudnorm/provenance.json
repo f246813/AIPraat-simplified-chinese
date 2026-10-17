@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "license": "MIT",
+  "upstream": "https://github.com/csteinmetz1/pyloudnorm",
+  "source_commit": "b8d67bfd3ce5deef872f688fcfa491a0ca69fddd",
+  "pypi": "https://pypi.org/project/pyloudnorm/0.2.0/",
+  "scipy_constraint": ">=1.14.1,<1.15",
+  "numpy_constraint": ">=2.0,<2.3",
+  "scipy_source": "https://github.com/scipy/scipy/tree/v1.14.1",
+  "scipy_license": "BSD-3-Clause; bundled component notices are in each wheel scipy-1.14.1.dist-info/LICENSE.txt",
+  "scipy_requires_python": ">=3.10",
+  "scipy_requires_numpy": ">=1.23.5,<2.3",
+  "artifacts": [
+    {"path": "wheels/pyloudnorm-0.2.0-py3-none-any.whl", "sha256": "9bb69afb904f59d007a7f9ba3d75d16fb8aeef35c44d6df822a9f192d69cf13f"},
+    {"path": "pyloudnorm-0.2.0.tar.gz", "sha256": "8bf597658ea4e1975c275adf490f6deb5369ea409f2901f939915efa4b681b16"},
+    {"path": "wheels/scipy-1.14.1-cp310-cp310-win_amd64.whl", "sha256": "a49f6ed96f83966f576b33a44257d869756df6cf1ef4934f59dd58b25e0327e5"},
+    {"path": "wheels/scipy-1.14.1-cp311-cp311-win_amd64.whl", "sha256": "716e389b694c4bb564b4fc0c51bc84d381735e0d39d3f26ec1af2556ec6aad94"},
+    {"path": "wheels/scipy-1.14.1-cp312-cp312-win_amd64.whl", "sha256": "2ff38e22128e6c03ff73b6bb0f85f897d2362f8c052e3b8ad00532198fbdae3f"},
+    {"path": "wheels/numpy-2.2.6-cp311-cp311-win_amd64.whl", "sha256": "e8213002e427c69c45a52bbd94163084025f533a55a59d6f9c5b820774ef3303"}
+  ],
+  "python_sources_sha256": {
+    "pyloudnorm/__init__.py": "4537fc38e05119abfbd343d9df912cc2ad8bff3117b58465f99b7269eab9e5b2",
+    "pyloudnorm/iirfilter.py": "4e20bb7c0a1b75eedee0dfefad1f5a238488551a82677fac6f7311d3ccdf56e3",
+    "pyloudnorm/meter.py": "e3d5da93e44f565fd695b09a8717e04d42f71ad5e9eb19a4b6033debcc48e4f4",
+    "pyloudnorm/normalize.py": "e0601829d64e665a4763cb3616ac0b2dadbcf21b60d610fc2f4ea140fe752167",
+    "pyloudnorm/util.py": "38554a8fda0ff773504735d6d5533378a0ab699bf6a7e4f748dd2e10cc32b947"
+  }
+}

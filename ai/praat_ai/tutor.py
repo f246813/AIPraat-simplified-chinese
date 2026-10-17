@@ -5,21 +5,28 @@ import os
 import re
 import shutil
 import sys
+import threading
 import tempfile
 from collections.abc import Callable
 from dataclasses import dataclass
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
+from .analysis_progress import run_with_stop
 from .bridge import PraatBridge, object_payload
 from .config import AppConfig, load_config
 from .models import AnalysisRequest, AnalysisResult, PhoneSpec
-from .pronunciation import analyze_pronunciation
+from .pronunciation import analyze_pronunciation, conclusion_caveat, explanation_evidence
+from .pronunciation_rules import resolve_profile
 from .qwen import QwenClient, QwenError
 from .report import write_json, write_overlay_png, write_textgrid
+from . import report_guards
 from .server import QwenServerError, QwenServerManager
+from .forced_alignment import AlignmentCancelled
 from .ui import show_tutor_form
 from .vram import detect_gpu, select_runtime_profile
+from .mfa_task import task_alignment, explanation_payload
 
 
 @dataclass(slots=True)
@@ -30,11 +37,60 @@ class TutorOutputs:
     result: AnalysisResult
 
 
+
+def _explanation_context(request_payload: dict[str, Any] | None) -> tuple[str, Any, Any]:
+    """从请求负载里取「这次分析针对哪些对象」，供解释守卫认对象与范围。"""
+
+    payload = request_payload or {}
+    reference = payload.get("resolved_reference") or {}
+    learner = payload.get("resolved_learner") or {}
+    rows = ["id\tclass\tname\tselected\tsel_start\tsel_end"]
+    for item in (reference, learner):
+        if not item.get("id"):
+            continue
+        rows.append(f"{item['id']}\t{item.get('class') or 'Sound'}\t{item.get('name') or ''}\t1\t\t")
+    return "\n".join(rows) + "\n", reference.get("id"), learner.get("id")
+
+
+def guard_explanation(
+    result: AnalysisResult,
+    text: str,
+    *,
+    request_payload: dict[str, Any] | None = None,
+    caveat: bool = True,
+) -> tuple[str, str]:
+    """AI 解释交付前走与云端报告同一份证据守卫，并附结论等级说明。
+
+    设计文档点名的缺口：解释直接调用文字接口交付，云端报告已有的数值核对在这里完全
+    不生效——本机与云端 provider 都一样。这里把解释当「模型对本次测量的主张」核对：
+
+    - 数值核对不上本次实测 → 遮蔽并标记（``rejected_masked``），不原样交付；
+    - ``check_statuses`` 说明对比不完整时 → 附上与 JSON 同一套状态的结论等级说明，
+      解释不能给出无条件结论；
+    - 状态原样返回给调用方写进交付物（``AnalysisResult.explanation_status``）。
+    """
+
+    context_text, reference_object, learner_object = _explanation_context(request_payload)
+    state = explanation_evidence(
+        result,
+        context_text=context_text,
+        reference_object=reference_object,
+        learner_object=learner_object,
+    )
+    guarded, status = report_guards.guard_delivered_text(state, str(text or ""))
+    note = conclusion_caveat(result) if caveat else ""
+    if note and note not in str(result.explanation or "") and note not in guarded:
+        guarded = (guarded.strip() + "\n\n" + note).strip()
+        result.warnings.append("解释结论等级：" + note)
+    return guarded, status
+
+
 def request_from_dict(payload: dict[str, Any]) -> AnalysisRequest:
     phonemes = [
         PhoneSpec(
             ipa=str(item["ipa"]),
             label=str(item.get("label", "")),
+            phone_index=int(item["phone_index"]) if item.get("phone_index") is not None else None,
             reference_start=float(item.get("reference_start", 0.0)),
             reference_end=float(item.get("reference_end", 0.0)),
             learner_start=(
@@ -63,13 +119,15 @@ def request_from_dict(payload: dict[str, Any]) -> AnalysisRequest:
         phonemes=phonemes,
         transcript=str(payload.get("transcript", "")),
         error_threshold=float(payload.get("error_threshold", 1.25)),
-        minimum_error_duration_sec=float(
-            payload.get("minimum_error_duration_sec", 0.04)
-        ),
         maximum_errors_per_phone=int(payload.get("maximum_errors_per_phone", 3)),
         qwen_explain=bool(payload.get("qwen_explain", True)),
         qwen_vision=bool(payload.get("qwen_vision", False)),
         output_prefix=str(payload.get("output_prefix", "ai")),
+        profile_id=str(payload["profile_id"]) if payload.get("profile_id") else None,
+        mfa_snapshot=payload.get('mfa_snapshot'),
+        selected_readings=payload.get('selected_readings', []),
+        generation_source=str(payload.get('generation_source', '')),
+        normalization=deepcopy(payload.get('normalization')),
     )
 
 
@@ -103,6 +161,13 @@ def _resolve_request(
     return request, payload
 
 
+def _require_not_cancelled(cancel: threading.Event | None, message: str) -> None:
+    """取消检查点：取消是「中止」，不是「失败」。"""
+
+    if cancel is not None and cancel.is_set():
+        raise AlignmentCancelled(message)
+
+
 def run_tutor(
     *,
     config_path: str | Path | None = None,
@@ -110,7 +175,19 @@ def run_tutor(
     user_text: str | None = None,
     request: AnalysisRequest | None = None,
     progress: Callable[[float, str], None] | None = None,
+    cancel: threading.Event | None = None,
 ) -> TutorOutputs:
+    """跑一次纠音分析并写报告。
+
+    ``cancel`` 会被贯穿到分析/对齐阶段（见 :func:`praat_ai.pronunciation.analyze_pronunciation`）：
+    取消不会产出「已完成」的报告；如果取消发生在测量之后，已取得的测量结果照常写进报告，
+    只是不再生成 AI 解释（结果保留，不丢证据）。
+    """
+
+    _require_not_cancelled(cancel, '已取消本次分析：还没有连接 Praat。')
+    if request is not None and request.normalization is not None:
+        request = deepcopy(request)  # Freeze before callbacks/model startup can change the caller's selection.
+
     def report(fraction: float, message: str) -> None:
         if progress:
             progress(fraction, message)
@@ -134,6 +211,7 @@ def run_tutor(
         request_payload["resolved_reference"] = reference.to_dict()
         request_payload["resolved_learner"] = learner.to_dict()
 
+    resolve_profile(request.profile_id, request.language)
     gpu = detect_gpu()
     profile = select_runtime_profile(
         gpu.free_mb if gpu else None,
@@ -153,8 +231,13 @@ def run_tutor(
                 server_error = str(error)
 
         report(0.32, "音素对齐与声学特征提取")
-        result = analyze_pronunciation(request, config.alignment)
-        report(0.68, "生成偏差评分")
+        with task_alignment(request, config.alignment) as task_config:
+            result = analyze_pronunciation(request, task_config, cancel=cancel)
+        if request.mfa_snapshot:
+            result.mfa_snapshot = request.mfa_snapshot
+            result.selected_readings = request.selected_readings
+            result.generation_source = request.generation_source
+        report(0.68, "汇总音位判据与证据状态" if request.profile_id else "生成偏差评分")
         output_dir = bridge.output_dir()
         output_dir.mkdir(parents=True, exist_ok=True)
         prefix = re.sub(r"[^\w.-]+", "_", request.output_prefix).strip("._") or "ai"
@@ -173,19 +256,28 @@ def run_tutor(
         textgrid_path = report_dir / f"{prefix}_errors.TextGrid"
         overlay_path = report_dir / f"{prefix}_overlay.png"
 
-        if request.qwen_explain:
+        if cancel is not None and cancel.is_set():
+            # 测量已经拿到：取消只停掉「写解释」这一步，报告照样交付，缺的那一步如实写明。
+            result.explanation = "已取消：测量结果已保留，未生成 AI 解释。"
+            result.explanation_status = "cancelled"
+            result.warnings.append("已取消：未生成 AI 解释；下面的测量结果在取消前已经完成。")
+        elif request.qwen_explain:
             client = QwenClient(config.qwen)
             if client.available():
                 try:
                     report(0.76, "生成前端解释")
-                    result.explanation = client.explain_errors(
-                        request_payload,
-                        result.to_dict(),
+                    explanation = client.explain_errors(
+                        explanation_payload(request_payload),
+                        explanation_payload(result.to_dict()),
                     )
+                    result.explanation, result.explanation_status = guard_explanation(
+                        result, explanation, request_payload=request_payload)
                 except QwenError as error:
                     result.explanation = f"Qwen 解释不可用：{error}"
+                    result.explanation_status = "unavailable"
             elif server_error:
                 result.explanation = f"Qwen 解释不可用：{server_error}"
+                result.explanation_status = "unavailable"
 
         report(0.86, "生成 TextGrid、JSON 和叠加图")
         write_textgrid(result, textgrid_path)
@@ -202,16 +294,22 @@ def run_tutor(
                     report(0.94, "生成视觉解释")
                     vision_explanation = client.vision_explain(
                         overlay_path,
-                        request_payload,
-                        result.to_dict(),
+                        explanation_payload(request_payload),
+                        explanation_payload(result.to_dict()),
                     )
                     if vision_explanation:
+                        guarded, status = guard_explanation(
+                            result, vision_explanation, request_payload=request_payload)
                         result.explanation = (
-                            result.explanation + "\n\n图表解释：\n" + vision_explanation
+                            result.explanation + "\n\n图表解释：\n" + guarded
                         ).strip()
+                        if status == "rejected_masked":
+                            result.explanation_status = "rejected_masked"
                         write_json(result, json_path)
-                except QwenError:
-                    pass
+                except QwenError as error:
+                    # 视觉解释失败以前被静默丢掉；这里留原因，并重写报告让它真的落到交付物里。
+                    result.warnings.append(f"视觉解释未生成：{error}")
+                    write_json(result, json_path)
 
         report(1.0, "分析完成")
         return TutorOutputs(
@@ -243,20 +341,42 @@ def run_from_praat(
             if item.class_name == "Sound"
         ]
         try:
-            values = show_tutor_form(sounds)
+            values = show_tutor_form(sounds, config_path=config_path)
         except ValueError as error:
             print(str(error), file=sys.stderr)
             return 1
+        except Exception as error:
+            from .desktop_launch import report_failure
+            return report_failure(error, config_path=config_path)
         request = values.request
         if request is None:
             return 0
-    outputs = run_tutor(
-        config_path=config_path,
-        request_path=request_path,
-        user_text=user_text,
-        request=request,
-    )
-    print(f"AI 纠音完成，发现 {len(outputs.result.errors)} 个偏差。")
+    try:
+        # 阶段 3：分析这一段给一个「简约小窗 + 停止按钮」（沿用 progress_popup 的设计语言）。
+        # 取消不是失败：run_tutor 在测量完成前中止就不写报告，测量完成后取消只停掉 AI 解释。
+        outputs, cancelled = run_with_stop(
+            lambda cancel, report: run_tutor(
+                config_path=config_path,
+                request_path=request_path,
+                user_text=user_text,
+                request=request,
+                progress=report,
+                cancel=cancel,
+            ),
+            enabled=interactive,
+        )
+    except AlignmentCancelled as error:
+        print(f"已停止分析：{error}", file=sys.stderr)
+        print("本次没有生成报告；如需报告请重新运行并让它走完。", file=sys.stderr)
+        return 3
+    except ValueError as error:
+        print(f"无法开始 AI 纠音：{error}", file=sys.stderr)
+        return 1
+    if outputs.result.profile_snapshot:
+        print(f"音位声学对比完成，生成 {len(outputs.result.observations)} 项观察（实验性）。")
+        print("未执行独立音素识别；观察不代表发音对错。")
+    else:
+        print(f"旧式声学对比完成，发现 {len(outputs.result.errors)} 个偏差。")
     print(
         f"对齐：{outputs.result.alignment_source or 'unknown'}，"
         f"置信度 {outputs.result.alignment_confidence:.2f}"
@@ -265,6 +385,9 @@ def run_from_praat(
     print(f"标注（TextGrid 文件）：{outputs.textgrid_path}")
     if outputs.overlay_path:
         print(f"叠加图（PNG 文件）：{outputs.overlay_path}")
+    if cancelled:
+        # 取消发生在测量之后：结果已经写进上面那份报告，缺的只有 AI 解释。
+        print("已停止：不再生成 AI 解释；取消前完成的测量结果照常写进上面这份报告。")
     if outputs.result.explanation:
         print("")
         print(outputs.result.explanation)

@@ -1,0 +1,4 @@
+PASS delivered root path window has no language model row or gap
+REAL-WORKFLOW runtime=已就绪 13/13 · cpu probeValid=True validation=全部必需依赖已就绪。
+FFmpeg: 已就绪：ffmpeg version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers；实际 OGG → WAV 解码通过。
+PASS delivered root path window completes real asynchronous runtime and FFmpeg detection

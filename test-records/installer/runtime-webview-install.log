@@ -1,0 +1,5 @@
+PASS missing WebView2 requires a local runtime installer
+PASS offline mode rejects bootstrapper
+PASS invalid Microsoft signature prevents execution
+PASS WebView2 failure preserves unready status
+PASS official silent installation rechecks runtime and preserves existing install

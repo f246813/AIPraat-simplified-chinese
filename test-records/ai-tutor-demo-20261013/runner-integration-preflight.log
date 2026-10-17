@@ -1,0 +1,9 @@
+测试环境未就绪，请用 -Python 指定 Python 3.10–3.12 x64 且运行库齐全的 python.exe。
+Interpreter not found: missing-python.exe
+At <WORKSPACE>\installer\tests\TestEnvironment.ps1:53 char:5
++     throw ("测试环境未就绪，请用 -Python 指定 Python 3.10–3.12 x64 且运行库齐全的 python ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (测试环境未就绪，请用 -Pyt...sing-python.exe:String) [], RuntimeException
+    + FullyQualifiedErrorId : 测试环境未就绪，请用 -Python 指定 Python 3.10–3.12 x64 且运行库齐全的 python.exe。
+Interpreter not found: missing-python.exe
+ 

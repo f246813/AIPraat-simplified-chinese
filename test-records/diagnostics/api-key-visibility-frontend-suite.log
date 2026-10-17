@@ -1,0 +1,44 @@
+
+> praat-assistant-frontend@1.0.0 test
+> vitest run
+
+
+ RUN  v3.2.4 <WORKSPACE>/ai/frontend
+
+ ✓ tests/bridge-store.test.ts (17 tests) 61ms
+ ✓ tests/search.test.ts (8 tests) 39ms
+ ✓ tests/session-menu.test.ts (7 tests) 37ms
+ ✓ tests/organization-store.test.ts (9 tests) 340ms
+ ✓ tests/workflow-settings.test.tsx (2 tests) 426ms
+   ✓ workflow presets, custom edit, host save and reopen never start model tests  424ms
+ ✓ tests/archived-settings.test.tsx (2 tests) 544ms
+   ✓ failed restore keeps history visible, reports the error and permits a successful retry  370ms
+ ✓ tests/model-settings-navigation.test.tsx (2 tests) 591ms
+   ✓ repeated menu requests select Model/API and keep unsaved settings  584ms
+ ✓ tests/composer-status.test.tsx (8 tests) 1031ms
+   ✓ debounces real host estimates and ignores stale session replies  360ms
+ ✓ tests/local-model-path-settings.test.tsx (2 tests) 807ms
+   ✓ local connection settings offer a model picker and save its path  476ms
+   ✓ canceling the native picker preserves the selected unsaved model  329ms
+ ✓ tests/layout.test.ts (7 tests) 25ms
+ ✓ tests/sidebar-search.test.tsx (5 tests) 730ms
+ ✓ tests/startup-session.test.ts (3 tests) 31ms
+ ✓ tests/archived-groups.test.ts (2 tests) 18ms
+ ✓ tests/speech-dictionaries.test.tsx (9 tests) 1916ms
+   ✓ opens the Wav2Vec2 folder picker and selects a model through its own namespace  520ms
+   ✓ switches the sidebar to acoustic models and uses their picker and current selection  338ms
+   ✓ models share deletion confirmation and return to dictionaries through the sidebar  355ms
+ ✓ tests/editor.test.ts (10 tests) 17ms
+ ✓ tests/modern-boundaries.test.ts (2 tests) 10ms
+ ✓ tests/transcript-menu.test.ts (5 tests) 8ms
+ ✓ tests/minimap.test.ts (6 tests) 7ms
+ ✓ tests/transcript-window.test.ts (6 tests) 8ms
+ ✓ tests/completions.test.ts (4 tests) 6ms
+ ✓ tests/sidebar-origins.test.ts (2 tests) 6ms
+ ✓ tests/scroll.test.ts (5 tests) 4ms
+
+ Test Files  22 passed (22)
+      Tests  123 passed (123)
+   Start at  22:39:58
+   Duration  4.89s (transform 2.76s, setup 0ms, collect 8.45s, tests 6.66s, environment 21.41s, prepare 3.73s)
+

@@ -8695,12 +8695,12 @@ static autoDaata oggFileRecognizer (integer nread, const char *header, MelderFil
 		header [10] == '\0' && header [11] == '\0' && header [12] == '\0' && header [13] == '\0' &&
 		strnequ (& header [28], "OpusHead", 8))
 	{
-		return Sound_readFromOggOpusFile (file);
+		return Sound_readFromSoundFile (file);
 	}
 	/*
 		Leave rest of checking to libVorbis
 	*/
-	return Sound_readFromOggVorbisFile (file);
+	return Sound_readFromSoundFile (file);
 }
 
 void praat_CC_init (ClassInfo klas) {

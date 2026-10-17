@@ -1,0 +1,345 @@
+python.exe : 
+所在位置 行:1 字符: 182
++ ... NG='utf-8'; & "$PWD\scratch\normalization-runtime\full312\venv\Script ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Loading weights:   0%|          | 0/424 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 424/424 [00:00<00:00, 30198.42it/s]
+
+Loading weights:   0%|          | 0/424 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 424/424 [00:00<00:00, 30278.11it/s]
+{
+  "marker": "SMOKE-NOT-ACCEPTANCE-NOT-ACCURACY",
+  "learner": {
+    "file": "learner.user.wav",
+    "channels": 1,
+    "sample_width": 2,
+    "sample_rate": 44100,
+    "duration": 0.892,
+    "peak": 0.0399,
+    "rms": 0.00671,
+    "integrated_lufs": -44.22,
+    "gain_to_target_db": 21.22,
+    "peak_after_gain": 0.459,
+    "pitch": {
+      "status": "applied",
+      "baseline_hz": 95.01,
+      "median_hz": 95.01,
+      "min_hz": 77.0,
+      "max_hz": 598.5,
+      "valid_frames": 39,
+      "octave_suspicion_frames": []
+    }
+  },
+  "reference": {
+    "file": "ckali.cc0.wav",
+    "channels": 1,
+    "sample_width": 2,
+    "sample_rate": 48000,
+    "duration": 1.053,
+    "peak": 0.2849,
+    "rms": 0.02664,
+    "integrated_lufs": -31.042,
+    "gain_to_target_db": 8.04,
+    "peak_after_gain": 0.719,
+    "pitch": {
+      "status": "applied",
+      "baseline_hz": 105.54,
+      "median_hz": 105.54,
+      "min_hz": 96.0,
+      "max_hz": 110.4,
+      "valid_frames": 33,
+      "octave_suspicion_frames": []
+    },
+    "provenance": {
+      "project": "Wikimedia Commons / Lingua Libre",
+      "speaker": "CKali",
+      "license": "CC0 1.0",
+      "recorded": "2023-07-22",
+      "page": "https://commons.wikimedia.org/wiki/File:LL-Q5287_(jpn)-CKali-%E3%81%82%E3%81%AA%E3%81%9F.wav",
+      "commons_sha1": "e2c1d6fddbb36503689b217ef155d14df2957774"
+    }
+  },
+  "baseline_difference_st": -1.82,
+  "raw": {
+    "alignment_source": "wav2vec2:<WORKSPACE>\\声学模型与语音词典\\Wav2Vec2\\wav2vec2-lv-60-espeak-cv-ft",
+    "alignment_confidence": 0.782,
+    "learner_intervals": [
+      [
+        "a",
+        0.182,
+        0.203,
+        "wav2vec2:<WORKSPACE>\\声学模型与语音词典\\Wav2Vec2\\wav2vec2-lv-60-espeak-cv-ft",
+        0.782
+      ],
+      [
+        "n",
+        0.263,
+        0.284,
+        "wav2vec2:<WORKSPACE>\\声学模型与语音词典\\Wav2Vec2\\wav2vec2-lv-60-espeak-cv-ft",
+        0.782
+      ],
+      [
+        "a",
+        0.324,
+        0.345,
+        "wav2vec2:<WORKSPACE>\\声学模型与语音词典\\Wav2Vec2\\wav2vec2-lv-60-espeak-cv-ft",
+        0.782
+      ],
+      [
+        "t",
+        0.486,
+        0.507,
+        "wav2vec2:<WORKSPACE>\\声学模型与语音词典\\Wav2Vec2\\wav2vec2-lv-60-espeak-cv-ft",
+        0.782
+      ],
+      [
+        "a",
+        0.527,
+        0.547,
+        "wav2vec2:<WORKSPACE>\\声学模型与语音词典\\Wav2Vec2\\wav2vec2-lv-60-espeak-cv-ft",
+        0.782
+      ]
+    ],
+    "check_statuses": {
+      "relative_duration": "observed",
+      "phone_acoustics": "not_evaluated",
+      "independent_phone_recognition": "not_evaluated",
+      "stress_or_pitch_accent": "not_evaluated",
+      "mora_structure": "not_evaluated"
+    },
+    "errors": [],
+    "observations": [
+      {
+        "phone": 1,
+        "ipa": "a",
+        "feature": "relative_duration",
+        "unit": "ratio",
+        "reference": 1.0,
+        "learner": 1.0
+      },
+      {
+        "phone": 2,
+        "ipa": "n",
+        "feature": "relative_duration",
+        "unit": "ratio",
+        "reference": 1.0,
+        "learner": 1.0
+      },
+      {
+        "phone": 3,
+        "ipa": "a",
+        "feature": "relative_duration",
+        "unit": "ratio",
+        "reference": 1.0,
+        "learner": 1.0
+      },
+      {
+        "phone": 4,
+        "ipa": "t",
+        "feature": "relative_duration",
+        "unit": "ratio",
+        "reference": 1.0,
+        "learner": 1.0
+      },
+      {
+        "phone": 5,
+        "ipa": "a",
+        "feature": "relative_duration",
+        "unit": "ratio",
+        "reference": 1.0,
+        "learner": 1.0
+      }
+    ],
+    "normalization": {},
+    "warnings": [
+      "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+    ]
+  },
+  "normalized": {
+    "alignment_source": "wav2vec2:<WORKSPACE>\\声学模型与语音词典\\Wav2Vec2\\wav2vec2-lv-60-espeak-cv-ft",
+    "alignment_confidence": 0.782,
+    "learner_intervals": [
+      [
+        "a",
+        0.182,
+        0.203,
+        "wav2vec2:<WORKSPACE>\\声学模型与语音词典\\Wav2Vec2\\wav2vec2-lv-60-espeak-cv-ft",
+        0.782
+      ],
+      [
+        "n",
+        0.263,
+        0.284,
+        "wav2vec2:<WORKSPACE>\\声学模型与语音词典\\Wav2Vec2\\wav2vec2-lv-60-espeak-cv-ft",
+        0.782
+      ],
+      [
+        "a",
+        0.324,
+        0.345,
+        "wav2vec2:<WORKSPACE>\\声学模型与语音词典\\Wav2Vec2\\wav2vec2-lv-60-espeak-cv-ft",
+        0.782
+      ],
+      [
+        "t",
+        0.486,
+        0.507,
+        "wav2vec2:<WORKSPACE>\\声学模型与语音词典\\Wav2Vec2\\wav2vec2-lv-60-espeak-cv-ft",
+        0.782
+      ],
+      [
+        "a",
+        0.527,
+        0.547,
+        "wav2vec2:<WORKSPACE>\\声学模型与语音词典\\Wav2Vec2\\wav2vec2-lv-60-espeak-cv-ft",
+        0.782
+      ]
+    ],
+    "check_statuses": {
+      "relative_pitch_observation": "observed",
+      "relative_loudness_observation": "insufficient_evidence",
+      "relative_duration": "observed",
+      "phone_acoustics": "not_evaluated",
+      "independent_phone_recognition": "not_evaluated",
+      "stress_or_pitch_accent": "not_evaluated",
+      "mora_structure": "not_evaluated"
+    },
+    "errors": [],
+    "observations": [
+      {
+        "phone": 1,
+        "ipa": "a",
+        "feature": "relative_duration",
+        "unit": "ratio",
+        "reference": 1.0,
+        "learner": 1.0
+      },
+      {
+        "phone": 2,
+        "ipa": "n",
+        "feature": "relative_duration",
+        "unit": "ratio",
+        "reference": 1.0,
+        "learner": 1.0
+      },
+      {
+        "phone": 3,
+        "ipa": "a",
+        "feature": "relative_duration",
+        "unit": "ratio",
+        "reference": 1.0,
+        "learner": 1.0
+      },
+      {
+        "phone": 4,
+        "ipa": "t",
+        "feature": "relative_duration",
+        "unit": "ratio",
+        "reference": 1.0,
+        "learner": 1.0
+      },
+      {
+        "phone": 5,
+        "ipa": "a",
+        "feature": "relative_duration",
+        "unit": "ratio",
+        "reference": 1.0,
+        "learner": 1.0
+      },
+      {
+        "phone": 1,
+        "ipa": "a",
+        "feature": "pitch_reliable_hz",
+        "unit": "Hz",
+        "reference": 106.188,
+        "learner": 102.9391
+      },
+      {
+        "phone": 1,
+        "ipa": "a",
+        "feature": "pitch_relative_st",
+        "unit": "st",
+        "reference": 0.1066,
+        "learner": 1.388
+      },
+      {
+        "phone": 2,
+        "ipa": "n",
+        "feature": "pitch_reliable_hz",
+        "unit": "Hz",
+        "reference": 109.7726,
+        "learner": 89.55
+      },
+      {
+        "phone": 2,
+        "ipa": "n",
+        "feature": "pitch_relative_st",
+        "unit": "st",
+        "reference": 0.6811,
+        "learner": -1.0245
+      },
+      {
+        "phone": 3,
+        "ipa": "a",
+        "feature": "pitch_reliable_hz",
+        "unit": "Hz",
+        "reference": 105.4522,
+        "learner": 114.1065
+      },
+      {
+        "phone": 3,
+        "ipa": "a",
+        "feature": "pitch_relative_st",
+        "unit": "st",
+        "reference": -0.0138,
+        "learner": 3.1673
+      },
+      {
+        "phone": 5,
+        "ipa": "a",
+        "feature": "pitch_reliable_hz",
+        "unit": "Hz",
+        "reference": 104.4962,
+        "learner": 79.4021
+      },
+      {
+        "phone": 5,
+        "ipa": "a",
+        "feature": "pitch_relative_st",
+        "unit": "st",
+        "reference": -0.1715,
+        "learner": -3.1065
+      }
+    ],
+    "normalization": {
+      "formants": {},
+      "pitch": {
+        "status": "applied",
+        "reason": "",
+        "method": "utterance_relative_pitch",
+        "unit": "st",
+        "observation_count": 4,
+        "comparison_status": "observed"
+      },
+      "loudness": {
+        "status": "applied",
+        "reason": "",
+        "method": "integrated_lufs_constant_gain",
+        "observation_count": 0,
+        "comparison_status": "insufficient_evidence"
+      }
+    },
+    "warnings": [
+      "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+    ]
+  },
+  "notes": [
+    "Automatic MFA alignment, not human-checked boundaries.",
+    "No per-speaker vowel calibration: formant normalization is off, no z score is claimed.",
+    "A downloaded word cannot be an acceptance reference speaker (no independent calibration).",
+    "Counts and values are engineering observations, not accuracy or error rates."
+  ]
+}

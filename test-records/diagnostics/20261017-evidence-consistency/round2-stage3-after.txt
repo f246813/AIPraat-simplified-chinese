@@ -1,0 +1,27 @@
+﻿python.exe : test_evidence_carries_both_sides_measured_values (test_explanation_guard.ExplanationEvidenceTests.test_evi
+dence_carries_both_sides_measured_values) ... ok
+所在位置 行:1 字符: 543
++ ... onsistency"; & $py -m unittest test_explanation_guard -v 2>&1 | Out-F ...
++                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_evidence_c..._values) ... ok:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test_caveat_is_recorded_in_warnings (test_explanation_guard.GuardedExplanationTests.test_caveat_is_recorded_in_warnings
+) ... ok
+test_complete_comparison_has_no_caveat (test_explanation_guard.GuardedExplanationTests.test_complete_comparison_has_no_
+caveat) ... ok
+test_fabricated_number_is_masked_and_measured_number_survives (test_explanation_guard.GuardedExplanationTests.test_fabr
+icated_number_is_masked_and_measured_number_survives) ... ok
+test_gaps_force_a_conclusion_caveat (test_explanation_guard.GuardedExplanationTests.test_gaps_force_a_conclusion_caveat
+) ... ok
+test_measured_explanation_keeps_its_text (test_explanation_guard.GuardedExplanationTests.test_measured_explanation_keep
+s_its_text) ... ok
+test_text_explanation_is_masked_before_delivery (test_explanation_guard.TutorExplanationDeliveryTests.test_text_explana
+tion_is_masked_before_delivery) ... ok
+test_vision_failure_is_recorded_not_swallowed (test_explanation_guard.TutorExplanationDeliveryTests.test_vision_failure
+_is_recorded_not_swallowed) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.086s
+
+OK

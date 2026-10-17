@@ -1,0 +1,35 @@
+
+> praat-assistant-frontend@1.0.0 test:ui
+> playwright test tests/browser/pronunciation.spec.ts tests/browser/normalization.spec.ts tests/browser/prosody.spec.ts tests/browser/webview-design.spec.ts tests/browser/workflow.spec.ts
+
+[WebServer] (node:18120) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 20 tests using 1 worker
+
+(node:28312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 tests\browser\normalization.spec.ts:3:34 › normalization slots, explicit confirmation, z preview and bounded layout at 1040px (1.2s)
+  ok  2 tests\browser\normalization.spec.ts:3:34 › normalization slots, explicit confirmation, z preview and bounded layout at 600px (940ms)
+  ok  3 tests\browser\pronunciation.spec.ts:85:1 › desktop and small windows retain visible actions and scroll advanced fields without overlap (1.5s)
+  ok  4 tests\browser\pronunciation.spec.ts:117:1 › validates IPA, selects Japanese rules, and submits only one analysis (823ms)
+  ok  5 tests\browser\pronunciation.spec.ts:158:1 › dark theme and keyboard focus render in the actual frontend (702ms)
+  ok  6 tests\browser\pronunciation.spec.ts:181:1 › G2P candidate confirmation, generated submission and resource editor stay usable at 1040/600/375 widths (3.0s)
+  ok  7 tests\browser\pronunciation.spec.ts:298:1 › generated request sends unique-word choices and server generation identity (767ms)
+  ok  8 tests\browser\pronunciation.spec.ts:332:1 › late generation cannot overwrite new transcript and cancel keeps pending request busy (818ms)
+  ok  9 tests\browser\prosody.spec.ts:3:34 › independent pitch/level switches, baseline confirmation and runtime repair entry 1040 (868ms)
+  ok 10 tests\browser\prosody.spec.ts:3:34 › independent pitch/level switches, baseline confirmation and runtime repair entry 600 (836ms)
+  ok 11 tests\browser\webview-design.spec.ts:14:1 › final chrome and stable composer expansion preserve saved sizes and rich editor (1.9s)
+  ok 12 tests\browser\webview-design.spec.ts:69:1 › conversation title resists selection and the expanded composer reaches 7/12 of the pane (1.0s)
+  ok 13 tests\browser\webview-design.spec.ts:100:1 › the resting composer also follows the pane instead of a fixed 720 band (848ms)
+  ok 14 tests\browser\webview-design.spec.ts:132:1 › dragging the conversation header asks the host to move the window instead of selecting the title (765ms)
+  ok 15 tests\browser\webview-design.spec.ts:148:1 › real Markdown math remains offline, italic and unboxed; quote/code/table rendering survives (872ms)
+  ok 16 tests\browser\webview-design.spec.ts:185:1 › opaque window base keeps the 14px/18px header and composer blur fades after the transparency rollback (1.1s)
+  ok 17 tests\browser\webview-design.spec.ts:237:1 › empty-state welcome stays centered on the composer band while the sidebar and window change (5.8s)
+  ok 18 tests\browser\webview-design.spec.ts:281:1 › sidebar dialogs center within the chat pane after resize and keep Escape dismissal (1.0s)
+  ok 19 tests\browser\workflow.spec.ts:3:1 › workflow page presets and custom policy save through host fixture (1.1s)
+  ok 20 tests\browser\workflow.spec.ts:52:1 › published result remains readable after explanation cancellation (1.2s)
+
+  20 passed (29.2s)

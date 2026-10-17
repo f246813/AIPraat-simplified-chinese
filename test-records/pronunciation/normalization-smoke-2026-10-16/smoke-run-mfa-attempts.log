@@ -1,0 +1,193 @@
+{
+  "marker": "SMOKE-NOT-ACCEPTANCE-NOT-ACCURACY",
+  "learner": {
+    "file": "learner.user.wav",
+    "channels": 1,
+    "sample_width": 2,
+    "sample_rate": 44100,
+    "duration": 0.892,
+    "peak": 0.0399,
+    "rms": 0.00671,
+    "integrated_lufs": -44.22,
+    "gain_to_target_db": 21.22,
+    "peak_after_gain": 0.459,
+    "pitch": {
+      "status": "applied",
+      "baseline_hz": 95.01,
+      "raw_median_hz": 95.01,
+      "raw_min_hz": 77.0,
+      "raw_max_hz": 598.5,
+      "valid_frames": 39,
+      "octave_suspicion_frames": []
+    },
+    "alignment": {
+      "source": "proportional",
+      "confidence": 0.25,
+      "intervals": [
+        [
+          "a",
+          0.0,
+          0.0
+        ],
+        [
+          "n",
+          0.0,
+          0.0
+        ],
+        [
+          "a",
+          0.0,
+          0.0
+        ],
+        [
+          "t",
+          0.0,
+          0.0
+        ],
+        [
+          "a",
+          0.0,
+          0.0
+        ]
+      ],
+      "covered_sec": 0.0,
+      "warnings": [
+        "No forced aligner was available; timing is approximate.",
+        "mfa: MFA alignment failed: Traceback (most recent call last):\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Scripts\\mfa-script.py\", line 9, in <module>\n    sys.exit(mfa_cli())\n             ~~~~~~~^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\rich_click\\rich_command.py\", line 401, in __call__\n    return super().__call__(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 1631, in __call__\n    return self.main(*args, **kwargs)\n           ~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\rich_click\\rich_command.py\", line 215, in main\n    rv = self.invoke(ctx)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 2032, in invoke\n    return _process_result(sub_ctx.command.invoke(sub_ctx))\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 1415, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 910, in invoke\n    return callback(*args, **kwargs)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\decorators.py\", line 34, in new_func\n    return f(get_current_context(), *args, **kwargs)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\command_line\\align.py\", line 116, in align_corpus_cli\n    initialize_configuration(context)\n    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\command_line\\utils.py\", line 214, in initialize_configuration\n    check_third_party()\n    ~~~~~~~~~~~~~~~~~^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\utils.py\", line 285, in check_third_party\n    raise ThirdpartyError(\"fstcompile\", open_fst=True)\nmontreal_forced_aligner.exceptions.ThirdpartyError: ThirdpartyError:\n\nCould not find 'fstcompile'.\nPlease ensure that you have installed MFA's conda dependencies and are in the correct environment.\nPlease ensure that you are in an environment that has the openfst conda package installed, or that the openfst binaries are on your path if you compiled them yourself."
+      ]
+    }
+  },
+  "reference": {
+    "file": "ckali.cc0.wav",
+    "channels": 1,
+    "sample_width": 2,
+    "sample_rate": 48000,
+    "duration": 1.053,
+    "peak": 0.2849,
+    "rms": 0.02664,
+    "integrated_lufs": -31.042,
+    "gain_to_target_db": 8.04,
+    "peak_after_gain": 0.719,
+    "pitch": {
+      "status": "applied",
+      "baseline_hz": 105.54,
+      "raw_median_hz": 105.54,
+      "raw_min_hz": 96.0,
+      "raw_max_hz": 110.4,
+      "valid_frames": 33,
+      "octave_suspicion_frames": []
+    },
+    "alignment": {
+      "source": "proportional",
+      "confidence": 0.25,
+      "intervals": [
+        [
+          "a",
+          0.0,
+          0.0
+        ],
+        [
+          "n",
+          0.0,
+          0.0
+        ],
+        [
+          "a",
+          0.0,
+          0.0
+        ],
+        [
+          "t",
+          0.0,
+          0.0
+        ],
+        [
+          "a",
+          0.0,
+          0.0
+        ]
+      ],
+      "covered_sec": 0.0,
+      "warnings": [
+        "No forced aligner was available; timing is approximate.",
+        "mfa: MFA alignment failed: Traceback (most recent call last):\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Scripts\\mfa-script.py\", line 9, in <module>\n    sys.exit(mfa_cli())\n             ~~~~~~~^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\rich_click\\rich_command.py\", line 401, in __call__\n    return super().__call__(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 1631, in __call__\n    return self.main(*args, **kwargs)\n           ~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\rich_click\\rich_command.py\", line 215, in main\n    rv = self.invoke(ctx)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 2032, in invoke\n    return _process_result(sub_ctx.command.invoke(sub_ctx))\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 1415, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 910, in invoke\n    return callback(*args, **kwargs)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\decorators.py\", line 34, in new_func\n    return f(get_current_context(), *args, **kwargs)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\command_line\\align.py\", line 116, in align_corpus_cli\n    initialize_configuration(context)\n    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\command_line\\utils.py\", line 214, in initialize_configuration\n    check_third_party()\n    ~~~~~~~~~~~~~~~~~^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\utils.py\", line 285, in check_third_party\n    raise ThirdpartyError(\"fstcompile\", open_fst=True)\nmontreal_forced_aligner.exceptions.ThirdpartyError: ThirdpartyError:\n\nCould not find 'fstcompile'.\nPlease ensure that you have installed MFA's conda dependencies and are in the correct environment.\nPlease ensure that you are in an environment that has the openfst conda package installed, or that the openfst binaries are on your path if you compiled them yourself."
+      ]
+    },
+    "provenance": {
+      "project": "Wikimedia Commons / Lingua Libre",
+      "speaker": "CKali",
+      "license": "CC0 1.0",
+      "recorded": "2023-07-22",
+      "page": "https://commons.wikimedia.org/wiki/File:LL-Q5287_(jpn)-CKali-%E3%81%82%E3%81%AA%E3%81%9F.wav",
+      "commons_sha1": "e2c1d6fddbb36503689b217ef155d14df2957774"
+    }
+  },
+  "baseline_difference_st": -1.82,
+  "raw": {
+    "alignment_source": "proportional",
+    "alignment_confidence": 0.25,
+    "check_statuses": {
+      "relative_duration": "not_evaluated",
+      "phone_acoustics": "not_evaluated",
+      "independent_phone_recognition": "not_evaluated",
+      "stress_or_pitch_accent": "not_evaluated",
+      "mora_structure": "not_evaluated"
+    },
+    "errors": [],
+    "observations": [],
+    "normalization": {},
+    "warnings": [
+      "Reference alignment: No forced aligner was available; timing is approximate.",
+      "Reference alignment: mfa: MFA alignment failed: Traceback (most recent call last):\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Scripts\\mfa-script.py\", line 9, in <module>\n    sys.exit(mfa_cli())\n             ~~~~~~~^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\rich_click\\rich_command.py\", line 401, in __call__\n    return super().__call__(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 1631, in __call__\n    return self.main(*args, **kwargs)\n           ~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\rich_click\\rich_command.py\", line 215, in main\n    rv = self.invoke(ctx)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 2032, in invoke\n    return _process_result(sub_ctx.command.invoke(sub_ctx))\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 1415, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 910, in invoke\n    return callback(*args, **kwargs)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\decorators.py\", line 34, in new_func\n    return f(get_current_context(), *args, **kwargs)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\command_line\\align.py\", line 116, in align_corpus_cli\n    initialize_configuration(context)\n    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\command_line\\utils.py\", line 214, in initialize_configuration\n    check_third_party()\n    ~~~~~~~~~~~~~~~~~^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\utils.py\", line 285, in check_third_party\n    raise ThirdpartyError(\"fstcompile\", open_fst=True)\nmontreal_forced_aligner.exceptions.ThirdpartyError: ThirdpartyError:\n\nCould not find 'fstcompile'.\nPlease ensure that you have installed MFA's conda dependencies and are in the correct environment.\nPlease ensure that you are in an environment that has the openfst conda package installed, or that the openfst binaries are on your path if you compiled them yourself.",
+      "No forced aligner was available; timing is approximate.",
+      "mfa: MFA alignment failed: Traceback (most recent call last):\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Scripts\\mfa-script.py\", line 9, in <module>\n    sys.exit(mfa_cli())\n             ~~~~~~~^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\rich_click\\rich_command.py\", line 401, in __call__\n    return super().__call__(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 1631, in __call__\n    return self.main(*args, **kwargs)\n           ~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\rich_click\\rich_command.py\", line 215, in main\n    rv = self.invoke(ctx)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 2032, in invoke\n    return _process_result(sub_ctx.command.invoke(sub_ctx))\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 1415, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 910, in invoke\n    return callback(*args, **kwargs)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\decorators.py\", line 34, in new_func\n    return f(get_current_context(), *args, **kwargs)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\command_line\\align.py\", line 116, in align_corpus_cli\n    initialize_configuration(context)\n    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\command_line\\utils.py\", line 214, in initialize_configuration\n    check_third_party()\n    ~~~~~~~~~~~~~~~~~^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\utils.py\", line 285, in check_third_party\n    raise ThirdpartyError(\"fstcompile\", open_fst=True)\nmontreal_forced_aligner.exceptions.ThirdpartyError: ThirdpartyError:\n\nCould not find 'fstcompile'.\nPlease ensure that you have installed MFA's conda dependencies and are in the correct environment.\nPlease ensure that you are in an environment that has the openfst conda package installed, or that the openfst binaries are on your path if you compiled them yourself.",
+      "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+    ]
+  },
+  "normalized": {
+    "alignment_source": "proportional",
+    "alignment_confidence": 0.25,
+    "check_statuses": {
+      "relative_pitch_observation": "insufficient_evidence",
+      "relative_loudness_observation": "insufficient_evidence",
+      "relative_duration": "not_evaluated",
+      "phone_acoustics": "not_evaluated",
+      "independent_phone_recognition": "not_evaluated",
+      "stress_or_pitch_accent": "not_evaluated",
+      "mora_structure": "not_evaluated"
+    },
+    "errors": [],
+    "observations": [],
+    "normalization": {
+      "formants": {},
+      "pitch": {
+        "status": "applied",
+        "reason": "",
+        "method": "utterance_relative_pitch",
+        "unit": "st",
+        "observation_count": 0,
+        "comparison_status": "insufficient_evidence"
+      },
+      "loudness": {
+        "status": "applied",
+        "reason": "",
+        "method": "integrated_lufs_constant_gain",
+        "observation_count": 0,
+        "comparison_status": "insufficient_evidence"
+      }
+    },
+    "warnings": [
+      "Reference alignment: No forced aligner was available; timing is approximate.",
+      "Reference alignment: mfa: MFA alignment failed: Traceback (most recent call last):\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Scripts\\mfa-script.py\", line 9, in <module>\n    sys.exit(mfa_cli())\n             ~~~~~~~^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\rich_click\\rich_command.py\", line 401, in __call__\n    return super().__call__(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 1631, in __call__\n    return self.main(*args, **kwargs)\n           ~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\rich_click\\rich_command.py\", line 215, in main\n    rv = self.invoke(ctx)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 2032, in invoke\n    return _process_result(sub_ctx.command.invoke(sub_ctx))\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 1415, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 910, in invoke\n    return callback(*args, **kwargs)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\decorators.py\", line 34, in new_func\n    return f(get_current_context(), *args, **kwargs)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\command_line\\align.py\", line 116, in align_corpus_cli\n    initialize_configuration(context)\n    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\command_line\\utils.py\", line 214, in initialize_configuration\n    check_third_party()\n    ~~~~~~~~~~~~~~~~~^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\utils.py\", line 285, in check_third_party\n    raise ThirdpartyError(\"fstcompile\", open_fst=True)\nmontreal_forced_aligner.exceptions.ThirdpartyError: ThirdpartyError:\n\nCould not find 'fstcompile'.\nPlease ensure that you have installed MFA's conda dependencies and are in the correct environment.\nPlease ensure that you are in an environment that has the openfst conda package installed, or that the openfst binaries are on your path if you compiled them yourself.",
+      "No forced aligner was available; timing is approximate.",
+      "mfa: MFA alignment failed: Traceback (most recent call last):\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Scripts\\mfa-script.py\", line 9, in <module>\n    sys.exit(mfa_cli())\n             ~~~~~~~^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\rich_click\\rich_command.py\", line 401, in __call__\n    return super().__call__(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 1631, in __call__\n    return self.main(*args, **kwargs)\n           ~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\rich_click\\rich_command.py\", line 215, in main\n    rv = self.invoke(ctx)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 2032, in invoke\n    return _process_result(sub_ctx.command.invoke(sub_ctx))\n                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 1415, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\core.py\", line 910, in invoke\n    return callback(*args, **kwargs)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\click\\decorators.py\", line 34, in new_func\n    return f(get_current_context(), *args, **kwargs)\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\command_line\\align.py\", line 116, in align_corpus_cli\n    initialize_configuration(context)\n    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\command_line\\utils.py\", line 214, in initialize_configuration\n    check_third_party()\n    ~~~~~~~~~~~~~~~~~^^\n  File \"<USER_HOME>\\miniforge3\\envs\\aligner\\Lib\\site-packages\\montreal_forced_aligner\\utils.py\", line 285, in check_third_party\n    raise ThirdpartyError(\"fstcompile\", open_fst=True)\nmontreal_forced_aligner.exceptions.ThirdpartyError: ThirdpartyError:\n\nCould not find 'fstcompile'.\nPlease ensure that you have installed MFA's conda dependencies and are in the correct environment.\nPlease ensure that you are in an environment that has the openfst conda package installed, or that the openfst binaries are on your path if you compiled them yourself.",
+      "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+    ]
+  },
+  "notes": [
+    "Automatic MFA alignment, not human-checked boundaries.",
+    "No per-speaker vowel calibration: formant normalization is off, no z score is claimed.",
+    "A downloaded word cannot be an acceptance reference speaker (no independent calibration).",
+    "Counts and values are engineering observations, not accuracy or error rates."
+  ]
+}

@@ -1,0 +1,17 @@
+
+> praat-assistant-frontend@1.0.0 test
+> vitest run tests/archived-settings.test.tsx tests/local-model-path-settings.test.tsx tests/model-settings-navigation.test.tsx tests/workflow-settings.test.tsx
+
+
+ RUN  v3.2.4 <WORKSPACE>/ai/frontend
+
+ ✓ tests/workflow-settings.test.tsx (2 tests) 229ms
+ ✓ tests/archived-settings.test.tsx (2 tests) 269ms
+ ✓ tests/model-settings-navigation.test.tsx (2 tests) 293ms
+ ✓ tests/local-model-path-settings.test.tsx (2 tests) 403ms
+
+ Test Files  4 passed (4)
+      Tests  8 passed (8)
+   Start at  20:07:37
+   Duration  2.17s (transform 336ms, setup 0ms, collect 2.32s, tests 1.19s, environment 3.39s, prepare 461ms)
+

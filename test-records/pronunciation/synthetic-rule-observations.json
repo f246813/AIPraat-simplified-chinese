@@ -1,0 +1,898 @@
+{
+  "language": "ja",
+  "reference_name": "reference.wav",
+  "learner_name": "learner.wav",
+  "reference_path": "reference.wav",
+  "learner_path": "learner.wav",
+  "duration": 0.4,
+  "errors": [],
+  "reference_phones": [
+    {
+      "phone_index": 1,
+      "ipa": "aː",
+      "start": 0.0,
+      "end": 0.2,
+      "tracks": {
+        "f1": {
+          "name": "f1",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            700.0,
+            710.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "f2": {
+          "name": "f2",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            1200.0,
+            null,
+            1210.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "f3": {
+          "name": "f3",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            2500.0,
+            2510.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "pitch": {
+          "name": "pitch",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            120.0,
+            121.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "intensity": {
+          "name": "intensity",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            60.0,
+            61.0
+          ],
+          "unit": "dB",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "rms": {
+          "name": "rms",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            0.1,
+            0.11
+          ],
+          "unit": "amplitude",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "spectral_centroid": {
+          "name": "spectral_centroid",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            3000.0,
+            3100.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "high_frequency_ratio": {
+          "name": "high_frequency_ratio",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            0.4,
+            0.5
+          ],
+          "unit": "ratio",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "zcr": {
+          "name": "zcr",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            0.2,
+            0.3
+          ],
+          "unit": "ratio",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        }
+      },
+      "alignment_confidence": 1.0,
+      "alignment_source": "provided"
+    },
+    {
+      "phone_index": 2,
+      "ipa": "s",
+      "start": 0.2,
+      "end": 0.4,
+      "tracks": {
+        "f1": {
+          "name": "f1",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            700.0,
+            710.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "f2": {
+          "name": "f2",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            1200.0,
+            1210.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "f3": {
+          "name": "f3",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            2500.0,
+            2510.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "pitch": {
+          "name": "pitch",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            120.0,
+            121.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "intensity": {
+          "name": "intensity",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            60.0,
+            61.0
+          ],
+          "unit": "dB",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "rms": {
+          "name": "rms",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            0.1,
+            0.11
+          ],
+          "unit": "amplitude",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "spectral_centroid": {
+          "name": "spectral_centroid",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            3000.0,
+            3100.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "high_frequency_ratio": {
+          "name": "high_frequency_ratio",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            0.4,
+            0.5
+          ],
+          "unit": "ratio",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "zcr": {
+          "name": "zcr",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            0.2,
+            0.3
+          ],
+          "unit": "ratio",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        }
+      },
+      "alignment_confidence": 1.0,
+      "alignment_source": "provided"
+    }
+  ],
+  "learner_phones": [
+    {
+      "phone_index": 1,
+      "ipa": "aː",
+      "start": 0.0,
+      "end": 0.2,
+      "tracks": {
+        "f1": {
+          "name": "f1",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            900.0,
+            910.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "f2": {
+          "name": "f2",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            1200.0,
+            1210.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "f3": {
+          "name": "f3",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            2500.0,
+            2510.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "pitch": {
+          "name": "pitch",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            120.0,
+            121.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "intensity": {
+          "name": "intensity",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            60.0,
+            61.0
+          ],
+          "unit": "dB",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "rms": {
+          "name": "rms",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            0.1,
+            0.11
+          ],
+          "unit": "amplitude",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "spectral_centroid": {
+          "name": "spectral_centroid",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            3000.0,
+            3100.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "high_frequency_ratio": {
+          "name": "high_frequency_ratio",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            0.4,
+            0.5
+          ],
+          "unit": "ratio",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "zcr": {
+          "name": "zcr",
+          "times": [
+            0.0,
+            0.2
+          ],
+          "values": [
+            0.2,
+            0.3
+          ],
+          "unit": "ratio",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        }
+      },
+      "alignment_confidence": 1.0,
+      "alignment_source": "provided"
+    },
+    {
+      "phone_index": 2,
+      "ipa": "s",
+      "start": 0.2,
+      "end": 0.4,
+      "tracks": {
+        "f1": {
+          "name": "f1",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            700.0,
+            710.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "f2": {
+          "name": "f2",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            1200.0,
+            1210.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "f3": {
+          "name": "f3",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            2500.0,
+            2510.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "pitch": {
+          "name": "pitch",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            120.0,
+            121.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "intensity": {
+          "name": "intensity",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            60.0,
+            61.0
+          ],
+          "unit": "dB",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "rms": {
+          "name": "rms",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            0.1,
+            0.11
+          ],
+          "unit": "amplitude",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "spectral_centroid": {
+          "name": "spectral_centroid",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            3000.0,
+            3100.0
+          ],
+          "unit": "Hz",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "high_frequency_ratio": {
+          "name": "high_frequency_ratio",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            0.4,
+            0.5
+          ],
+          "unit": "ratio",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        },
+        "zcr": {
+          "name": "zcr",
+          "times": [
+            0.2,
+            0.4
+          ],
+          "values": [
+            0.2,
+            0.3
+          ],
+          "unit": "ratio",
+          "weight": 1.0,
+          "minimum_tolerance": 0.05
+        }
+      },
+      "alignment_confidence": 1.0,
+      "alignment_source": "provided"
+    }
+  ],
+  "explanation": "",
+  "alignment_source": "provided",
+  "alignment_confidence": 1.0,
+  "warnings": [
+    "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+  ],
+  "analysis_mode": "phone_rules",
+  "profile_snapshot": {
+    "id": "ja-JP-standard-v1",
+    "language": "ja",
+    "name": "日语（标准语）",
+    "version": "1",
+    "rules_version": "phone-acoustics-v1",
+    "evaluation_status": "experimental",
+    "feature_source": "panphon@a49c242d3307864312a2701055faefa4e548501c",
+    "thresholds_calibrated": false,
+    "independent_recognition_available": false
+  },
+  "observations": [
+    {
+      "phone_index": 1,
+      "ipa": "aː",
+      "start": 0.0,
+      "end": 0.2,
+      "feature": "f1",
+      "score": 0.0,
+      "severity": 0.0,
+      "direction": "偏高",
+      "message": "/aː/ 的 f1 声学观察：参考 705.000Hz，学习者 905.000Hz（偏高；实验性，未判定发音对错）。",
+      "reference_value": 705.0,
+      "learner_value": 905.0,
+      "unit": "Hz",
+      "alignment_confidence": 1.0,
+      "issue_type": "observation",
+      "rule_id": "ja.vowel.f1",
+      "evaluation_status": "experimental",
+      "evidence": {
+        "reference_interval": [
+          0.0,
+          0.2
+        ],
+        "learner_interval": [
+          0.0,
+          0.2
+        ],
+        "reference_alignment_source": "provided",
+        "learner_alignment_source": "provided",
+        "method": "dtw",
+        "aligned_frames": 2,
+        "reference_valid_frames": 2,
+        "learner_valid_frames": 2,
+        "normalized_distance": 200.0
+      }
+    },
+    {
+      "phone_index": 1,
+      "ipa": "aː",
+      "start": 0.0,
+      "end": 0.2,
+      "feature": "f2",
+      "score": 0.0,
+      "severity": 0.0,
+      "direction": "无明显差异",
+      "message": "/aː/ 的 f2 声学观察：参考 1205.000Hz，学习者 1205.000Hz（无明显差异；实验性，未判定发音对错）。",
+      "reference_value": 1205.0,
+      "learner_value": 1205.0,
+      "unit": "Hz",
+      "alignment_confidence": 1.0,
+      "issue_type": "observation",
+      "rule_id": "ja.vowel.f2",
+      "evaluation_status": "experimental",
+      "evidence": {
+        "reference_interval": [
+          0.0,
+          0.2
+        ],
+        "learner_interval": [
+          0.0,
+          0.2
+        ],
+        "reference_alignment_source": "provided",
+        "learner_alignment_source": "provided",
+        "method": "dtw",
+        "aligned_frames": 2,
+        "reference_valid_frames": 2,
+        "learner_valid_frames": 2,
+        "normalized_distance": 0.0
+      }
+    },
+    {
+      "phone_index": 1,
+      "ipa": "aː",
+      "start": 0.0,
+      "end": 0.2,
+      "feature": "relative_duration",
+      "score": 0.0,
+      "severity": 0.0,
+      "direction": "相对时长相近",
+      "message": "/aː/ 的 relative_duration 声学观察：参考 1.000ratio，学习者 1.000ratio（相对时长相近；实验性，未判定发音对错）。",
+      "reference_value": 1.0,
+      "learner_value": 1.0,
+      "unit": "ratio",
+      "alignment_confidence": 1.0,
+      "issue_type": "observation",
+      "rule_id": "ja.long_vowel.relative_duration",
+      "evaluation_status": "experimental",
+      "evidence": {
+        "reference_interval": [
+          0.0,
+          0.2
+        ],
+        "learner_interval": [
+          0.0,
+          0.2
+        ],
+        "reference_alignment_source": "provided",
+        "learner_alignment_source": "provided",
+        "method": "adjacent_phone_duration_ratio",
+        "neighbor_phone_indices": [
+          2
+        ],
+        "reference_duration_sec": 0.2,
+        "learner_duration_sec": 0.2,
+        "reference_baseline_sec": 0.2,
+        "learner_baseline_sec": 0.2,
+        "mora_structure_available": false
+      }
+    },
+    {
+      "phone_index": 2,
+      "ipa": "s",
+      "start": 0.2,
+      "end": 0.4,
+      "feature": "spectral_centroid",
+      "score": 0.0,
+      "severity": 0.0,
+      "direction": "无明显差异",
+      "message": "/s/ 的 spectral_centroid 声学观察：参考 3050.000Hz，学习者 3050.000Hz（无明显差异；实验性，未判定发音对错）。",
+      "reference_value": 3050.0,
+      "learner_value": 3050.0,
+      "unit": "Hz",
+      "alignment_confidence": 1.0,
+      "issue_type": "observation",
+      "rule_id": "ja.fricative.spectral_centroid",
+      "evaluation_status": "experimental",
+      "evidence": {
+        "reference_interval": [
+          0.2,
+          0.4
+        ],
+        "learner_interval": [
+          0.2,
+          0.4
+        ],
+        "reference_alignment_source": "provided",
+        "learner_alignment_source": "provided",
+        "method": "dtw",
+        "aligned_frames": 2,
+        "reference_valid_frames": 2,
+        "learner_valid_frames": 2,
+        "normalized_distance": 0.0
+      }
+    },
+    {
+      "phone_index": 2,
+      "ipa": "s",
+      "start": 0.2,
+      "end": 0.4,
+      "feature": "high_frequency_ratio",
+      "score": 0.0,
+      "severity": 0.0,
+      "direction": "无明显差异",
+      "message": "/s/ 的 high_frequency_ratio 声学观察：参考 0.450ratio，学习者 0.450ratio（无明显差异；实验性，未判定发音对错）。",
+      "reference_value": 0.45,
+      "learner_value": 0.45,
+      "unit": "ratio",
+      "alignment_confidence": 1.0,
+      "issue_type": "observation",
+      "rule_id": "ja.fricative.high_frequency_ratio",
+      "evaluation_status": "experimental",
+      "evidence": {
+        "reference_interval": [
+          0.2,
+          0.4
+        ],
+        "learner_interval": [
+          0.2,
+          0.4
+        ],
+        "reference_alignment_source": "provided",
+        "learner_alignment_source": "provided",
+        "method": "dtw",
+        "aligned_frames": 2,
+        "reference_valid_frames": 2,
+        "learner_valid_frames": 2,
+        "normalized_distance": 0.0
+      }
+    },
+    {
+      "phone_index": 2,
+      "ipa": "s",
+      "start": 0.2,
+      "end": 0.4,
+      "feature": "zcr",
+      "score": 0.0,
+      "severity": 0.0,
+      "direction": "无明显差异",
+      "message": "/s/ 的 zcr 声学观察：参考 0.250ratio，学习者 0.250ratio（无明显差异；实验性，未判定发音对错）。",
+      "reference_value": 0.25,
+      "learner_value": 0.25,
+      "unit": "ratio",
+      "alignment_confidence": 1.0,
+      "issue_type": "observation",
+      "rule_id": "ja.fricative.zcr",
+      "evaluation_status": "experimental",
+      "evidence": {
+        "reference_interval": [
+          0.2,
+          0.4
+        ],
+        "learner_interval": [
+          0.2,
+          0.4
+        ],
+        "reference_alignment_source": "provided",
+        "learner_alignment_source": "provided",
+        "method": "dtw",
+        "aligned_frames": 2,
+        "reference_valid_frames": 2,
+        "learner_valid_frames": 2,
+        "normalized_distance": 0.0
+      }
+    },
+    {
+      "phone_index": 2,
+      "ipa": "s",
+      "start": 0.2,
+      "end": 0.4,
+      "feature": "relative_duration",
+      "score": 0.0,
+      "severity": 0.0,
+      "direction": "相对时长相近",
+      "message": "/s/ 的 relative_duration 声学观察：参考 1.000ratio，学习者 1.000ratio（相对时长相近；实验性，未判定发音对错）。",
+      "reference_value": 1.0,
+      "learner_value": 1.0,
+      "unit": "ratio",
+      "alignment_confidence": 1.0,
+      "issue_type": "observation",
+      "rule_id": "ja.fricative.relative_duration",
+      "evaluation_status": "experimental",
+      "evidence": {
+        "reference_interval": [
+          0.2,
+          0.4
+        ],
+        "learner_interval": [
+          0.2,
+          0.4
+        ],
+        "reference_alignment_source": "provided",
+        "learner_alignment_source": "provided",
+        "method": "adjacent_phone_duration_ratio",
+        "neighbor_phone_indices": [
+          1
+        ],
+        "reference_duration_sec": 0.2,
+        "learner_duration_sec": 0.2,
+        "reference_baseline_sec": 0.2,
+        "learner_baseline_sec": 0.2,
+        "mora_structure_available": false
+      }
+    }
+  ],
+  "phone_assessments": [
+    {
+      "phone_index": 1,
+      "ipa": "aː",
+      "phone_class": "vowel",
+      "status": "observed",
+      "checks": [
+        {
+          "feature": "f1",
+          "rule_id": "ja.vowel.f1",
+          "status": "observed",
+          "reason": ""
+        },
+        {
+          "feature": "f2",
+          "rule_id": "ja.vowel.f2",
+          "status": "observed",
+          "reason": ""
+        },
+        {
+          "feature": "relative_duration",
+          "rule_id": "ja.long_vowel.relative_duration",
+          "status": "observed",
+          "reason": ""
+        }
+      ]
+    },
+    {
+      "phone_index": 2,
+      "ipa": "s",
+      "phone_class": "fricative",
+      "status": "observed",
+      "checks": [
+        {
+          "feature": "spectral_centroid",
+          "rule_id": "ja.fricative.spectral_centroid",
+          "status": "observed",
+          "reason": ""
+        },
+        {
+          "feature": "high_frequency_ratio",
+          "rule_id": "ja.fricative.high_frequency_ratio",
+          "status": "observed",
+          "reason": ""
+        },
+        {
+          "feature": "zcr",
+          "rule_id": "ja.fricative.zcr",
+          "status": "observed",
+          "reason": ""
+        },
+        {
+          "feature": "relative_duration",
+          "rule_id": "ja.fricative.relative_duration",
+          "status": "observed",
+          "reason": ""
+        }
+      ]
+    }
+  ],
+  "check_statuses": {
+    "relative_duration": "observed",
+    "phone_acoustics": "observed",
+    "independent_phone_recognition": "not_evaluated",
+    "stress_or_pitch_accent": "not_evaluated",
+    "mora_structure": "not_evaluated"
+  }
+}

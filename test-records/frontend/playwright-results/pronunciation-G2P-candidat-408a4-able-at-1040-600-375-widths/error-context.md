@@ -1,0 +1,164 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - img [ref=e6]
+    - text: AIPraat
+    - generic [ref=e7]: AI 纠音
+  - main [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]: PRONUNCIATION
+        - heading "分析两段音频，比较差异" [level=1] [ref=e12]
+        - paragraph [ref=e13]: 选择标准音与学习者录音，设置本次分析的发音目标。
+      - img [ref=e15]
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - group [ref=e19]:
+          - generic [ref=e20]:
+            - generic [ref=e21]:
+              - generic [ref=e22]: "01"
+              - heading "录音对象" [level=2] [ref=e23]
+            - generic [ref=e24]:
+              - generic [ref=e25]:
+                - generic [ref=e26]: 标准音范本
+                - combobox "标准音范本" [ref=e27]:
+                  - 'option "4: 标准音_hello" [selected]'
+                  - 'option "9: 学习者_hello"'
+              - generic [ref=e28]:
+                - generic [ref=e29]: 学习者录音
+                - combobox "学习者录音" [ref=e30]:
+                  - 'option "4: 标准音_hello"'
+                  - 'option "9: 学习者_hello" [selected]'
+            - paragraph [ref=e31]: 来自 Praat 当前选中的 Sound 对象。
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - generic [ref=e34]: "02"
+              - heading "发音目标" [level=2] [ref=e35]
+            - generic [ref=e36]:
+              - generic [ref=e37]:
+                - generic [ref=e38]:
+                  - generic [ref=e39]: 目标语言与读音
+                  - combobox "目标语言与读音" [ref=e40]:
+                    - option "高级手动 IPA（普通话 / 日语 / 自定义）"
+                    - option "英语（英式）"
+                    - option "英语（美式）" [selected]
+                - button "配置配套资源" [ref=e41] [cursor=pointer]
+              - generic [ref=e42]:
+                - status [ref=e43]:
+                  - paragraph [ref=e44]: G2P：静态检查通过 · 词典：静态检查通过 · 声学模型：静态检查通过
+                  - paragraph [ref=e45]: 兼容性：未验证（文件存在不代表口音或标签兼容）
+                  - list [ref=e46]:
+                    - listitem [ref=e47]: 元数据不能证明口音；此配套为用户声明。
+                - paragraph [ref=e48]: 缺声学模型不妨碍仅生成读音，但不能完成 MFA 音频对齐。
+              - generic [ref=e49]:
+                - generic [ref=e50]:
+                  - generic [ref=e51]:
+                    - text: 参考文本
+                    - emphasis [ref=e52]: · 生成必填
+                  - textbox "参考文本 · 生成必填 仅点击按钮才运行本地 MFA G2P。" [ref=e53]:
+                    - /placeholder: 例如 hello world
+                    - text: hello hello
+                  - generic [ref=e54]: 仅点击按钮才运行本地 MFA G2P。
+                - button "自动生成音位" [ref=e55] [cursor=pointer]
+              - generic [ref=e56]:
+                - heading "逐词读音候选" [level=3] [ref=e57]
+                - generic [ref=e58]:
+                  - generic [ref=e59]: hello
+                  - combobox "hello 的读音" [ref=e60]:
+                    - option "请选择读音" [disabled]
+                    - option "h ə l ˈoʊ · MFA G2P（原始：HH AH0 L OW1）"
+                    - option "h ɛ l oʊ · 词典（原始：HH EH L OW）" [selected]
+                - button "已应用读音" [ref=e61] [cursor=pointer]
+                - generic [ref=e62]: 重复词使用同一选择，并按参考文本原词序还原。
+              - generic [ref=e63]:
+                - generic [ref=e64]:
+                  - text: 目标音位
+                  - emphasis [ref=e65]: · IPA
+                - textbox "目标音位 · IPA 用空格、逗号或分号分隔。编辑即转为手动 IPA，不保留失配的原始标签。" [ref=e66]: h ɛ l oʊ h ɛ l oʊ
+                - generic [ref=e67]: 用空格、逗号或分号分隔。编辑即转为手动 IPA，不保留失配的原始标签。
+              - generic [ref=e68]:
+                - status [ref=e69]: 已应用完整读音；编辑 IPA 将明确转为手动路径。
+                - button "转为手动 IPA" [ref=e70] [cursor=pointer]
+              - paragraph [ref=e71]: 音位来源：MFA G2P · English G2P.zip
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - generic [ref=e74]: "03"
+              - heading "分析方式" [level=2] [ref=e75]
+            - radiogroup "分析方式" [ref=e76]:
+              - generic [ref=e77] [cursor=pointer]:
+                - radio "声学对比 沿用现有声学差异阈值" [ref=e78]
+                - generic [ref=e79]:
+                  - strong [ref=e80]: 声学对比
+                  - generic [ref=e81]: 沿用现有声学差异阈值
+              - generic [ref=e82] [cursor=pointer]:
+                - radio "音位判据 实验性 英语 / 日语的分音类观察" [checked] [active] [ref=e83]
+                - generic [ref=e84]:
+                  - strong [ref=e85]: 音位判据 实验性
+                  - generic [ref=e86]: 英语 / 日语的分音类观察
+            - paragraph [ref=e87]: 本次判据：英语（美式）。需可靠对齐；未执行独立音素识别，判错阈值尚未校准。
+            - region "减小说话人与录音差异 实验性" [ref=e88]:
+              - heading "减小说话人与录音差异 实验性" [level=3] [ref=e89]
+              - generic [ref=e90]:
+                - checkbox "独立元音校准 · Lobanov 共振峰归一化" [disabled] [ref=e91]
+                - generic [ref=e92]: 独立元音校准 · Lobanov 共振峰归一化
+              - generic [ref=e93]: 原始 Hz 始终保留，不据 z 值判定发音对错。音高与响度在下方独立启用，不依赖元音校准。
+              - status [ref=e94]: 不适用：此读音尚无固定校准清单。
+              - status [ref=e95]: 已关闭：仅原始 Hz 观察。
+            - region "相对音高与整段响度 独立实验观察" [ref=e96]:
+              - heading "相对音高与整段响度 独立实验观察" [level=3] [ref=e97]
+              - generic [ref=e98]:
+                - checkbox "相对音高（半音 st）" [ref=e99] [cursor=pointer]
+                - generic [ref=e100]: 相对音高（半音 st）
+              - status [ref=e101]: 相对音高已关闭。
+              - generic [ref=e102]:
+                - checkbox "整段恒定响度校正（不修改音频）" [ref=e103] [cursor=pointer]
+                - generic [ref=e104]: 整段恒定响度校正（不修改音频）
+              - status [ref=e105]: 响度校正已关闭。
+              - generic [ref=e106]: 原始电平与实际基线始终写入报告。不能消除既有削波、AGC、噪声或麦克风频响，也不据单音素校正均值判断轻重音。正常长度测量需要 pyloudnorm / SciPy；依赖缺失时保留原始观察，不自动安装。
+              - button "路径配置 → 配置运行库…" [ref=e107] [cursor=pointer]
+            - generic [ref=e108] [cursor=pointer]:
+              - generic [ref=e109]:
+                - strong [ref=e110]: 使用 AI 生成解释
+                - generic [ref=e111]: 当前模型：本地模型 · local-fixture（仅用于解释，不用于 G2P 或对齐）
+              - checkbox "使用 AI 生成解释 当前模型：本地模型 · local-fixture（仅用于解释，不用于 G2P 或对齐）" [checked] [ref=e112]
+            - group [ref=e113]:
+              - generic "高级设置" [ref=e114] [cursor=pointer]
+        - complementary [ref=e115]:
+          - generic [ref=e116]:
+            - heading "本次分析" [level=2] [ref=e117]:
+              - img [ref=e118]
+              - text: 本次分析
+            - generic [ref=e119]:
+              - term [ref=e120]: 标准音 → 学习者
+              - definition [ref=e121]: 标准音_hello → 学习者_hello
+              - term [ref=e122]: 目标语言与读音
+              - definition [ref=e123]: 英语（美式）
+              - term [ref=e124]: 目标音位
+              - definition [ref=e125]: h · ɛ · l · oʊ · h · ɛ · l · oʊ
+              - term [ref=e126]: 音位来源
+              - definition [ref=e127]: MFA G2P · English G2P.zip
+              - term [ref=e128]: 本次资源
+              - definition [ref=e129]:
+                - text: G2P：静态检查通过
+                - text: 词典：静态检查通过
+                - text: 声学模型：静态检查通过
+              - term [ref=e130]: 分析方式
+              - definition [ref=e131]: 英语（美式）音位判据
+              - term [ref=e132]: 结果解释
+              - definition [ref=e133]: AI 文字解释
+              - term [ref=e134]: 解释模型
+              - definition [ref=e135]: 本地模型 · local-fixture
+            - paragraph [ref=e136]: 分析会比较两段录音的声学特征，输出发音差异与参考解释。
+          - generic [ref=e137]:
+            - img [ref=e138]
+            - paragraph [ref=e140]: 音位判据用于观察声学特征，实验性结果不作为已校准的发音评分。
+      - generic [ref=e141]:
+        - paragraph [ref=e142]: 检查录音顺序与目标音位后，开始本次分析。
+        - generic [ref=e143]:
+          - button "取消" [ref=e144] [cursor=pointer]
+          - button "开始分析" [ref=e145] [cursor=pointer]:
+            - text: 开始分析
+            - img [ref=e146]
+```

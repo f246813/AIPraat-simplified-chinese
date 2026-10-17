@@ -1,6 +1,6 @@
 # 现代前端维护入口
 
-阅读 [架构](../docs/ai-frontend/CHAT-UI-ARCHITECTURE.zh-CN.md)、[宿主契约](../docs/ai-frontend/HOST-CONTRACT.md)、[来源说明](../docs/ai-frontend/FRONTEND-SOURCES.md) 与 [构建说明](../docs/ai-frontend/BUILD-RESULTS.zh-CN.md)。
+阅读 [架构](../docs/ai-frontend/CHAT-UI-ARCHITECTURE.zh-CN.md)、[宿主与构建](../docs/ai-frontend/CURRENT-HOST.zh-CN.md)、[宿主契约](../docs/ai-frontend/HOST-CONTRACT.md)、[来源说明](../docs/ai-frontend/FRONTEND-SOURCES.md) 与 [安装向导与路径](../docs/ai-frontend/INSTALLATION-PATHS.zh-CN.md)。
 
 | 代码入口 | 职责 |
 | --- | --- |

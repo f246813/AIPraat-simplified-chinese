@@ -1,0 +1,57 @@
+﻿python.exe : test_chinese_composition_matches_each_input_at_all_scales (test_ime.NativeImeTests.test_chinese_compositio
+n_matches_each_input_at_all_scales) ... ok
+所在位置 行:1 字符: 983
++ ... after.txt"; & $py -m unittest test_ime test_capabilities test_analysi ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_chinese_co..._scales) ... ok:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test_frontend_renders_without_windows_bitmap_scaling (test_ime.NativeImeTests.test_frontend_renders_without_windows_bit
+map_scaling) ... ok
+test_initial_window_fits_the_dpi_scaled_controls (test_ime.NativeImeTests.test_initial_window_fits_the_dpi_scaled_contr
+ols) ... ok
+test_japanese_composition_matches_each_input_at_all_scales (test_ime.NativeImeTests.test_japanese_composition_matches_e
+ach_input_at_all_scales) ... ok
+test_missing_parselmouth_blocks_formants_and_pitch_but_not_loudness (test_capabilities.CapabilityDetectionTests.test_mi
+ssing_parselmouth_blocks_formants_and_pitch_but_not_loudness)
+缺 praat-parselmouth 只影响基频/共振峰；响度不该被连坐。 ... ok
+test_this_interpreter_is_ready_and_specs_come_from_requirements (test_capabilities.CapabilityDetectionTests.test_this_i
+nterpreter_is_ready_and_specs_come_from_requirements)
+当前验收解释器上三项能力都应就绪，且版本区间来自 requirements.txt。 ... ok
+test_unknown_capability_and_intentional_absence_on_newer_python (test_capabilities.CapabilityDetectionTests.test_unknow
+n_capability_and_intentional_absence_on_newer_python)
+未知能力项要报错；较新解释器上 parselmouth 是**故意**不装的，提示要说清原因。 ... ok
+test_version_outside_requirements_is_refused_from_the_same_source (test_capabilities.CapabilityDetectionTests.test_vers
+ion_outside_requirements_is_refused_from_the_same_source)
+版本门控读 requirements.txt：既不写死数字，也不接受区间外的「同类新版」。 ... ok
+test_audio_extraction_and_calibration_share_the_same_hint (test_capabilities.CapabilityUsePointTests.test_audio_extract
+ion_and_calibration_share_the_same_hint)
+两处使用点（基频/共振峰提取、共振峰校准）都用同一句可执行提示。 ... ok
+test_tutor_capabilities_payload_is_the_frontend_contract (test_capabilities.CapabilityUsePointTests.test_tutor_capabili
+ties_payload_is_the_frontend_contract)
+前端 `tutor.capabilities`：能力 id 与归一化开关同名，逐包给出状态与提示。 ... ok
+test_stop_button_fires_once_and_then_reports_it_is_stopping (test_analysis_stop.MiniProgressStopButtonTests.test_stop_b
+utton_fires_once_and_then_reports_it_is_stopping) ... ok
+test_window_without_callback_has_no_stop_button (test_analysis_stop.MiniProgressStopButtonTests.test_window_without_cal
+lback_has_no_stop_button) ... ok
+test_analysis_receives_cancel_and_progress_from_the_progress_window (test_analysis_stop.RunFromPraatTests.test_analysis
+_receives_cancel_and_progress_from_the_progress_window) ... ok
+test_cancel_is_reported_honestly_and_is_not_a_success (test_analysis_stop.RunFromPraatTests.test_cancel_is_reported_hon
+estly_and_is_not_a_success) ... ok
+test_cancelled_after_measurement_returns_the_outputs (test_analysis_stop.RunWithStopTests.test_cancelled_after_measurem
+ent_returns_the_outputs)
+取消发生在测量之后：结果还在（run_tutor 会写出报告），只是标记 cancelled。 ... ok
+test_clicking_stop_sets_cancel_and_propagates_the_cancellation (test_analysis_stop.RunWithStopTests.test_clicking_stop_
+sets_cancel_and_propagates_the_cancellation)
+点「停止」→ cancel 置位；分析在检查点中止，异常照原样带回主线程。 ... ok
+test_disabled_never_opens_a_window (test_analysis_stop.RunWithStopTests.test_disabled_never_opens_a_window) ... ok
+test_headless_falls_back_to_synchronous_execution (test_analysis_stop.RunWithStopTests.test_headless_falls_back_to_sync
+hronous_execution)
+拿不到 Tk：直接同步跑，report 为 None——命令行行为与加这一层之前一致。 ... ok
+test_progress_is_marshalled_to_the_main_loop_and_outputs_return (test_analysis_stop.RunWithStopTests.test_progress_is_m
+arshalled_to_the_main_loop_and_outputs_return) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 7.311s
+
+OK

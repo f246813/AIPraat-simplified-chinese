@@ -1,0 +1,12 @@
+{
+  "executable": "<WORKSPACE>\\frontend-startup-fix\\Praat.exe",
+  "shortcut": "<WORKSPACE>\\frontend-startup-fix\\启动 Praat 修复版.lnk",
+  "working_directory": "<WORKSPACE>",
+  "sha256": "F08F13C17823042258CFEBAE9B2FEA77292D1699432F3AE9E76E735E659A6B3D",
+  "python_tests": 32,
+  "native_checks": 8,
+  "workspace_executable": "<WORKSPACE>/Praat.exe",
+  "workspace_sha256": "F08F13C17823042258CFEBAE9B2FEA77292D1699432F3AE9E76E735E659A6B3D",
+  "backup_executable": "<WORKSPACE>/Praat-before-frontend-fix-20261013.exe",
+  "backup_sha256": "D0F0BA3645CAB41C3C1ABCFEAE32BFE3B848603B7C41ADC67724A47896EC7E65"
+}

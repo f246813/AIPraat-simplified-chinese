@@ -1,0 +1,707 @@
+{
+  "calibration": {
+    "version": "normalization-v1",
+    "method": "lobanov_independent_vowel_calibration",
+    "algorithm_source": "VowSpace@3143f636c56cb34e26cc83da0f425494bb3f9c94/vowspace/core/normalization.py",
+    "protocol": "balanced-monophthong-middle-40-60-three-v1",
+    "speaker_label": "slt",
+    "language": "en",
+    "profile_id": "en-US-general-v1",
+    "reading_id": "en-US-general-v1",
+    "inventory": [
+      "i",
+      "ɪ",
+      "ɛ",
+      "æ",
+      "ɑ",
+      "ɔ",
+      "ʊ",
+      "u",
+      "ʌ"
+    ],
+    "tokens_per_vowel": 3,
+    "window": [
+      0.4,
+      0.6
+    ],
+    "ddof": 1,
+    "measurement_settings": {
+      "extractor": "praat-parselmouth-burg",
+      "time_step_sec": 0.01,
+      "max_number_of_formants": 5.0,
+      "maximum_formant_hz": 5500.0,
+      "window_length_sec": 0.025,
+      "pre_emphasis_from_hz": 50.0,
+      "sampling": "basic-rms-frame-centers-v1"
+    },
+    "material": {
+      "wav_name": "slt_independent.wav",
+      "textgrid_name": "slt_automatic_phones.TextGrid",
+      "audio_identity": "53a9cf601a97982c24002b2317a71d60394ca2ae3dee4395c3c6e30008a64320",
+      "wav_sha256": "4faa7650d249f943123e851b824745f65a46c41b3710ad6a9bb773abc998818f",
+      "textgrid_sha256": "ca6efcc26a63ad71538e3c13c16c97d0688bc58418acb110b0969e7e86916ff1"
+    },
+    "formants": {
+      "f1": {
+        "status": "insufficient_evidence",
+        "reason": "有效单元音 token 不足：/ɔ/ 1/3",
+        "coverage": {
+          "i": 4,
+          "ɪ": 5,
+          "ɛ": 5,
+          "æ": 7,
+          "ɑ": 6,
+          "ɔ": 1,
+          "ʊ": 4,
+          "u": 4,
+          "ʌ": 4
+        },
+        "selected_tokens": {
+          "i": [
+            {
+              "phone_index": 26,
+              "start": 1.9,
+              "end": 1.93,
+              "value_hz": 455.66606355229516,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 40,
+              "start": 2.81,
+              "end": 2.91,
+              "value_hz": 453.66153881009717,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 60,
+              "start": 4.5750625,
+              "end": 4.7050625,
+              "value_hz": 448.2006663999007,
+              "valid_frames": 3
+            }
+          ],
+          "ɪ": [
+            {
+              "phone_index": 2,
+              "start": 0.19,
+              "end": 0.28,
+              "value_hz": 434.41502574175183,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 13,
+              "start": 0.95,
+              "end": 1.02,
+              "value_hz": 623.9920700703124,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 31,
+              "start": 2.14,
+              "end": 2.19,
+              "value_hz": 631.2163185297157,
+              "valid_frames": 1
+            }
+          ],
+          "ɛ": [
+            {
+              "phone_index": 22,
+              "start": 1.59,
+              "end": 1.69,
+              "value_hz": 777.6461612824869,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 78,
+              "start": 5.8550625,
+              "end": 5.9350625,
+              "value_hz": 786.099996747111,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 88,
+              "start": 6.7150625,
+              "end": 6.7850625,
+              "value_hz": 721.7525072780682,
+              "valid_frames": 1
+            }
+          ],
+          "æ": [
+            {
+              "phone_index": 28,
+              "start": 2.0,
+              "end": 2.05,
+              "value_hz": 594.6758639758252,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 46,
+              "start": 3.23,
+              "end": 3.36,
+              "value_hz": 893.3151546811929,
+              "valid_frames": 3
+            },
+            {
+              "phone_index": 56,
+              "start": 4.3050625,
+              "end": 4.4050625,
+              "value_hz": 780.219385961934,
+              "valid_frames": 2
+            }
+          ],
+          "ɑ": [
+            {
+              "phone_index": 11,
+              "start": 0.82,
+              "end": 0.91,
+              "value_hz": 805.6215206960444,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 34,
+              "start": 2.38,
+              "end": 2.53,
+              "value_hz": 871.601515899636,
+              "valid_frames": 3
+            },
+            {
+              "phone_index": 41,
+              "start": 2.91,
+              "end": 3.04,
+              "value_hz": 829.9126224951472,
+              "valid_frames": 3
+            }
+          ],
+          "ɔ": [
+            {
+              "phone_index": 93,
+              "start": 7.0650625,
+              "end": 7.1350625,
+              "value_hz": 450.6655372443998,
+              "valid_frames": 1
+            }
+          ],
+          "ʊ": [
+            {
+              "phone_index": 68,
+              "start": 5.2450624999999995,
+              "end": 5.3550625,
+              "value_hz": 546.2541823467291,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 75,
+              "start": 5.7150625,
+              "end": 5.7550625,
+              "value_hz": 470.75020139067243,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 114,
+              "start": 9.160124999999999,
+              "end": 9.220125,
+              "value_hz": 506.9338903021863,
+              "valid_frames": 1
+            }
+          ],
+          "u": [
+            {
+              "phone_index": 9,
+              "start": 0.67,
+              "end": 0.71,
+              "value_hz": 359.8263615681344,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 17,
+              "start": 1.24,
+              "end": 1.27,
+              "value_hz": 411.1786575561807,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 83,
+              "start": 6.3150625,
+              "end": 6.4150624999999994,
+              "value_hz": 421.9180152188103,
+              "valid_frames": 2
+            }
+          ],
+          "ʌ": [
+            {
+              "phone_index": 5,
+              "start": 0.4,
+              "end": 0.5,
+              "value_hz": 765.8226683404785,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 62,
+              "start": 4.7750625,
+              "end": 4.9050625,
+              "value_hz": 805.1127239717471,
+              "valid_frames": 3
+            },
+            {
+              "phone_index": 100,
+              "start": 7.6050625,
+              "end": 7.6750625,
+              "value_hz": 726.3673489946007,
+              "valid_frames": 1
+            }
+          ]
+        }
+      },
+      "f2": {
+        "status": "insufficient_evidence",
+        "reason": "有效单元音 token 不足：/ɔ/ 1/3",
+        "coverage": {
+          "i": 4,
+          "ɪ": 5,
+          "ɛ": 5,
+          "æ": 7,
+          "ɑ": 6,
+          "ɔ": 1,
+          "ʊ": 4,
+          "u": 4,
+          "ʌ": 4
+        },
+        "selected_tokens": {
+          "i": [
+            {
+              "phone_index": 26,
+              "start": 1.9,
+              "end": 1.93,
+              "value_hz": 2741.3324219995457,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 40,
+              "start": 2.81,
+              "end": 2.91,
+              "value_hz": 2860.8733455282977,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 60,
+              "start": 4.5750625,
+              "end": 4.7050625,
+              "value_hz": 2423.340121059791,
+              "valid_frames": 3
+            }
+          ],
+          "ɪ": [
+            {
+              "phone_index": 2,
+              "start": 0.19,
+              "end": 0.28,
+              "value_hz": 2564.320152387744,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 13,
+              "start": 0.95,
+              "end": 1.02,
+              "value_hz": 1710.5981156215237,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 31,
+              "start": 2.14,
+              "end": 2.19,
+              "value_hz": 2061.342460572967,
+              "valid_frames": 1
+            }
+          ],
+          "ɛ": [
+            {
+              "phone_index": 22,
+              "start": 1.59,
+              "end": 1.69,
+              "value_hz": 2032.6844810209884,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 78,
+              "start": 5.8550625,
+              "end": 5.9350625,
+              "value_hz": 2110.167235233059,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 88,
+              "start": 6.7150625,
+              "end": 6.7850625,
+              "value_hz": 1643.4831403941823,
+              "valid_frames": 1
+            }
+          ],
+          "æ": [
+            {
+              "phone_index": 28,
+              "start": 2.0,
+              "end": 2.05,
+              "value_hz": 2179.6405633722466,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 46,
+              "start": 3.23,
+              "end": 3.36,
+              "value_hz": 1913.0481055914756,
+              "valid_frames": 3
+            },
+            {
+              "phone_index": 56,
+              "start": 4.3050625,
+              "end": 4.4050625,
+              "value_hz": 1965.8902512445482,
+              "valid_frames": 2
+            }
+          ],
+          "ɑ": [
+            {
+              "phone_index": 11,
+              "start": 0.82,
+              "end": 0.91,
+              "value_hz": 1332.5053941116269,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 34,
+              "start": 2.38,
+              "end": 2.53,
+              "value_hz": 1334.9111138154174,
+              "valid_frames": 3
+            },
+            {
+              "phone_index": 41,
+              "start": 2.91,
+              "end": 3.04,
+              "value_hz": 1601.5500732421808,
+              "valid_frames": 3
+            }
+          ],
+          "ɔ": [
+            {
+              "phone_index": 93,
+              "start": 7.0650625,
+              "end": 7.1350625,
+              "value_hz": 1147.0841744925626,
+              "valid_frames": 1
+            }
+          ],
+          "ʊ": [
+            {
+              "phone_index": 68,
+              "start": 5.2450624999999995,
+              "end": 5.3550625,
+              "value_hz": 1696.7391986680193,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 75,
+              "start": 5.7150625,
+              "end": 5.7550625,
+              "value_hz": 2417.1231126817183,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 114,
+              "start": 9.160124999999999,
+              "end": 9.220125,
+              "value_hz": 1905.286478364687,
+              "valid_frames": 1
+            }
+          ],
+          "u": [
+            {
+              "phone_index": 9,
+              "start": 0.67,
+              "end": 0.71,
+              "value_hz": 1676.4551479381103,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 17,
+              "start": 1.24,
+              "end": 1.27,
+              "value_hz": 1136.3683536044755,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 83,
+              "start": 6.3150625,
+              "end": 6.4150624999999994,
+              "value_hz": 1075.4405199034684,
+              "valid_frames": 2
+            }
+          ],
+          "ʌ": [
+            {
+              "phone_index": 5,
+              "start": 0.4,
+              "end": 0.5,
+              "value_hz": 1574.4856864461924,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 62,
+              "start": 4.7750625,
+              "end": 4.9050625,
+              "value_hz": 1636.1556388437568,
+              "valid_frames": 3
+            },
+            {
+              "phone_index": 100,
+              "start": 7.6050625,
+              "end": 7.6750625,
+              "value_hz": 1458.2317964007523,
+              "valid_frames": 1
+            }
+          ]
+        }
+      },
+      "f3": {
+        "status": "insufficient_evidence",
+        "reason": "有效单元音 token 不足：/ɔ/ 1/3",
+        "coverage": {
+          "i": 4,
+          "ɪ": 5,
+          "ɛ": 5,
+          "æ": 7,
+          "ɑ": 6,
+          "ɔ": 1,
+          "ʊ": 4,
+          "u": 4,
+          "ʌ": 4
+        },
+        "selected_tokens": {
+          "i": [
+            {
+              "phone_index": 26,
+              "start": 1.9,
+              "end": 1.93,
+              "value_hz": 3236.770405924145,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 40,
+              "start": 2.81,
+              "end": 2.91,
+              "value_hz": 3006.654718633841,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 60,
+              "start": 4.5750625,
+              "end": 4.7050625,
+              "value_hz": 3213.076378925057,
+              "valid_frames": 3
+            }
+          ],
+          "ɪ": [
+            {
+              "phone_index": 2,
+              "start": 0.19,
+              "end": 0.28,
+              "value_hz": 3169.2159031992815,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 13,
+              "start": 0.95,
+              "end": 1.02,
+              "value_hz": 3275.488652846837,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 31,
+              "start": 2.14,
+              "end": 2.19,
+              "value_hz": 3153.9663758559113,
+              "valid_frames": 1
+            }
+          ],
+          "ɛ": [
+            {
+              "phone_index": 22,
+              "start": 1.59,
+              "end": 1.69,
+              "value_hz": 2979.1938812994786,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 78,
+              "start": 5.8550625,
+              "end": 5.9350625,
+              "value_hz": 3100.0873672776806,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 88,
+              "start": 6.7150625,
+              "end": 6.7850625,
+              "value_hz": 3128.318812031253,
+              "valid_frames": 1
+            }
+          ],
+          "æ": [
+            {
+              "phone_index": 28,
+              "start": 2.0,
+              "end": 2.05,
+              "value_hz": 3137.4148856707848,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 46,
+              "start": 3.23,
+              "end": 3.36,
+              "value_hz": 3027.7900112190873,
+              "valid_frames": 3
+            },
+            {
+              "phone_index": 56,
+              "start": 4.3050625,
+              "end": 4.4050625,
+              "value_hz": 3027.776012639214,
+              "valid_frames": 2
+            }
+          ],
+          "ɑ": [
+            {
+              "phone_index": 11,
+              "start": 0.82,
+              "end": 0.91,
+              "value_hz": 3311.8521029403155,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 34,
+              "start": 2.38,
+              "end": 2.53,
+              "value_hz": 3239.1264773119274,
+              "valid_frames": 3
+            },
+            {
+              "phone_index": 41,
+              "start": 2.91,
+              "end": 3.04,
+              "value_hz": 3410.2816587199036,
+              "valid_frames": 3
+            }
+          ],
+          "ɔ": [
+            {
+              "phone_index": 93,
+              "start": 7.0650625,
+              "end": 7.1350625,
+              "value_hz": 2804.3016806932997,
+              "valid_frames": 1
+            }
+          ],
+          "ʊ": [
+            {
+              "phone_index": 68,
+              "start": 5.2450624999999995,
+              "end": 5.3550625,
+              "value_hz": 2726.283513088709,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 75,
+              "start": 5.7150625,
+              "end": 5.7550625,
+              "value_hz": 3050.773125423796,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 114,
+              "start": 9.160124999999999,
+              "end": 9.220125,
+              "value_hz": 2915.833262676318,
+              "valid_frames": 1
+            }
+          ],
+          "u": [
+            {
+              "phone_index": 9,
+              "start": 0.67,
+              "end": 0.71,
+              "value_hz": 2842.7345220393136,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 17,
+              "start": 1.24,
+              "end": 1.27,
+              "value_hz": 2793.2427541601587,
+              "valid_frames": 1
+            },
+            {
+              "phone_index": 83,
+              "start": 6.3150625,
+              "end": 6.4150624999999994,
+              "value_hz": 3184.555601085417,
+              "valid_frames": 2
+            }
+          ],
+          "ʌ": [
+            {
+              "phone_index": 5,
+              "start": 0.4,
+              "end": 0.5,
+              "value_hz": 2819.3835857165477,
+              "valid_frames": 2
+            },
+            {
+              "phone_index": 62,
+              "start": 4.7750625,
+              "end": 4.9050625,
+              "value_hz": 3051.0253771187986,
+              "valid_frames": 3
+            },
+            {
+              "phone_index": 100,
+              "start": 7.6050625,
+              "end": 7.6750625,
+              "value_hz": 3276.691817728344,
+              "valid_frames": 1
+            }
+          ]
+        }
+      }
+    },
+    "status": "insufficient_evidence",
+    "id": "fe6b0f5b6b1f8dee94b1a06f171fb3cf61c77d358bcaa6642423e30f0aa5dfcf"
+  },
+  "sources": [
+    {
+      "id": "slt_arctic_a0531",
+      "sha256": "66412273ec3cfc5113c007c597ff85d2dd7114d7d1910f5d278f1f8a71f6cf4d",
+      "offset_seconds": 0.0,
+      "duration": 3.9350625
+    },
+    {
+      "id": "slt_arctic_b0242",
+      "sha256": "4c4f69d6730d7aac6eca704fd488f4e6bd00ff86bc063cda44249d9ab1f09b73",
+      "offset_seconds": 3.9350625,
+      "duration": 4.5550625
+    },
+    {
+      "id": "slt_arctic_b0375",
+      "sha256": "ba84821494b465993f9745f3d8a13aa489f684664373b1fbf7f55abf0d187e12",
+      "offset_seconds": 8.490124999999999,
+      "duration": 1.9550625
+    },
+    {
+      "id": "slt_arctic_b0166",
+      "sha256": "8045b0300b66a7d1f0340f2a1953ec5e3591e9f519ceeb54bca854c521b1f610",
+      "offset_seconds": 10.4451875,
+      "duration": 1.815
+    }
+  ],
+  "annotations": "automatic MFA labels and boundaries, not human reviewed",
+  "waveform": "concatenation of independent public calibration clips; target clips excluded"
+}

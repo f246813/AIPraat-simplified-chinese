@@ -1,0 +1,119 @@
+python.exe : test_dependency_missing_differs_from_failed_extraction (test_evidence_consistency.AcousticExtractionStatus
+Tests.test_dependency_missing_differs_from_failed_extraction) ... ERROR
+所在位置 行:1 字符: 463
++ ... nsistency"; & $py -m unittest test_evidence_consistency -v 2>&1 | Tee ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_dependency...tion) ... ERROR:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test_missing_reason_reaches_the_deliverable (test_evidence_consistency.AcousticExtractionStatusTests.test_missing_reaso
+n_reaches_the_deliverable) ... FAIL
+test_one_audio_is_measured_once_and_matches_per_phone_extraction (test_evidence_consistency.AcousticExtractionStatusTes
+ts.test_one_audio_is_measured_once_and_matches_per_phone_extraction) ... ERROR
+test_both_delivery_paths_use_one_guard_entry (test_evidence_consistency.LocalDeliveryGuardTests.test_both_delivery_path
+s_use_one_guard_entry) ... ERROR
+test_supported_number_is_delivered_unchanged (test_evidence_consistency.LocalDeliveryGuardTests.test_supported_number_i
+s_delivered_unchanged) ... ERROR
+test_unsupported_number_cannot_reach_the_user (test_evidence_consistency.LocalDeliveryGuardTests.test_unsupported_numbe
+r_cannot_reach_the_user) ... FAIL
+test_empty_feature_tracks_are_delivered_as_unevaluated (test_evidence_consistency.NoMeasurementIsNotNoDifferenceTests.t
+est_empty_feature_tracks_are_delivered_as_unevaluated) ... ERROR
+test_undefined_learner_values_are_not_a_deviation (test_evidence_consistency.UnmeasurableIsNotSeverityOneTests.test_und
+efined_learner_values_are_not_a_deviation) ... FAIL
+
+======================================================================
+ERROR: test_dependency_missing_differs_from_failed_extraction (test_evidence_consistency.AcousticExtractionStatusTests.
+test_dependency_missing_differs_from_failed_extraction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\tests\test_evidence_consistency.py", line 241, in test_dependency_missing_differs_fro
+m_failed_extraction
+    extract_phone_tracks("learner.wav", phones, learner=True, diagnostics=missing)
+TypeError: extract_phone_tracks() got an unexpected keyword argument 'diagnostics'
+
+======================================================================
+ERROR: test_one_audio_is_measured_once_and_matches_per_phone_extraction (test_evidence_consistency.AcousticExtractionSt
+atusTests.test_one_audio_is_measured_once_and_matches_per_phone_extraction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\tests\test_evidence_consistency.py", line 309, in test_one_audio_is_measured_once_and
+_matches_per_phone_extraction
+    tracks = extract_phone_tracks(path, phones, learner=True, diagnostics=diagnostics)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: extract_phone_tracks() got an unexpected keyword argument 'diagnostics'
+
+======================================================================
+ERROR: test_both_delivery_paths_use_one_guard_entry (test_evidence_consistency.LocalDeliveryGuardTests.test_both_delive
+ry_paths_use_one_guard_entry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\tests\test_evidence_consistency.py", line 209, in test_both_delivery_paths_use_one_gu
+ard_entry
+    cloud_agent.report_guards.guard_delivered_text,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'praat_ai.cloud_agent' has no attribute 'report_guards'
+
+======================================================================
+ERROR: test_supported_number_is_delivered_unchanged (test_evidence_consistency.LocalDeliveryGuardTests.test_supported_n
+umber_is_delivered_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\tests\test_evidence_consistency.py", line 203, in test_supported_number_is_delivered_
+unchanged
+    self.assertEqual(outcome.delivery_guard, "verified")
+                     ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'TurnOutcome' object has no attribute 'delivery_guard'
+
+======================================================================
+ERROR: test_empty_feature_tracks_are_delivered_as_unevaluated (test_evidence_consistency.NoMeasurementIsNotNoDifference
+Tests.test_empty_feature_tracks_are_delivered_as_unevaluated)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\tests\test_evidence_consistency.py", line 124, in test_empty_feature_tracks_are_deliv
+ered_as_unevaluated
+    self.assertEqual(result.phone_assessments[0]["status"], "insufficient_evidence")
+                     ~~~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+FAIL: test_missing_reason_reaches_the_deliverable (test_evidence_consistency.AcousticExtractionStatusTests.test_missing
+_reason_reaches_the_deliverable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\tests\test_evidence_consistency.py", line 267, in test_missing_reason_reaches_the_del
+iverable
+    self.assertEqual(status, "dependency_missing")
+AssertionError: None != 'dependency_missing'
+
+======================================================================
+FAIL: test_unsupported_number_cannot_reach_the_user (test_evidence_consistency.LocalDeliveryGuardTests.test_unsupported
+_number_cannot_reach_the_user)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\tests\test_evidence_consistency.py", line 186, in test_unsupported_number_cannot_reac
+h_the_user
+    self.assertNotIn("999", outcome.reply)
+AssertionError: '999' unexpectedly found in '0.5 �봦��Ƶ 999 Hz��'
+
+======================================================================
+FAIL: test_undefined_learner_values_are_not_a_deviation (test_evidence_consistency.UnmeasurableIsNotSeverityOneTests.te
+st_undefined_learner_values_are_not_a_deviation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\tests\test_evidence_consistency.py", line 151, in test_undefined_learner_values_are_n
+ot_a_deviation
+    self.assertEqual(result.errors, [])
+AssertionError: Lists differ: [PronunciationError(phone_index=1, ipa='a'[934 chars]={})] != []
+
+First list contains 3 additional elements.
+First extra element 0:
+PronunciationError(phone_index=1, ipa='a', start=0.0, end=0.2, feature='f1', score=2.0, severity=1.0, direction='ȱʧ���޷
+�����', message='a �� f1 �޷��ɿ�������', reference_value=0.0, learner_value=0.0, unit='Hz', alignment_confidence=1.0, is
+sue_type='legacy_acoustic_difference', rule_id='', evaluation_status='experimental', evidence={})
+
+Diff is 2051 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.090s
+
+FAILED (failures=3, errors=5)

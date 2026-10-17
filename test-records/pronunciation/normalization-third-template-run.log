@@ -1,0 +1,34 @@
+﻿{
+  "executed_at_utc": "2026-10-16T07:30:39.864768+00:00",
+  "manifests": [
+    {
+      "manifest": "test-records\\pronunciation\\normalization-materials-template-independent-pitch.json",
+      "schema_version": "normalization-materials-v1",
+      "manifest_sha256": "d9cac1b8cd2124bab32db352f987c32fb9a72c3f1d3f5bf4bcb00a1ab13f06fd",
+      "status": "blocked",
+      "global_gaps": [
+        "missing corpus_id",
+        "no acceptance cases; awaiting user materials"
+      ],
+      "pitch_baseline_mode": "utterance",
+      "provenance_notice": "Human/source declarations require external audit; hashes do not prove authenticity.",
+      "accuracy": {
+        "status": "not_measured",
+        "reason": "No automatic accuracy claim from manifest or predictions."
+      },
+      "isolation": {
+        "status": "audited",
+        "violations": [],
+        "speakers": {},
+        "rules": [
+          "a fitting recording (calibration or neutral phrase) is never an evaluated target",
+          "one recording never fits both speakers",
+          "declarations still require external audit; PCM identity detects copies, not splicing"
+        ],
+        "notice": "Isolation is checked on PCM content and declared speaker identity, not on speaker verification."
+      },
+      "materials": [],
+      "cases": []
+    }
+  ]
+}

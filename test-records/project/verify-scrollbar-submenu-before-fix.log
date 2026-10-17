@@ -1,25 +1,25 @@
-EXE: D:\Praat-work\稳定早期版\Praat.exe; SHA-256: 94ad066af7c96b96653f8e95be6332a8ffcc2ba80fbd2500537d785b101001f6; window DPI: 96 (100%)
-'绘制': row=(1015, 315, 1249, 343), button=(1015, 315, 1249, 343)
-'查询': row=(1015, 348, 1249, 376), button=(1015, 348, 1249, 376)
-'修改': row=(1015, 381, 1249, 409), button=(1015, 381, 1249, 409)
-'标注': row=(1015, 414, 1249, 442), button=(1015, 414, 1249, 442)
-'分析周期性': row=(1015, 447, 1249, 475), button=(1015, 447, 1249, 475)
-'分析频谱': row=(1015, 480, 1249, 508), button=(1015, 480, 1249, 508)
-'操作': row=(1015, 546, 1249, 574), button=(1015, 546, 1249, 574)
-'转换': row=(1015, 579, 1249, 607), button=(1015, 579, 1249, 607)
-'滤波': row=(1015, 612, 1249, 640), button=(1015, 612, 1249, 640)
-'合并': row=(1015, 645, 1249, 673), button=(1015, 645, 1249, 673)
-Measured heights: ordinary=28px, dynamic rows=[28], cascade buttons=[28]; expected=28px
-Measured widths: ordinary=[234], dynamic rows=[234], cascade buttons=[234]
-PASS: 10 cascade titles are centered between the fixed rails
-Traceback (most recent call last):
-  File "D:\Praat-work\稳定早期版-主菜单UI备份-20260929\verify-scrollbar-submenu-resize.py", line 41, in <module>
-    result = suite["main"]()
-             ^^^^^^^^^^^^^^^
-  File "D:\Praat-work\praat-simplified-chinese\ai\tests\verify_dynamic_action_layout_live.py", line 512, in main
-    overflow_clip = _action_clip_window(scroll_window)
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\Praat-work\稳定早期版-主菜单UI备份-20260929\verify-scrollbar-submenu-resize.py", line 31, in check_clip_window
-    assert not mismatches, (
-           ^^^^^^^^^^^^^^
-AssertionError: Scrollbar visibility changes must resize submenu buttons with their rows: [('绘制', (869, 315, 1087, 343), (869, 315, 1103, 343)), ('查询', (869, 348, 1087, 376), (869, 348, 1103, 376)), ('修改', (869, 381, 1087, 409), (869, 381, 1103, 409)), ('标注', (869, 414, 1087, 442), (869, 414, 1103, 442)), ('分析周期性', (869, 447, 1087, 475), (869, 447, 1103, 475)), ('分析频谱', (869, 480, 1087, 508), (869, 480, 1103, 508)), ('操作', (869, 546, 1087, 574), (869, 546, 1103, 574)), ('转换', (869, 579, 1087, 607), (869, 579, 1103, 607)), ('滤波', (869, 612, 1087, 640), (869, 612, 1103, 640)), ('合并', (869, 645, 1087, 673), (869, 645, 1103, 673))]
+EXE: <WORKSPACE>\Praat.exe; SHA-256: 94ad066af7c96b96653f8e95be6332a8ffcc2ba80fbd2500537d785b101001f6; window DPI: 96 (100%)
+'绘制': row=(1015, 315, 1249, 343), button=(1015, 315, 1249, 343)
+'查询': row=(1015, 348, 1249, 376), button=(1015, 348, 1249, 376)
+'修改': row=(1015, 381, 1249, 409), button=(1015, 381, 1249, 409)
+'标注': row=(1015, 414, 1249, 442), button=(1015, 414, 1249, 442)
+'分析周期性': row=(1015, 447, 1249, 475), button=(1015, 447, 1249, 475)
+'分析频谱': row=(1015, 480, 1249, 508), button=(1015, 480, 1249, 508)
+'操作': row=(1015, 546, 1249, 574), button=(1015, 546, 1249, 574)
+'转换': row=(1015, 579, 1249, 607), button=(1015, 579, 1249, 607)
+'滤波': row=(1015, 612, 1249, 640), button=(1015, 612, 1249, 640)
+'合并': row=(1015, 645, 1249, 673), button=(1015, 645, 1249, 673)
+Measured heights: ordinary=28px, dynamic rows=[28], cascade buttons=[28]; expected=28px
+Measured widths: ordinary=[234], dynamic rows=[234], cascade buttons=[234]
+PASS: 10 cascade titles are centered between the fixed rails
+Traceback (most recent call last):
+  File "<WORKSPACE>-主菜单UI备份-20260929\verify-scrollbar-submenu-resize.py", line 41, in <module>
+    result = suite["main"]()
+             ^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\praat-simplified-chinese\ai\tests\verify_dynamic_action_layout_live.py", line 512, in main
+    overflow_clip = _action_clip_window(scroll_window)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>-主菜单UI备份-20260929\verify-scrollbar-submenu-resize.py", line 31, in check_clip_window
+    assert not mismatches, (
+           ^^^^^^^^^^^^^^
+AssertionError: Scrollbar visibility changes must resize submenu buttons with their rows: [('绘制', (869, 315, 1087, 343), (869, 315, 1103, 343)), ('查询', (869, 348, 1087, 376), (869, 348, 1103, 376)), ('修改', (869, 381, 1087, 409), (869, 381, 1103, 409)), ('标注', (869, 414, 1087, 442), (869, 414, 1103, 442)), ('分析周期性', (869, 447, 1087, 475), (869, 447, 1103, 475)), ('分析频谱', (869, 480, 1087, 508), (869, 480, 1103, 508)), ('操作', (869, 546, 1087, 574), (869, 546, 1103, 574)), ('转换', (869, 579, 1087, 607), (869, 579, 1103, 607)), ('滤波', (869, 612, 1087, 640), (869, 612, 1103, 640)), ('合并', (869, 645, 1087, 673), (869, 645, 1103, 673))]

@@ -1,0 +1,11 @@
+Test Python: <WORKSPACE>\venv-ai-modern\Scripts\python.exe (Python 3.12.14, runtime ready)
+Test FFmpeg: <USER_HOME>\AppData\Local\AIPraat\ffmpeg\ffmpeg.exe
+PASS folder_recurses_only_selected_tree_and_preserves_multiple_verified_candidates
+PASS automatic_keeps_valid_config_and_does_not_recurse_or_scan_packages
+PASS wheel_metadata_and_zip_are_packages_and_bad_archive_does_not_abort_search
+PASS package_found_keeps_required_gate_closed_and_does_not_pair_models
+PASS multiple_program_candidates_use_user_choice_then_real_checks
+PASS wizard_and_path_dialog_share_panel_gate_and_immediately_invalidate_path_edits
+PASS both_hosts_remove_optional_processing_actions_and_retired_resource_fields
+PASS installer_checks_ffmpeg_before_filesystem_writes
+RESULT failures=0; fixtures=<USER_HOME>\AppData\Local\Temp\AIPraat-discovery-3416e8780142449388bceb397b0cd77c; renders=<WORKSPACE>\test-records\installer\model-ghost-ui

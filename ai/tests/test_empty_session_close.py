@@ -37,9 +37,10 @@ class EmptySessionCloseTests(unittest.TestCase):
     def create(self, **params):
         return self.app.rpc('sessions.create', params)['id']
 
-    def test_repeated_open_close_leaves_no_new_empty_history(self):
-        existing = self.app.store.new_session()['id']
-        expected = {existing, 'legacy:' + self.legacy_id}
+    def test_repeated_open_close_removes_every_blank_session(self):
+        # A blank opened before this window existed is not in its created set, but
+        # the close-time scan still finds and removes it.
+        leftover = self.app.store.new_session()['id']
         for _ in range(3):
             self.app.rpc('bootstrap', {})
             sid = self.create()
@@ -49,7 +50,8 @@ class EmptySessionCloseTests(unittest.TestCase):
             self.app.close()
             self.app.close()  # closed event and host finally both call close
             self.app = self.open_window()
-            self.assertEqual({s['id'] for s in self.app.bootstrap()['sessions']}, expected)
+            self.assertEqual({s['id'] for s in self.app.bootstrap()['sessions']}, {'legacy:' + self.legacy_id})
+        self.assertNotIn(leftover, {s['id'] for s in self.app.store.sessions()})
 
     def test_close_preserves_messages_and_nonempty_drafts(self):
         chatted, drafted, cleared = self.create(), self.create(), self.create()
@@ -77,6 +79,27 @@ class EmptySessionCloseTests(unittest.TestCase):
         self.app = self.open_window()
         self.assertEqual({s['id'] for s in self.app.store.sessions()},
                          {named, renamed, pinned, member, fork, 'legacy:' + self.legacy_id})
+
+    def test_prune_script_removes_blanks_and_keeps_used_history(self):
+        from praat_ai.prune_blank_sessions import prune
+        blank = self.app.store.new_session()['id']
+        named = self.create(title='我的计划')
+        drafted = self.create()
+        self.app.rpc('sessions.view', dict(sessionId=drafted, draft='未发送的草稿'))
+        # Run the standalone entry while the window is still open: closing already scans.
+        removed = prune(self.app.store.path, self.legacy.path)
+        self.assertIn(blank, removed)
+        self.assertNotIn(named, removed)
+        self.assertNotIn(drafted, removed)
+        self.assertEqual({s['id'] for s in self.app.store.sessions()},
+                         {named, drafted, 'legacy:' + self.legacy_id})
+
+    def test_save_empty_sessions_preference_keeps_blanks_on_close(self):
+        self.app.rpc('settings.save', dict(settings={'preferences': {'save_empty_sessions': True, 'empty_session_policy': 'never_persist'}}))
+        sid = self.create()
+        self.app.close()
+        self.app = self.open_window()
+        self.assertIn(sid, {s['id'] for s in self.app.store.sessions()})
 
     def test_manually_deleted_empty_session_does_not_break_close(self):
         sid = self.create()

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "<USER_HOME>\\miniforge3\\envs\\aligner\\Scripts\\mfa.exe",
+    "align",
+    "X:\\scratch\\aipraat-public-samples-st9gwhue\\corpus",
+    "<USER_HOME>\\Documents\\MFA\\pretrained_models\\dictionary\\english_us_arpa.dict",
+    "<USER_HOME>\\Documents\\MFA\\pretrained_models\\acoustic\\english_us_arpa.zip",
+    "X:\\scratch\\aipraat-public-samples-st9gwhue\\alignment-all",
+    "--output_format",
+    "long_textgrid",
+    "--clean",
+    "--num_jobs",
+    "1",
+    "--beam",
+    "100",
+    "--retry_beam",
+    "400",
+    "--temporary_directory",
+    "X:\\scratch\\aipraat-public-samples-st9gwhue\\mfa-work-all"
+  ],
+  "workspace": "X:\\scratch\\aipraat-public-samples-st9gwhue"
+}

@@ -1,0 +1,12 @@
+﻿[
+    {
+        "file":  "AIPraat-install.exe",
+        "size":  60224000,
+        "sha256":  "827c247744688ba91d69f1ac009a0e2728ca61f6d2a8a39e5dca85b071313b97"
+    },
+    {
+        "file":  "AIPraat-paths.exe",
+        "size":  293888,
+        "sha256":  "65dbce02bd9273c6967fe1a589fb74a53d481c3c916725e873a4e9e2efb95c19"
+    }
+]

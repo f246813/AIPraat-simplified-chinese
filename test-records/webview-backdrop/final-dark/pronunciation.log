@@ -1,0 +1,230 @@
+{
+  "host": "pronunciation",
+  "recordedAtUTC": "2026-10-15T12:17:12.920470+00:00",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "pywebview": "6.2.1",
+  "realDesktop": true,
+  "productionAssets": true,
+  "frontendModified": false,
+  "wholeWindowOpacityModified": false,
+  "wallpaperChanged": false,
+  "themeRequested": "dark",
+  "systemTransparency": "unchanged",
+  "backgrounds": [
+    "actual Windows desktop (Wallpaper Engine is running on this PC)",
+    "real Windows Notepad displaying ai/praat_ai/webview_backdrop.py"
+  ],
+  "assetIndexSHA256": "a76b5377cf618bafe64508cb4ccccd39282ba03f864ed222c540153e94938e2e",
+  "pronunciationInputs": {
+    "kind": "existing audio test files, not live Praat selection",
+    "files": [
+      "D:\\Praat-work\\稳定早期版\\test-records\\En-uk-hello.ogg",
+      "D:\\Praat-work\\稳定早期版\\test-records\\En-us-hello.ogg"
+    ],
+    "analysisRun": false
+  },
+  "initiallyVisible": true,
+  "notepadPID": 20216,
+  "effectiveTheme": "dark",
+  "native": {
+    "state": "active",
+    "reason": null,
+    "hwnd": 3213942,
+    "windows_build": 19045,
+    "material": "accent-blur-undocumented",
+    "webview_alpha": 0,
+    "form_opacity": 1.0
+  },
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0",
+  "url": "http://127.0.0.1:60907/index.html?window=pronunciation",
+  "dom": {
+    "html": {
+      "tag": "HTML",
+      "className": "",
+      "background": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "filter": "none",
+      "backdropFilter": "none"
+    },
+    "body": {
+      "tag": "BODY",
+      "className": "",
+      "background": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "filter": "none",
+      "backdropFilter": "none"
+    },
+    "surfaces": [
+      {
+        "tag": "DIV",
+        "className": "pron-window",
+        "background": "rgba(30, 30, 33, 0.97)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "blur(32px) saturate(0.6)"
+      }
+    ],
+    "root": {
+      "tag": "DIV",
+      "className": "",
+      "background": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "filter": "none",
+      "backdropFilter": "none"
+    },
+    "centerAncestors": [
+      {
+        "tag": "DIV",
+        "className": "pron-target pron-full",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "DIV",
+        "className": "pron-fields",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "SECTION",
+        "className": "pron-section",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "FIELDSET",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "DIV",
+        "className": "pron-card",
+        "background": "rgba(42, 42, 46, 0.92)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "DIV",
+        "className": "pron-layout",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "FORM",
+        "className": "pron-form",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "MAIN",
+        "className": "pron-main",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "DIV",
+        "className": "pron-window",
+        "background": "rgba(30, 30, 33, 0.97)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "blur(32px) saturate(0.6)"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      }
+    ]
+  },
+  "nativeProperties": {
+    "formOpacity": 1.0,
+    "transparencyKey": 0,
+    "webviewAlpha": 0,
+    "formBackground": "Color [Black]",
+    "runtimeVersion": "155.0.4283.45"
+  },
+  "actualBackgroundDifference": {
+    "meanAbsoluteRGB": [
+      197.05320544122776,
+      154.34224450645274,
+      150.1780798744332
+    ],
+    "meanAbsolute": 167.19117660737123
+  },
+  "productionDifference": {
+    "meanAbsoluteRGB": [
+      1.794344262295082,
+      1.5330432507847924,
+      1.4749738402511336
+    ],
+    "meanAbsolute": 1.6007871177770028
+  },
+  "nativeOnlyDifference": {
+    "meanAbsoluteRGB": [
+      195.82623299616324,
+      150.39425183118243,
+      145.19738576909663
+    ],
+    "meanAbsolute": 163.80595686548077
+  },
+  "afterRestoreOpacity": 1.0,
+  "focusedHWND": 3213942,
+  "nativeStillActive": {
+    "state": "active",
+    "reason": null,
+    "hwnd": 3213942,
+    "windows_build": 19045,
+    "material": "accent-blur-undocumented",
+    "webview_alpha": 0,
+    "form_opacity": 1.0
+  },
+  "checksPassed": true,
+  "nativeDesktopPixelsChanged": true,
+  "productionDesktopPixelsChanged": true,
+  "productionDesktopEffectVerified": true,
+  "opaqueFallbackVerified": false,
+  "verificationScope": "real background pixels and native alpha, not full visual/UI acceptance",
+  "limitation": "Native-only screenshots hide the child: they cannot certify .95/.93 UI. Production differences must be interpreted with computed DOM backgrounds and screenshots. Win10 ACCENT_POLICY is undocumented; Win11 path has not been tested on this PC.",
+  "notepadClosed": true,
+  "systemPreferencesRestored": true,
+  "desktopWindowsRestored": true,
+  "assetIndexSHA256End": "a76b5377cf618bafe64508cb4ccccd39282ba03f864ed222c540153e94938e2e",
+  "assetsUnchangedDuringRun": true,
+  "passed": true
+}

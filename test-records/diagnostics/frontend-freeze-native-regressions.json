@@ -1,0 +1,42 @@
+{
+  "checks": [
+    {
+      "name": "normal-output",
+      "elapsed_ms": 43,
+      "exit_code": 0
+    },
+    {
+      "name": "silent-hang",
+      "elapsed_ms": 199,
+      "exit_code": 1
+    },
+    {
+      "name": "continuous-output",
+      "elapsed_ms": 207,
+      "exit_code": 1
+    },
+    {
+      "name": "venv-child-terminated",
+      "elapsed_ms": 207,
+      "exit_code": 1
+    },
+    {
+      "name": "inherited-pipe",
+      "elapsed_ms": 55,
+      "exit_code": 0
+    },
+    {
+      "name": "ordinary-script-without-menu-deadline",
+      "elapsed_ms": 339,
+      "exit_code": 0
+    },
+    {
+      "name": "actual-low-integrity-write-denial-exits-immediately",
+      "elapsed_ms": 71
+    },
+    {
+      "name": "detached-launch-returns-before-child",
+      "elapsed_ms": 93
+    }
+  ]
+}

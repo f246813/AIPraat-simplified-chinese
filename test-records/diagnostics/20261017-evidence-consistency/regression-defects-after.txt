@@ -1,0 +1,28 @@
+﻿python.exe : test_dependency_missing_differs_from_failed_extraction (test_evidence_consistency.AcousticExtractionStatus
+Tests.test_dependency_missing_differs_from_failed_extraction) ... ok
+所在位置 行:3 字符: 1
++ & $py -m unittest test_evidence_consistency -v 2>&1 | Out-File -Encod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_dependency...raction) ... ok:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test_missing_reason_reaches_the_deliverable (test_evidence_consistency.AcousticExtractionStatusTests.test_missing_reaso
+n_reaches_the_deliverable)
+真实音频、真实提取，只是解释器里没有 praat-parselmouth：原因必须写进交付物。 ... ok
+test_one_audio_is_measured_once_and_matches_per_phone_extraction (test_evidence_consistency.AcousticExtractionStatusTes
+ts.test_one_audio_is_measured_once_and_matches_per_phone_extraction) ... ok
+test_both_delivery_paths_use_one_guard_entry (test_evidence_consistency.LocalDeliveryGuardTests.test_both_delivery_path
+s_use_one_guard_entry) ... ok
+test_supported_number_is_delivered_unchanged (test_evidence_consistency.LocalDeliveryGuardTests.test_supported_number_i
+s_delivered_unchanged) ... ok
+test_unsupported_number_cannot_reach_the_user (test_evidence_consistency.LocalDeliveryGuardTests.test_unsupported_numbe
+r_cannot_reach_the_user) ... ok
+test_empty_feature_tracks_are_delivered_as_unevaluated (test_evidence_consistency.NoMeasurementIsNotNoDifferenceTests.t
+est_empty_feature_tracks_are_delivered_as_unevaluated) ... ok
+test_undefined_learner_values_are_not_a_deviation (test_evidence_consistency.UnmeasurableIsNotSeverityOneTests.test_und
+efined_learner_values_are_not_a_deviation) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.094s
+
+OK

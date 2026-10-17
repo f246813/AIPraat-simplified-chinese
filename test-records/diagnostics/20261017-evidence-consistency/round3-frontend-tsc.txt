@@ -1,0 +1,2 @@
+﻿vitest/tsc 记录
+npx tsc -b: 无输出，退出码 0（ai/frontend，Node 24 / TypeScript 5.9.3）。

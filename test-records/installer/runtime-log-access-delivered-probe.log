@@ -1,0 +1,2 @@
+PASS delivered AIPraat-paths.exe Python runtime 13/13 ready; log=<USER_HOME>\AppData\Local\AIPraat\logs\runtime\detect-20261013-164752-668Z-2e263e44.log
+PASS delivered AIPraat-paths.exe auto-resolves FFmpeg and decodes OGG to WAV: <USER_HOME>\AppData\Local\AIPraat\ffmpeg\ffmpeg.exe

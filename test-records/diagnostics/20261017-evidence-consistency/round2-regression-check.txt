@@ -1,0 +1,77 @@
+python.exe : test_degenerate_backend_falls_back_to_proportional_timing (test_forced_alignment.DegenerateAlignmentTests.
+test_degenerate_backend_falls_back_to_proportional_timing) ... ok
+所在位置 行:1 字符: 543
++ ... nsistency"; & $py -m unittest test_forced_alignment test_mfa_pipeline ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_degenerate..._timing) ... ok:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test_degenerate_ctc_alignment_is_rejected (test_forced_alignment.DegenerateAlignmentTests.test_degenerate_ctc_alignment
+_is_rejected) ... ok
+test_empty_alignment_is_degenerate (test_forced_alignment.DegenerateAlignmentTests.test_empty_alignment_is_degenerate) 
+... ok
+test_normal_spans_are_not_flagged (test_forced_alignment.DegenerateAlignmentTests.test_normal_spans_are_not_flagged) ..
+. ok
+test_one_frame_per_phone_has_no_duration_information (test_forced_alignment.DegenerateAlignmentTests.test_one_frame_per
+_phone_has_no_duration_information) ... ok
+test_usable_ctc_alignment_is_returned (test_forced_alignment.DegenerateAlignmentTests.test_usable_ctc_alignment_is_retu
+rned) ... ok
+test_composite_aligner_merges_boundaries (test_forced_alignment.ForcedAlignmentTests.test_composite_aligner_merges_boun
+daries) ... ERROR
+test_ctc_alignment_finds_token_spans (test_forced_alignment.ForcedAlignmentTests.test_ctc_alignment_finds_token_spans) 
+... ok
+test_extra_tokens_and_silence_preserve_unicode_ipa (test_forced_alignment.ForcedAlignmentTests.test_extra_tokens_and_si
+lence_preserve_unicode_ipa) ... ok
+test_mfa_command_uses_configured_model (test_forced_alignment.ForcedAlignmentTests.test_mfa_command_uses_configured_mod
+el) ... ok
+test_repeated_extra_tokens_match_ordered_requested_sequence (test_forced_alignment.ForcedAlignmentTests.test_repeated_e
+xtra_tokens_match_ordered_requested_sequence) ... ok
+test_repeated_tokens_can_match_noncontiguous_subsequence (test_forced_alignment.ForcedAlignmentTests.test_repeated_toke
+ns_can_match_noncontiguous_subsequence) ... ok
+test_textgrid_parser_reads_phone_tier (test_forced_alignment.ForcedAlignmentTests.test_textgrid_parser_reads_phone_tier
+) ... ok
+test_unmatched_or_reordered_tokens_are_not_relabelled (test_forced_alignment.ForcedAlignmentTests.test_unmatched_or_reo
+rdered_tokens_are_not_relabelled) ... ok
+test_registered_preset_g2p_submit_both_alignments_and_reports (test_mfa_pipeline.MfaPipelineTests.test_registered_prese
+t_g2p_submit_both_alignments_and_reports) ... ERROR
+
+======================================================================
+ERROR: test_composite_aligner_merges_boundaries (test_forced_alignment.ForcedAlignmentTests.test_composite_aligner_merg
+es_boundaries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\tests\test_forced_alignment.py", line 188, in test_composite_aligner_merges_boundaries
+    result = aligner.align("unused.wav", [PhoneSpec("a")], "test")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\ai\praat_ai\forced_alignment.py", line 610, in align
+    backend.align(audio_path, phones, language, transcript, cancel=cancel)
+TypeError: FixedAligner.align() got an unexpected keyword argument 'cancel'
+
+======================================================================
+ERROR: test_registered_preset_g2p_submit_both_alignments_and_reports (test_mfa_pipeline.MfaPipelineTests.test_registere
+d_preset_g2p_submit_both_alignments_and_reports)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\tests\test_mfa_pipeline.py", line 86, in test_registered_preset_g2p_submit_both_alignmen
+ts_and_reports
+    outputs = run_tutor(config_path=config, request=app.result.request)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\ai\praat_ai\tutor.py", line 234, in run_tutor
+    result = analyze_pronunciation(request, task_config, cancel=cancel)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\ai\praat_ai\pronunciation.py", line 450, in analyze_pronunciation
+    aligned_reference, _, _, reference_warnings = align_learner_phones(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\ai\praat_ai\pronunciation.py", line 306, in align_learner_phones
+    result = (aligner or build_aligner(alignment_config)).align(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\ai\praat_ai\forced_alignment.py", line 617, in align
+    raise AlignmentError('配套 MFA 对齐失败，未执行比例回退：' + '; '.join(warnings or ['MFA 不可用']))
+praat_ai.forced_alignment.AlignmentError: 配套 MFA 对齐失败，未执行比例回退：mfa: MFA alignment failed: MFA 操作失败：<USER_HOME>\.cache
+\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe: can't open file '<USER_HOME>\\AppData\\Local
+\\Temp\\praat_mfa_lzlig05k\\align': [Errno 2] No such file or directory
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.150s
+
+FAILED (errors=2)

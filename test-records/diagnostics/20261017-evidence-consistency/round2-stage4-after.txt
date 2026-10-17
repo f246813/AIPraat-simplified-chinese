@@ -1,0 +1,27 @@
+﻿python.exe : test_composite_does_not_swallow_cancellation (test_alignment_control.CancelIsNotAFallbackTests.test_compos
+ite_does_not_swallow_cancellation) ... ok
+所在位置 行:1 字符: 543
++ ... onsistency"; & $py -m unittest test_alignment_control -v 2>&1 | Out-F ...
++                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_composite_...llation) ... ok:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test_composite_still_falls_back_on_real_alignment_failure (test_alignment_control.CancelIsNotAFallbackTests.test_compos
+ite_still_falls_back_on_real_alignment_failure) ... ok
+test_analysis_passes_the_cancel_event_to_the_aligner (test_alignment_control.CancellationThreadingTests.test_analysis_p
+asses_the_cancel_event_to_the_aligner) ... ok
+test_cancelled_analysis_raises_instead_of_reporting_completion (test_alignment_control.CancellationThreadingTests.test_
+cancelled_analysis_raises_instead_of_reporting_completion) ... ok
+test_run_tutor_cancelled_before_start_does_not_touch_praat (test_alignment_control.CancellationThreadingTests.test_run_
+tutor_cancelled_before_start_does_not_touch_praat) ... ok
+test_cancel_before_start_never_spawns_the_command (test_alignment_control.MfaTimeoutTests.test_cancel_before_start_neve
+r_spawns_the_command) ... ok
+test_cancel_raises_a_cancellable_error_within_the_deadline (test_alignment_control.MfaTimeoutTests.test_cancel_raises_a
+_cancellable_error_within_the_deadline) ... ok
+test_timeout_fails_with_reason_and_kills_the_child (test_alignment_control.MfaTimeoutTests.test_timeout_fails_with_reas
+on_and_kills_the_child) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 3.455s
+
+OK

@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "executableSHA256": "aa39d61c4c4222f1b4976063896916efd4349575e3207d1f4b6b409942a888af",
+  "realCloud": false,
+  "cases": [
+    {
+      "executable": "<WORKSPACE>\\.aipraat-backups\\Praat-d3531e8c3590452d83fb21223fe07235.exe",
+      "fileIntegrity": 4096,
+      "runtimeIntegrity": 8192,
+      "statusIntegrityBefore": 8192,
+      "praatIntegrity": 4096,
+      "pythonPid": 12864,
+      "pythonIntegrity": 4096,
+      "code": 1,
+      "stderr": "新前端准备失败：[Errno 13] Permission denied: '<USER_HOME>\\\\AppData\\\\LocalLow\\\\praat-integrity-upg7idyn\\\\ai\\\\runtime\\\\status.json'\n",
+      "status": {
+        "fixture": true
+      },
+      "nativeDiagnostic": "确定\n\nPython script exited with error (exit code 1). See Info window for details.\n",
+      "statusIntegrityAfter": 8192,
+      "passed": true
+    },
+    {
+      "executable": "<WORKSPACE>\\Praat.exe",
+      "fileIntegrity": 8192,
+      "runtimeIntegrity": 8192,
+      "statusIntegrityBefore": 8192,
+      "praatIntegrity": 8192,
+      "pythonPid": 74364,
+      "pythonIntegrity": 8192,
+      "code": 0,
+      "stderr": "",
+      "status": {
+        "success": true,
+        "frontend_model": "未配置",
+        "frontend_status": "未配置",
+        "frontend_running": false,
+        "configured": false,
+        "frontend_local": true,
+        "vram_warning": "unknown",
+        "vram_free_gb": null,
+        "frontend_start_phase": "ready-to-launch",
+        "frontend_model_source": "desktop",
+        "model_service_started": false,
+        "error": ""
+      },
+      "chatIntegrity": 8192,
+      "statusIntegrityAfter": 8192,
+      "passed": true
+    }
+  ]
+}

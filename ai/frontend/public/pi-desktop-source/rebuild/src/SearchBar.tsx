@@ -71,6 +71,13 @@ export function ChatSearch({content, viewport, hidden, hiddenCount, onRevealEarl
   const align = useCallback((range: Range | undefined) => {
     const node = viewport.current;
     if (!node || !range) return;
+    // A match can live inside the process disclosure and a nested tool record.
+    // Reveal its ancestors before measuring the range, otherwise it has no box.
+    let parent = range.startContainer.parentElement;
+    while (parent && node.contains(parent)) {
+      if (parent instanceof HTMLDetailsElement) parent.open = true;
+      parent = parent.parentElement;
+    }
     const rect = range.getBoundingClientRect();
     const top = alignScrollTop({targetTop: rect.top, viewportTop: node.getBoundingClientRect().top, scrollTop: node.scrollTop, clientHeight: node.clientHeight});
     onAlign(top);

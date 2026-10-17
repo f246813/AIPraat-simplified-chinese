@@ -1,6 +1,8 @@
-param([string]$Python=(Get-Command python).Source)
+﻿param([string]$Python='')
 $ErrorActionPreference='Stop'
 $taskRoot=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+. (Join-Path $PSScriptRoot 'TestEnvironment.ps1')
+$Python=Resolve-TestPython -ProjectDirectory $taskRoot -Python $Python
 $taskFixture=Join-Path $taskRoot ('installer/verification/python-live-'+[guid]::NewGuid().ToString('N'))
 & $Python -m venv --without-pip $taskFixture
 if($LASTEXITCODE -ne 0){throw 'Cannot create isolated environment'}

@@ -1,6 +1,6 @@
 import type { Methods, Rpc } from './types';
 declare global { interface Window { pywebview?: {api?: {rpc?: (method: string, params: unknown) => Promise<unknown>}} } }
-const allowed = new Set<keyof Methods>(['bootstrap', 'sessions.create', 'sessions.get', 'sessions.search', 'sessions.context', 'sessions.rename', 'sessions.pin', 'sessions.delete', 'sessions.view', 'sessions.fork', 'sessions.section', 'sessions.archive', 'sessions.group', 'sections.create', 'sections.update', 'sections.delete', 'sections.archive', 'tasks.submit', 'tasks.followup', 'tasks.cancel', 'events.poll', 'settings.get', 'settings.save', 'settings.test', 'attachments.choose', 'attachments.import', 'attachments.preview', 'links.open']);
+const allowed = new Set<keyof Methods>(['bootstrap', 'sessions.create', 'sessions.get', 'sessions.search', 'sessions.context', 'window.drag', 'sessions.rename', 'sessions.pin', 'sessions.delete', 'sessions.view', 'sessions.fork', 'sessions.section', 'sessions.archive', 'sessions.group', 'sections.create', 'sections.update', 'sections.delete', 'sections.archive', 'tasks.submit', 'tasks.followup', 'tasks.cancel', 'events.poll', 'settings.get', 'settings.save', 'settings.test', 'settings.choose_model', 'attachments.choose', 'attachments.import', 'attachments.preview', 'links.open']);
 export class HostBridge {
   constructor(private adapter?: Rpc) {}
   ready() { return Boolean(this.adapter || window.pywebview?.api?.rpc); }

@@ -78,17 +78,17 @@ test('the conversation band is width-adjustable from either edge and stays insid
   await page.keyboard.press('ArrowLeft');
   expect(await conversationWidth(page)).toBe(1034);
   await page.keyboard.press('Home');
-  expect(await conversationWidth(page)).toBe(850);
+  expect(await conversationWidth(page)).toBe(720);
   await page.keyboard.press('End');
   const pane = await page.locator('.transcript').evaluate(el => el.clientWidth);
   expect(await conversationWidth(page)).toBe(pane - 48);
   await page.keyboard.press('Home');
 
   await right.dblclick();
-  expect(await conversationWidth(page)).toBe(850);
+  expect(await conversationWidth(page)).toBe(720);
   // A narrow window compresses the drawn band without rewriting the preference.
   await page.setViewportSize({width: 820, height: 700});
   await expect.poll(() => bandWidth(page)).toBeLessThan(850);
-  expect(await conversationWidth(page)).toBe(850);
+  expect(await conversationWidth(page)).toBe(720);
   expect(errors).toEqual([]);
 });

@@ -1,0 +1,77 @@
+{
+  "selection_method": "greedy coverage from local MFA dictionary; automatic, not human labels",
+  "target_count": 4,
+  "selected": [
+    {
+      "utterance": "arctic_a0531",
+      "transcript": "In what bucolic school of fence he had been taught was beyond imagining.",
+      "expected_vowel_counts": {
+        "i": 2,
+        "ɪ": 4,
+        "ʊ": 0,
+        "ɔ": 3,
+        "u": 2,
+        "ʌ": 2,
+        "ɑ": 1,
+        "æ": 2,
+        "ɛ": 1
+      }
+    },
+    {
+      "utterance": "arctic_b0242",
+      "transcript": "The Japanese understood as we could never school ourselves or hope to understand.",
+      "expected_vowel_counts": {
+        "i": 2,
+        "ɪ": 0,
+        "ʊ": 2,
+        "ɔ": 1,
+        "u": 2,
+        "ʌ": 2,
+        "ɑ": 1,
+        "æ": 3,
+        "ɛ": 2
+      }
+    },
+    {
+      "utterance": "arctic_b0375",
+      "transcript": "Man could not conquer them.",
+      "expected_vowel_counts": {
+        "i": 0,
+        "ɪ": 0,
+        "ʊ": 1,
+        "ɔ": 0,
+        "u": 0,
+        "ʌ": 0,
+        "ɑ": 2,
+        "æ": 1,
+        "ɛ": 1
+      }
+    },
+    {
+      "utterance": "arctic_b0166",
+      "transcript": "Fast, but endure.",
+      "expected_vowel_counts": {
+        "i": 0,
+        "ɪ": 0,
+        "ʊ": 1,
+        "ɔ": 0,
+        "u": 0,
+        "ʌ": 1,
+        "ɑ": 0,
+        "æ": 1,
+        "ɛ": 1
+      }
+    }
+  ],
+  "expected_coverage": {
+    "i": 4,
+    "ɪ": 4,
+    "ʊ": 4,
+    "ɔ": 4,
+    "u": 4,
+    "ʌ": 5,
+    "ɑ": 4,
+    "æ": 7,
+    "ɛ": 5
+  }
+}

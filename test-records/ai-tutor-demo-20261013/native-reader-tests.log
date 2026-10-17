@@ -1,0 +1,5 @@
+PASS ordinary Read from file + WAV export + source unchanged: En-us-hello.ogg
+PASS ordinary Read from file + WAV export + source unchanged: En-uk-hello.ogg
+PASS ordinary Read from file + WAV export + source unchanged: hello-fallback.aac
+PASS native read needs no FFmpeg; failed fallback cleans temporary files
+PASS shared audio.ffmpeg config is used by the native reader

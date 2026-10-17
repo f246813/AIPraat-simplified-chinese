@@ -1,0 +1,34 @@
+test_alive_reused_pid_without_chat_window_or_identity_does_not_suppress_launch (ai.tests.test_desktop_launch.DesktopLaunchTests.test_alive_reused_pid_without_chat_window_or_identity_does_not_suppress_launch) ... ok
+test_cleanup_never_removes_someone_elses_pid (ai.tests.test_desktop_launch.DesktopLaunchTests.test_cleanup_never_removes_someone_elses_pid) ... ok
+test_explicit_service_cli_keeps_legacy_behavior (ai.tests.test_desktop_launch.DesktopLaunchTests.test_explicit_service_cli_keeps_legacy_behavior) ... ok
+test_host_records_connection_once_without_exposing_an_extra_api (ai.tests.test_desktop_launch.DesktopLaunchTests.test_host_records_connection_once_without_exposing_an_extra_api) ... ok
+test_identity_matched_process_still_starting_is_not_duplicated (ai.tests.test_desktop_launch.DesktopLaunchTests.test_identity_matched_process_still_starting_is_not_duplicated) ... ok
+test_installed_entry_uses_same_desktop_launcher (ai.tests.test_desktop_launch.DesktopLaunchTests.test_installed_entry_uses_same_desktop_launcher) ... ok
+test_launch_failure_is_visible_and_redacts_both_credentials (ai.tests.test_desktop_launch.DesktopLaunchTests.test_launch_failure_is_visible_and_redacts_both_credentials) ... 新前端未启动：[REDACTED] [REDACTED]
+
+Python：<WORKSPACE>\venv-ai-modern\Scripts\python.exe
+请在 Praat 的路径配置中选择已安装 pywebview/pythonnet 的 Python。
+不会自动改用旧界面或发送模型请求。
+ok
+test_missing_assets_fail_before_spawn (ai.tests.test_desktop_launch.DesktopLaunchTests.test_missing_assets_fail_before_spawn) ... ok
+test_missing_python_dependencies_fail_before_spawn (ai.tests.test_desktop_launch.DesktopLaunchTests.test_missing_python_dependencies_fail_before_spawn) ... ok
+test_native_menu_prepares_desktop_without_old_service_or_network (ai.tests.test_desktop_launch.DesktopLaunchTests.test_native_menu_prepares_desktop_without_old_service_or_network) ... ok
+test_other_native_commands_keep_legacy_behavior (ai.tests.test_desktop_launch.DesktopLaunchTests.test_other_native_commands_keep_legacy_behavior) ... ok
+test_pythonw_with_no_stderr_still_displays_error (ai.tests.test_desktop_launch.DesktopLaunchTests.test_pythonw_with_no_stderr_still_displays_error) ... ok
+test_snapshot_requires_bound_live_parent_and_matching_native_marker (ai.tests.test_desktop_launch.DesktopLaunchTests.test_snapshot_requires_bound_live_parent_and_matching_native_marker) ... ok
+test_start_preflight_failure_has_no_child_and_reports (ai.tests.test_desktop_launch.DesktopLaunchTests.test_start_preflight_failure_has_no_child_and_reports) ... ok
+test_status_write_does_not_reuse_unwritable_pid_temporary_file (ai.tests.test_desktop_launch.DesktopLaunchTests.test_status_write_does_not_reuse_unwritable_pid_temporary_file) ... ok
+test_status_write_failure_reports_original_error_without_second_exception (ai.tests.test_desktop_launch.DesktopLaunchTests.test_status_write_failure_reports_original_error_without_second_exception) ... ok
+test_changes_are_read_fresh_without_rewriting_dictionary_configuration (ai.tests.test_frontend_menu_status.FrontendMenuStatusTests.test_changes_are_read_fresh_without_rewriting_dictionary_configuration) ... ok
+test_cloud_label_and_incomplete_cloud_configuration (ai.tests.test_frontend_menu_status.FrontendMenuStatusTests.test_cloud_label_and_incomplete_cloud_configuration) ... ok
+test_cloud_never_reports_local_gpu_warning_and_local_switch_restores_it (ai.tests.test_frontend_menu_status.FrontendMenuStatusTests.test_cloud_never_reports_local_gpu_warning_and_local_switch_restores_it) ... ok
+test_local_shows_saved_preset_label_without_a_running_service (ai.tests.test_frontend_menu_status.FrontendMenuStatusTests.test_local_shows_saved_preset_label_without_a_running_service) ... ok
+test_missing_local_files_and_no_configuration (ai.tests.test_frontend_menu_status.FrontendMenuStatusTests.test_missing_local_files_and_no_configuration) ... ok
+test_only_connected_identity_matched_desktop_counts_as_running (ai.tests.test_frontend_menu_status.FrontendMenuStatusTests.test_only_connected_identity_matched_desktop_counts_as_running) ... ok
+test_thresholds_use_unrounded_free_memory (ai.tests.test_frontend_menu_status.FrontendMenuStatusTests.test_thresholds_use_unrounded_free_memory) ... ok
+test_zero_memory_is_known_red_and_absent_gpu_is_unknown (ai.tests.test_frontend_menu_status.FrontendMenuStatusTests.test_zero_memory_is_known_red_and_absent_gpu_is_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.182s
+
+OK

@@ -1,0 +1,13 @@
+{
+  "vowspace": {
+    "status": "passed",
+    "commit": "3143f636c56cb34e26cc83da0f425494bb3f9c94",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "max_absolute_error": 0.0
+  },
+  "phonR": {
+    "status": "not_run",
+    "reason": "Rscript not installed; Python math is not represented as actual R execution."
+  }
+}

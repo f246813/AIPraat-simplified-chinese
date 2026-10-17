@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "D:\Praat-work\稳定早期版\ai\tests\verify_webview_backdrop.py", line 420, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "D:\Praat-work\稳定早期版\ai\tests\verify_webview_backdrop.py", line 75, in main
+    assetIndexSHA256=hashlib.sha256((source / 'frontend/dist/index.html').read_bytes()).hexdigest())
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\f2468\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'D:\\Praat-work\\稳定早期版\\ai\\frontend\\dist\\index.html'

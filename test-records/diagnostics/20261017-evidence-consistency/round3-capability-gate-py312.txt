@@ -1,0 +1,85 @@
+{
+  "python": "<WORKSPACE>\\venv-ai-modern\\Scripts\\python.exe",
+  "version": "3.12.14",
+  "requirements": "<WORKSPACE>\\ai\\requirements.txt",
+  "ready": true,
+  "features": {
+    "formants": {
+      "id": "formants",
+      "label": "共振峰校准与 F1/F2 观察",
+      "ready": true,
+      "packages": [
+        {
+          "id": "numpy",
+          "import_name": "numpy",
+          "installed": "2.2.6",
+          "ready": true,
+          "reason": ""
+        },
+        {
+          "id": "praat-parselmouth",
+          "import_name": "parselmouth",
+          "installed": "0.4.7",
+          "ready": true,
+          "reason": ""
+        }
+      ],
+      "reason": "",
+      "hint": ""
+    },
+    "pitch": {
+      "id": "pitch",
+      "label": "基频提取与相对音高（半音）",
+      "ready": true,
+      "packages": [
+        {
+          "id": "numpy",
+          "import_name": "numpy",
+          "installed": "2.2.6",
+          "ready": true,
+          "reason": ""
+        },
+        {
+          "id": "praat-parselmouth",
+          "import_name": "parselmouth",
+          "installed": "0.4.7",
+          "ready": true,
+          "reason": ""
+        }
+      ],
+      "reason": "",
+      "hint": ""
+    },
+    "loudness": {
+      "id": "loudness",
+      "label": "整段恒定响度（LUFS）",
+      "ready": true,
+      "packages": [
+        {
+          "id": "numpy",
+          "import_name": "numpy",
+          "installed": "2.2.6",
+          "ready": true,
+          "reason": ""
+        },
+        {
+          "id": "scipy",
+          "import_name": "scipy",
+          "installed": "1.14.1",
+          "ready": true,
+          "reason": ""
+        },
+        {
+          "id": "pyloudnorm",
+          "import_name": "pyloudnorm",
+          "installed": "0.2.0",
+          "ready": true,
+          "reason": ""
+        }
+      ],
+      "reason": "",
+      "hint": ""
+    }
+  },
+  "message": ""
+}

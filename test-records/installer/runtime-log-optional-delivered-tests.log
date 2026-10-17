@@ -1,0 +1,3 @@
+环境已就绪：Python 3.12.14，全部必需运行库检测通过。 日志未保存，不影响检测。
+PASS delivered AIPraat-paths.exe Python runtime 13/13 ready; log=
+PASS delivered AIPraat-paths.exe auto-resolves FFmpeg and decodes OGG to WAV: <USER_HOME>\AppData\Local\AIPraat\ffmpeg\ffmpeg.exe

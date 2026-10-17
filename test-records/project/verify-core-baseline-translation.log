@@ -1,10 +1,10 @@
-texio
-Error: Script assertion fails in line 128: error « Cannot open file “D:\Praat-work\稳定早期版\test\fon\texio\texio99.TextGrid”. » not raised. Instead:
-Cannot 打开 file “D:\Praat-work\稳定早期版\test\fon\texio\texio99.TextGrid”.
-Hint: one of the folders or files in this file path does not exist.
-
-Script line 129 not performed or completed:
-« Read from file... texio/texio99.TextGrid »
-Script “D:\Praat-work\稳定早期版\test\fon\texio.praat” not completed.
-Praat: script command <<D:\Praat-work\稳定早期版\test\fon\texio.praat>> not completed.
-
+texio
+Error: Script assertion fails in line 128: error « Cannot open file “<WORKSPACE>\test\fon\texio\texio99.TextGrid”. » not raised. Instead:
+Cannot 打开 file “<WORKSPACE>\test\fon\texio\texio99.TextGrid”.
+Hint: one of the folders or files in this file path does not exist.
+
+Script line 129 not performed or completed:
+« Read from file... texio/texio99.TextGrid »
+Script “<WORKSPACE>\test\fon\texio.praat” not completed.
+Praat: script command <<<WORKSPACE>\test\fon\texio.praat>> not completed.
+

@@ -354,10 +354,10 @@ class ModernTests(unittest.TestCase):
         settings = self.app.settings.get()
         # The drag handles persist here because WebView2 private mode discards localStorage.
         self.assertEqual(settings['preferences']['sidebar_width'], 272)
-        self.assertEqual(settings['preferences']['conversation_width'], 850)
+        self.assertEqual(settings['preferences']['conversation_width'], 720)
         self.app.settings.save(dict(preferences=dict(sidebar_width=300)))
         prefs = json.loads(self.config.read_text())['modern']['preferences']
-        self.assertEqual((prefs['sidebar_width'], prefs['conversation_width'], prefs['theme'], prefs['smooth_stream']), (300, 850, 'system', True))
+        self.assertEqual((prefs['sidebar_width'], prefs['conversation_width'], prefs['theme'], prefs['smooth_stream']), (300, 720, 'system', True))
         self.app.settings.save(dict(preferences=dict(sidebar_width=9999, conversation_width=1)))
         prefs = json.loads(self.config.read_text())['modern']['preferences']
         self.assertEqual((prefs['sidebar_width'], prefs['conversation_width']), (520, 560))

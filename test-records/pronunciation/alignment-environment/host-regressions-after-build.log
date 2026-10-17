@@ -1,0 +1,45 @@
+PASS actual scratch host resource bytes: AIPraat-setup-scratch.exe (6/6)
+PASS actual scratch host resource bytes: AIPraat-paths-scratch.exe (6/6)
+PASS real_complete_environment_passes_all_15_without_wheels
+PASS cuda_requires_actual_device
+PASS embedded_manifest_and_scripts_match_source
+PASS online_ui_reuses_postinstall_report_and_keeps_timestamped_logs
+PASS failed_install_returns_one_full_report_and_persistent_error_log
+PASS both_hosts_use_shared_runtime_field_and_switch_clears_ready
+PASS shared_dialog_contains_15_rows_and_offline_controls
+PASS save_rechecks_selected_environment_and_synchronizes_cpu
+PASS installer_engine_rechecks_and_rejects_skip_before_writing
+Screenshots: <WORKSPACE>\scratch\normalization-runtime\full312\csharp\temp\AIPraat-runtime-ui-eda27629d78a4cf1b9908445f9517ef3
+PASS repair_available_only_for_runnable_supported_python_missing_dependencies
+PASS single_runtime_entry_has_disabled_ready_and_busy_states
+PASS path_dialog_runtime_field_available_for_missing_and_ready_environment
+PASS installer_uses_same_runtime_field_and_removes_skip
+UNHANDLED System.ComponentModel.Win32Exception / 创建窗口句柄时出错。
+UNHANDLED System.ComponentModel.Win32Exception / 创建窗口句柄时出错。
+powershell : PythonSetupTests.exe : 
+所在位置 行:1 字符: 222
++ ... .exe).Path; powershell -NoProfile -ExecutionPolicy Bypass -File insta ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PythonSetupTests.exe : :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+At <WORKSPACE>\installer\tests\Run-LoudnessFullRegressionTests.ps1:72 char:11
++     try { & $exe @arguments 2>&1 | Tee-Object -FilePath (Join-Path $o ...
++           ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+THREAD EXCEPTION System.InvalidOperationException / 执行 CreateHandle() 时无法调用值 Dispose()。
+FAIL restored_button_opens_original_detection_installation_and_repair_window: 执行 CreateHandle() 时无法调用值 Dispose()。
+ 
+   
+由于 Exception.ToString() 失败，因此无法打印异常字符串。
+   由于 Exception.ToString() 失败，因此无法打印异常字符串。
+PASS powershell_launch_preserves_unicode_spaces_apostrophes_and_metacharacters
+Screenshots: <WORKSPACE>\scratch\normalization-runtime\full312\csharp\temp\AIPraat setup 中文 e1eb7621e878464888943566b2a23da2
+PythonSetupTests failed
+At <WORKSPACE>\installer\tests\Run-LoudnessFullRegressionTests.ps1:75 char:21
++     if($code -ne 0){throw "$suite failed"}
++                     ~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (PythonSetupTests failed:String) [], RuntimeException
+    + FullyQualifiedErrorId : PythonSetupTests failed
+ 

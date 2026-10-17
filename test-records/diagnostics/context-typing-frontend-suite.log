@@ -1,0 +1,37 @@
+
+ RUN  v3.2.4 <WORKSPACE>/ai/frontend
+
+ ✓ tests/search.test.ts (8 tests) 42ms
+ ✓ tests/bridge-store.test.ts (17 tests) 62ms
+ ✓ tests/session-menu.test.ts (7 tests) 37ms
+ ✓ tests/organization-store.test.ts (9 tests) 343ms
+ ✓ tests/workflow-settings.test.tsx (2 tests) 479ms
+   ✓ workflow presets, custom edit, host save and reopen never start model tests  477ms
+ ✓ tests/model-settings-navigation.test.tsx (2 tests) 634ms
+   ✓ repeated menu requests select Model/API and keep unsaved settings  627ms
+ ✓ tests/archived-settings.test.tsx (2 tests) 726ms
+   ✓ failed restore keeps history visible, reports the error and permits a successful retry  503ms
+ ✓ tests/composer-status.test.tsx (8 tests) 1169ms
+   ✓ debounces real host estimates and ignores stale session replies  374ms
+ ✓ tests/local-model-path-settings.test.tsx (2 tests) 921ms
+   ✓ local connection settings offer a model picker and save its path  652ms
+ ✓ tests/startup-session.test.ts (3 tests) 28ms
+ ✓ tests/speech-dictionaries.test.tsx (9 tests) 1678ms
+   ✓ opens the Wav2Vec2 folder picker and selects a model through its own namespace  470ms
+ ✓ tests/layout.test.ts (7 tests) 26ms
+ ✓ tests/archived-groups.test.ts (2 tests) 19ms
+ ✓ tests/editor.test.ts (10 tests) 16ms
+ ✓ tests/transcript-menu.test.ts (5 tests) 8ms
+ ✓ tests/modern-boundaries.test.ts (2 tests) 12ms
+ ✓ tests/minimap.test.ts (6 tests) 7ms
+ ✓ tests/completions.test.ts (4 tests) 6ms
+ ✓ tests/transcript-window.test.ts (6 tests) 6ms
+ ✓ tests/sidebar-search.test.tsx (5 tests) 786ms
+ ✓ tests/scroll.test.ts (5 tests) 6ms
+ ✓ tests/sidebar-origins.test.ts (2 tests) 6ms
+
+ Test Files  22 passed (22)
+      Tests  123 passed (123)
+   Start at  21:37:15
+   Duration  5.16s (transform 3.80s, setup 0ms, collect 9.33s, tests 7.02s, environment 22.50s, prepare 4.01s)
+

@@ -57,13 +57,15 @@ export function anchorFor(rows: RowOffset[], scrollTop: number): {messageId: str
     if (rows[mid].top <= scrollTop) { found = mid; low = mid + 1; } else high = mid - 1;
   }
   const row = rows[found === -1 ? 0 : found];
-  return {messageId: row.id, offset: Math.round(row.top - scrollTop)};
+  // Preserve sub-pixel offsets: rounding can hide the final fraction of the
+  // first visible row when restoring after a font/spacing or mount change.
+  return {messageId: row.id, offset: row.top - scrollTop};
 }
 
 /** The scrollTop that puts the anchored row back at its stored offset, or null when it is not mounted. */
 export function scrollTopFor(rows: RowOffset[], anchor: {messageId: string; offset: number}): number | null {
   const row = rows.find(entry => entry.id === anchor.messageId);
-  return row ? Math.max(0, Math.round(row.top - anchor.offset)) : null;
+  return row ? Math.max(0, row.top - anchor.offset) : null;
 }
 
 /** Growing the window adds rows above the reading position, so the scroller absorbs exactly that much. */

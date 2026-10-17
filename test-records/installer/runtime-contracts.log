@@ -1,0 +1,8 @@
+PASS real_complete_environment_passes_all_13_without_wheels
+PASS cuda_requires_actual_device
+PASS embedded_manifest_and_scripts_match_source
+PASS both_hosts_use_shared_runtime_field_and_switch_clears_ready
+PASS shared_dialog_contains_13_rows_and_offline_controls
+PASS save_rechecks_selected_environment_and_synchronizes_cpu
+PASS installer_engine_rechecks_and_rejects_skip_before_writing
+Screenshots: <USER_HOME>\AppData\Local\Temp\AIPraat-runtime-ui-c6e91e29ea20475e8cc8eb683ec2c0c8

@@ -1,0 +1,1291 @@
+{
+  "marker": "PUBLIC-HUMAN-AUDIO-ENGINEERING-RUN-NOT-ACCURACY",
+  "samples": [
+    {
+      "id": "bdl_arctic_a0001",
+      "speaker": "bdl",
+      "utterance": "arctic_a0001",
+      "path": "audio\\bdl_arctic_a0001.wav",
+      "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0001.wav",
+      "sha256": "2594562568c97203d6c3c2c2ff87b9a7c62389100a014934ab0ad39d15af0384",
+      "bytes": 103566,
+      "channels": 1,
+      "sample_width": 2,
+      "rate": 16000,
+      "duration": 3.2350625,
+      "transcript": "Author of the danger trail, Philip Steels, etc."
+    },
+    {
+      "id": "bdl_arctic_a0002",
+      "speaker": "bdl",
+      "utterance": "arctic_a0002",
+      "path": "audio\\bdl_arctic_a0002.wav",
+      "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0002.wav",
+      "sha256": "88b2c3f29f696637ec34f8a031964920d7e187a903ba88fd720d3cb1b0d50c2a",
+      "bytes": 108046,
+      "channels": 1,
+      "sample_width": 2,
+      "rate": 16000,
+      "duration": 3.3750625,
+      "transcript": "Not at this particular case, Tom, apologized Whittemore."
+    },
+    {
+      "id": "bdl_arctic_a0003",
+      "speaker": "bdl",
+      "utterance": "arctic_a0003",
+      "path": "audio\\bdl_arctic_a0003.wav",
+      "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0003.wav",
+      "sha256": "6bf2ec5e40a8a01a690d7aa5d1aa3a1489baae614850c7a716bf00092b005028",
+      "bytes": 107726,
+      "channels": 1,
+      "sample_width": 2,
+      "rate": 16000,
+      "duration": 3.3650625,
+      "transcript": "For the twentieth time that evening the two men shook hands."
+    },
+    {
+      "id": "bdl_arctic_a0004",
+      "speaker": "bdl",
+      "utterance": "arctic_a0004",
+      "path": "audio\\bdl_arctic_a0004.wav",
+      "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0004.wav",
+      "sha256": "9014c7af0c450ffab8a64f211559ed6eb61d1eb6c8a8288cca40325e64f702e7",
+      "bytes": 82446,
+      "channels": 1,
+      "sample_width": 2,
+      "rate": 16000,
+      "duration": 2.5750625,
+      "transcript": "Lord, but I'm glad to see you again, Phil."
+    },
+    {
+      "id": "bdl_arctic_a0005",
+      "speaker": "bdl",
+      "utterance": "arctic_a0005",
+      "path": "audio\\bdl_arctic_a0005.wav",
+      "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0005.wav",
+      "sha256": "b654e28a68b0f49d40f715744f99f4bba338b1f66e61b58e428588e886d8fa1f",
+      "bytes": 41486,
+      "channels": 1,
+      "sample_width": 2,
+      "rate": 16000,
+      "duration": 1.2950625,
+      "transcript": "Will we ever forget it."
+    },
+    {
+      "id": "slt_arctic_a0001",
+      "speaker": "slt",
+      "utterance": "arctic_a0001",
+      "path": "audio\\slt_arctic_a0001.wav",
+      "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0001.wav",
+      "sha256": "7862eb2cccb56875910f6bf46f9b8d26dac36e7672829aabe3956b0837ae122e",
+      "bytes": 107404,
+      "channels": 1,
+      "sample_width": 2,
+      "rate": 16000,
+      "duration": 3.355,
+      "transcript": "Author of the danger trail, Philip Steels, etc."
+    },
+    {
+      "id": "slt_arctic_a0002",
+      "speaker": "slt",
+      "utterance": "arctic_a0002",
+      "path": "audio\\slt_arctic_a0002.wav",
+      "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0002.wav",
+      "sha256": "d09c9367d7e756cb5f6854d4e8a279e6e6e543fafeb4d04b32757c639f7f38d3",
+      "bytes": 120204,
+      "channels": 1,
+      "sample_width": 2,
+      "rate": 16000,
+      "duration": 3.755,
+      "transcript": "Not at this particular case, Tom, apologized Whittemore."
+    },
+    {
+      "id": "slt_arctic_a0003",
+      "speaker": "slt",
+      "utterance": "arctic_a0003",
+      "path": "audio\\slt_arctic_a0003.wav",
+      "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0003.wav",
+      "sha256": "0b32e00846e132826f46d7e5cabb2d8b370a5dc654bac0447cb63285f81cc413",
+      "bytes": 102606,
+      "channels": 1,
+      "sample_width": 2,
+      "rate": 16000,
+      "duration": 3.2050625,
+      "transcript": "For the twentieth time that evening the two men shook hands."
+    },
+    {
+      "id": "slt_arctic_a0004",
+      "speaker": "slt",
+      "utterance": "arctic_a0004",
+      "path": "audio\\slt_arctic_a0004.wav",
+      "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0004.wav",
+      "sha256": "2a653cf74346ff24690f8a2abcff5091b81463f277b0062c851031a293f25167",
+      "bytes": 80206,
+      "channels": 1,
+      "sample_width": 2,
+      "rate": 16000,
+      "duration": 2.5050625,
+      "transcript": "Lord, but I'm glad to see you again, Phil."
+    },
+    {
+      "id": "slt_arctic_a0005",
+      "speaker": "slt",
+      "utterance": "arctic_a0005",
+      "path": "audio\\slt_arctic_a0005.wav",
+      "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0005.wav",
+      "sha256": "f93c823f955875d2389ae0f731a95128afb1ee096df7614e063e8b4b5695801d",
+      "bytes": 47566,
+      "channels": 1,
+      "sample_width": 2,
+      "rate": 16000,
+      "duration": 1.4850625,
+      "transcript": "Will we ever forget it."
+    }
+  ],
+  "pairs": [
+    {
+      "id": "arctic_a0001",
+      "reference": "bdl_arctic_a0001",
+      "comparison": "slt_arctic_a0001",
+      "transcript": "Author of the danger trail, Philip Steels, etc.",
+      "reference_phones": 33,
+      "comparison_phones": 33,
+      "matched_phones": 33,
+      "unmatched_reference": [],
+      "unmatched_comparison": [],
+      "raw": {
+        "observation_count": 93,
+        "observations_by_feature": {
+          "f1": 14,
+          "f2": 18,
+          "relative_duration": 33,
+          "spectral_centroid": 9,
+          "high_frequency_ratio": 8,
+          "zcr": 7,
+          "f3": 4
+        },
+        "checks": {
+          "relative_duration": "observed",
+          "phone_acoustics": "partial",
+          "independent_phone_recognition": "not_evaluated",
+          "stress_or_pitch_accent": "not_evaluated"
+        },
+        "pitch": {},
+        "loudness": {},
+        "formants": {},
+        "warnings": [
+          "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+        ],
+        "runtime_seconds": 1.484,
+        "png_generated": true,
+        "report": "reports\\arctic_a0001\\raw\\report.json"
+      },
+      "normalized": {
+        "observation_count": 199,
+        "observations_by_feature": {
+          "f1": 14,
+          "f2": 18,
+          "relative_duration": 33,
+          "spectral_centroid": 9,
+          "high_frequency_ratio": 8,
+          "zcr": 7,
+          "f3": 4,
+          "pitch_reliable_hz": 20,
+          "pitch_relative_st": 20,
+          "intensity_lufs_adjusted_db": 33,
+          "rms_lufs_adjusted": 33
+        },
+        "checks": {
+          "relative_pitch_observation": "observed",
+          "relative_loudness_observation": "observed",
+          "relative_duration": "observed",
+          "phone_acoustics": "partial",
+          "independent_phone_recognition": "not_evaluated",
+          "stress_or_pitch_accent": "not_evaluated"
+        },
+        "pitch": {
+          "status": "applied",
+          "reason": "",
+          "method": "utterance_relative_pitch",
+          "comparison_gaps": [
+            {
+              "phone_index": 8,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 8,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 11,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 11,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 16,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 16,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 17,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 17,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 21,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 21,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 22,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 22,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 23,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 23,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 26,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 26,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 27,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 27,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 28,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 28,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 29,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 29,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            }
+          ],
+          "observation_count": 20,
+          "comparison_status": "observed"
+        },
+        "loudness": {
+          "status": "applied",
+          "reason": "",
+          "method": "integrated_lufs_constant_gain",
+          "quality": [
+            {
+              "role": "reference",
+              "peak_amplitude": 0.64996337890625,
+              "possible_existing_clipping": false,
+              "gain_db": -0.6252557386667092,
+              "gain_linear": 0.9305446424985072,
+              "would_clip_if_exported": false
+            },
+            {
+              "role": "learner",
+              "peak_amplitude": 0.649932861328125,
+              "possible_existing_clipping": false,
+              "gain_db": -3.869534508647771,
+              "gain_linear": 0.6405061064430146,
+              "would_clip_if_exported": false
+            }
+          ],
+          "reference_baseline": {
+            "integrated_lufs": -22.37474426133329,
+            "interval": [
+              0,
+              3.2350625
+            ]
+          },
+          "learner_baseline": {
+            "integrated_lufs": -19.13046549135223,
+            "interval": [
+              0,
+              3.355
+            ]
+          },
+          "observation_count": 66,
+          "comparison_status": "observed"
+        },
+        "formants": {
+          "f1": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f1_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 249,
+              "learner": 225
+            }
+          },
+          "f2": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f2_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 249,
+              "learner": 225
+            }
+          },
+          "f3": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f3_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 249,
+              "learner": 225
+            }
+          }
+        },
+        "warnings": [
+          "f1 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "f2 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "f3 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+        ],
+        "runtime_seconds": 1.969,
+        "png_generated": true,
+        "report": "reports\\arctic_a0001\\normalized\\report.json"
+      }
+    },
+    {
+      "id": "arctic_a0002",
+      "reference": "bdl_arctic_a0002",
+      "comparison": "slt_arctic_a0002",
+      "transcript": "Not at this particular case, Tom, apologized Whittemore.",
+      "reference_phones": 38,
+      "comparison_phones": 39,
+      "matched_phones": 38,
+      "unmatched_reference": [],
+      "unmatched_comparison": [
+        {
+          "raw": "HH",
+          "ipa": "h",
+          "start": 3.01,
+          "end": 3.06
+        }
+      ],
+      "raw": {
+        "observation_count": 87,
+        "observations_by_feature": {
+          "spectral_centroid": 8,
+          "relative_duration": 38,
+          "f1": 14,
+          "f2": 16,
+          "high_frequency_ratio": 5,
+          "zcr": 4,
+          "f3": 2
+        },
+        "checks": {
+          "relative_duration": "observed",
+          "phone_acoustics": "partial",
+          "independent_phone_recognition": "not_evaluated",
+          "stress_or_pitch_accent": "not_evaluated"
+        },
+        "pitch": {},
+        "loudness": {},
+        "formants": {},
+        "warnings": [
+          "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+        ],
+        "runtime_seconds": 1.765,
+        "png_generated": true,
+        "report": "reports\\arctic_a0002\\raw\\report.json"
+      },
+      "normalized": {
+        "observation_count": 203,
+        "observations_by_feature": {
+          "spectral_centroid": 8,
+          "relative_duration": 38,
+          "f1": 14,
+          "f2": 16,
+          "high_frequency_ratio": 5,
+          "zcr": 4,
+          "f3": 2,
+          "pitch_reliable_hz": 25,
+          "pitch_relative_st": 25,
+          "intensity_lufs_adjusted_db": 33,
+          "rms_lufs_adjusted": 33
+        },
+        "checks": {
+          "relative_pitch_observation": "observed",
+          "relative_loudness_observation": "observed",
+          "relative_duration": "observed",
+          "phone_acoustics": "partial",
+          "independent_phone_recognition": "not_evaluated",
+          "stress_or_pitch_accent": "not_evaluated"
+        },
+        "pitch": {
+          "status": "applied",
+          "reason": "",
+          "method": "utterance_relative_pitch",
+          "comparison_gaps": [
+            {
+              "phone_index": 4,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 4,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 6,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 6,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 9,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 9,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 11,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 11,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 18,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 18,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 24,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 24,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 32,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 32,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 35,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 35,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            }
+          ],
+          "observation_count": 25,
+          "comparison_status": "observed"
+        },
+        "loudness": {
+          "status": "applied",
+          "reason": "",
+          "method": "integrated_lufs_constant_gain",
+          "quality": [
+            {
+              "role": "reference",
+              "peak_amplitude": 0.64996337890625,
+              "possible_existing_clipping": false,
+              "gain_db": -1.6850295955362569,
+              "gain_linear": 0.8236610330240878,
+              "would_clip_if_exported": false
+            },
+            {
+              "role": "learner",
+              "peak_amplitude": 0.649932861328125,
+              "possible_existing_clipping": false,
+              "gain_db": -2.17580042703543,
+              "gain_linear": 0.77841281776866,
+              "would_clip_if_exported": false
+            }
+          ],
+          "reference_baseline": {
+            "integrated_lufs": -21.314970404463743,
+            "interval": [
+              0,
+              3.3750625
+            ]
+          },
+          "learner_baseline": {
+            "integrated_lufs": -20.82419957296457,
+            "interval": [
+              0,
+              3.755
+            ]
+          },
+          "observation_count": 66,
+          "comparison_status": "observed"
+        },
+        "formants": {
+          "f1": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f1_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 244,
+              "learner": 249
+            }
+          },
+          "f2": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f2_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 244,
+              "learner": 249
+            }
+          },
+          "f3": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f3_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 244,
+              "learner": 249
+            }
+          }
+        },
+        "warnings": [
+          "f1 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "f2 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "f3 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+        ],
+        "runtime_seconds": 1.797,
+        "png_generated": true,
+        "report": "reports\\arctic_a0002\\normalized\\report.json"
+      }
+    },
+    {
+      "id": "arctic_a0003",
+      "reference": "bdl_arctic_a0003",
+      "comparison": "slt_arctic_a0003",
+      "transcript": "For the twentieth time that evening the two men shook hands.",
+      "reference_phones": 38,
+      "comparison_phones": 36,
+      "matched_phones": 36,
+      "unmatched_reference": [
+        {
+          "raw": "R",
+          "ipa": "ɹ",
+          "start": 0.13,
+          "end": 0.16
+        },
+        {
+          "raw": "T",
+          "ipa": "t",
+          "start": 0.57,
+          "end": 0.63
+        }
+      ],
+      "unmatched_comparison": [],
+      "raw": {
+        "observation_count": 89,
+        "observations_by_feature": {
+          "spectral_centroid": 13,
+          "high_frequency_ratio": 7,
+          "zcr": 7,
+          "relative_duration": 36,
+          "f1": 12,
+          "f2": 13,
+          "f3": 1
+        },
+        "checks": {
+          "relative_duration": "observed",
+          "phone_acoustics": "partial",
+          "independent_phone_recognition": "not_evaluated",
+          "stress_or_pitch_accent": "not_evaluated"
+        },
+        "pitch": {},
+        "loudness": {},
+        "formants": {},
+        "warnings": [
+          "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+        ],
+        "runtime_seconds": 1.531,
+        "png_generated": true,
+        "report": "reports\\arctic_a0003\\raw\\report.json"
+      },
+      "normalized": {
+        "observation_count": 201,
+        "observations_by_feature": {
+          "spectral_centroid": 13,
+          "high_frequency_ratio": 7,
+          "zcr": 7,
+          "relative_duration": 36,
+          "f1": 12,
+          "f2": 13,
+          "f3": 1,
+          "intensity_lufs_adjusted_db": 31,
+          "rms_lufs_adjusted": 31,
+          "pitch_reliable_hz": 25,
+          "pitch_relative_st": 25
+        },
+        "checks": {
+          "relative_pitch_observation": "observed",
+          "relative_loudness_observation": "observed",
+          "relative_duration": "observed",
+          "phone_acoustics": "partial",
+          "independent_phone_recognition": "not_evaluated",
+          "stress_or_pitch_accent": "not_evaluated"
+        },
+        "pitch": {
+          "status": "applied",
+          "reason": "",
+          "method": "utterance_relative_pitch",
+          "comparison_gaps": [
+            {
+              "phone_index": 1,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 1,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 3,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 3,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 20,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 20,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 21,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 21,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 24,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 24,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 27,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 27,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 34,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 34,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 38,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 38,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            }
+          ],
+          "observation_count": 25,
+          "comparison_status": "observed"
+        },
+        "loudness": {
+          "status": "applied",
+          "reason": "",
+          "method": "integrated_lufs_constant_gain",
+          "quality": [
+            {
+              "role": "reference",
+              "peak_amplitude": 0.64996337890625,
+              "possible_existing_clipping": false,
+              "gain_db": -1.8433770150335462,
+              "gain_linear": 0.8087813893190282,
+              "would_clip_if_exported": false
+            },
+            {
+              "role": "learner",
+              "peak_amplitude": 0.649932861328125,
+              "possible_existing_clipping": false,
+              "gain_db": -6.11218928198538,
+              "gain_linear": 0.4947553919071945,
+              "would_clip_if_exported": false
+            }
+          ],
+          "reference_baseline": {
+            "integrated_lufs": -21.156622984966454,
+            "interval": [
+              0,
+              3.3650625
+            ]
+          },
+          "learner_baseline": {
+            "integrated_lufs": -16.88781071801462,
+            "interval": [
+              0,
+              3.2050625
+            ]
+          },
+          "observation_count": 62,
+          "comparison_status": "observed"
+        },
+        "formants": {
+          "f1": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f1_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 251,
+              "learner": 232
+            }
+          },
+          "f2": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f2_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 251,
+              "learner": 232
+            }
+          },
+          "f3": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f3_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 251,
+              "learner": 232
+            }
+          }
+        },
+        "warnings": [
+          "f1 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "f2 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "f3 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+        ],
+        "runtime_seconds": 1.594,
+        "png_generated": true,
+        "report": "reports\\arctic_a0003\\normalized\\report.json"
+      }
+    },
+    {
+      "id": "arctic_a0004",
+      "reference": "bdl_arctic_a0004",
+      "comparison": "slt_arctic_a0004",
+      "transcript": "Lord, but I'm glad to see you again, Phil.",
+      "reference_phones": 26,
+      "comparison_phones": 26,
+      "matched_phones": 25,
+      "unmatched_reference": [
+        {
+          "raw": "AH0",
+          "ipa": "ə",
+          "start": 1.15,
+          "end": 1.2
+        }
+      ],
+      "unmatched_comparison": [
+        {
+          "raw": "IH0",
+          "ipa": "ɪ",
+          "start": 1.21,
+          "end": 1.25
+        }
+      ],
+      "raw": {
+        "observation_count": 59,
+        "observations_by_feature": {
+          "f2": 13,
+          "f3": 4,
+          "relative_duration": 25,
+          "f1": 9,
+          "spectral_centroid": 4,
+          "high_frequency_ratio": 2,
+          "zcr": 2
+        },
+        "checks": {
+          "relative_duration": "observed",
+          "phone_acoustics": "partial",
+          "independent_phone_recognition": "not_evaluated",
+          "stress_or_pitch_accent": "not_evaluated"
+        },
+        "pitch": {},
+        "loudness": {},
+        "formants": {},
+        "warnings": [
+          "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+        ],
+        "runtime_seconds": 0.891,
+        "png_generated": true,
+        "report": "reports\\arctic_a0004\\raw\\report.json"
+      },
+      "normalized": {
+        "observation_count": 145,
+        "observations_by_feature": {
+          "f2": 13,
+          "f3": 4,
+          "relative_duration": 25,
+          "f1": 9,
+          "spectral_centroid": 4,
+          "high_frequency_ratio": 2,
+          "zcr": 2,
+          "pitch_reliable_hz": 19,
+          "pitch_relative_st": 19,
+          "intensity_lufs_adjusted_db": 24,
+          "rms_lufs_adjusted": 24
+        },
+        "checks": {
+          "relative_pitch_observation": "observed",
+          "relative_loudness_observation": "observed",
+          "relative_duration": "observed",
+          "phone_acoustics": "partial",
+          "independent_phone_recognition": "not_evaluated",
+          "stress_or_pitch_accent": "not_evaluated"
+        },
+        "pitch": {
+          "status": "applied",
+          "reason": "",
+          "method": "utterance_relative_pitch",
+          "comparison_gaps": [
+            {
+              "phone_index": 5,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 5,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 14,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 14,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 16,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 16,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 23,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 23,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 24,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 24,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 26,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 26,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            }
+          ],
+          "observation_count": 19,
+          "comparison_status": "observed"
+        },
+        "loudness": {
+          "status": "applied",
+          "reason": "",
+          "method": "integrated_lufs_constant_gain",
+          "quality": [
+            {
+              "role": "reference",
+              "peak_amplitude": 0.649932861328125,
+              "possible_existing_clipping": false,
+              "gain_db": -4.6765614342803765,
+              "gain_linear": 0.5836761239597449,
+              "would_clip_if_exported": false
+            },
+            {
+              "role": "learner",
+              "peak_amplitude": 0.649932861328125,
+              "possible_existing_clipping": false,
+              "gain_db": -4.5002738071027935,
+              "gain_linear": 0.5956433666435187,
+              "would_clip_if_exported": false
+            }
+          ],
+          "reference_baseline": {
+            "integrated_lufs": -18.323438565719623,
+            "interval": [
+              0,
+              2.5750625
+            ]
+          },
+          "learner_baseline": {
+            "integrated_lufs": -18.499726192897207,
+            "interval": [
+              0,
+              2.5050625
+            ]
+          },
+          "observation_count": 48,
+          "comparison_status": "observed"
+        },
+        "formants": {
+          "f1": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f1_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 195,
+              "learner": 160
+            }
+          },
+          "f2": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f2_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 195,
+              "learner": 160
+            }
+          },
+          "f3": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f3_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 195,
+              "learner": 160
+            }
+          }
+        },
+        "warnings": [
+          "f1 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "f2 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "f3 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+        ],
+        "runtime_seconds": 0.984,
+        "png_generated": true,
+        "report": "reports\\arctic_a0004\\normalized\\report.json"
+      }
+    },
+    {
+      "id": "arctic_a0005",
+      "reference": "bdl_arctic_a0005",
+      "comparison": "slt_arctic_a0005",
+      "transcript": "Will we ever forget it.",
+      "reference_phones": 15,
+      "comparison_phones": 15,
+      "matched_phones": 15,
+      "unmatched_reference": [],
+      "unmatched_comparison": [],
+      "raw": {
+        "observation_count": 41,
+        "observations_by_feature": {
+          "f2": 10,
+          "f3": 3,
+          "relative_duration": 15,
+          "f1": 7,
+          "spectral_centroid": 2,
+          "high_frequency_ratio": 2,
+          "zcr": 2
+        },
+        "checks": {
+          "relative_duration": "observed",
+          "phone_acoustics": "partial",
+          "independent_phone_recognition": "not_evaluated",
+          "stress_or_pitch_accent": "not_evaluated"
+        },
+        "pitch": {},
+        "loudness": {},
+        "formants": {},
+        "warnings": [
+          "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+        ],
+        "runtime_seconds": 0.329,
+        "png_generated": true,
+        "report": "reports\\arctic_a0005\\raw\\report.json"
+      },
+      "normalized": {
+        "observation_count": 93,
+        "observations_by_feature": {
+          "f2": 10,
+          "f3": 3,
+          "relative_duration": 15,
+          "f1": 7,
+          "spectral_centroid": 2,
+          "high_frequency_ratio": 2,
+          "zcr": 2,
+          "pitch_reliable_hz": 13,
+          "pitch_relative_st": 13,
+          "intensity_lufs_adjusted_db": 13,
+          "rms_lufs_adjusted": 13
+        },
+        "checks": {
+          "relative_pitch_observation": "observed",
+          "relative_loudness_observation": "observed",
+          "relative_duration": "observed",
+          "phone_acoustics": "partial",
+          "independent_phone_recognition": "not_evaluated",
+          "stress_or_pitch_accent": "not_evaluated"
+        },
+        "pitch": {
+          "status": "applied",
+          "reason": "",
+          "method": "utterance_relative_pitch",
+          "comparison_gaps": [
+            {
+              "phone_index": 6,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 6,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 15,
+              "feature": "pitch_reliable_hz",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            },
+            {
+              "phone_index": 15,
+              "feature": "pitch_relative_st",
+              "reason": "有效连续区间缺失或缺口结构不匹配，未跨缺口执行 DTW。"
+            }
+          ],
+          "observation_count": 13,
+          "comparison_status": "observed"
+        },
+        "loudness": {
+          "status": "applied",
+          "reason": "",
+          "method": "integrated_lufs_constant_gain",
+          "quality": [
+            {
+              "role": "reference",
+              "peak_amplitude": 0.64996337890625,
+              "possible_existing_clipping": false,
+              "gain_db": -2.645634651684894,
+              "gain_linear": 0.7374256971108861,
+              "would_clip_if_exported": false
+            },
+            {
+              "role": "learner",
+              "peak_amplitude": 0.649932861328125,
+              "possible_existing_clipping": false,
+              "gain_db": -5.901023465728276,
+              "gain_linear": 0.5069309726498218,
+              "would_clip_if_exported": false
+            }
+          ],
+          "reference_baseline": {
+            "integrated_lufs": -20.354365348315106,
+            "interval": [
+              0,
+              1.2950625
+            ]
+          },
+          "learner_baseline": {
+            "integrated_lufs": -17.098976534271724,
+            "interval": [
+              0,
+              1.4850625
+            ]
+          },
+          "observation_count": 26,
+          "comparison_status": "observed"
+        },
+        "formants": {
+          "f1": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f1_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 89,
+              "learner": 85
+            }
+          },
+          "f2": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f2_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 89,
+              "learner": 85
+            }
+          },
+          "f3": {
+            "status": "insufficient_evidence",
+            "reason": "标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+            "feature_id": "f3_lobanov_z",
+            "unit": "z",
+            "valid_target_frames": {
+              "reference": 89,
+              "learner": 85
+            }
+          }
+        },
+        "warnings": [
+          "f1 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "f2 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "f3 仅原始 Hz 观察：标准说话人：未导入该说话人的独立校准。；学习者：未导入该说话人的独立校准。",
+          "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+        ],
+        "runtime_seconds": 0.39,
+        "png_generated": true,
+        "report": "reports\\arctic_a0005\\normalized\\report.json"
+      }
+    }
+  ],
+  "failures": [],
+  "alignment": "MFA english_us_arpa, automatic, not human checked",
+  "formant_scope": "Requested, but independent per-speaker calibration is not supplied; report actual insufficiency.",
+  "source": "http://festvox.org/cmu_arctic/",
+  "roles": "BDL is reference A, SLT is comparison B; neither speaker is labelled erroneous."
+}

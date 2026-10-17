@@ -1,0 +1,14 @@
+{
+  "before": {
+    "hwnd": 2886036,
+    "title": "1. Sound あなた",
+    "pid": 50452
+  },
+  "exit_code": 0,
+  "stderr": "",
+  "after": {
+    "hwnd": 2557788,
+    "title": "AIPraat · AI 工作台",
+    "pid": 51020
+  }
+}

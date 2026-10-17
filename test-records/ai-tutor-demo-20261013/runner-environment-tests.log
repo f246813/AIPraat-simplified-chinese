@@ -1,0 +1,7 @@
+Test Python: <USER_HOME>\AppData\Local\Temp\AIPraat-runner-env-ca7e1a6548a2472c80e4b846dc551de9\project\venv-ai-modern\Scripts\python.exe (Python 3.12.14, runtime ready)
+PASS default selects first ready project interpreter and skips WindowsApps
+PASS explicit unready interpreter fails preflight with version and -Python guidance
+Test Python: <USER_HOME>\AppData\Local\Temp\AIPraat-runner-env-ca7e1a6548a2472c80e4b846dc551de9\project\venv-ai-modern\Scripts\python.exe (Python 3.12.14, runtime ready)
+Test Python: <USER_HOME>\AppData\Local\Temp\AIPraat-runner-env-ca7e1a6548a2472c80e4b846dc551de9\project\venv-ai-modern\Scripts\python.exe (Python 3.12.14, runtime ready)
+PASS shared override and explicit environment directory use the same resolver
+PASS absent Python and FFmpeg produce actionable environment messages

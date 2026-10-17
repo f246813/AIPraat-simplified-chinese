@@ -9,6 +9,7 @@ from pathlib import Path
 
 from .config import default_config_path
 from .service_lock import service_transition_lock
+from .mfa_resources import MfaResourceService
 
 
 def path_key(value):
@@ -45,9 +46,16 @@ class DictionaryService:
 
     def _result(self, raw):
         active = raw.get('alignment', {}).get(self.section_key, {}).get(self.active_key, '')
+        kind = 'dictionary' if self.active_key == 'dictionary_path' else 'acoustic'
+        resources = MfaResourceService.catalog(raw)[kind] if self.section_key == 'mfa' else []
+
+        def used_by(value):
+            return sorted({preset for resource in resources if path_key(resource['path']) == path_key(value)
+                           for preset in resource['used_by']})
         return {self.result_key: [dict(path=value, name=Path(value).name,
                                       exists=self._exists(value),
-                                      active=bool(active) and path_key(value) == path_key(active))
+                                      active=bool(active) and path_key(value) == path_key(active),
+                                      used_by=used_by(value))
                                   for value in self._paths(raw)],
                 'theme': raw.get('modern', {}).get('preferences', {}).get('theme', 'system')}
 
@@ -140,10 +148,14 @@ class DictionaryApplication:
         self._service = DictionaryService(config_path)
         self._models = AcousticModelService(config_path)
         self._wav2vec2 = Wav2Vec2ModelService(config_path)
+        self._mfa_resources = MfaResourceService(config_path)
         self.window = None
         self._guard = threading.Lock()
 
     def rpc(self, method, params):
+        # Native pickers and launcher probing must not hold the close/UI guard.
+        if method.startswith('mfa.'):
+            return self._mfa_resources.rpc(method, params, window=self.window)
         with self._guard:
             namespace, _, action = method.partition('.')
             service = {'dictionaries': self._service, 'acoustic_models': self._models,

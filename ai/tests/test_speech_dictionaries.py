@@ -122,14 +122,14 @@ class SpeechDictionaryTests(unittest.TestCase):
         self.service.select(str(self.second))
         aligner = MfaAligner(load_config(self.path).alignment.mfa)
 
-        def execute(command, **kwargs):
+        def execute(command, cancel=None, timeout=None, cwd=None):
             self.assertEqual(command[3], str(self.second))
             (Path(command[5]) / 'learner.TextGrid').write_text('', encoding='utf-8')
-            return Mock(returncode=0)
+            return 'ok\n'
 
         with patch.object(aligner, 'available', return_value=True), \
              patch('praat_ai.forced_alignment._copy_as_wav'), \
-             patch('praat_ai.forced_alignment.subprocess.run', side_effect=execute), \
+             patch('praat_ai.forced_alignment.run_mfa_command', side_effect=execute), \
              patch('praat_ai.forced_alignment.parse_mfa_textgrid', return_value='aligned'):
             self.assertEqual(aligner.align('fixture.wav', [PhoneSpec('a')], 'en', transcript='hello'), 'aligned')
 
@@ -251,6 +251,36 @@ class SpeechDictionaryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             app.rpc('wav2vec2_models.select', {'path': str(self.root / 'missing')})
         self.assertEqual(app.rpc('wav2vec2_models.remove', {'path': str(self.root / 'missing')})['models'], [])
+
+    def test_legacy_items_show_shared_preset_references_without_list_recursion(self):
+        from praat_ai.mfa_resources import MfaResourceService
+        resources = MfaResourceService(self.path)
+        data = resources.list()
+        preset = data['presets'][0]
+        preset['dictionary'] = data['resources']['dictionary'][0]['id']
+        resources.save(preset, data['launcher'])
+        before = self.path.read_bytes()
+        with patch.object(MfaResourceService, 'list', side_effect=AssertionError('recursive list')):
+            self.assertEqual(self.service.list()['dictionaries'][0]['used_by'], ['en-GB'])
+        self.assertEqual(before, self.path.read_bytes())
+
+    def test_mfa_rpc_routes_outside_dictionary_window_guard(self):
+        app = DictionaryApplication(self.path)
+        app.window = Mock()
+        with app._guard, patch.object(app._mfa_resources, 'rpc', return_value={'status': 'fixture'}) as rpc:
+            self.assertEqual(app.rpc('mfa.check_launcher', {'launcher': {}}), {'status': 'fixture'})
+        rpc.assert_called_once_with('mfa.check_launcher', {'launcher': {}}, window=app.window)
+
+    def test_shared_mfa_import_does_not_switch_legacy_active_dictionary(self):
+        app = DictionaryApplication(self.path)
+        app.window = Mock()
+        app.window.create_file_dialog.return_value = [str(self.second)]
+        with patch.dict('sys.modules', webview=Mock()):
+            data = app.rpc('mfa.choose', {'kind': 'dictionary'})
+        self.assertEqual(len(data['resources']['dictionary']), 2)
+        self.assertEqual(load_config(self.path).alignment.mfa.dictionary_path, str(self.first))
+        self.assertEqual(load_config(self.path).alignment.mfa.dictionary_paths, [])
+
 
 
 if __name__ == '__main__':

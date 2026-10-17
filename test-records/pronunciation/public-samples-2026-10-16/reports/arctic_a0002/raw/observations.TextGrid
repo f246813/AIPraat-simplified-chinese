@@ -1,0 +1,662 @@
+File type = "ooTextFile"
+Object class = "TextGrid"
+
+xmin = 0
+xmax = 3.755000
+tiers? <exists>
+size = 4
+item []:
+    item [1]:
+        class = "IntervalTier"
+        name = "Target_Phones"
+        xmin = 0
+        xmax = 3.755000
+        intervals: size = 43
+        intervals [1]:
+            xmin = 0.000000
+            xmax = 0.210000
+            text = "未评估"
+        intervals [2]:
+            xmin = 0.210000
+            xmax = 0.300000
+            text = "n"
+        intervals [3]:
+            xmin = 0.300000
+            xmax = 0.440000
+            text = "ɑ"
+        intervals [4]:
+            xmin = 0.440000
+            xmax = 0.480000
+            text = "t"
+        intervals [5]:
+            xmin = 0.480000
+            xmax = 0.550000
+            text = "æ"
+        intervals [6]:
+            xmin = 0.550000
+            xmax = 0.630000
+            text = "t"
+        intervals [7]:
+            xmin = 0.630000
+            xmax = 0.670000
+            text = "ð"
+        intervals [8]:
+            xmin = 0.670000
+            xmax = 0.760000
+            text = "ɪ"
+        intervals [9]:
+            xmin = 0.760000
+            xmax = 0.840000
+            text = "s"
+        intervals [10]:
+            xmin = 0.840000
+            xmax = 0.940000
+            text = "p"
+        intervals [11]:
+            xmin = 0.940000
+            xmax = 0.980000
+            text = "ɚ"
+        intervals [12]:
+            xmin = 0.980000
+            xmax = 1.070000
+            text = "t"
+        intervals [13]:
+            xmin = 1.070000
+            xmax = 1.120000
+            text = "ɪ"
+        intervals [14]:
+            xmin = 1.120000
+            xmax = 1.180000
+            text = "k"
+        intervals [15]:
+            xmin = 1.180000
+            xmax = 1.210000
+            text = "j"
+        intervals [16]:
+            xmin = 1.210000
+            xmax = 1.260000
+            text = "ə"
+        intervals [17]:
+            xmin = 1.260000
+            xmax = 1.290000
+            text = "l"
+        intervals [18]:
+            xmin = 1.290000
+            xmax = 1.380000
+            text = "ɚ"
+        intervals [19]:
+            xmin = 1.380000
+            xmax = 1.500000
+            text = "k"
+        intervals [20]:
+            xmin = 1.500000
+            xmax = 1.660000
+            text = "eɪ"
+        intervals [21]:
+            xmin = 1.660000
+            xmax = 1.850000
+            text = "s"
+        intervals [22]:
+            xmin = 1.850000
+            xmax = 1.890000
+            text = "未评估"
+        intervals [23]:
+            xmin = 1.890000
+            xmax = 2.000000
+            text = "t"
+        intervals [24]:
+            xmin = 2.000000
+            xmax = 2.190000
+            text = "ɑ"
+        intervals [25]:
+            xmin = 2.190000
+            xmax = 2.310000
+            text = "m"
+        intervals [26]:
+            xmin = 2.310000
+            xmax = 2.360000
+            text = "未评估"
+        intervals [27]:
+            xmin = 2.360000
+            xmax = 2.430000
+            text = "ə"
+        intervals [28]:
+            xmin = 2.430000
+            xmax = 2.540000
+            text = "p"
+        intervals [29]:
+            xmin = 2.540000
+            xmax = 2.630000
+            text = "ɑ"
+        intervals [30]:
+            xmin = 2.630000
+            xmax = 2.670000
+            text = "l"
+        intervals [31]:
+            xmin = 2.670000
+            xmax = 2.730000
+            text = "ə"
+        intervals [32]:
+            xmin = 2.730000
+            xmax = 2.800000
+            text = "dʒ"
+        intervals [33]:
+            xmin = 2.800000
+            xmax = 2.930000
+            text = "aɪ"
+        intervals [34]:
+            xmin = 2.930000
+            xmax = 2.980000
+            text = "z"
+        intervals [35]:
+            xmin = 2.980000
+            xmax = 3.010000
+            text = "d"
+        intervals [36]:
+            xmin = 3.010000
+            xmax = 3.060000
+            text = "未评估"
+        intervals [37]:
+            xmin = 3.060000
+            xmax = 3.090000
+            text = "w"
+        intervals [38]:
+            xmin = 3.090000
+            xmax = 3.160000
+            text = "ɪ"
+        intervals [39]:
+            xmin = 3.160000
+            xmax = 3.220000
+            text = "t"
+        intervals [40]:
+            xmin = 3.220000
+            xmax = 3.280000
+            text = "m"
+        intervals [41]:
+            xmin = 3.280000
+            xmax = 3.380000
+            text = "ɔ"
+        intervals [42]:
+            xmin = 3.380000
+            xmax = 3.600000
+            text = "ɹ"
+        intervals [43]:
+            xmin = 3.600000
+            xmax = 3.755000
+            text = "未评估"
+    item [2]:
+        class = "IntervalTier"
+        name = "AI_ProblemCandidates"
+        xmin = 0
+        xmax = 3.755000
+        intervals: size = 43
+        intervals [1]:
+            xmin = 0.000000
+            xmax = 0.210000
+            text = "未评估"
+        intervals [2]:
+            xmin = 0.210000
+            xmax = 0.300000
+            text = "未评估：未执行独立音素识别"
+        intervals [3]:
+            xmin = 0.300000
+            xmax = 0.440000
+            text = "未评估：未执行独立音素识别"
+        intervals [4]:
+            xmin = 0.440000
+            xmax = 0.480000
+            text = "未评估：未执行独立音素识别"
+        intervals [5]:
+            xmin = 0.480000
+            xmax = 0.550000
+            text = "未评估：未执行独立音素识别"
+        intervals [6]:
+            xmin = 0.550000
+            xmax = 0.630000
+            text = "未评估：未执行独立音素识别"
+        intervals [7]:
+            xmin = 0.630000
+            xmax = 0.670000
+            text = "未评估：未执行独立音素识别"
+        intervals [8]:
+            xmin = 0.670000
+            xmax = 0.760000
+            text = "未评估：未执行独立音素识别"
+        intervals [9]:
+            xmin = 0.760000
+            xmax = 0.840000
+            text = "未评估：未执行独立音素识别"
+        intervals [10]:
+            xmin = 0.840000
+            xmax = 0.940000
+            text = "未评估：未执行独立音素识别"
+        intervals [11]:
+            xmin = 0.940000
+            xmax = 0.980000
+            text = "未评估：未执行独立音素识别"
+        intervals [12]:
+            xmin = 0.980000
+            xmax = 1.070000
+            text = "未评估：未执行独立音素识别"
+        intervals [13]:
+            xmin = 1.070000
+            xmax = 1.120000
+            text = "未评估：未执行独立音素识别"
+        intervals [14]:
+            xmin = 1.120000
+            xmax = 1.180000
+            text = "未评估：未执行独立音素识别"
+        intervals [15]:
+            xmin = 1.180000
+            xmax = 1.210000
+            text = "未评估：未执行独立音素识别"
+        intervals [16]:
+            xmin = 1.210000
+            xmax = 1.260000
+            text = "未评估：未执行独立音素识别"
+        intervals [17]:
+            xmin = 1.260000
+            xmax = 1.290000
+            text = "未评估：未执行独立音素识别"
+        intervals [18]:
+            xmin = 1.290000
+            xmax = 1.380000
+            text = "未评估：未执行独立音素识别"
+        intervals [19]:
+            xmin = 1.380000
+            xmax = 1.500000
+            text = "未评估：未执行独立音素识别"
+        intervals [20]:
+            xmin = 1.500000
+            xmax = 1.660000
+            text = "未评估：未执行独立音素识别"
+        intervals [21]:
+            xmin = 1.660000
+            xmax = 1.850000
+            text = "未评估：未执行独立音素识别"
+        intervals [22]:
+            xmin = 1.850000
+            xmax = 1.890000
+            text = "未评估"
+        intervals [23]:
+            xmin = 1.890000
+            xmax = 2.000000
+            text = "未评估：未执行独立音素识别"
+        intervals [24]:
+            xmin = 2.000000
+            xmax = 2.190000
+            text = "未评估：未执行独立音素识别"
+        intervals [25]:
+            xmin = 2.190000
+            xmax = 2.310000
+            text = "未评估：未执行独立音素识别"
+        intervals [26]:
+            xmin = 2.310000
+            xmax = 2.360000
+            text = "未评估"
+        intervals [27]:
+            xmin = 2.360000
+            xmax = 2.430000
+            text = "未评估：未执行独立音素识别"
+        intervals [28]:
+            xmin = 2.430000
+            xmax = 2.540000
+            text = "未评估：未执行独立音素识别"
+        intervals [29]:
+            xmin = 2.540000
+            xmax = 2.630000
+            text = "未评估：未执行独立音素识别"
+        intervals [30]:
+            xmin = 2.630000
+            xmax = 2.670000
+            text = "未评估：未执行独立音素识别"
+        intervals [31]:
+            xmin = 2.670000
+            xmax = 2.730000
+            text = "未评估：未执行独立音素识别"
+        intervals [32]:
+            xmin = 2.730000
+            xmax = 2.800000
+            text = "未评估：未执行独立音素识别"
+        intervals [33]:
+            xmin = 2.800000
+            xmax = 2.930000
+            text = "未评估：未执行独立音素识别"
+        intervals [34]:
+            xmin = 2.930000
+            xmax = 2.980000
+            text = "未评估：未执行独立音素识别"
+        intervals [35]:
+            xmin = 2.980000
+            xmax = 3.010000
+            text = "未评估：未执行独立音素识别"
+        intervals [36]:
+            xmin = 3.010000
+            xmax = 3.060000
+            text = "未评估"
+        intervals [37]:
+            xmin = 3.060000
+            xmax = 3.090000
+            text = "未评估：未执行独立音素识别"
+        intervals [38]:
+            xmin = 3.090000
+            xmax = 3.160000
+            text = "未评估：未执行独立音素识别"
+        intervals [39]:
+            xmin = 3.160000
+            xmax = 3.220000
+            text = "未评估：未执行独立音素识别"
+        intervals [40]:
+            xmin = 3.220000
+            xmax = 3.280000
+            text = "未评估：未执行独立音素识别"
+        intervals [41]:
+            xmin = 3.280000
+            xmax = 3.380000
+            text = "未评估：未执行独立音素识别"
+        intervals [42]:
+            xmin = 3.380000
+            xmax = 3.600000
+            text = "未评估：未执行独立音素识别"
+        intervals [43]:
+            xmin = 3.600000
+            xmax = 3.755000
+            text = "未评估"
+    item [3]:
+        class = "IntervalTier"
+        name = "AI_EvidenceStatus"
+        xmin = 0
+        xmax = 3.755000
+        intervals: size = 43
+        intervals [1]:
+            xmin = 0.000000
+            xmax = 0.210000
+            text = "未评估"
+        intervals [2]:
+            xmin = 0.210000
+            xmax = 0.300000
+            text = "已生成声学观察（实验性）"
+        intervals [3]:
+            xmin = 0.300000
+            xmax = 0.440000
+            text = "已生成声学观察（实验性）"
+        intervals [4]:
+            xmin = 0.440000
+            xmax = 0.480000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [5]:
+            xmin = 0.480000
+            xmax = 0.550000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [6]:
+            xmin = 0.550000
+            xmax = 0.630000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [7]:
+            xmin = 0.630000
+            xmax = 0.670000
+            text = "已生成声学观察（实验性）"
+        intervals [8]:
+            xmin = 0.670000
+            xmax = 0.760000
+            text = "已生成声学观察（实验性）"
+        intervals [9]:
+            xmin = 0.760000
+            xmax = 0.840000
+            text = "已生成声学观察（实验性）"
+        intervals [10]:
+            xmin = 0.840000
+            xmax = 0.940000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [11]:
+            xmin = 0.940000
+            xmax = 0.980000
+            text = "已生成声学观察（实验性）"
+        intervals [12]:
+            xmin = 0.980000
+            xmax = 1.070000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [13]:
+            xmin = 1.070000
+            xmax = 1.120000
+            text = "已生成声学观察（实验性）"
+        intervals [14]:
+            xmin = 1.120000
+            xmax = 1.180000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [15]:
+            xmin = 1.180000
+            xmax = 1.210000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [16]:
+            xmin = 1.210000
+            xmax = 1.260000
+            text = "已生成声学观察（实验性）"
+        intervals [17]:
+            xmin = 1.260000
+            xmax = 1.290000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [18]:
+            xmin = 1.290000
+            xmax = 1.380000
+            text = "已生成声学观察（实验性）"
+        intervals [19]:
+            xmin = 1.380000
+            xmax = 1.500000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [20]:
+            xmin = 1.500000
+            xmax = 1.660000
+            text = "已生成声学观察（实验性）"
+        intervals [21]:
+            xmin = 1.660000
+            xmax = 1.850000
+            text = "已生成声学观察（实验性）"
+        intervals [22]:
+            xmin = 1.850000
+            xmax = 1.890000
+            text = "未评估"
+        intervals [23]:
+            xmin = 1.890000
+            xmax = 2.000000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [24]:
+            xmin = 2.000000
+            xmax = 2.190000
+            text = "已生成声学观察（实验性）"
+        intervals [25]:
+            xmin = 2.190000
+            xmax = 2.310000
+            text = "已生成声学观察（实验性）"
+        intervals [26]:
+            xmin = 2.310000
+            xmax = 2.360000
+            text = "未评估"
+        intervals [27]:
+            xmin = 2.360000
+            xmax = 2.430000
+            text = "已生成声学观察（实验性）"
+        intervals [28]:
+            xmin = 2.430000
+            xmax = 2.540000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [29]:
+            xmin = 2.540000
+            xmax = 2.630000
+            text = "已生成声学观察（实验性）"
+        intervals [30]:
+            xmin = 2.630000
+            xmax = 2.670000
+            text = "已生成声学观察（实验性）"
+        intervals [31]:
+            xmin = 2.670000
+            xmax = 2.730000
+            text = "已生成声学观察（实验性）"
+        intervals [32]:
+            xmin = 2.730000
+            xmax = 2.800000
+            text = "已生成声学观察（实验性）"
+        intervals [33]:
+            xmin = 2.800000
+            xmax = 2.930000
+            text = "已生成声学观察（实验性）"
+        intervals [34]:
+            xmin = 2.930000
+            xmax = 2.980000
+            text = "已生成声学观察（实验性）"
+        intervals [35]:
+            xmin = 2.980000
+            xmax = 3.010000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [36]:
+            xmin = 3.010000
+            xmax = 3.060000
+            text = "未评估"
+        intervals [37]:
+            xmin = 3.060000
+            xmax = 3.090000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [38]:
+            xmin = 3.090000
+            xmax = 3.160000
+            text = "已生成声学观察（实验性）"
+        intervals [39]:
+            xmin = 3.160000
+            xmax = 3.220000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [40]:
+            xmin = 3.220000
+            xmax = 3.280000
+            text = "已生成声学观察（实验性）"
+        intervals [41]:
+            xmin = 3.280000
+            xmax = 3.380000
+            text = "已生成声学观察（实验性）"
+        intervals [42]:
+            xmin = 3.380000
+            xmax = 3.600000
+            text = "已生成声学观察（实验性）"
+        intervals [43]:
+            xmin = 3.600000
+            xmax = 3.755000
+            text = "未评估"
+    item [4]:
+        class = "TextTier"
+        name = "AI_Observations"
+        xmin = 0
+        xmax = 3.755000
+        points: size = 38
+        points [1]:
+            number = 0.255000
+            mark = "/n/ 的 spectral_centroid 声学观察：参考 469.865Hz，学习者 426.739Hz（偏低；实验性，未判定发音对错）。；/n/ 的 relative_duration 时长观察：参考 0.818ratio，学习者 0.643ratio（相对偏短；实验性，未判定发音对错）。"
+        points [2]:
+            number = 0.370000
+            mark = "/ɑ/ 的 f1 声学观察：参考 750.153Hz，学习者 933.162Hz（偏高；实验性，未判定发音对错）。；/ɑ/ 的 f2 声学观察：参考 1381.595Hz，学习者 1663.617Hz（偏高；实验性，未判定发音对错）。；/ɑ/ 的 relative_duration 时长观察：参考 1.692ratio，学习者 2.154ratio（相对偏长；实验性，未判定发音对错）。"
+        points [3]:
+            number = 0.460000
+            mark = "/t/ 的 relative_duration 时长观察：参考 0.571ratio，学习者 0.381ratio（相对偏短；实验性，未判定发音对错）。"
+        points [4]:
+            number = 0.515000
+            mark = "/æ/ 的 relative_duration 时长观察：参考 0.500ratio，学习者 1.167ratio（相对偏长；实验性，未判定发音对错）。"
+        points [5]:
+            number = 0.590000
+            mark = "/t/ 的 relative_duration 时长观察：参考 2.000ratio，学习者 1.455ratio（相对偏短；实验性，未判定发音对错）。"
+        points [6]:
+            number = 0.650000
+            mark = "/ð/ 的 spectral_centroid 声学观察：参考 3208.430Hz，学习者 2792.712Hz（偏低；实验性，未判定发音对错）。；/ð/ 的 high_frequency_ratio 声学观察：参考 0.623ratio，学习者 0.565ratio（偏低；实验性，未判定发音对错）。；/ð/ 的 zcr 声学观察：参考 0.279ratio，学习者 0.139ratio（偏低；实验性，未判定发音对错）。；/ð/ 的 relative_duration 时长观察：参考 0.625ratio，学习者 0.471ratio（相对偏短；实验性，未判定发音对错）。"
+        points [7]:
+            number = 0.715000
+            mark = "/ɪ/ 的 f1 声学观察：参考 408.540Hz，学习者 536.628Hz（偏高；实验性，未判定发音对错）。；/ɪ/ 的 f2 声学观察：参考 1612.976Hz，学习者 2063.199Hz（偏高；实验性，未判定发音对错）。；/ɪ/ 的 relative_duration 时长观察：参考 1.600ratio，学习者 1.500ratio（相对偏短；实验性，未判定发音对错）。"
+        points [8]:
+            number = 0.800000
+            mark = "/s/ 的 spectral_centroid 声学观察：参考 4738.676Hz，学习者 5402.053Hz（偏高；实验性，未判定发音对错）。；/s/ 的 high_frequency_ratio 声学观察：参考 0.913ratio，学习者 0.892ratio（偏低；实验性，未判定发音对错）。；/s/ 的 zcr 声学观察：参考 0.561ratio，学习者 0.691ratio（偏高；实验性，未判定发音对错）。；/s/ 的 relative_duration 时长观察：参考 0.526ratio，学习者 0.842ratio（相对偏长；实验性，未判定发音对错）。"
+        points [9]:
+            number = 0.890000
+            mark = "/p/ 的 relative_duration 时长观察：参考 2.000ratio，学习者 1.667ratio（相对偏短；实验性，未判定发音对错）。"
+        points [10]:
+            number = 0.960000
+            mark = "/ɚ/ 的 f1 声学观察：参考 466.988Hz，学习者 329.605Hz（偏低；实验性，未判定发音对错）。；/ɚ/ 的 f2 声学观察：参考 1701.122Hz，学习者 1683.279Hz（偏低；实验性，未判定发音对错）。；/ɚ/ 的 relative_duration 时长观察：参考 0.632ratio，学习者 0.421ratio（相对偏短；实验性，未判定发音对错）。"
+        points [11]:
+            number = 1.025000
+            mark = "/t/ 的 relative_duration 时长观察：参考 1.455ratio，学习者 2.000ratio（相对偏长；实验性，未判定发音对错）。"
+        points [12]:
+            number = 1.095000
+            mark = "/ɪ/ 的 f1 声学观察：参考 318.267Hz，学习者 361.954Hz（偏高；实验性，未判定发音对错）。；/ɪ/ 的 f2 声学观察：参考 2284.390Hz，学习者 2499.357Hz（偏高；实验性，未判定发音对错）。；/ɪ/ 的 relative_duration 时长观察：参考 0.588ratio，学习者 0.667ratio（相对偏长；实验性，未判定发音对错）。"
+        points [13]:
+            number = 1.150000
+            mark = "/k/ 的 relative_duration 时长观察：参考 2.250ratio，学习者 1.500ratio（相对偏短；实验性，未判定发音对错）。"
+        points [14]:
+            number = 1.195000
+            mark = "/j/ 的 relative_duration 时长观察：参考 0.375ratio，学习者 0.545ratio（相对偏长；实验性，未判定发音对错）。"
+        points [15]:
+            number = 1.235000
+            mark = "/ə/ 的 f1 声学观察：参考 423.572Hz，学习者 555.668Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 f2 声学观察：参考 1530.011Hz，学习者 1672.017Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 relative_duration 时长观察：参考 2.333ratio，学习者 1.667ratio（相对偏短；实验性，未判定发音对错）。"
+        points [16]:
+            number = 1.275000
+            mark = "/l/ 的 relative_duration 时长观察：参考 0.400ratio，学习者 0.429ratio（相对偏长；实验性，未判定发音对错）。"
+        points [17]:
+            number = 1.335000
+            mark = "/ɚ/ 的 f1 声学观察：参考 427.609Hz，学习者 483.633Hz（偏高；实验性，未判定发音对错）。；/ɚ/ 的 f2 声学观察：参考 1641.917Hz，学习者 1741.028Hz（偏高；实验性，未判定发音对错）。；/ɚ/ 的 relative_duration 时长观察：参考 1.231ratio，学习者 1.200ratio（相对偏短；实验性，未判定发音对错）。"
+        points [18]:
+            number = 1.440000
+            mark = "/k/ 的 relative_duration 时长观察：参考 0.870ratio，学习者 0.960ratio（相对偏长；实验性，未判定发音对错）。"
+        points [19]:
+            number = 1.580000
+            mark = "/eɪ/ 的 f1 声学观察：参考 460.337Hz，学习者 509.716Hz（偏高；实验性，未判定发音对错）。；/eɪ/ 的 f2 声学观察：参考 2198.822Hz，学习者 2632.442Hz（偏高；实验性，未判定发音对错）。；/eɪ/ 的 relative_duration 时长观察：参考 1.200ratio，学习者 1.032ratio（相对偏短；实验性，未判定发音对错）。"
+        points [20]:
+            number = 1.755000
+            mark = "/s/ 的 spectral_centroid 声学观察：参考 4802.927Hz，学习者 5085.090Hz（偏高；实验性，未判定发音对错）。；/s/ 的 high_frequency_ratio 声学观察：参考 0.916ratio，学习者 0.889ratio（偏低；实验性，未判定发音对错）。；/s/ 的 zcr 声学观察：参考 0.572ratio，学习者 0.650ratio（偏高；实验性，未判定发音对错）。；/s/ 的 relative_duration 时长观察：参考 1.304ratio，学习者 1.407ratio（相对偏长；实验性，未判定发音对错）。"
+        points [21]:
+            number = 1.945000
+            mark = "/t/ 的 relative_duration 时长观察：参考 0.457ratio，学习者 0.579ratio（相对偏长；实验性，未判定发音对错）。"
+        points [22]:
+            number = 2.095000
+            mark = "/ɑ/ 的 f1 声学观察：参考 721.808Hz，学习者 814.694Hz（偏高；实验性，未判定发音对错）。；/ɑ/ 的 f2 声学观察：参考 1261.173Hz，学习者 1301.234Hz（偏高；实验性，未判定发音对错）。；/ɑ/ 的 relative_duration 时长观察：参考 2.105ratio，学习者 1.652ratio（相对偏短；实验性，未判定发音对错）。"
+        points [23]:
+            number = 2.250000
+            mark = "/m/ 的 spectral_centroid 声学观察：参考 606.941Hz，学习者 489.593Hz（偏低；实验性，未判定发音对错）。；/m/ 的 relative_duration 时长观察：参考 0.846ratio，学习者 0.923ratio（相对偏长；实验性，未判定发音对错）。"
+        points [24]:
+            number = 2.395000
+            mark = "/ə/ 的 f1 声学观察：参考 694.789Hz，学习者 837.907Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 f2 声学观察：参考 1268.719Hz，学习者 1520.562Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 relative_duration 时长观察：参考 0.571ratio，学习者 0.609ratio（相对偏长；实验性，未判定发音对错）。"
+        points [25]:
+            number = 2.485000
+            mark = "/p/ 的 relative_duration 时长观察：参考 1.538ratio，学习者 1.375ratio（相对偏短；实验性，未判定发音对错）。"
+        points [26]:
+            number = 2.585000
+            mark = "/ɑ/ 的 f1 声学观察：参考 679.395Hz，学习者 698.700Hz（偏高；实验性，未判定发音对错）。；/ɑ/ 的 f2 声学观察：参考 1041.954Hz，学习者 1144.050Hz（偏高；实验性，未判定发音对错）。；/ɑ/ 的 relative_duration 时长观察：参考 0.824ratio，学习者 1.200ratio（相对偏长；实验性，未判定发音对错）。"
+        points [27]:
+            number = 2.650000
+            mark = "/l/ 的 f2 声学观察：参考 892.590Hz，学习者 1178.628Hz（偏高；实验性，未判定发音对错）。；/l/ 的 f3 声学观察：参考 2887.185Hz，学习者 3407.698Hz（偏高；实验性，未判定发音对错）。；/l/ 的 relative_duration 时长观察：参考 1.167ratio，学习者 0.533ratio（相对偏短；实验性，未判定发音对错）。"
+        points [28]:
+            number = 2.700000
+            mark = "/ə/ 的 f1 声学观察：参考 481.240Hz，学习者 576.594Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 f2 声学观察：参考 1394.227Hz，学习者 1693.623Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 relative_duration 时长观察：参考 0.625ratio，学习者 1.091ratio（相对偏长；实验性，未判定发音对错）。"
+        points [29]:
+            number = 2.765000
+            mark = "/dʒ/ 的 spectral_centroid 声学观察：参考 1843.495Hz，学习者 2047.458Hz（偏高；实验性，未判定发音对错）。；/dʒ/ 的 high_frequency_ratio 声学观察：参考 0.400ratio，学习者 0.440ratio（偏高；实验性，未判定发音对错）。；/dʒ/ 的 relative_duration 时长观察：参考 0.857ratio，学习者 0.737ratio（相对偏短；实验性，未判定发音对错）。"
+        points [30]:
+            number = 2.865000
+            mark = "/aɪ/ 的 f1 声学观察：参考 572.643Hz，学习者 646.908Hz（偏高；实验性，未判定发音对错）。；/aɪ/ 的 f2 声学观察：参考 1769.424Hz，学习者 1857.245Hz（偏高；实验性，未判定发音对错）。；/aɪ/ 的 relative_duration 时长观察：参考 1.882ratio，学习者 2.167ratio（相对偏长；实验性，未判定发音对错）。"
+        points [31]:
+            number = 2.955000
+            mark = "/z/ 的 spectral_centroid 声学观察：参考 2825.819Hz，学习者 2821.429Hz（偏低；实验性，未判定发音对错）。；/z/ 的 high_frequency_ratio 声学观察：参考 0.546ratio，学习者 0.497ratio（偏低；实验性，未判定发音对错）。；/z/ 的 zcr 声学观察：参考 0.202ratio，学习者 0.192ratio（偏低；实验性，未判定发音对错）。；/z/ 的 relative_duration 时长观察：参考 0.696ratio，学习者 0.625ratio（相对偏短；实验性，未判定发音对错）。"
+        points [32]:
+            number = 2.995000
+            mark = "/d/ 的 relative_duration 时长观察：参考 0.875ratio，学习者 0.750ratio（相对偏短；实验性，未判定发音对错）。"
+        points [33]:
+            number = 3.075000
+            mark = "/w/ 的 relative_duration 时长观察：参考 1.231ratio，学习者 0.600ratio（相对偏短；实验性，未判定发音对错）。"
+        points [34]:
+            number = 3.125000
+            mark = "/ɪ/ 的 f1 声学观察：参考 481.149Hz，学习者 501.850Hz（偏高；实验性，未判定发音对错）。；/ɪ/ 的 f2 声学观察：参考 1719.378Hz，学习者 1797.674Hz（偏高；实验性，未判定发音对错）。；/ɪ/ 的 relative_duration 时长观察：参考 0.800ratio，学习者 1.556ratio（相对偏长；实验性，未判定发音对错）。"
+        points [35]:
+            number = 3.190000
+            mark = "/t/ 的 relative_duration 时长观察：参考 0.933ratio，学习者 0.923ratio（相对偏短；实验性，未判定发音对错）。"
+        points [36]:
+            number = 3.250000
+            mark = "/m/ 的 spectral_centroid 声学观察：参考 731.826Hz，学习者 379.212Hz（偏低；实验性，未判定发音对错）。；/m/ 的 relative_duration 时长观察：参考 1.125ratio，学习者 0.750ratio（相对偏短；实验性，未判定发音对错）。"
+        points [37]:
+            number = 3.330000
+            mark = "/ɔ/ 的 f1 声学观察：参考 633.254Hz，学习者 371.386Hz（偏低；实验性，未判定发音对错）。；/ɔ/ 的 f2 声学观察：参考 772.023Hz，学习者 1034.498Hz（偏高；实验性，未判定发音对错）。；/ɔ/ 的 relative_duration 时长观察：参考 0.783ratio，学习者 0.714ratio（相对偏短；实验性，未判定发音对错）。"
+        points [38]:
+            number = 3.490000
+            mark = "/ɹ/ 的 f2 声学观察：参考 1512.870Hz，学习者 1607.366Hz（偏高；实验性，未判定发音对错）。；/ɹ/ 的 f3 声学观察：参考 2244.235Hz，学习者 2155.695Hz（偏低；实验性，未判定发音对错）。；/ɹ/ 的 relative_duration 时长观察：参考 1.556ratio，学习者 2.200ratio（相对偏长；实验性，未判定发音对错）。"

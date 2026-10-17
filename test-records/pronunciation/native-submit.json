@@ -1,0 +1,12 @@
+{
+  "action": "submit",
+  "realCloud": false,
+  "checks": [
+    "production-React-assets-real-WebView2-RPC-and-local-model-label",
+    "request-reached-existing-offline-analysis-and-persistent-JSON-report"
+  ],
+  "exitCode": 0,
+  "reportsGenerated": 1,
+  "textgridGenerated": true,
+  "passed": true
+}

@@ -5,21 +5,28 @@ using System.Text.RegularExpressions;
 
 namespace AIPraat.Setup
 {
-    // Paths only: enable flags, backend, Conda launcher and runtime parameters
-    // remain owned by the existing alignment configuration.
+    // Paths plus the launcher identity needed to detect a usable alignment
+    // environment: enable flags, backend and runtime parameters stay owned by the
+    // existing alignment configuration.
     public sealed class AlignmentPaths
     {
         public string Wav2Vec2ModelPath {get;set;}
         public string MfaExecutablePath {get;set;}
+        // MfaAcousticModelPath/MfaDictionaryPath are retained for config preservation; speech resource management writes them.
         public string MfaAcousticModelPath {get;set;}
         public string MfaDictionaryPath {get;set;}
-        public AlignmentPaths(){Wav2Vec2ModelPath=MfaExecutablePath=MfaAcousticModelPath=MfaDictionaryPath="";}
+        // A direct Scripts\mfa.exe call never activates its conda environment, so
+        // libsndfile/openfst are missing; these two carry the alternative launcher.
+        public string MfaCondaExecutable {get;set;}
+        public string MfaCondaEnvironment {get;set;}
+        public AlignmentPaths(){Wav2Vec2ModelPath=MfaExecutablePath=MfaAcousticModelPath=MfaDictionaryPath=MfaCondaExecutable=MfaCondaEnvironment="";}
         static string Value(Dictionary<string,object> data,string key,string fallback)
         {object value;return data.TryGetValue(key,out value)?Convert.ToString(value):fallback;}
         public static AlignmentPaths Read(Dictionary<string,object> config)
         {
             var alignment=Configuration.Object(config,"alignment");var wav=Configuration.Object(alignment,"wav2vec2");var mfa=Configuration.Object(alignment,"mfa");
-            return new AlignmentPaths {Wav2Vec2ModelPath=Value(wav,"model",""),MfaExecutablePath=Value(mfa,"executable","mfa"),MfaAcousticModelPath=Value(mfa,"acoustic_model",""),MfaDictionaryPath=Value(mfa,"dictionary_path","")};
+            return new AlignmentPaths {Wav2Vec2ModelPath=Value(wav,"model",""),MfaExecutablePath=Value(mfa,"executable","mfa"),MfaAcousticModelPath=Value(mfa,"acoustic_model",""),MfaDictionaryPath=Value(mfa,"dictionary_path",""),
+                MfaCondaExecutable=Value(mfa,"conda_executable",""),MfaCondaEnvironment=Value(mfa,"conda_environment","")};
         }
         public void Apply(Dictionary<string,object> config,AlignmentPaths original)
         {
@@ -28,11 +35,24 @@ namespace AIPraat.Setup
             Put(mfa,"executable",MfaExecutablePath,original==null?null:original.MfaExecutablePath);
             Put(mfa,"acoustic_model",MfaAcousticModelPath,original==null?null:original.MfaAcousticModelPath);
             Put(mfa,"dictionary_path",MfaDictionaryPath,original==null?null:original.MfaDictionaryPath);
+            PutLauncher(mfa,"conda_executable",MfaCondaExecutable);
+            PutLauncher(mfa,"conda_environment",MfaCondaEnvironment);
         }
         static void Put(Dictionary<string,object> section,string key,string value,string original)
         {
             string cleaned=PathValidation.Clean(value);
             if(original==null || cleaned!=PathValidation.Clean(original))section[key]=cleaned;
+        }
+        // The conda launcher is owned by the app config and edited through the MFA detail
+        // dialog, which always starts from the loaded values. Callers that never carry it
+        // (installer config merge, contract tests) pass empty, so only a non-empty value is
+        // ever written: saving unrelated paths must not erase a configured launcher.
+        static void PutLauncher(Dictionary<string,object> section,string key,string value)
+        {
+            string cleaned=PathValidation.Clean(value);
+            if(cleaned=="")return;
+            if(!section.ContainsKey(key)||!string.Equals(Convert.ToString(section[key]),cleaned,StringComparison.Ordinal))
+                section[key]=cleaned;
         }
         public string ValidationError()
         {

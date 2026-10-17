@@ -37,10 +37,12 @@ from typing import Any, Callable, Mapping
 from . import (
     api_settings,
     delivery,
+    escape_policy,
     parent_watch,
     praat_app,
     progress_popup,
     qwen,
+    report_guards,
     sendpraat,
     tools,
     vot_request,
@@ -547,6 +549,14 @@ class TurnOutcome:
     steps: list[AgentStep] = field(default_factory=list)
     used_tools: bool = False
     failure: str = ""
+    #: 最终交付的证据守卫状态（见 :func:`_guard_local_delivery`）：
+    #: ``verified`` / ``rejected_masked`` / ``no_evidence`` / ``empty``。
+    #: 空串表示这一轮没走到交付守卫（例如直接返回的固定提示）。
+    delivery_guard: str = ""
+    #: 这轮正文的来源：``model``（模型写的）／``summary``（本地用实测结果行拼的摘要）／
+    #: ``static``（程序文案，例如取消、超时）。只有 ``model`` 的正文才是「模型的主张」，
+    #: 才需要拿证据核对：实测结果行本身不是需要核对的主张。
+    reply_source: str = ""
 
     @property
     def last_script(self) -> str:
@@ -554,6 +564,61 @@ class TurnOutcome:
             if step.script:
                 return step.script
         return ""
+
+
+def local_evidence_state(context_text: str, outcome: TurnOutcome, user_text: str) -> escape_policy.AnalysisState:
+    """本机循环里用来核对最终正文的证据视图。
+
+    形状与云端 ``state.evidence`` 一致：一条工具结果一行证据，取工具名、参数和
+    真实结果行。报告守卫按这份证据核对数值，所以两条路径核对的是同一种东西。
+    """
+
+    state = escape_policy.AnalysisState(goal=str(user_text or ""), context_text=str(context_text or ""))
+    for step in outcome.steps:
+        if not step.ok or not step.results:
+            continue
+        state.add_evidence(
+            escape_policy.Evidence(
+                step.tool,
+                dict(step.arguments),
+                list(step.results),
+                state.context_text,
+            )
+        )
+    return state
+
+
+def _guard_local_delivery(outcome: TurnOutcome, *, context_text: str, user_text: str) -> None:
+    """本机最终交付前走与云端同一份证据守卫（``report_guards.guard_delivered_text``）。
+
+    本机规划器过去把模型写好的正文直接交付，云端报告已有的数值核对在本机路径上
+    完全不生效：实测里证据只有 220 Hz 时，模型写的 999 Hz 照样到了用户面前。
+
+    没有测量证据时不核对数值——没有被核对的对象，状态如实记为 ``no_evidence``，
+    而不是把它算成通过。核对通过/被遮蔽分别记 ``verified`` / ``rejected_masked``。
+    """
+
+    reply = str(outcome.reply or "")
+    if not reply.strip():
+        outcome.delivery_guard = "empty"
+        return
+    if outcome.reply_source != "model":
+        # 本地摘要/程序文案不是模型的主张：结果行是实测原文，遮蔽它等于丢证据。
+        outcome.delivery_guard = "not_model_text"
+        return
+    state = local_evidence_state(context_text, outcome, user_text)
+    if not report_guards.report_context_data(state):
+        outcome.delivery_guard = "no_evidence"
+        return
+    text, status = report_guards.guard_delivered_text(state, reply)
+    outcome.delivery_guard = status
+    if text != reply:
+        outcome.reply = text
+        outcome.notes.append(
+            "交付前数值核对：对不上本次实测的数值已标成 "
+            + report_guards.UNVERIFIED_NUMBER
+            + "，结论文字保留。"
+        )
 
 
 def _short_arguments(arguments: Mapping[str, Any], *, maximum: int = 60) -> str:
@@ -768,6 +833,7 @@ def _run_agent_turn(
         except qwen.TruncatedResponseError as error:
             outcome.failure = str(error)
             outcome.reply = "模型回答未完成：" + str(error)
+            outcome.reply_source = "static"
             return outcome
         if not actions:
             if not reply:
@@ -781,8 +847,10 @@ def _run_agent_turn(
                     except qwen.TruncatedResponseError as error:
                         outcome.failure = str(error)
                         outcome.reply = "模型回答未完成：" + str(error)
+                        outcome.reply_source = "static"
                         return outcome
             outcome.reply = reply or _summary_of(outcome)
+            outcome.reply_source = "model" if reply else "summary"
             return outcome
         for action_index, action in enumerate(actions):
             if cancel is not None and cancel.is_set():
@@ -883,15 +951,19 @@ def _run_agent_turn(
     if cancelled:
         outcome.notes.append("已取消：后面的步骤没有再执行。")
         outcome.reply = "已取消这次操作（已经执行完的那几步结果还在下面）。"
+        outcome.reply_source = "static"
         return outcome
     # 收尾失败不能丢失已执行结果：重试一次，再失败使用本地摘要并记录原因。
     for attempt in range(2):
         try:
-            outcome.reply = planner.wrap_up() or _summary_of(outcome)
+            wrapped = planner.wrap_up()
+            outcome.reply = wrapped or _summary_of(outcome)
+            outcome.reply_source = "model" if wrapped else "summary"
             break
         except qwen.TruncatedResponseError as error:
             outcome.failure = str(error)
             outcome.reply = "模型回答未完成：" + str(error)
+            outcome.reply_source = "static"
             break
         except qwen.QwenError as error:
             if attempt == 0:
@@ -901,6 +973,7 @@ def _run_agent_turn(
                 f"收尾回答两次都没成功（{error}），下面用本次实测结果拼的摘要。"
             )
             outcome.reply = _summary_of(outcome)
+            outcome.reply_source = "summary"
     return outcome
 
 
@@ -1198,7 +1271,7 @@ def run_turn(
         qwen.planner_mode() != qwen.JSON_MODE if native is None else native
     )
     schemas = tools.tool_schemas() if use_native else []
-    # A5：先扣掉工具 schema、系统提示、用户这句话和回答预留，剩下的才是
+    # 先扣掉工具 schema、系统提示、用户这句话和回答预留，剩下的才是
     # 「现场信息 + 对话历史」能用的额度；对象列表最多拿三分之一（它得让模型看到
     # 当前选中，但不该把历史挤光）。
     # 老的 JSON 规划把工具清单写在提示词里，那份开销也要算进去。
@@ -1260,6 +1333,7 @@ def run_turn(
         environment=environment,
         cancel=cancel,
     )
+    _guard_local_delivery(outcome, context_text=context_text, user_text=user_text)
     outcome.notes[:0] = notes
     return outcome
 
@@ -1389,8 +1463,8 @@ def _read_results() -> list[str]:
         return []
     try:
         # 按 errors='replace' 读（和 _read_failure 一致）：结果文件里混进一个坏字节时，
-        # UnicodeDecodeError 不是 OSError，会穿过 _send 的 except 把已经确认的投递事实
-        # 一起丢掉（2026-10-07 实测：一个 0xFF 就让「已投递成功」变成无法归因的失败）。
+        # 只按 UTF-8 替换解码，避免一个非法字节让已经确认的投递事实
+        # 变成无法归因的失败。
         text = path.read_text(encoding="utf-8", errors="replace")
     except OSError:
         return []
@@ -1697,9 +1771,9 @@ class ChatWindow:
         self._choice_tags = []
         self.messages: queue.Queue[tuple[str, str]] = queue.Queue()
         self.busy = False
-        #: C7：点「停止」时置上，正在等的投递/批处理/多轮循环都会看到。
+        #: 点「停止」时置上；正在等待的投递、批处理和规划循环都会检查。
         self.cancel_event = threading.Event()
-        #: C5：已经投递过脚本的 Praat 进程集合——之后不用再送那条 ping 往返。
+        #: 已经投递过脚本的 Praat 进程集合；同一进程不必重复做上下文 ping。
         self.context_ready_pids: frozenset[int] = frozenset()
         #: 加载/停止模型时的迷你进度小窗（懒创建，用完关掉）。
         self.progress_window = None
@@ -1932,7 +2006,7 @@ class ChatWindow:
             kind="filled",
         )
         self.send_button.grid(row=0, column=3, sticky="e", padx=(0, self.theme.pad(8)))
-        # C7：等待可以取消。Praat 卡住、社区脚本跑太久时不用干等 25 秒。
+        # 等待可以取消：Praat 卡住或社区脚本耗时过长时不必干等完成标记。
         self.stop_button = ui_widgets.RoundedButton(
             composer_actions,
             self.theme,
@@ -2459,7 +2533,7 @@ class ChatWindow:
         transcript.tag_configure(block.body_tag, elide=block.collapsed)
         transcript.configure(state="disabled")
 
-    def _process_block_at(self, index: str) -> _ProcessBlock | None:
+    def _process_block_at(self, index: str, point: tuple[int, int] | None = None) -> _ProcessBlock | None:
         """这一处文字属于哪个**已结束**的过程折叠区（用于右键命中）。
 
         只认标题那一行会漏掉两种情况，用户会看到「右键没反应」：
@@ -2469,10 +2543,23 @@ class ChatWindow:
         - 标题行上下的行距（``hint`` 的 ``spacing1/spacing3`` 是**行间**空隙，不映射到
           任何字符），差一两行同样点不到 header tag。
 
-        所以这里除了题目所在的字符，还看该行的行尾、下一行的行首和行尾。折叠时正文被
-        elide 掉，正文那一行的字符索引正好等于标题行行尾的下一个位置（``line.end +1c``），
-        所以「点折叠区也能展开」也顺带成立，而展开状态下正文各行不会命中。
+        所以先按字符找：题目所在的字符，加上该行的行首/行尾与下一行的行首/行尾。折叠时
+        正文被 elide 掉，正文那一行的字符索引正好等于标题行行尾的下一个位置，所以
+        「点折叠区也能展开」也顺带成立，而展开状态下正文各行不会命中。
+
+        ``point``（``@x,y`` 的像素坐标）是行距的兜底：同一条行距在不同字体/DPI 下会被
+        判给上一行或下一行（实测：标题行高 17px 时，标题下方 6px 处会解析成**下一行**，
+        于是命中判定扑空）。给了 ``point`` 就再按标题行的像素带找最近的已结束折叠区，
+        容差是半个行高——足够覆盖行距，又不会把手伸到正文里。
         """
+
+        block = self._process_block_by_characters(index)
+        if block is not None or point is None:
+            return block
+        return self._process_block_near_point(*point)
+
+    def _process_block_by_characters(self, index: str) -> _ProcessBlock | None:
+        """字符法：题目字符、所在行的首尾、下一行的首尾都算命中。"""
 
         transcript = self.transcript
         number = index.split(".")[0]
@@ -2481,10 +2568,8 @@ class ChatWindow:
             line = int(number) + offset
             if line < 1:
                 continue
-            start = f"{line}.0"
-            end = f"{line}.end"
-            candidates.append(start)
-            candidates.append(end)
+            candidates.append(f"{line}.0")
+            candidates.append(f"{line}.end")
         for candidate in candidates:
             try:
                 names = transcript.tag_names(candidate)
@@ -2495,6 +2580,35 @@ class ChatWindow:
                 if block is not None and block.finished_at is not None:
                     return block
         return None
+
+    def _process_block_near_point(self, x: int, y: int) -> _ProcessBlock | None:
+        """像素兜底：点落在某个折叠区标题行的上下半个行高内就算命中，取最近的那个。"""
+
+        transcript = self.transcript
+        best: tuple[int, _ProcessBlock] | None = None
+        for block in self._process_blocks.values():
+            if block.finished_at is None:
+                continue
+            try:
+                first = transcript.index(f"{block.header_tag}.first")
+                box = transcript.bbox(first)
+            except tk.TclError:
+                continue
+            if not box:
+                continue
+            top, height = box[1], box[3]
+            slack = max(2, height // 2)
+            if not top - slack <= y <= top + height + slack:
+                continue
+            distance = 0 if top <= y <= top + height else min(abs(y - top), abs(y - (top + height)))
+            if best is None or distance < best[0]:
+                best = (distance, block)
+        return best[1] if best else None
+
+    def _process_block_at_characters(self, index: str) -> _ProcessBlock | None:
+        """旧名字保留给测试/调用方（等价于 :meth:`_process_block_by_characters`）。"""
+
+        return self._process_block_by_characters(index)
 
     #: 同一次右键里重复投递的事件（``<Button-3>`` + ``<ButtonRelease-3>``）必须只算一次，
     #: 否则两次切换互相抵消，用户看到的就是「点了没反应 / 闪一下又收起」。
@@ -2523,7 +2637,7 @@ class ChatWindow:
             index = self.transcript.index(f"@{event.x},{event.y}")
         except tk.TclError:
             return None
-        block = self._process_block_at(index)
+        block = self._process_block_at(index, (event.x, event.y))
         if block is None:
             return None
         self.toggle_process(block)
@@ -2709,7 +2823,7 @@ class ChatWindow:
         return "break"
 
     def cancel_turn(self) -> None:
-        """C7：不再等这一步。已经在 Praat 里跑的脚本不受影响（它可能已经跑完）。"""
+        """不再等待当前步骤；已经在 Praat 里运行的脚本不受影响。"""
 
         if not self.busy:
             return

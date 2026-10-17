@@ -1,0 +1,40 @@
+python.exe : ======================================================================
+所在位置 行:1 字符: 543
++ ... nsistency"; & $py -m unittest test_explanation_guard test_alignment_c ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (===============...===============:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ERROR: test_explanation_guard (unittest.loader._FailedTest.test_explanation_guard)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_explanation_guard
+Traceback (most recent call last):
+  File "<USER_HOME>\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\loader.py", line 13
+7, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\ai\tests\test_explanation_guard.py", line 35, in <module>
+    from praat_ai.pronunciation import conclusion_caveat, explanation_evidence
+ImportError: cannot import name 'conclusion_caveat' from 'praat_ai.pronunciation' (<WORKSPACE>\ai\praat_ai\pron
+unciation.py)
+
+
+======================================================================
+ERROR: test_alignment_control (unittest.loader._FailedTest.test_alignment_control)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_alignment_control
+Traceback (most recent call last):
+  File "<USER_HOME>\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\loader.py", line 13
+7, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\ai\tests\test_alignment_control.py", line 28, in <module>
+    from praat_ai.forced_alignment import (
+ImportError: cannot import name 'AlignmentCancelled' from 'praat_ai.forced_alignment' (<WORKSPACE>\ai\praat_ai\
+forced_alignment.py)
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+FAILED (errors=2)

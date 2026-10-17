@@ -156,22 +156,6 @@ namespace {
 		});
 	}
 
-	static void aiFrontendAddModelCallback (Thing boss, GuiMenuItemEvent /* event */) {
-		FunctionEditor me = reinterpret_cast <FunctionEditor> (boss);
-		runAiMenuAction (praat_translate (U"Add model path"), [me] {
-			PraatAiControl_chooseFrontendModel();
-			updateAiToolbarStatus (me);
-		});
-	}
-
-	static void aiApiSettingsCallback (Thing boss, GuiMenuItemEvent /* event */) {
-		FunctionEditor me = reinterpret_cast <FunctionEditor> (boss);
-		runAiMenuAction (praat_translate (U"API settings"), [me] {
-			PraatAiControl_configureApi();
-			updateAiToolbarStatus (me);
-		});
-	}
-
 	static void aiPathSettingsCallback (Thing boss, GuiMenuItemEvent /* event */) {
 		FunctionEditor me = reinterpret_cast <FunctionEditor> (boss);
 		runAiMenuAction (praat_translate (U"Path configuration"), [me] {
@@ -244,15 +228,9 @@ namespace {
 			me -> aiFrontendMenu, U"Stop frontend", 0, aiFrontendStopCallback, me
 		);
 		GuiMenu_addSeparator (me -> aiFrontendMenu);
-		GuiMenu_addItem (
-			me -> aiFrontendMenu, U"Add model path...", 0, aiFrontendAddModelCallback, me
-		);
 		GuiMenu_addItem (me -> aiFrontendMenu, U"Anki integration...", 0, aiAnkiCallback, me);
 		GuiMenu_addItem (
 			me -> aiFrontendMenu, U"Path configuration...", 0, aiPathSettingsCallback, me
-		);
-		GuiMenu_addItem (
-			me -> aiFrontendMenu, U"API settings...", 0, aiApiSettingsCallback, me
 		);
 		GuiMenu_addSeparator (me -> aiFrontendMenu);
 		GuiMenu_addItem (

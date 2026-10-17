@@ -1,0 +1,46 @@
+PASS actual scratch host resource bytes: AIPraat-setup-scratch.exe (5/5)
+PASS actual scratch host resource bytes: AIPraat-paths-scratch.exe (5/5)
+PASS real_complete_environment_passes_all_15_without_wheels
+PASS cuda_requires_actual_device
+PASS embedded_manifest_and_scripts_match_source
+PASS online_ui_reuses_postinstall_report_and_keeps_timestamped_logs
+PASS failed_install_returns_one_full_report_and_persistent_error_log
+PASS both_hosts_use_shared_runtime_field_and_switch_clears_ready
+PASS shared_dialog_contains_15_rows_and_offline_controls
+PASS save_rechecks_selected_environment_and_synchronizes_cpu
+PASS installer_engine_rechecks_and_rejects_skip_before_writing
+Screenshots: <WORKSPACE>\scratch\normalization-runtime\full312\csharp\temp\AIPraat-runtime-ui-671b8a207c674a6fbaa071ada4954b8d
+PASS repair_available_only_for_runnable_supported_python_missing_dependencies
+PASS single_runtime_entry_has_disabled_ready_and_busy_states
+PASS path_dialog_runtime_field_available_for_missing_and_ready_environment
+PASS installer_uses_same_runtime_field_and_removes_skip
+powershell : PythonSetupTests.exe : 
+所在位置 行:1 字符: 222
++ ... .exe).Path; powershell -NoProfile -ExecutionPolicy Bypass -File insta ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PythonSetupTests.exe : :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+At <WORKSPACE>\installer\tests\Run-LoudnessFullRegressionTests.ps1:58 char:11
++     try { & $exe @arguments 2>&1 | Tee-Object -FilePath (Join-Path $o ...
++           ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   由于 Exception.ToString() 失败，因此无法打印异常字符串。
+   由于 Exception.ToString() 失败，因此无法打印异常字符串。
+PASS restored_button_opens_original_detection_installation_and_repair_window
+PASS powershell_launch_preserves_unicode_spaces_apostrophes_and_metacharacters
+Screenshots: <WORKSPACE>\scratch\normalization-runtime\full312\csharp\temp\AIPraat setup 中文 9653b909d81a4e33ab568e015b60b76a
+PASS denied_log_file_creation_uses_writable_fallback
+PASS all_unwritable_locations_return_no_log_stem
+PASS temporary_work_files_fall_back_to_program_directory
+SKIP denied_user_and_temp_logs_use_program_directory: would change ACLs on live user/global log folders
+SKIP all_logs_denied_real_probe_returns_complete_report: would change ACLs on live user/global log folders
+SKIP denied_report_archive_does_not_discard_successful_detection: would change ACLs on live user/global log folders
+SKIP all_logs_denied_real_panel_opens_populated_runtime_window: would change ACLs on live user/global log folders
+SKIP all_logs_denied_install_keeps_postinstall_report: would change ACLs on live user/global log folders
+PASS missing_report_is_detection_failure_not_15_missing_dependencies
+Runtime log: <WORKSPACE>\scratch\normalization-runtime\full312\csharp\temp\AIPraat\logs\runtime\detect-20261016-070334-511Z-010e644d.log
+PASS delivered_runtime_probe_retains_complete_report_and_log
+RESULT 5 passed, 0 failed, 5 skipped; fixtures=<WORKSPACE>\scratch\normalization-runtime\full312\csharp\scratch\AIPraat-log-tests-ea917484e31b4d83abcd6d7ec617e332

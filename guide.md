@@ -1,6 +1,6 @@
 # Praat 中文版维护指南
 
-本文件说明翻译源、原生界面、构建入口与 AI 前端的维护方式。文档和代码注释描述当前实现；临时开发阶段、AI 修改流水和被取代的决策不作为项目规则。未确认的实现差异应标明为差异或待核对事项。
+本文件说明翻译源、原生界面、构建入口与 AI 前端的维护方式。所有项目文档和代码注释只描述已核实的当前状态，不记录 AI 历史修改、临时开发阶段或已被取代的决策。采用新决策后直接更新现状描述，不保留废弃决策的叙事。未确认的实现偏差不得写成新业务规则；应区分源码事实、已复现缺陷和待核实事项。第三方出处、许可证和原始测试证据按其用途保留。
 
 ## 0. 接任务后的默认动作
 
@@ -17,9 +17,8 @@
    - 内置帮助手册：看 `fon/manual_*.cpp`，必要时用抽取脚本生成双语审校材料。
    - Windows 文件拖拽：看 `sys/motifEmulator.cpp`、`sys/GuiMenu.cpp`、`sys/praat_objectMenus.cpp`。
    - 启动时图像窗口隐藏：看 `sys/praat_picture.cpp` 和 `sys/praat_objectMenus.cpp`。
-   - 发布打包：看 `.github/workflows/release.yml`、`README.txt`。
-   - 本地 AI 纠音前端（对话窗口、工具模板、编辑器选区链路）：看 `ai/praat_ai/`，
-     交接要点见 `ai/HANDOFF.md`（选区数据流、VOT 算法取舍、验证命令）。
+   - 发布打包：看 `installer/build.ps1`、`installer/publish-release.ps1` 和 `.github/workflows/release.yml`，具体环境要求见 `installer/README.zh-CN.md`。
+   - AI 对话、测量与双音频纠音：看 `ai/praat_ai/`；先读 `docs/CURRENT-IMPLEMENTATION.zh-CN.md` 和 `handoff/AI-MODULE.zh-CN.md`，验证入口见 `ai/docs/validation.zh-CN.md`。
 
 3. 修改前先读相关上下文。不要只凭英文字符串全局替换；Praat 有大量手写宏、菜单别名和旧拼写，错误替换很容易导致启动时报错或 UI 不匹配。
 
@@ -312,9 +311,15 @@ Compress-Archive -Path Praat.exe, README.txt -DestinationPath Praat-ZH-Windows-x
 
 发布工作流位于 `.github/workflows/release.yml`，实际包含：
 
+- `ai-offline-regression`（测试门槛，`ubuntu-latest` / Python 3.12）：装分析运行库（不装模型、不联网下载）→ `compileall` → 能力门（`praat_ai.capabilities.analysis_capabilities()["ready"]` 必须为真）→ `python -m unittest discover -s tests -t tests`。
+- `frontend-tests`（测试门槛，`ubuntu-latest` / Node 22）：`npm ci` → `npx tsc -b` → `npm test`（vitest 单元）。浏览器级 `npm run test:ui` 需要真实窗口，不在 CI 里。
 - `build-windows-x64`：在 `windows-latest` 上用 MSYS2 `CLANG64` 构建 `make PRAAT_ARCH=x64v3 -j2`，产出 Windows x64 zip。
 - `build-macos`：在 `macos-26` 上准备 Xcode project，必要时从上游 release 下载 `praatXXXX_xcodeproj.zip`，并把 `sys/praat_translate.cpp` 注入 `praat_mac` target，产出 macOS universal dmg。
 - `create-release`：下载两个构建产物，用 `gh release create` 创建 GitHub release。
+
+两个测试门槛是 `build-windows-x64` 与 `build-macos` 的 `needs`：**测试不过就不构建、不发布**。
+但这条门槛只覆盖源码级离线回归与前端单测——真实录音材料验收、安装产物验收、WebView2/原生
+菜单行为仍要按各自文档独立进行（见 `ai/docs/validation.zh-CN.md`）。
 
 该 workflow 是手动触发的 `workflow_dispatch`，输入包括：
 
@@ -362,8 +367,26 @@ pywebview / WebView2；`--legacy` 使用 Tk 窗口。现代宿主的存储、任
 `ai/praat_ai/measures.tsv` 与 `ai/plugin/`。社区脚本来源和贡献者见
 [CREDITS.zh-CN.md](CREDITS.zh-CN.md)。
 
-维护参考：
+### 8.1 Tk（legacy）界面：设计语言与进度小窗
 
+四个 Tk 界面（`chat.py`、`api_settings.py`、`progress_popup.py`、`ui.py`）共用
+`ui_theme.py` 的令牌与 `ui_widgets.py` 的自绘控件，设计语言参考 TW-Elements（见
+[CREDITS.zh-CN.md](CREDITS.zh-CN.md)，未复制它的代码）。代码注释里历史引用写作
+`guide.md §8.16`，指的就是这一节。
+
+`progress_popup.MiniProgress` 的对外契约（回归脚本按这些读，语义不要改）：
+
+- `bar` 的 `value` 仍是 **0–100**；`update(fraction, message=None)` 收 0–1 的进度；
+- `configure`/`cget` 兼容 ttk 的 `state`/`text`/`command`/`kind`/`background`；
+- `remaining_minimum_seconds()` 是「最少显示 0.8 秒」的剩余时间；
+- 默认关窗键不做事（简约：不给中途关闭）；传了可选的 `on_stop` 才长出「停止」按钮，
+  关窗键与它同义；收尾用 `complete(message=None)`（推到 100% 并禁掉按钮），
+  这样「分析已经结束」与「用户要求停止」不会混起来。
+- 纠音**分析**阶段用 `analysis_progress.run_with_stop` 起这个窗口（见
+  [validation.zh-CN.md](ai/docs/validation.zh-CN.md)）；Praat 菜单那一档的进度窗属于
+  Praat（`PRAAT_PROGRESS` → `Melder_progress`），不在本模块里，也没有停止按钮。
+
+维护参考：
 - [启动与配置](ai/README.zh-CN.md)
 - [当前模块、接口与限制](ai/HANDOFF.md)
 - [前端架构](docs/ai-frontend/CHAT-UI-ARCHITECTURE.zh-CN.md)

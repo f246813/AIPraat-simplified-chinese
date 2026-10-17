@@ -5,10 +5,10 @@ import { revealAllHistory } from './reveal';
 // That is also the configuration the mount window will need, because prepending history
 // has to be compensated deliberately rather than by the browser.
 const disableNativeAnchoring = (page: Page) => page.addStyleTag({content: '.transcript{overflow-anchor:none !important}'});
-const early = (page: Page) => page.locator('details[data-activity-id="fixture-early-thinking"]');
-const held = (page: Page) => page.locator('details[data-activity-id="fixture-mid-thinking"]');
-const heldSummary = (page: Page) => page.locator('details[data-activity-id="fixture-mid-thinking"] > summary');
-const heldOffset = (page: Page) => page.locator('details[data-activity-id="fixture-mid-thinking"] > summary').evaluate(el => {
+const early = (page: Page) => page.locator('[data-message-id="history-39"] .process-details');
+const held = (page: Page) => page.locator('[data-message-id="history-59"] .process-details');
+const heldSummary = (page: Page) => held(page).locator(':scope > summary');
+const heldOffset = (page: Page) => heldSummary(page).evaluate(el => {
   const scroller = document.querySelector('.transcript')!;
   return el.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
 });

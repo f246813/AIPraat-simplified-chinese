@@ -46,6 +46,7 @@ __pycache__/
 ai/logs/
 ai/ai_config.json
 ai/runtime/
+logs/runtime/
 
 # Local zip packages/releases
 *.zip
@@ -57,3 +58,35 @@ gui_candidates.txt
 translation_candidates.txt
 translation_check_report.md
 scratch/
+
+# Isolated runtime acceptance environments and downloaded wheels
+installer/verification/runtime-*-env/
+installer/verification/runtime-wheelhouse/
+installer/verification/runtime-local-plan.json
+installer/verification/runtime-constraints.txt
+
+# Machine-specific configuration, acceptance environments and local artifacts
+ai/anki_config.json
+ai/ai_config.json.lock
+install-settings.json
+payload-manifest.json
+.aipraat-backups/
+**/.aipraat-backups/
+.pi/
+本机开发/
+/*.exe
+/AIPraat-使用说明.md
+installer/verification/*.exe
+installer/verification/python*/
+installer/verification/ai/runtime/
+installer/verification/logs/
+ai/frontend/undefined/
+pip-build-tracker-*/
+pip-download-*/
+pip-metadata-*/
+pip-unpack-*/
+tmp*/
+torchinductor_*/
+installer/build/
+test-records/**/mfa-cache/
+test-records/**/mfa-work/

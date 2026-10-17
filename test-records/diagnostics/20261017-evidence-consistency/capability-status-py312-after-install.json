@@ -1,0 +1,72 @@
+{
+  "python": "<WORKSPACE>\\venv-ai-modern\\Scripts\\python.exe",
+  "version": "3.12.14",
+  "architecture": "AMD64",
+  "device": "cpu",
+  "supported": true,
+  "ready": false,
+  "completed": false,
+  "items": [
+    {
+      "id": "numpy",
+      "label": "NumPy",
+      "required": true,
+      "requirement": "numpy>=2.0,<2.3",
+      "spec": ">=2.0,<2.3",
+      "installed": "2.2.6",
+      "ok": true,
+      "status": "已就绪"
+    },
+    {
+      "id": "scipy",
+      "label": "SciPy（响度滤波）",
+      "required": true,
+      "requirement": "scipy>=1.14.1,<1.15",
+      "spec": ">=1.14.1,<1.15",
+      "installed": "1.14.1",
+      "ok": true,
+      "status": "已就绪"
+    },
+    {
+      "id": "pyloudnorm",
+      "label": "pyloudnorm（响度归一化）",
+      "required": true,
+      "requirement": "pyloudnorm==0.2.0",
+      "spec": "==0.2.0",
+      "installed": "0.2.0",
+      "ok": true,
+      "status": "已就绪"
+    },
+    {
+      "id": "pillow",
+      "label": "Pillow",
+      "required": true,
+      "requirement": "pillow>=10.0",
+      "spec": ">=10.0",
+      "installed": "12.3.0",
+      "ok": true,
+      "status": "已就绪"
+    },
+    {
+      "id": "praat-parselmouth",
+      "label": "praat-parselmouth",
+      "required": true,
+      "requirement": "praat-parselmouth>=0.4.7",
+      "spec": ">=0.4.7",
+      "installed": "0.4.7",
+      "ok": true,
+      "status": "已就绪"
+    },
+    {
+      "id": "pydantic-ai-slim",
+      "label": "pydantic-ai-slim",
+      "required": true,
+      "requirement": "pydantic-ai-slim[openai]==2.52.0",
+      "spec": "==2.52.0",
+      "installed": "2.52.0",
+      "ok": true,
+      "status": "已就绪"
+    }
+  ],
+  "message": ""
+}

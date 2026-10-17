@@ -11,7 +11,7 @@ import ast
 import copy
 import math
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from pydantic_ai import ModelRetry
@@ -22,6 +22,9 @@ from .tools import SOUND_CLASSES, parse_object_context
 
 #: 算不出来的推导式在正文里换成这个：不把内部语法漏给用户，也不因为一句推导丢掉整份报告。
 UNVERIFIED_CALC = '[推导未核对]'
+#: 守卫没核上的数值，在保留的正文里换成这个占位符：正文能留，没测过的数字不能当实测。
+#: 云端恢复稿（``cloud_agent.rescued_report``）与本机最终交付（``chat``）共用这一个标记。
+UNVERIFIED_NUMBER = '[未通过核对的数值]'
 
 
 class CalcUnavailable(Exception):
@@ -53,8 +56,7 @@ _VALUE_RANGE = re.compile(
     r'(?P<a>' + _N + r')\s*(?P<ua>kHz|Hz|dB|%|％)?\s*[–—~～至到-]\s*'
     r'(?P<b>' + _N + r')\s*(?P<ub>kHz|Hz|dB|%|％)(?![A-Za-z])', re.I)
 #: ``[0.446194, 0.66158] 秒``：模型很常这样写编辑器圈选。它和「0.446194–0.66158 秒」
-#: 是同一个范围，只是写法不同；不认它就会把一个**正确**的范围当成孤立数字
-#: （2026-10-07 实测：报告因此连吃两次拒绝，正文里留下 ``[[未通过核对的数值], 0.66158]``）。
+#: 括号对与短横线是同一范围的两种写法；不识别括号对会把正确的范围当成孤立数字。
 _RANGE_PAIR = re.compile(
     r'[\[［(（]\s*(?P<a>' + _N + r')\s*[,，、]\s*(?P<b>' + _N + r')\s*[\]］)）]\s*'
     r'(?P<u>milliseconds?|seconds?|msec|sec|ms|s|毫秒|秒)?', re.I)
@@ -854,7 +856,12 @@ def _fill_citations(state: Any, text: str, records: dict[str, Record]) -> str:
     return '\n'.join(out)
 
 
-def _validate_text(state: Any, text: str, records: dict[str, Record]) -> str:
+def _validate_text(state: Any, text: str, records: dict[str, Record], *, fill_citations: bool = True) -> str:
+    """核对正文里的数值/推导。
+
+    ``fill_citations=False``：只核对、不给数值补 ``[E1]`` 引证。本机最终交付发的是
+    普通聊天正文，没有引证记号，补进去会改动用户看到的答复。
+    """
     replacements: list[str] = []
 
     if '\ue000' in text or '\ue001' in text:
@@ -862,7 +869,9 @@ def _validate_text(state: Any, text: str, records: dict[str, Record]) -> str:
         text = text.replace('\ue000', '').replace('\ue001', '')
         note_guard(state, 'repair', 'report.internal_marker')
     text = _strip_unknown_citations(state, text, records)
-    text = _fill_citations(state, text, records)
+    text = _strip_unknown_citations(state, text, records)
+    if fill_citations:
+        text = _fill_citations(state, text, records)
 
     def calculate(match: re.Match[str]) -> str:
         line_start = text.rfind('\n', 0, match.start()) + 1
@@ -925,17 +934,16 @@ def _validate_text(state: Any, text: str, records: dict[str, Record]) -> str:
         _check_numeric_line(state, evidence_line, records, verbatim=in_fence or _verbatim_line(line))
         checked = _check_prosody_line(state, evidence_line, records)
         if checked != evidence_line:
-            # 只把追加的标注接回 masked 的那一行：evidence_line 里的 calc 占位式已经被
-            # 引证替换过，整行替换会把程序算出来的结果弄丢（2026-10-07 自查发现）。
+            # 只把追加的标注接回被遮蔽的那一行：该行的 calc 占位式已被引证替换，
+            # 整行替换会丢掉程序计算的结果。
             masked = masked.replace(line, line.rstrip() + checked[len(evidence_line):])
     for index, rendered in enumerate(replacements):
         masked = masked.replace('\ue000' + chr(0xE100 + index) + '\ue001', rendered)
     return masked
 
 
-#: 「没有音频输入所以测不了」：测量是 Praat 对对象做的，不需要把音频发给模型。
-#: 2026-10-07 实测：一轮里已经测到 10 行数据，报告仍以 ``audio_input=false，无法执行测量``
-#: 收尾，而且因为不含任何数字，数值核对一句话都没拦——整份「零测量报告」照样算通过。
+#: 「没有音频输入所以测不了」不成立：搜索与测量在 Praat 对象上进行，
+#: 不需要把音频发给模型。已经取得测量行时更不能据此收尾。
 _NO_INPUT_CLAIM = re.compile(
     r'未提供音频|没有收到音频|未收到任何音频|没有音频输入|未提供任何音频|无音频输入|'
     r'audio_input\s*(?:为|=|是|is)\s*`?false|无法执行(?:任何)?测量|无法进行(?:任何)?测量|'
@@ -948,7 +956,7 @@ _MISSING_DENIAL = re.compile(r'不存在|找不到|未找到|没有找到|不在
                              r'未加载|没有该对象|does not exist|not found', re.I)
 
 
-def validate_report(state: Any, report: Any) -> Any:
+def validate_report(state: Any, report: Any, *, fill_citations: bool = True) -> Any:
     """Return a report with deterministic calculations, or request SDK retry.
 
     This works with AnalysisReport without importing cloud_agent (and creating
@@ -966,10 +974,8 @@ def validate_report(state: Any, report: Any) -> Any:
                   if measured else '对象列表里有可测量的声音对象；')
         _block(state, 'report.input_claim_conflict',
                reason + '测量由 Praat 对对象执行，不需要把音频发给模型，'
-               '所以不能声称没有输入或无法测量。请执行测量并引用结果，'
-               '或者说明工具到底为什么失败。')
-    # 用户点名的对象不存在时，回答里必须说出来；不能拿「没有音频输入」搪塞过去
-    # （2026-10-07 实测：对象名不存在被答成「未收到音频」）。
+               '所以「没有音频输入」或「无法测量」在这里不成立。')
+    # 用户点名的对象不存在时，回答必须明确说明，不能用「没有音频输入」搪塞。
     for match in _MISSING_OBJECT_NOTE.finditer(context_text):
         names = [piece.strip() for piece in re.split(r'[、,，]', match[1]) if piece.strip()]
         if not names:
@@ -981,13 +987,77 @@ def validate_report(state: Any, report: Any) -> Any:
                    '用户提到的对象（' + '、'.join(names) + '）不在当前 Praat 对象列表里；'
                    '回答里必须点名说明它不存在（找不到/未找到/不在列表），'
                    '不能改用别的对象，也不能用「没有音频输入」代替。')
-    analysis = _validate_text(state, report.analysis, records)
+    analysis = _validate_text(state, report.analysis, records, fill_citations=fill_citations)
     coverage = []
     for entry in report.coverage:
-        explanation = _validate_text(state, entry.explanation, records)
+        explanation = _validate_text(state, entry.explanation, records, fill_citations=fill_citations)
         coverage.append(entry.model_copy(update={'explanation': explanation})
                         if hasattr(entry, 'model_copy') else entry)
     if hasattr(report, 'model_copy'):
         return report.model_copy(update={'analysis': analysis, 'coverage': coverage})
     report.analysis = analysis
     return report
+
+
+@dataclass
+class _TextDraft:
+    """把一段普通正文塞进 ``validate_report`` 用的最小报告对象（无引证、无覆盖项）。"""
+
+    analysis: str
+    coverage: list[Any] = field(default_factory=list)
+
+def _guard_note(text: str, detail: str, values=()) -> str:
+    """被守卫拒绝、又只能靠遮蔽修复时，把原因附在正文末尾（云端 rescued_report 同一做法）。
+
+    原因里回显的正是那个没核上的数值，所以原因本身也要遮蔽同样的值——否则用户还是
+    会从那句话里看到没测过的数字。
+    """
+
+    reason = ' '.join(str(detail or '').split())[:300].rstrip('。；; ')
+    reason = mask_rejected_numbers(reason or '见守卫记录', values, UNVERIFIED_NUMBER)
+    return (text.rstrip() + '\n\n（这份回答没有通过自动数值核对：' + reason
+            + '。没通过核对的数值已标成 ' + UNVERIFIED_NUMBER + '。）')
+
+
+def guard_delivered_text(state: Any, text: str, *, values=(), verify: bool = True,
+                         fill_citations: bool = False) -> tuple[str, str]:
+    """两条交付路径共用的守卫入口：云端恢复稿与本机最终交付都经这一个函数。
+
+    ``verify=True``：先走 :func:`validate_report`（同一套确定性核对）。被拒时取出没
+    核上的数值，用 :func:`mask_rejected_numbers` 遮蔽，再核对一遍——一次只能报出一处
+    没对上的数值，所以要循环到核对干净（最多 4 轮）或确认无法靠遮蔽修复；无法修复的
+    规则只标注原因，不假装通过。任何情况下都不把没测过的数字当实测交付。
+
+    返回 ``(可交付文本, 状态)``：``verified``（核对通过）、``rejected_masked``
+    （被拒并已遮蔽/标注）、``masked_only``（调用方已经知道被拒的数值，只要求遮蔽）。
+    状态要如实往上带：被遮蔽不等于通过核对。
+    """
+
+    text = str(text or '')
+    pending = list(dict.fromkeys(value for value in values if value))
+    if not verify:
+        if not pending:
+            return text, 'masked_only'
+        return mask_rejected_numbers(text, pending, UNVERIFIED_NUMBER, state=state), 'rejected_masked'
+    detail = ''
+    for _ in range(4):
+        try:
+            validated = validate_report(state, _TextDraft(analysis=text),
+                                        fill_citations=fill_citations)
+        except ModelRetry as error:
+            detail = str(error)
+            found = rejected_values(detail)
+            if not found:
+                # 与数值无关的规则（对象、声称等）遮蔽不了：留原因，不伪装成通过。
+                return _guard_note(text, detail, pending), 'rejected_masked'
+            pending = list(dict.fromkeys([*pending, *found]))
+            masked = mask_rejected_numbers(text, pending, UNVERIFIED_NUMBER, state=state)
+            if masked == text:
+                # 值取不出来（例如写成中文数字）：同样只能标注。
+                return _guard_note(text, detail, pending), 'rejected_masked'
+            text = masked
+            continue
+        if detail:
+            return _guard_note(text, detail, pending), 'rejected_masked'
+        return str(getattr(validated, 'analysis', text) or ''), 'verified'
+    return _guard_note(text, detail, pending), 'rejected_masked'

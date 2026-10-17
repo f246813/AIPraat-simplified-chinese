@@ -1,0 +1,15 @@
+pip install --prefer-binary pillow>=10.0
+PASS success uses cache with no retry
+pip install --prefer-binary pillow>=10.0
+检测到 pip 缓存错误；本次安装禁用缓存重试一次，其他安装仍使用缓存。
+PASS cache permission failure retries once
+pip install --prefer-binary pillow>=10.0
+PASS network failure does not bypass cache
+pip install --prefer-binary pillow>=10.0
+PASS site-packages permission failure does not bypass cache
+pip install --prefer-binary pillow>=10.0
+检测到 pip 缓存错误；本次安装禁用缓存重试一次，其他安装仍使用缓存。
+PASS second failure stops after one retry
+pip install --prefer-binary pillow>=10.0
+检测到 pip 缓存错误；本次安装禁用缓存重试一次，其他安装仍使用缓存。
+PASS corrupt cache wheel retries once

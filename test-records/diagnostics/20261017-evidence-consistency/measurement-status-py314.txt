@@ -1,0 +1,14 @@
+------------------------------------------------------------
+interpreter: 3.14.7
+importable: {"numpy": false, "parselmouth": false, "scipy": false, "pyloudnorm": false}
+numpy 不可用：本解释器上跑不了声学提取，能力状态只能报「缺依赖」而不是「测过」。
+{
+  "python": "<USER_HOME>\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+  "version": "3.14.7",
+  "modules": {
+    "numpy": false,
+    "parselmouth": false,
+    "scipy": false,
+    "pyloudnorm": false
+  }
+}

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import importlib.util
+import inspect
 import math
 import re
 import shutil
+import threading
 import subprocess
 import tempfile
 from abc import ABC, abstractmethod
+from difflib import SequenceMatcher
 from pathlib import Path
 
 import numpy as np
@@ -14,9 +17,21 @@ import numpy as np
 from .audio import read_wav
 from .config import AlignmentConfig, MfaAlignmentConfig, Wav2Vec2AlignmentConfig
 from .models import AlignedPhone, AlignmentResult, PhoneSpec
+from .mfa_g2p import run_command as run_mfa_command
 
 
 class AlignmentError(RuntimeError):
+    pass
+
+
+class AlignmentCancelled(RuntimeError):
+    """用户取消导致对齐（或依赖对齐的分析）中止。
+
+    它**不是**对齐失败：调用方不得把它当成「MFA 没跑成」而回退比例对齐——那等于用
+    猜测的边界冒充实测，用户看到的会是一份「已完成」的报告。调用方应尽快结束，并如实
+    说明哪些结果已经拿到、哪些没做。
+    """
+
     pass
 
 
@@ -34,6 +49,8 @@ class AlignmentBackend(ABC):
         phones: list[PhoneSpec],
         language: str,
         transcript: str = "",
+        *,
+        cancel: threading.Event | None = None,
     ) -> AlignmentResult:
         raise NotImplementedError
 
@@ -60,6 +77,7 @@ def parse_mfa_textgrid(
     phones: list[PhoneSpec],
     source: str = "mfa",
     confidence: float = 0.85,
+    raw_labels: bool = False,
 ) -> AlignmentResult:
     text = Path(path).read_text(encoding="utf-8", errors="replace")
     name_matches = list(re.finditer(r'name\s*=\s*"([^"]+)"', text))
@@ -80,11 +98,11 @@ def parse_mfa_textgrid(
     interval_pattern = re.compile(
         r"xmin\s*=\s*([0-9.+-eE]+)\s*"
         r"xmax\s*=\s*([0-9.+-eE]+)\s*"
-        r'text\s*=\s*"((?:\\.|[^"])*)"',
+        r'text\s*=\s*"((?:\\.|""|[^"])*)"',
         re.DOTALL,
     )
     intervals = [
-        (float(start), float(end), bytes(label, "utf-8").decode("unicode_escape"))
+        (float(start), float(end), label.replace('""', '"'))
         for start, end, label in interval_pattern.findall(tier_text)
     ]
     ignored = {"", "sp", "sil", "silence", "<eps>", "<unk>"}
@@ -93,18 +111,26 @@ def parse_mfa_textgrid(
         raise AlignmentError(
             f"MFA returned {len(spoken)} phones, expected {len(phones)}."
         )
-    if len(spoken) > len(phones):
-        expected = [phone.ipa for phone in phones]
-        spoken = [
-            item
-            for item in spoken
-            if item[2].strip().rstrip("0123456789") in expected
-        ]
-    if len(spoken) != len(phones):
+    expected = [phone.label if raw_labels else phone.ipa for phone in phones]
+    labels = [item[2].strip() for item in spoken]
+    if raw_labels and labels != expected:
+        raise AlignmentError('MFA 原始音位序列与本次选定读音不一致，不能按近似序列配对。')
+    matcher = SequenceMatcher(None, expected, labels, autojunk=False)
+    matched = [spoken[block.b + offset] for block in matcher.get_matching_blocks()
+               for offset in range(block.size)]
+    if len(matched) != len(expected):
+        # SequenceMatcher favors contiguous blocks. Repeated tokens may still
+        # form a complete ordered subsequence across those blocks.
+        matched = []
+        for interval in spoken:
+            if len(matched) < len(expected) and interval[2].strip() == expected[len(matched)]:
+                matched.append(interval)
+    if len(matched) != len(phones):
         raise AlignmentError(
             f"MFA phone sequence does not match the requested sequence "
-            f"({len(spoken)} != {len(phones)})."
+            f"({len(matched)} ordered matches != {len(phones)} requested)."
         )
+    spoken = matched
 
     aligned = [
         AlignedPhone(
@@ -127,8 +153,9 @@ def parse_mfa_textgrid(
 class MfaAligner(AlignmentBackend):
     name = "mfa"
 
-    def __init__(self, config: MfaAlignmentConfig):
+    def __init__(self, config: MfaAlignmentConfig, *, raw_labels: bool = False):
         self.config = config
+        self.raw_labels = raw_labels
 
     def available(self) -> bool:
         if self.config.conda_executable and self.config.conda_environment:
@@ -137,7 +164,8 @@ class MfaAligner(AlignmentBackend):
                 or Path(self.config.conda_executable).is_file()
             )
         else:
-            launcher_available = shutil.which(self.config.executable) is not None
+            launcher_available = (shutil.which(self.config.executable) is not None
+                                  or Path(self.config.executable).is_file())
         return (
             self.config.enabled
             and launcher_available
@@ -145,15 +173,14 @@ class MfaAligner(AlignmentBackend):
         )
 
     def _launcher(self) -> list[str]:
-        if self.config.conda_executable and self.config.conda_environment:
-            return [
-                self.config.conda_executable,
-                "run",
-                "-n",
-                self.config.conda_environment,
-                "mfa",
-            ]
-        return [self.config.executable]
+        if not self.raw_labels:
+            if self.config.conda_executable and self.config.conda_environment:
+                return [self.config.conda_executable, 'run', '-n', self.config.conda_environment, 'mfa']
+            return [self.config.executable]
+        from .mfa_g2p import launcher_command
+        return launcher_command(dict(executable=self.config.executable,
+                                     conda_executable=self.config.conda_executable,
+                                     conda_environment=self.config.conda_environment))
 
     def build_command(
         self,
@@ -177,12 +204,36 @@ class MfaAligner(AlignmentBackend):
             str(self.config.retry_beam),
         ]
 
+    def _timeout(self) -> float:
+        """等待上限（秒）。配置里写了非数字或非正值时不静默变成「无超时」，而是回到默认值。"""
+
+        try:
+            timeout = float(self.config.timeout_sec)
+        except (TypeError, ValueError):
+            return 1800.0
+        return timeout if timeout > 0 else 1800.0
+
+    def _alignment_error(self, message: str, timeout: float) -> RuntimeError:
+        """把 ``mfa_g2p.run_command`` 的失败翻成对齐层的错误。
+
+        取消要区分出来（它不是对齐失败，不能触发比例回退）；超时按失败报告，但把等待
+        上限写进原因，用户才知道是自己设的时限还是对齐真的挂了。
+        """
+
+        if message.startswith('已取消'):
+            return AlignmentCancelled('已取消 MFA 对齐：对齐进程已终止。')
+        if '超时' in message:
+            return AlignmentError(f'MFA 对齐超时（>{timeout:g} 秒）：{message}')
+        return AlignmentError(f'MFA alignment failed: {message}')
+
     def align(
         self,
         audio_path: str | Path,
         phones: list[PhoneSpec],
         language: str,
         transcript: str = "",
+        *,
+        cancel: threading.Event | None = None,
     ) -> AlignmentResult:
         del language
         if not phones:
@@ -190,6 +241,9 @@ class MfaAligner(AlignmentBackend):
         if not self.available():
             raise AlignmentError("MFA is not configured or not installed.")
 
+        if self.raw_labels:
+            from .mfa_g2p import english_words
+            transcript = ' '.join(english_words(transcript))
         with tempfile.TemporaryDirectory(prefix="praat_mfa_") as directory:
             root = Path(directory)
             corpus = root / "corpus"
@@ -216,24 +270,21 @@ class MfaAligner(AlignmentBackend):
                     encoding="utf-8",
                 )
             command = self.build_command(corpus, dictionary, output)
-            completed = subprocess.run(
-                command,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                check=False,
-            )
-            if completed.returncode != 0:
-                message = completed.stderr.strip() or completed.stdout.strip()
-                raise AlignmentError(f"MFA alignment failed: {message}")
+            timeout = self._timeout()
+            try:
+                # 复用 mfa_g2p 已有的进程树管理：超时/取消都会杀掉整棵树（含 conda 子进程），
+                # 而不是像旧的 subprocess.run 那样一直等下去。这里不传 cwd：参数字里都是绝对
+                # 路径，工作目录保持与旧实现一致，免得相对的可执行文件路径失效。
+                run_mfa_command(command, cancel, timeout)
+            except ValueError as error:
+                raise self._alignment_error(str(error), timeout) from error
             textgrid = output / "learner.TextGrid"
             if not textgrid.is_file():
                 candidates = list(output.glob("*.TextGrid"))
                 if not candidates:
                     raise AlignmentError("MFA did not produce a TextGrid.")
                 textgrid = candidates[0]
-            return parse_mfa_textgrid(textgrid, phones, source=self.name)
+            return parse_mfa_textgrid(textgrid, phones, source=self.name, raw_labels=self.raw_labels)
 
 
 def _ctc_forced_align(
@@ -305,6 +356,27 @@ def _ctc_forced_align(
     return token_frames, confidence
 
 
+def ctc_span_quality(token_frames, frame_count, duration):
+    """Observable timing facts of a CTC alignment. Not a pronunciation judgement.
+
+    A path that spends a single frame on half of the phones carries no duration
+    information at all: every phone would report the same length, so callers must
+    not treat it as a usable phone alignment even when the frame probabilities are
+    high. Measured on a real degenerate run: five phones, one frame each (0.0203 s
+    per phone, ~10 % of the analysed audio), reported confidence 0.71-0.78.
+    """
+    counts = [len(frames) for frames in token_frames]
+    if not counts or frame_count <= 0:
+        return dict(phones=len(counts), median_frames=0.0, covered_seconds=0.0,
+                    covered_fraction=0.0, degenerate=True)
+    frames = sum(counts)
+    median = float(np.median(counts))
+    return dict(phones=len(counts), median_frames=median,
+                covered_seconds=frames / frame_count * duration,
+                covered_fraction=frames / frame_count,
+                degenerate=median <= 1.0)
+
+
 class Wav2Vec2Aligner(AlignmentBackend):
     name = "wav2vec2"
 
@@ -364,13 +436,19 @@ class Wav2Vec2Aligner(AlignmentBackend):
         phones: list[PhoneSpec],
         language: str,
         transcript: str = "",
+        *,
+        cancel: threading.Event | None = None,
     ) -> AlignmentResult:
         del language, transcript
         if not phones:
             return AlignmentResult([], self.name, 0.0)
+        if cancel is not None and cancel.is_set():
+            raise AlignmentCancelled('已取消声学模型对齐：未开始加载模型。')
         if not self.available():
             raise AlignmentError("wav2vec2 is not configured or not installed.")
         self._load()
+        if cancel is not None and cancel.is_set():
+            raise AlignmentCancelled('已取消声学模型对齐：模型已加载，未开始推理。')
         sound = read_wav(audio_path)
         samples = sound.samples.astype(np.float32)
         sample_rate = sound.sample_rate
@@ -410,6 +488,18 @@ class Wav2Vec2Aligner(AlignmentBackend):
             target_ids,
             self.config.blank_token_id,
         )
+        quality = ctc_span_quality(token_frames, len(log_probabilities), sound.duration)
+        if quality["degenerate"]:
+            # Reject instead of trusting it: the composite aligner then falls through to
+            # the next backend (or to proportional timing, which the rules already treat
+            # as insufficient evidence) and the report keeps this reason visible.
+            raise AlignmentError(
+                "wav2vec2 对齐退化：{phones} 个音素中位 {median:g} 帧/音素，"
+                "覆盖 {covered:.3f}/{duration:.3f} 秒（{fraction:.1%}）；"
+                "该结果没有可用时长信息，已拒绝".format(
+                    phones=quality["phones"], median=quality["median_frames"],
+                    covered=quality["covered_seconds"], duration=sound.duration,
+                    fraction=quality["covered_fraction"]))
         duration = sound.duration
         aligned: list[AlignedPhone] = []
         for index, (phone, frames) in enumerate(zip(phones, token_frames), start=1):
@@ -448,8 +538,12 @@ class ProportionalAligner(AlignmentBackend):
         phones: list[PhoneSpec],
         language: str,
         transcript: str = "",
+        *,
+        cancel: threading.Event | None = None,
     ) -> AlignmentResult:
         del language, transcript
+        if cancel is not None and cancel.is_set():
+            raise AlignmentCancelled('已取消对齐：未生成比例回退。')
         if not phones:
             return AlignmentResult([], self.name, 0.25)
         sound = read_wav(audio_path)
@@ -481,6 +575,22 @@ class ProportionalAligner(AlignmentBackend):
             warnings=["No forced aligner was available; timing is approximate."],
         )
 
+def supports_cancel(backend: Any) -> bool:
+    """这个对齐后端接受 ``cancel`` 参数吗？
+
+    项目自己的后端都有；老式/第三方对象可能没有。看签名决定怎么调用，别等 TypeError
+    才知道——那会把后端内部真的抛出的 TypeError 也误判成「签名不匹配」。
+    """
+
+    try:
+        signature = inspect.signature(backend.align)
+    except (TypeError, ValueError):
+        return False
+    if "cancel" in signature.parameters:
+        return True
+    return any(parameter.kind is inspect.Parameter.VAR_KEYWORD
+               for parameter in signature.parameters.values())
+
 
 class CompositeAligner:
     def __init__(
@@ -489,10 +599,12 @@ class CompositeAligner:
         *,
         agreement_threshold_sec: float = 0.04,
         minimum_confidence: float = 0.45,
+        strict: bool = False,
     ):
         self.backends = backends
         self.agreement_threshold_sec = agreement_threshold_sec
         self.minimum_confidence = minimum_confidence
+        self.strict = strict
 
     def align(
         self,
@@ -500,25 +612,39 @@ class CompositeAligner:
         phones: list[PhoneSpec],
         language: str,
         transcript: str = "",
+        *,
+        cancel: threading.Event | None = None,
     ) -> AlignmentResult:
         results: list[AlignmentResult] = []
         warnings: list[str] = []
         for backend in self.backends:
+            if cancel is not None and cancel.is_set():
+                # 取消不是「对齐失败」：绝不落到比例回退，直接把取消往上抛。
+                raise AlignmentCancelled('已取消对齐：未生成比例回退。')
             if not backend.available():
                 continue
+            if cancel is not None and not supports_cancel(backend):
+                # 老式/第三方后端没有 cancel 参数：还能在步骤之间取消，但要说明白，
+                # 不能让调用方以为「你按了停止就一定停得住正在跑的那一步」。
+                warnings.append(
+                    f"{backend.name}: 该对齐后端不支持取消参数，只能在步骤之间取消。")
             try:
-                results.append(
-                    backend.align(audio_path, phones, language, transcript)
-                )
+                if supports_cancel(backend):
+                    results.append(
+                        backend.align(audio_path, phones, language, transcript, cancel=cancel))
+                else:
+                    results.append(backend.align(audio_path, phones, language, transcript))
             except AlignmentError as error:
                 warnings.append(f"{backend.name}: {error}")
-
         if not results:
+            if self.strict:
+                raise AlignmentError('配套 MFA 对齐失败，未执行比例回退：' + '; '.join(warnings or ['MFA 不可用']))
             fallback = ProportionalAligner().align(
                 audio_path,
                 phones,
                 language,
                 transcript,
+                cancel=cancel,
             )
             fallback.warnings.extend(warnings)
             return fallback
@@ -602,12 +728,13 @@ class CompositeAligner:
 def build_aligner(config: AlignmentConfig) -> CompositeAligner:
     backend = config.backend.lower()
     backends: list[AlignmentBackend] = []
-    if backend in {"auto", "mfa"}:
-        backends.append(MfaAligner(config.mfa))
+    if backend in {"auto", "mfa", "mfa-strict"}:
+        backends.append(MfaAligner(config.mfa, raw_labels=backend == 'mfa-strict'))
     if backend in {"auto", "wav2vec2", "ctc"}:
         backends.append(Wav2Vec2Aligner(config.wav2vec2))
     return CompositeAligner(
         backends,
         agreement_threshold_sec=config.agreement_threshold_sec,
         minimum_confidence=config.minimum_confidence,
+        strict=backend == 'mfa-strict',
     )

@@ -64,12 +64,38 @@ static void Sound_alawDecode (Sound me) {
 
 #include <time.h>
 #include "Sound.h"
+#include "../dwtools/Sound_extensions.h"
+#include <filesystem>
+#include <chrono>
+#include <atomic>
 #if defined (_WIN32)
 #include "Sound_m4a_windows.h"
 #endif
 
-autoSound Sound_readFromSoundFile (MelderFile file) {
+static autostring32 (*ffmpegPathProvider) () = nullptr;
+void Sound_setFfmpegPathProvider (autostring32 (*provider) ()) {
+	ffmpegPathProvider = provider;
+}
+
+bool Sound_isAudioFileName (conststring32 name) {
+	for (conststring32 extension : { U".wav", U".aiff", U".aif", U".au", U".snd", U".nist", U".flac", U".mp3", U".m4a", U".m4b", U".aac", U".ogg", U".oga", U".opus", U".wma" }) {
+		const integer length = Melder_length (name), suffixLength = Melder_length (extension);
+		if (length >= suffixLength && str32equ_caseInsensitive (name + length - suffixLength, extension))
+			return true;
+	}
+	return false;
+}
+
+static autoSound Sound_readNativeAudio (MelderFile file) {
 	try {
+		// The full Praat application has Vorbis/Opus readers that Parselmouth lacks.
+		{
+			autofile input = Melder_fopen (file, "rb");
+			char header [36] { };
+			const size_t count = fread (header, 1, sizeof header, input);
+			if (count >= 36 && strnequ (header, "OggS", 4))
+				return strnequ (header + 28, "OpusHead", 8) ? Sound_readFromOggOpusFile (file) : Sound_readFromOggVorbisFile (file);
+		}
 		#if defined (_WIN32)
 			if (Melder_endsWith_caseAware (MelderFile_name (file), U".m4a"))
 				return Sound_readM4aWindows (file);
@@ -97,6 +123,53 @@ autoSound Sound_readFromSoundFile (MelderFile file) {
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not read from sound file ", file, U".");
+	}
+}
+
+autoSound Sound_readFromSoundFile (MelderFile file, bool *converted) {
+	if (converted) *converted = false;
+	try {
+		return Sound_readNativeAudio (file);
+	} catch (MelderError) {
+		autostring32 nativeError = Melder_dup (Melder_getError ());
+		Melder_clearError ();
+		// Decode only after a completed, failed native read. The retry reads WAV
+		// natively, so a bad WAV cannot recurse into another conversion.
+		std::filesystem::path directory;
+		try {
+			autostring32 executable = ffmpegPathProvider ? ffmpegPathProvider () : Melder_dup (U"ffmpeg");
+			static std::atomic<unsigned long> sequence { 0 };
+			for (unsigned int attempt = 0; attempt < 100; attempt ++) {
+				directory = std::filesystem::temp_directory_path () / ("aipraat-audio-" +
+					std::to_string (std::chrono::high_resolution_clock::now ().time_since_epoch ().count ()) + "-" + std::to_string (++ sequence));
+				if (std::filesystem::create_directory (directory)) break;
+				directory.clear ();
+			}
+			if (directory.empty ()) Melder_throw (U"无法创建音频解码临时目录。");
+			const auto wav = directory / "decoded.wav";
+			autostring32 wav32 = Melder_8to32_e (wav.u8string ().c_str ());
+			autoSTRVEC arguments { U"-nostdin", U"-v", U"error", U"-i", MelderFile_peekPath (file),
+				U"-map", U"0:a:0", U"-vn", U"-c:a", U"pcm_s24le", U"-y", wav32.get () };
+			Melder_runSubprocess (executable.get (), arguments.size, arguments.peek2 ());
+			structMelderFile temporary;
+			Melder_pathToFile (wav32.get (), & temporary);
+			autoSound sound = Sound_readNativeAudio (& temporary);
+			std::error_code cleanupError;
+			std::filesystem::remove_all (directory, cleanupError);
+			if (converted) *converted = true;
+			return sound;
+		} catch (MelderError) {
+			autostring32 fallbackError = Melder_dup (Melder_getError ());
+			Melder_clearError ();
+			std::error_code cleanupError;
+			if (! directory.empty ()) std::filesystem::remove_all (directory, cleanupError);
+			Melder_throw (U"原生音频读取失败：\n", nativeError.get (), U"\n临时 WAV 备用解码失败：\n", fallbackError.get (),
+				U"\n请在路径配置中检测或安装 FFmpeg。");
+		} catch (const std::exception &error) {
+			std::error_code cleanupError;
+			if (! directory.empty ()) std::filesystem::remove_all (directory, cleanupError);
+			Melder_throw (U"原生音频读取失败：\n", nativeError.get (), U"\n备用解码失败：", Melder_peek8to32_u (error.what ()));
+		}
 	}
 }
 

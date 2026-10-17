@@ -1,0 +1,13 @@
+测试环境未就绪，请用 -Python 指定 Python 3.10–3.12 x64 且运行库齐全的 python.exe。
+<USER_HOME>\AppData\Local\Microsoft\WindowsApps\python.exe (Python 3.14.7): Python 3.10–3.12 x64（推荐 3.12） Missing/un
+available: NumPy, Pillow, praat-parselmouth, pydantic-ai-slim, pydantic-graph, jsonschema, pywebview, pythonnet, PyTorc
+h, Transformers, Safetensors, WebView2 Runtime, Tcl/Tk
+At <WORKSPACE>\installer\tests\TestEnvironment.ps1:53 char:5
++     throw ("测试环境未就绪，请用 -Python 指定 Python 3.10–3.12 x64 且运行库齐全的 python ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (测试环境未就绪，请用 -Pyt...Runtime, Tcl/Tk:String) [], RuntimeException
+    + FullyQualifiedErrorId : 测试环境未就绪，请用 -Python 指定 Python 3.10–3.12 x64 且运行库齐全的 python.exe。
+    <USER_HOME>\AppData\Local\Microsoft\WindowsApps\python.exe (Python 3.14.7): Python 3.10–3.12 x64（推荐 3.12） Missi 
+   ng/unavailable: NumPy, Pillow, praat-parselmouth, pydantic-ai-slim, pydantic-graph, jsonschema, pywebview, pythonn  
+  et, PyTorch, Transformers, Safetensors, WebView2 Runtime, Tcl/Tk
+ 

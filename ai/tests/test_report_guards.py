@@ -400,7 +400,8 @@ class RepairedDeliveryTests(unittest.TestCase):
         self.assertIn('最低 200 Hz', body)              # 核对通过的实测值原样保留
         self.assertEqual(body.count(UNVERIFIED_NUMBER), 1)
         self.assertIn('说明节奏稳定', body)
-        self.assertIn('请按这条提示核对引用的数值和范围', note)
+        self.assertNotIn('请按这条提示核对', note)      # 交付文案不对模型提要求
+        self.assertIn(UNVERIFIED_NUMBER, note)
 
     def test_bracket_pair_of_selection_bounds_is_a_range_not_a_stray_number(self):
         """``[0.446194, 0.66158] 秒`` 和 ``0.446194–0.66158 秒`` 是同一个范围。
@@ -427,7 +428,8 @@ class RepairedDeliveryTests(unittest.TestCase):
         self.assertNotIn('80 Hz', repaired.analysis)
         self.assertEqual(body.count(UNVERIFIED_NUMBER), 2)
         self.assertIn('说明节奏稳定', body)
-        self.assertIn('请按这条提示核对引用的数值和范围', note)
+        self.assertNotIn('请按这条提示核对', note)      # 交付文案不对模型提要求
+        self.assertIn(UNVERIFIED_NUMBER, note)
 
     def test_repaired_delivery_needs_prose_to_rescue(self):
         from praat_ai.cloud_agent import repaired_report
@@ -440,3 +442,43 @@ class RepairedDeliveryTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ReportVoiceTests(unittest.TestCase):
+    """报告指令、守卫理由和交付文案说的是同一件事，而且都对用户说话。"""
+
+    def test_report_instructions_and_context_do_not_offer_the_blocked_phrase(self):
+        from praat_ai.cloud_agent import report_context, report_instructions
+        from praat_ai.config import AppConfig
+
+        state = AnalysisState('分析录音', CONTEXT, evidence=[pitch()])
+        instruction = report_instructions(AppConfig(), state)
+        self.assertNotIn('audio_input', instruction)
+        self.assertNotIn('未听本轮录音', instruction)
+        # 本轮没有音频时不发这个字段：模型没有现成句式可以照抄成「没有音频输入」。
+        self.assertNotIn('audio_input', report_context(state))
+        self.assertIs(report_context(state, audio=True)['audio_input'], True)
+
+    def test_input_claim_block_states_the_fact_instead_of_ordering_the_model(self):
+        state = AnalysisState('分析录音语调', CONTEXT, evidence=[pitch(220)])
+        with self.assertRaises(ModelRetry) as caught:
+            validate_report(state, report('由于 audio_input=false，未提供音频输入，无法执行任何测量。'))
+        reason = str(caught.exception)
+        self.assertIn('report.input_claim_conflict', str(state.metrics['guard_blocks']))
+        self.assertIn('测量由 Praat 对对象执行', reason)
+        self.assertNotIn('请执行测量并引用结果', reason)
+
+    def test_delivered_text_never_addresses_the_model(self):
+        from praat_ai.cloud_agent import repaired_report, rescued_report
+
+        state = AnalysisState('分析录音', CONTEXT, evidence=[pitch()])
+        detail = '数值“300 Hz”未匹配同对象/范围/量名的测量。'
+        draft = report('本段平均基频为 300 Hz，说明节奏稳定。')
+        repaired = repaired_report(draft, detail, state, state)
+        self.assertIsNotNone(repaired)
+        rescued = rescued_report(draft.analysis, detail, ['300 Hz'], state=state)
+        for text in (repaired.analysis, rescued):
+            self.assertIn('没有通过自动数值核对', text)
+            for order in ('请执行测量并引用结果', '请按这条提示核对引用的数值和范围',
+                          '请按这条提示核对', '为什么失败'):
+                self.assertNotIn(order, text)

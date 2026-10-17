@@ -1,0 +1,87 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - status [ref=e4]: 浏览器测试适配器 · 全部内容为明确的演示夹具 · 没有模型、Praat 或网络验证
+  - complementary "会话侧栏" [ref=e5]:
+    - button "展开会话侧栏" [ref=e8] [cursor=pointer]:
+      - img [ref=e9]
+    - button "新建会话" [ref=e12] [cursor=pointer]:
+      - img [ref=e13]
+    - generic [ref=e17]:
+      - button "后台任务" [ref=e18] [cursor=pointer]:
+        - img [ref=e19]
+        - generic [ref=e21]: "1"
+      - button "打开设置" [ref=e22] [cursor=pointer]:
+        - img [ref=e23]
+  - main [ref=e26]:
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - heading "新会话" [level=1] [ref=e30]:
+          - img [ref=e31]
+          - generic "新会话" [ref=e33]
+        - generic [ref=e34]:
+          - button "在会话中查找（Ctrl / Cmd + K）" [ref=e35] [cursor=pointer]:
+            - img [ref=e36]
+          - button "刷新当前会话" [ref=e39] [cursor=pointer]:
+            - img [ref=e40]
+      - generic [ref=e45]:
+        - generic "会话消息" [ref=e46]:
+          - generic [ref=e47]:
+            - generic "用户消息" [ref=e48]:
+              - generic [ref=e49]:
+                - paragraph [ref=e51]: 测试紧凑对话
+                - button "复制消息" [ref=e53] [cursor=pointer]:
+                  - img [ref=e54]
+            - generic "助手回复" [ref=e57]:
+              - generic [ref=e58]:
+                - group [ref=e59]:
+                  - generic "执行中 6 个步骤 ›" [active] [ref=e60] [cursor=pointer]:
+                    - img [ref=e61]
+                    - generic [ref=e63]: 执行中
+                    - generic [ref=e64]: 6 个步骤
+                    - text: ›
+                  - text: › › › › › ›
+                - paragraph [ref=e66]:
+                  - text: 这是一条
+                  - strong [ref=e67]: 浏览器测试响应
+                  - text: ，没有调用模型、云端
+                - button "复制消息" [ref=e69] [cursor=pointer]:
+                  - img [ref=e70]
+        - generic:
+          - generic:
+            - separator "调整对话区宽度" [ref=e73]
+            - separator "调整对话区宽度" [ref=e74]
+      - generic [ref=e77]:
+        - toolbar "文本格式" [ref=e78]:
+          - button "加粗（Ctrl+B）" [ref=e79] [cursor=pointer]:
+            - img [ref=e80]
+          - button "斜体（Ctrl+I）" [ref=e82] [cursor=pointer]:
+            - img [ref=e83]
+          - button "行内代码" [ref=e85] [cursor=pointer]:
+            - img [ref=e86]
+          - button "项目列表" [ref=e89] [cursor=pointer]:
+            - img [ref=e90]
+        - textbox "消息输入" [ref=e93]:
+          - text: 描述你的分析目标，或附上音频与材料…
+          - paragraph [ref=e94]
+        - generic [ref=e95]:
+          - button "添加附件" [ref=e96] [cursor=pointer]:
+            - img [ref=e97]
+            - text: 添加附件
+          - generic [ref=e100]:
+            - button "上下文用量" [ref=e101] [cursor=pointer]:
+              - img [ref=e102]
+              - generic [ref=e105]: 4%
+            - button "切换模型与推理强度" [ref=e106] [cursor=pointer]:
+              - img [ref=e107]
+              - generic [ref=e110]:
+                - text: browser-fixture
+                - generic [ref=e111]: · auto
+              - img [ref=e112]
+          - button "取消当前任务" [ref=e114] [cursor=pointer]:
+            - img [ref=e115]
+            - text: 停止
+          - button "发送消息" [disabled] [ref=e117]:
+            - img [ref=e118]
+```

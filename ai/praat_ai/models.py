@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+import math
 from typing import Any
 
 
@@ -14,7 +15,9 @@ class FeatureTrack:
     minimum_tolerance: float = 0.05
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        payload = asdict(self)
+        payload["values"] = [value if math.isfinite(value) else None for value in self.values]
+        return payload
 
 
 @dataclass(slots=True)
@@ -27,6 +30,7 @@ class PhoneSpec:
     learner_end: float | None = None
     alignment_confidence: float = 1.0
     alignment_source: str = ""
+    phone_index: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -41,6 +45,7 @@ class PhoneFeatureTracks:
     tracks: dict[str, FeatureTrack] = field(default_factory=dict)
     alignment_confidence: float = 1.0
     alignment_source: str = ""
+    derived_tracks: dict[str, FeatureTrack] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -49,6 +54,8 @@ class PhoneFeatureTracks:
             "start": self.start,
             "end": self.end,
             "tracks": {name: track.to_dict() for name, track in self.tracks.items()},
+            **({"derived_tracks": {name: track.to_dict() for name, track in self.derived_tracks.items()}}
+               if self.derived_tracks else {}),
             "alignment_confidence": self.alignment_confidence,
             "alignment_source": self.alignment_source,
         }
@@ -69,6 +76,10 @@ class PronunciationError:
     learner_value: float
     unit: str = ""
     alignment_confidence: float = 1.0
+    issue_type: str = "legacy_acoustic_difference"
+    rule_id: str = ""
+    evaluation_status: str = "experimental"
+    evidence: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -82,14 +93,20 @@ class AnalysisRequest:
     phonemes: list[PhoneSpec]
     transcript: str = ""
     error_threshold: float = 1.25
-    minimum_error_duration_sec: float = 0.04
     maximum_errors_per_phone: int = 3
     qwen_explain: bool = True
     qwen_vision: bool = False
     output_prefix: str = "ai"
+    profile_id: str | None = None
+    mfa_snapshot: dict[str, Any] | None = None
+    selected_readings: list[dict[str, Any]] = field(default_factory=list)
+    generation_source: str = ""
+    normalization: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
+        if self.normalization is None:
+            payload.pop("normalization", None)
         payload["phonemes"] = [phone.to_dict() for phone in self.phonemes]
         return payload
 
@@ -109,6 +126,18 @@ class AnalysisResult:
     alignment_source: str = ""
     alignment_confidence: float = 1.0
     warnings: list[str] = field(default_factory=list)
+    profile_snapshot: dict[str, Any] | None = None
+    observations: list[PronunciationError] = field(default_factory=list)
+    phone_assessments: list[dict[str, Any]] = field(default_factory=list)
+    check_statuses: dict[str, str] = field(default_factory=dict)
+    #: AI 解释的交付状态（见 :func:`praat_ai.tutor.guard_explanation`）：
+    #: ``verified``（数值全对上）/ ``rejected_masked``（有数值没核对上，已遮蔽）/
+    #: ``unavailable``（模型不可用，没生成解释）。空串表示本次没有解释。
+    explanation_status: str = ""
+    mfa_snapshot: dict[str, Any] | None = None
+    selected_readings: list[dict[str, Any]] = field(default_factory=list)
+    generation_source: str = ""
+    normalization: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -125,6 +154,15 @@ class AnalysisResult:
             "alignment_source": self.alignment_source,
             "alignment_confidence": self.alignment_confidence,
             "warnings": self.warnings,
+            "analysis_mode": "phone_rules" if self.profile_snapshot else "legacy_acoustic_comparison",
+            "profile_snapshot": self.profile_snapshot,
+            "observations": [item.to_dict() for item in self.observations],
+            "phone_assessments": self.phone_assessments,
+            "check_statuses": self.check_statuses,
+            "explanation_status": self.explanation_status,
+            **({"normalization": self.normalization} if self.normalization is not None else {}),
+            **(dict(mfa_snapshot=self.mfa_snapshot, selected_readings=self.selected_readings,
+                    generation_source=self.generation_source) if self.mfa_snapshot else {}),
         }
 
 

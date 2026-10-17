@@ -1,0 +1,209 @@
+D:\Praat-work\ÎÈ¶¨ÔçÆÚ°æ\ai\tests\report_webview_modal_pixels.py:54: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  count = sum(1 for pixel in delta.getdata() if any(pixel))
+{
+  "evidence": "test-records\\webview-backdrop\\final-pages-light\\dictionaries",
+  "assetIndexSHA256": "ae093294d6b968176f07600869a15ede22fa8bde05c2de4e8ce84a2df13ab2bf",
+  "screenshotSize": [
+    800,
+    620
+  ],
+  "units": "8-bit RGB absolute difference, screenshot-pixel boxes",
+  "sourceHashes": {
+    "mfa-resource-dialog-background-1.png": "2e232457009d39542ada50ad264f89ebc7f663cd9eeecf435a36059275977723",
+    "mfa-resource-dialog-background-2.png": "879b9db5db8b71025919102761b278c29716bce691baf3d6d7399dd64ca8b2d2"
+  },
+  "nativeTitlebarExcluded": true,
+  "repeatAvailable": false,
+  "modalComputedStyles": null,
+  "regions": {
+    "client-all": {
+      "box": [
+        8,
+        31,
+        792,
+        612
+      ],
+      "backgroundAB": {
+        "meanAbsolute": 0.09551837085953141,
+        "meanAbsoluteRGB": [
+          0.09706830236397485,
+          0.09483121992342548,
+          0.09465559029119393
+        ],
+        "channelExtrema": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "changedPixelFraction": 0.10413519969089184
+      }
+    },
+    "modal-outside-left": {
+      "box": [
+        10,
+        50,
+        30,
+        590
+      ],
+      "backgroundAB": {
+        "meanAbsolute": 0.937530864197531,
+        "meanAbsoluteRGB": [
+          0.97,
+          0.9213888888888889,
+          0.9212037037037037
+        ],
+        "channelExtrema": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "changedPixelFraction": 0.97
+      }
+    },
+    "dialog-whole": {
+      "box": [
+        44,
+        47,
+        756,
+        596
+      ],
+      "backgroundAB": {
+        "meanAbsolute": 0.0,
+        "meanAbsoluteRGB": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "channelExtrema": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "changedPixelFraction": 0.0
+      }
+    },
+    "dialog-header-blank": {
+      "box": [
+        436,
+        61,
+        616,
+        91
+      ],
+      "backgroundAB": {
+        "meanAbsolute": 0.0,
+        "meanAbsoluteRGB": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "channelExtrema": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "changedPixelFraction": 0.0
+      }
+    },
+    "dialog-body": {
+      "box": [
+        64,
+        131,
+        736,
+        576
+      ],
+      "backgroundAB": {
+        "meanAbsolute": 0.0,
+        "meanAbsoluteRGB": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "channelExtrema": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "changedPixelFraction": 0.0
+      }
+    },
+    "original-cropped-ROI": {
+      "box": [
+        50,
+        80,
+        750,
+        550
+      ],
+      "backgroundAB": {
+        "meanAbsolute": 0.0,
+        "meanAbsoluteRGB": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "channelExtrema": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "changedPixelFraction": 0.0
+      }
+    }
+  },
+  "clientBackgroundPixelsChanged": true,
+  "modalPanelNearOpaque": true,
+  "interpretation": "Client and outside-strip measurements answer desktop-through-host questions. A zero in dialog-body alone is NOT evidence of an opaque client or a WebView2 limitation. Light .94 panel over .95 main and .2 scrim leaves about .0024 desktop contribution; cards and 8-bit quantization can eliminate observable center differences. Removing the extra CSS filter layer is a frontend choice, not a proven host requirement."
+}

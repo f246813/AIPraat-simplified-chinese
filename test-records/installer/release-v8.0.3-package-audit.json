@@ -1,0 +1,8 @@
+{
+  "payload_files": 481,
+  "runtime_and_frontend_files_checked": 473,
+  "installer_size": 59745792,
+  "installer_sha256": "1225b82dd2c5e628e3f82d092bb6b0978a9ca67862723b1ba0663f2d5872b2a0",
+  "omitted_files": [],
+  "stale_files": []
+}

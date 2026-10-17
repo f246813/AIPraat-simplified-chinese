@@ -1,0 +1,17 @@
+[WebServer] (node:50744) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:50732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\settings-entry.spec.ts:2:1 › collapsed gear opens Model; expanded gear keeps Session and Storage (2.4s)
+  ok 2 tests\browser\startup-session.spec.ts:2:1 › opening starts a blank session and keeps historical conversations accessible (2.8s)
+  ok 3 tests\browser\ui.spec.ts:4:1 › normal browser is fail-closed, never a demo (9.5s)
+  ok 4 tests\browser\ui.spec.ts:18:1 › rich composer IME, newline, drafts, native attachment tags, session CRUD (2.2s)
+  ok 5 tests\browser\ui.spec.ts:115:1 › settings categories, key preservation, separate fixture tests and unknown capability (1.2s)
+  ok 6 tests\browser\ui.spec.ts:182:1 › long history math/highlight/diagram, reading position, background stream isolation and cancel (4.9s)
+
+  6 passed (26.5s)

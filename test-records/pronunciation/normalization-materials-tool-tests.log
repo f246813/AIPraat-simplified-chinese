@@ -1,0 +1,54 @@
+test_annotation_audio_binding (test_normalization_materials_acceptance.MaterialGateTests.test_annotation_audio_binding) ... ok
+test_auto_alignment_is_not_human_annotation (test_normalization_materials_acceptance.MaterialGateTests.test_auto_alignment_is_not_human_annotation) ... ok
+test_batch_keeps_other_invalid_manifests (test_normalization_materials_acceptance.MaterialGateTests.test_batch_keeps_other_invalid_manifests) ... ok
+test_blocked_batch_does_not_call_analysis (test_normalization_materials_acceptance.MaterialGateTests.test_blocked_batch_does_not_call_analysis) ... ok
+test_both_speakers_need_multivowel_coverage (test_normalization_materials_acceptance.MaterialGateTests.test_both_speakers_need_multivowel_coverage) ... ok
+test_declared_recording_id_duplicates_rejected (test_normalization_materials_acceptance.MaterialGateTests.test_declared_recording_id_duplicates_rejected) ... ok
+test_duplicate_json_and_nan_rejected (test_normalization_materials_acceptance.MaterialGateTests.test_duplicate_json_and_nan_rejected) ... ok
+test_each_configuration_field_must_match (test_normalization_materials_acceptance.MaterialGateTests.test_each_configuration_field_must_match) ... ok
+test_english_requires_its_full_nine_vowel_inventory (test_normalization_materials_acceptance.MaterialGateTests.test_english_requires_its_full_nine_vowel_inventory) ... ok
+test_explicit_synthetic_source_rejected (test_normalization_materials_acceptance.MaterialGateTests.test_explicit_synthetic_source_rejected) ... ok
+test_human_judgments_required (test_normalization_materials_acceptance.MaterialGateTests.test_human_judgments_required) ... ok
+test_independent_pitch_not_faked_by_utterance (test_normalization_materials_acceptance.MaterialGateTests.test_independent_pitch_not_faked_by_utterance) ... ok
+test_invalid_bounds_and_empty_labels (test_normalization_materials_acceptance.MaterialGateTests.test_invalid_bounds_and_empty_labels) ... ok
+test_inventory_does_not_certify_fixtures (test_normalization_materials_acceptance.MaterialGateTests.test_inventory_does_not_certify_fixtures) ... ok
+test_local_runner_passes_explicit_options_without_cloud_or_alignment (test_normalization_materials_acceptance.MaterialGateTests.test_local_runner_passes_explicit_options_without_cloud_or_alignment) ... ok
+test_missing_annotator_blocked (test_normalization_materials_acceptance.MaterialGateTests.test_missing_annotator_blocked) ... ok
+test_missing_calibration_never_defaults_pass (test_normalization_materials_acceptance.MaterialGateTests.test_missing_calibration_never_defaults_pass) ... ok
+test_missing_or_tampered_hash (test_normalization_materials_acceptance.MaterialGateTests.test_missing_or_tampered_hash) ... ok
+test_no_implicit_prosody_and_explicit_utterance_supported (test_normalization_materials_acceptance.MaterialGateTests.test_no_implicit_prosody_and_explicit_utterance_supported) ... ok
+test_no_source_assumed_real (test_normalization_materials_acceptance.MaterialGateTests.test_no_source_assumed_real) ... ok
+test_output_never_overwrites_materials (test_normalization_materials_acceptance.MaterialGateTests.test_output_never_overwrites_materials) ... usage: python.exe -m unittest [-h] [--template TEMPLATE]
+                              [--inventory INVENTORY] [--analyze]
+                              [--output OUTPUT]
+                              [manifests ...]
+python.exe -m unittest: error: output exists; refusing to overwrite evidence or user material (choose a new path)
+ok
+test_path_traversal_rejected (test_normalization_materials_acceptance.MaterialGateTests.test_path_traversal_rejected) ... ok
+test_positive_schema_is_ready_not_accuracy (test_normalization_materials_acceptance.MaterialGateTests.test_positive_schema_is_ready_not_accuracy) ... ok
+test_reference_cannot_be_unacceptable (test_normalization_materials_acceptance.MaterialGateTests.test_reference_cannot_be_unacceptable) ... ok
+test_renamed_duplicate_pcm_rejected (test_normalization_materials_acceptance.MaterialGateTests.test_renamed_duplicate_pcm_rejected) ... ok
+test_reviewed_alignment_requires_origin (test_normalization_materials_acceptance.MaterialGateTests.test_reviewed_alignment_requires_origin) ... ok
+test_runner_blocks_live_protocol_drift (test_normalization_materials_acceptance.MaterialGateTests.test_runner_blocks_live_protocol_drift) ... ok
+test_runner_insufficient_measured_calibration_cannot_pass (test_normalization_materials_acceptance.MaterialGateTests.test_runner_insufficient_measured_calibration_cannot_pass) ... ok
+test_runner_isolates_case_failures (test_normalization_materials_acceptance.MaterialGateTests.test_runner_isolates_case_failures) ... ok
+test_runner_marks_missing_requested_feature_unavailable (test_normalization_materials_acceptance.MaterialGateTests.test_runner_marks_missing_requested_feature_unavailable) ... ok
+test_runner_rechecks_hashes_before_extraction (test_normalization_materials_acceptance.MaterialGateTests.test_runner_rechecks_hashes_before_extraction) ... ok
+test_same_speaker_pair_blocked (test_normalization_materials_acceptance.MaterialGateTests.test_same_speaker_pair_blocked) ... ok
+test_settings_protocol_cannot_be_silently_changed (test_normalization_materials_acceptance.MaterialGateTests.test_settings_protocol_cannot_be_silently_changed) ... ok
+test_target_label_mismatch (test_normalization_materials_acceptance.MaterialGateTests.test_target_label_mismatch) ... ok
+test_template_does_not_overwrite (test_normalization_materials_acceptance.MaterialGateTests.test_template_does_not_overwrite) ... usage: python.exe -m unittest [-h] [--template TEMPLATE]
+                              [--inventory INVENTORY] [--analyze]
+                              [--output OUTPUT]
+                              [manifests ...]
+python.exe -m unittest: error: template exists; refusing to overwrite user material
+ok
+test_template_is_empty_and_blocked (test_normalization_materials_acceptance.MaterialGateTests.test_template_is_empty_and_blocked) ... ok
+test_unknown_origin_is_missing_evidence (test_normalization_materials_acceptance.MaterialGateTests.test_unknown_origin_is_missing_evidence) ... ok
+test_unsupported_language_preset (test_normalization_materials_acceptance.MaterialGateTests.test_unsupported_language_preset) ... ok
+test_wrong_speaker_calibration_blocked (test_normalization_materials_acceptance.MaterialGateTests.test_wrong_speaker_calibration_blocked) ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 0.961s
+
+OK

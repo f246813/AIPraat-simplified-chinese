@@ -1,0 +1,69 @@
+
+> praat-assistant-frontend@1.0.0 test
+> vitest run
+
+
+ RUN  v3.2.4 <WORKSPACE>/ai/frontend
+
+ ✓ tests/search.test.ts (8 tests) 38ms
+ ✓ tests/bridge-store.test.ts (17 tests) 57ms
+ ✓ tests/session-menu.test.ts (7 tests) 34ms
+ ✓ tests/organization-store.test.ts (9 tests) 326ms
+ ✓ tests/archived-settings.test.tsx (2 tests) 473ms
+   ✓ failed restore keeps history visible, reports the error and permits a successful retry  356ms
+ ✓ tests/workflow-settings.test.tsx (2 tests) 488ms
+   ✓ workflow presets, custom edit, host save and reopen never start model tests  485ms
+ ✓ tests/model-settings-navigation.test.tsx (2 tests) 572ms
+   ✓ repeated menu requests select Model/API and keep unsaved settings  565ms
+ ✓ tests/local-model-path-settings.test.tsx (2 tests) 748ms
+   ✓ local connection settings offer a model picker and save its path  524ms
+ ✓ tests/composer-status.test.tsx (8 tests) 1080ms
+   ✓ debounces real host estimates and ignores stale session replies  399ms
+ ✓ tests/sidebar-search.test.tsx (5 tests) 760ms
+ ✓ tests/layout.test.ts (7 tests) 27ms
+ ✓ tests/startup-session.test.ts (3 tests) 28ms
+ ✓ tests/archived-groups.test.ts (2 tests) 19ms
+ ❯ tests/speech-dictionaries.test.tsx (9 tests | 1 failed) 1532ms
+   ✓ opens the Wav2Vec2 folder picker and selects a model through its own namespace  486ms
+   ✓ loads configured paths and opens the native picker from the bottom action 99ms
+   ✓ right-click deletion requires choosing delete; cancel leaves configuration intact 228ms
+   ✓ shows picker errors and keeps the existing list 100ms
+   ✓ left-clicking the select menu updates the current check and border after host save 130ms
+   ✓ keeps the old active dictionary when selecting fails 117ms
+   ✓ does not offer selection of a missing dictionary file 63ms
+   ✓ switches the sidebar to acoustic models and uses their picker and current selection 193ms
+   × models share deletion confirmation and return to dictionaries through the sidebar 116ms
+     → expected 'light' to be 'dark' // Object.is equality
+ ✓ tests/editor.test.ts (10 tests) 17ms
+ ✓ tests/modern-boundaries.test.ts (2 tests) 11ms
+ ✓ tests/transcript-menu.test.ts (5 tests) 8ms
+ ✓ tests/minimap.test.ts (6 tests) 7ms
+ ✓ tests/transcript-window.test.ts (6 tests) 6ms
+ ✓ tests/completions.test.ts (4 tests) 6ms
+ ✓ tests/scroll.test.ts (5 tests) 4ms
+ ✓ tests/sidebar-origins.test.ts (2 tests) 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/speech-dictionaries.test.tsx > models share deletion confirmation and return to dictionaries through the sidebar
+AssertionError: expected 'light' to be 'dark' // Object.is equality
+
+Expected: "dark"
+Received: "light"
+
+ ❯ tests/speech-dictionaries.test.tsx:141:50
+    139|   fireEvent.click(screen.getByRole('button', {name: 'MFA声学模型'}));
+    140|   const row = await screen.findByRole('button', {name: /中文声学.zip/});
+    141|   expect(document.documentElement.dataset.theme).toBe('dark');
+       |                                                  ^
+    142|   fireEvent.contextMenu(row, {clientX: 80, clientY: 100});
+    143|   fireEvent.click(screen.getByRole('menuitem', {name: '删除'}));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 21 passed (22)
+      Tests  1 failed | 122 passed (123)
+   Start at  22:07:50
+   Duration  5.11s (transform 2.74s, setup 0ms, collect 8.13s, tests 6.24s, environment 22.31s, prepare 3.96s)
+

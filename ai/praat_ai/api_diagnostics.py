@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 from datetime import datetime, timezone
+from typing import Mapping
 
 from . import model_capabilities as caps
 
@@ -20,7 +21,7 @@ def status_code(detail, explicit=None):
     return int(match[1]) if match and 100 <= int(match[1]) <= 599 else None
 
 
-def test_record(base_url, model, api_key, result):
+def test_record(base_url, model, api_key, result, *, sequence=None):
     reason = caps.safe_error(RuntimeError(str(result.get('reason', ''))), api_key)
     return {
         'identity': request_identity(base_url, model, api_key),
@@ -28,7 +29,74 @@ def test_record(base_url, model, api_key, result):
         'reason': reason,
         'status_code': status_code(reason, result.get('status_code')),
         'tested_at': datetime.now(timezone.utc).isoformat(),
+        #: 这次观测是在配置文件第几次音频写入之后做出的（时间并列时用来定先后）。
+        'sequence': int(sequence if sequence is not None else result.get('sequence', 0) or 0),
     }
+
+
+#: 音频设置的写序号键（见 config.ApiConfig.audio_setting_sequence）。
+SEQUENCE_KEY = 'audio_setting_sequence'
+
+
+def _record_sequence(record) -> int:
+    if not isinstance(record, Mapping):
+        return 0
+    try:
+        return int(record.get('sequence', 0) or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def observation_sequence(payload) -> int:
+    """这份配置（或界面上的值）里已经记下的音频设置序号。"""
+
+    if not isinstance(payload, Mapping):
+        return 0
+    try:
+        stored = int(payload.get(SEQUENCE_KEY, 0) or 0)
+    except (TypeError, ValueError):
+        stored = 0
+    return max(stored, _record_sequence(payload.get('audio_test_result')))
+
+
+def next_sequence(payload) -> int:
+    """下一次音频写入要用的序号：严格大于这份配置里已记录的。"""
+
+    return observation_sequence(payload) + 1
+
+
+def observed_later(previous, incoming) -> bool:
+    """``previous`` 这次观测是否严格晚于 ``incoming``？
+
+    Windows 的 ``datetime.now`` 粒度约 15 ms：同一个时刻写下的两次观测时间会**并列**，
+    而「谁更晚」正是音频设置覆盖规则的唯一依据。并列时改比写序号（大的一方晚）；
+    两边都没有序号时按「不更晚」处理——宁可保留已存的纠正，也不要在无从判断时放开。
+    """
+
+    previous_at = observation_time((previous or {}).get('tested_at'))
+    incoming_at = observation_time((incoming or {}).get('tested_at'))
+    if previous_at != incoming_at:
+        return previous_at > incoming_at
+    return _record_sequence(previous) > _record_sequence(incoming)
+
+
+def edited_after(edited_at, edited_sequence, previous) -> bool:
+    """用户的手动修改是不是发生在 ``previous`` 这次观测**之后**？
+
+    时间并列时看「这次编辑有没有看到那次写入」：``edited_sequence`` 是编辑发生时配置里
+    的序号，大于等于观测的序号才算在后。这样「先改后纠正」与「先纠正后改」在同一刻也
+    能分出先后，用户的选择不会被随机覆盖。
+    """
+
+    edited = observation_time(edited_at)
+    stored = observation_time((previous or {}).get('tested_at'))
+    if edited != stored:
+        return edited > stored
+    try:
+        seen = int(edited_sequence or 0)
+    except (TypeError, ValueError):
+        seen = 0
+    return seen >= _record_sequence(previous)
 
 
 def matching_record(record, base_url, model, api_key):

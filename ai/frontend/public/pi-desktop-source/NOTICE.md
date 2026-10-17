@@ -87,7 +87,7 @@ plain text input and spelling/correction/capitalization attributes are reused
 in `SearchBar.tsx` and the sidebar search. App/sidebar shortcuts use the same
 upstream composition bypass. The upstream `outline: none` rule is applied to
 the two search inputs with focus selectors strong enough to override this
-project's global green focus outline. Keyboard focus on other controls remains.
+project's global focus outline. Keyboard focus on other controls remains.
 
 Only the renderer input/event/style parts are connected to the current host;
 Pi's app-store, command runner, project/search IPC and Agent runtime are not
@@ -115,6 +115,10 @@ dashboard with the initial conversation/storage category. The existing model
 settings entry retains the model category. No Pi navigation/runtime is added;
 the current App/Settings source and unchanged expanded search are supplied in
 `rebuild/`.
+
+## Final neutral WebView appearance
+
+`sidebar/sidebar-layout.css` and the adapted `Sidebar.tsx` keep the above interactions while moving options into the Praat brand dropdown, exposing search on demand, placing collapse arrows after labels, and retaining an independently collapsible default conversation section. `rebuild/src/composer-layout.ts` uses the content-height measurement idea from upstream `Composer.tsx` at the fixed revision above, with a project-local inert probe measured at the compact width to avoid expand/shrink oscillation. The transcript-only mask in `rebuild/src/styles.css` follows `chat-shell.css` at that same baseline, with local 14px/18px fade lengths. These local adaptations and their full frontend rebuild inputs are supplied in `rebuild/`; no Codex desktop renderer is claimed or shipped.
 
 ## Replace / rebuild
 

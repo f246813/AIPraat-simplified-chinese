@@ -1,0 +1,9 @@
+正在下载 FFmpeg Windows x64（FFmpeg 官网列出的 Gyan 构建）…
+校验通过，正在解压…
+已安装：<USER_HOME>\AppData\Local\AIPraat\ffmpeg\ffmpeg.exe
+ffmpeg version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers
+PASS one-click installer backend + post-install actual decode
+PASS executable + real Ogg decode
+PASS real dependency checks + shared decoder path save
+PASS asynchronous real probes enable saving
+PASS shared config + field position + detection/install controls

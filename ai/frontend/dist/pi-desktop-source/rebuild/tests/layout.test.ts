@@ -39,7 +39,9 @@ it('collapses rather than leaving a cramped expanded column, without rewriting t
 });
 
 it('keeps one conversation band inside the live pane and the 24px gutters', () => {
+  expect(CONVERSATION_WIDTH_DEFAULT).toBe(720);
   expect(resolveConversationWidth(undefined)).toBe(CONVERSATION_WIDTH_DEFAULT);
+  expect(resolveConversationWidth(850)).toBe(850); // keep existing user dimensions, not a migration
   expect(resolveConversationWidth('900')).toBe(CONVERSATION_WIDTH_DEFAULT);
   expect(resolveConversationWidth(100)).toBe(CONVERSATION_WIDTH_MIN);
   expect(resolveConversationWidth(901.6)).toBe(902);

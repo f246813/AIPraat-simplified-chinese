@@ -129,9 +129,9 @@ class ToolGuards:
         args.pop('_whole_object', None)
         properties = self.validators[name].schema.get('properties', {})
         # 范围端点的同义写法要**双向**折叠：原来只把 from→start 折过去，声明 from/to 的
-        # 工具收到 finish 时既没折叠也不报错，render 直接忽略它，静默按整段测量
-        # （2026-10-07 实测）。方向按「工具自己声明了哪一对」定：声明 start 的以
-        # start/end 为准，只声明 from 的以 from/to 为准；只往一个方向搬，避免来回倒。
+        # 工具收到 finish 时既不折叠也不报错，渲染会直接忽略它并按整段测量。
+        # 方向按工具声明的那一对为准：声明 start 的用 start/end，只声明 from 的用
+        # from/to；两个都声明的以 start/end 为准，只往一个方向搬运。
         # 同时声明两个键的工具（extract_part / textgrid_set_interval）以 start/end 为准。
         pairs = (('start', ('from',)), ('end', ('to', 'finish'))) if 'start' in properties else (
             ('from', ('start',)), ('to', ('end', 'finish')))
@@ -170,9 +170,8 @@ class ToolGuards:
             if key in required:
                 # 重命名这类工具：写错名字是用户可见的破坏性操作，必须用用户给的名字。
                 raise tools.ToolError(f'{key} 必须是用户明确提供的新名字；没有新名字时省略名称参数。')
-            # 名字可选的工具（截取片段、复制、生成频谱图…）只是给**新对象**起个名：
-            # 模型编一个无害的名字不该让整步失败（2026-10-07 实测：这正好卡住了
-            # 「先截取一段再测量」这条我们自己在错误信息里推荐的路径）。
+            # 名字可选的工具（截取片段、复制、生成频谱图等）只是给新对象命名：
+            # 模型给出无害名称不应让整个步骤失败。
             args.pop(key, None)
         if name == tools.CUSTOM_SCRIPT_TOOL:
             args['script'] = self.script(str(args.get('script') or ''), context, allowed_names)

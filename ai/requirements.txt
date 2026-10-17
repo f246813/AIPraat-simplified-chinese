@@ -1,4 +1,6 @@
-numpy>=2.0
+numpy>=2.0,<2.3
+scipy>=1.14.1,<1.15
+pyloudnorm==0.2.0
 Pillow>=10.0
 praat-parselmouth>=0.4.7; python_version < "3.13"
 pydantic-ai-slim[openai]==2.52.0
@@ -6,3 +8,4 @@ pydantic-graph==2.52.0
 jsonschema==4.26.0
 pywebview==6.2.1
 pythonnet==3.2.0; sys_platform == "win32"
+-r requirements-wav2vec2.txt

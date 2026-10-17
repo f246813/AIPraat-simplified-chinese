@@ -1,0 +1,2 @@
+AI.projectDirectory: <WORKSPACE>\ai
+Python.executablePath: <WORKSPACE>\venv-ai-modern\Scripts\python.exe

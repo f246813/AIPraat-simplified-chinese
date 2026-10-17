@@ -71,3 +71,38 @@ it('creates one usable session when opening an empty workspace', async () => {
   expect(rpc.mock.calls.filter(([method])=>method==='sessions.create')).toHaveLength(1);
   store.stop();
 });
+it('defers a new session to local memory when 不落库 is selected', async () => {
+  const demo=createDemoAdapter();
+  const rpc=vi.fn(async(method:string,params:any)=>{
+    const result=await demo(method as any,params);
+    if(method==='bootstrap')return {...result,settings:{...result.settings,preferences:{...result.settings.preferences,save_empty_sessions:false,empty_session_policy:'never_persist'}}};
+    return result;
+  });
+  const store=new ChatStore(rpc as Rpc);
+  await store.initialize({newSession:true});
+  let state=store.getSnapshot();
+  const draft=state.sessions.find(s=>s.id===state.selected)!;
+  expect(store.isLocalDraft(draft.id)).toBe(true);
+  expect(state.messages[draft.id]).toEqual([]);
+  // Nothing is written until the first message.
+  expect(rpc.mock.calls.filter(([method])=>method==='sessions.create')).toHaveLength(0);
+  await store.submit(draft.id,'你好',[]);
+  state=store.getSnapshot();
+  expect(store.isLocalDraft(state.selected!)).toBe(false);
+  expect(rpc.mock.calls.filter(([method])=>method==='sessions.create')).toHaveLength(1);
+  store.stop();
+});
+
+it('saves empty sessions immediately when 保存空会话 is on', async () => {
+  const demo=createDemoAdapter();
+  const rpc=vi.fn(async(method:string,params:any)=>{
+    const result=await demo(method as any,params);
+    if(method==='bootstrap')return {...result,settings:{...result.settings,preferences:{...result.settings.preferences,save_empty_sessions:true,empty_session_policy:'never_persist'}}};
+    return result;
+  });
+  const store=new ChatStore(rpc as Rpc);
+  await store.initialize({newSession:true});
+  expect(store.isLocalDraft(store.getSnapshot().selected!)).toBe(false);
+  expect(rpc.mock.calls.filter(([method])=>method==='sessions.create')).toHaveLength(1);
+  store.stop();
+});

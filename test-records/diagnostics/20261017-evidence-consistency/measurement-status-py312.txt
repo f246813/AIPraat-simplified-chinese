@@ -1,0 +1,58 @@
+------------------------------------------------------------
+interpreter: 3.12.14
+importable: {"numpy": true, "parselmouth": true, "scipy": false, "pyloudnorm": false}
+------------------------------------------------------------
+3 个音素一次提取：
+{
+  "pitch_formant_status": "ok",
+  "pitch_formant_reason": "",
+  "pitch_formant_extractions": 1,
+  "parselmouth_Sound_opens": 1,
+  "phones": 3,
+  "phone_features": [
+    "f1",
+    "f2",
+    "f3",
+    "high_frequency_ratio",
+    "intensity",
+    "pitch",
+    "rms",
+    "spectral_centroid",
+    "zcr"
+  ]
+}
+------------------------------------------------------------
+已安装但提取失败： extraction_failed | 基频/共振峰提取失败：RuntimeError: boom
+------------------------------------------------------------
+{
+  "python": "<WORKSPACE>\\venv-ai-modern\\Scripts\\python.exe",
+  "version": "3.12.14",
+  "modules": {
+    "numpy": true,
+    "parselmouth": true,
+    "scipy": false,
+    "pyloudnorm": false
+  },
+  "extraction": {
+    "pitch_formant_status": "ok",
+    "pitch_formant_reason": "",
+    "pitch_formant_extractions": 1,
+    "parselmouth_Sound_opens": 1,
+    "phones": 3,
+    "phone_features": [
+      "f1",
+      "f2",
+      "f3",
+      "high_frequency_ratio",
+      "intensity",
+      "pitch",
+      "rms",
+      "spectral_centroid",
+      "zcr"
+    ]
+  },
+  "extraction_failed": {
+    "pitch_formant_status": "extraction_failed",
+    "pitch_formant_reason": "基频/共振峰提取失败：RuntimeError: boom"
+  }
+}

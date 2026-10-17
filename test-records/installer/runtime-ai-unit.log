@@ -1,0 +1,231 @@
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.1000	API 模式：设置里取消了「顺手停掉本机模型服务」，本机服务保持不动。
+PRAAT_PROGRESS	1.0000	API 模式仍在运行；本机模型服务按设置保留。
+.............................................................................................................................................can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+PRAAT_PROGRESS	0.0200	切回本地模型（关闭 API 模式）…
+.........................................invalid command name "2403703522112flush_messages"
+    while executing
+"2403703522112flush_messages"
+    ("after" script)
+invalid command name "2403703092608focus_set"
+    while executing
+"2403703092608focus_set"
+    ("after" script)
+invalid command name "2403703476800_restore_status_text"
+    while executing
+"2403703476800_restore_status_text"
+    ("after" script)
+invalid command name "2403703532992flush_messages"
+    while executing
+"2403703532992flush_messages"
+    ("after" script)
+invalid command name "2403703533056focus_set"
+    while executing
+"2403703533056focus_set"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+invalid command name "2403703091200flush_messages"
+    while executing
+"2403703091200flush_messages"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+.invalid command name "2403617513472focus_set"
+    while executing
+"2403617513472focus_set"
+    ("after" script)
+......F..F......................................................................................................................................................................................................................................新前端未启动：[REDACTED] [REDACTED]
+
+Python：<WORKSPACE>\venv-ai-modern\Scripts\python.exe
+请在 Praat 的路径配置中选择已安装 pywebview/pythonnet 的 Python。
+不会自动改用旧界面或发送模型请求。
+PRAAT_PROGRESS	0.1000	正在停止模型服务…
+PRAAT_PROGRESS	1.0000	已停止。
+PRAAT_PROGRESS	0.0500	停止旧的模型服务…
+PRAAT_PROGRESS	0.1500	等待端口释放…
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	停止旧的模型服务…
+PRAAT_PROGRESS	0.1500	等待端口释放…
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.1000	当前是 API 模式，不需要本机模型服务。
+PRAAT_PROGRESS	1.0000	已就绪：deepseek-chat（云端）
+PRAAT_PROGRESS	0.1000	当前是 API 模式，不需要本机模型服务。
+PRAAT_PROGRESS	1.0000	已就绪：deepseek-chat（云端）
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.1000	API 模式：设置里取消了「顺手停掉本机模型服务」，本机服务保持不动。
+PRAAT_PROGRESS	1.0000	API 模式仍在运行；本机模型服务按设置保留。
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	0.1000	正在停止模型服务…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	已停止。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	0.0200	切回本地模型（关闭 API 模式）…
+.................................................................................................................................................................F........................................................................................................................................................................................................................................................................................................................................................FEEF.F........................................................................................................................................................can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+.....invalid command name "2403633800704flush_messages"
+    while executing
+"2403633800704flush_messages"
+    ("after" script)
+invalid command name "2403633793856focus_set"
+    while executing
+"2403633793856focus_set"
+    ("after" script)
+invalid command name "2403634475456flush_messages"
+    while executing
+"2403634475456flush_messages"
+    ("after" script)
+invalid command name "2403634476992focus_set"
+    while executing
+"2403634476992focus_set"
+    ("after" script)
+invalid command name "2403632861248flush_messages"
+    while executing
+"2403632861248flush_messages"
+    ("after" script)
+invalid command name "2403634464576focus_set"
+    while executing
+"2403634464576focus_set"
+    ("after" script)
+.........................................................................
+======================================================================
+ERROR: test_longsound_uses_the_same_vot_action (test_segment_analysis_tools.SegmentAnalysisToolTests.test_longsound_uses_the_same_vot_action)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\tests\test_segment_analysis_tools.py", line 76, in test_longsound_uses_the_same_vot_action
+    script = tools._build_vot(
+             ^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\ai\praat_ai\tools.py", line 2066, in _build_vot
+    return _build_vot_explicit(arguments, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\ai\praat_ai\tools.py", line 1602, in _build_vot_explicit
+    row = context.resolve_by_class(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\ai\praat_ai\tools.py", line 251, in resolve_by_class
+    self.require_class(row, classes, description)
+  File "<WORKSPACE>\ai\praat_ai\tools.py", line 237, in require_class
+    raise ToolError(
+praat_ai.tools.ToolError: 算 VOT 需要一个 TextGrid（按层补边界）或 Sound（直接按两个时刻相减）（对象 1 是 LongSound）。请先用截取片段将 LongSound 提取成 Sound，再进行分析。
+
+======================================================================
+ERROR: test_negative_vot_boundaries_are_passed_without_reordering (test_segment_analysis_tools.SegmentAnalysisToolTests.test_negative_vot_boundaries_are_passed_without_reordering)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\tests\test_segment_analysis_tools.py", line 39, in test_negative_vot_boundaries_are_passed_without_reordering
+    script = tools._build_vot(
+             ^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\ai\praat_ai\tools.py", line 2066, in _build_vot
+    return _build_vot_explicit(arguments, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\ai\praat_ai\tools.py", line 1623, in _build_vot_explicit
+    raise ToolError(
+praat_ai.tools.ToolError: 浊音起始必须晚于爆破时刻（现在 burst=0.300 秒、voicing=0.280 秒）。
+
+======================================================================
+FAIL: test_right_click_in_the_row_gap_above_the_header_still_toggles (test_chat_process_fold.ProcessFoldTests.test_right_click_in_the_row_gap_above_the_header_still_toggles)
+标题文字上方那条行距带没有字符，@x,y 落在标题行本身，也必须能点开。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\tests\test_chat_process_fold.py", line 260, in test_right_click_in_the_row_gap_above_the_header_still_toggles
+    self.assertTrue(self.collapsed(tag))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_right_click_one_row_below_the_header_expands_the_collapsed_process (test_chat_process_fold.ProcessFoldTests.test_right_click_one_row_below_the_header_expands_the_collapsed_process)
+标题下面那一行的行距，同一个点上去也要能展开、能再收起。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\tests\test_chat_process_fold.py", line 297, in test_right_click_one_row_below_the_header_expands_the_collapsed_process
+    self.assertFalse(self.collapsed(tag))
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_japanese_composition_matches_each_input_at_all_scales (test_ime.NativeImeTests.test_japanese_composition_matches_each_input_at_all_scales)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\tests\test_ime.py", line 121, in test_japanese_composition_matches_each_input_at_all_scales
+    self.run_probe('font', 0x411)
+  File "<WORKSPACE>\ai\tests\test_ime.py", line 109, in run_probe
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<string>", line 78, in <module>
+AssertionError: TCombobox DPI 96: IME height -18, expected -16
+
+
+======================================================================
+FAIL: test_candidate_export_keeps_the_selected_absolute_interval (test_segment_analysis_tools.SegmentAnalysisToolTests.test_candidate_export_keeps_the_selected_absolute_interval)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\tests\test_segment_analysis_tools.py", line 60, in test_candidate_export_keeps_the_selected_absolute_interval
+    self.assertIn("Write VOT analysis to file: tmin, tmax, undefined, undefined", script)
+AssertionError: 'Write VOT analysis to file: tmin, tmax, undefined, undefined' not found in 'selectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\ntmin = 0.250000\ntmax = 0.500000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax - 0.002\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmpmxim1u4z/chat_result.tsv", "自动检测失败：搜索范围无效、超出声音时长或不足 2 毫秒。请在声音内重新圈选爆破和浊音起始附近的范围；未改用整个声音。"\nelse\nrangeNote$ = "（按编辑器圈选 0.250–0.500 秒）"\nselectObject: 1\nFilter (pass Hann band): 2000, 8000, 100\nhfSound = selected ("Sound")\nTo Intensity: 2000, 0.001, "yes"\nhfEnv = selected ("Intensity")\nselectObject: hfEnv\nhfN = Get number of frames\nhfRise = -1000\nhfBest = -1\nfor i from 1 to hfN\n    ft = Get time from frame number: i\n    back = i - 3\n    if back >= 1 and ft >= tmin and ft <= tmax\n        bt = Get time from frame number: back\n        if bt >= tmin\n            v = Get value in frame: i\n            v0 = Get value in frame: back\n            later = v\n            j = i + 5\n            if j <= hfN\n                later = Get value in frame: j\n            endif\n            if later >= v - 10 and v - v0 > hfRise\n                hfRise = v - v0\n                hfBest = i\n            endif\n        endif\n    endif\nendfor\nhfOnset = tmin\nif hfBest >= 1\n    hfOnset = Get time from frame number: hfBest\n    hfRef = Get value in frame: hfBest\n    k = hfBest - 1\n    found = 0\n    while k >= 1 and found = 0\n        vt = Get time from frame number: k\n        v = Get value in frame: k\n        if vt < tmin or v < hfRef - 8\n            found = 1\n        else\n            hfOnset = vt\n            k = k - 1\n        endif\n    endwhile\nendif\nselectObject: 1\nTo Intensity: 1000, 0.001, "yes"\nbbEnv = selected ("Intensity")\nselectObject: bbEnv\nbbN = Get number of frames\nbbRise = -1000\nbbBest = -1\nfor i from 1 to bbN\n    ft = Get time from frame number: i\n    back = i - 3\n    if back >= 1 and ft >= tmin and ft <= tmax\n        bt = Get time from frame number: back\n        if bt >= tmin\n            v = Get value in frame: i\n            v0 = Get value in frame: back\n            later = v\n            j = i + 5\n            if j <= bbN\n                later = Get value in frame: j\n            endif\n            if later >= v - 10 and v - v0 > bbRise\n                bbRise = v - v0\n                bbBest = i\n            endif\n        endif\n    endif\nendfor\nbbOnset = tmin\nif bbBest >= 1\n    bbOnset = Get time from frame number: bbBest\n    bbRef = Get value in frame: bbBest\n    k = bbBest - 1\n    found = 0\n    while k >= 1 and found = 0\n        vt = Get time from frame number: k\n        v = Get value in frame: k\n        if vt < tmin or v < bbRef - 8\n            found = 1\n        else\n            bbOnset = vt\n            k = k - 1\n        endif\n    endwhile\nendif\nburstTime = -1\nburstRise = 0\nburstBand$ = ""\nif hfRise >= 6.0\n    burstTime = hfOnset\n    burstRise = hfRise\n    burstBand$ = "高频带 2–8 kHz"\nelsif bbRise >= 6.0\n    burstTime = bbOnset\n    burstRise = bbRise\n    burstBand$ = "全频段"\nendif\nselectObject: hfEnv\nplusObject: bbEnv\nplusObject: hfSound\nRemove\nselectObject: 1\nTo Pitch (ac): 0.002, 75.000000, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600\npn = Get number of frames\nvoicingTime = -1\nf0Onset = 0\nfirstVoicedTime = -1\nrun = 0\nrunStart = -1\nrunStartF0 = 0\nlastVoiced = -1\ncandTime = -1\nsecondVoicingTime = -1\nfor i from 1 to pn\n    ft = Get time from frame number: i\n    if ft >= tmin and ft <= tmax\n        v = Get value in frame: i, "Hertz"\n        if v <> undefined\n            run = run + 1\n            if run = 1\n                runStart = ft\n                runStartF0 = v\n            endif\n            if firstVoicedTime < 0\n                firstVoicedTime = ft\n            endif\n            if voicingTime < 0 and run >= 3 and runStart >= burstTime\n                voicingTime = runStart\n                f0Onset = runStartF0\n            endif\n            if candTime >= 0\n                if secondVoicingTime < 0\n                    secondVoicingTime = candTime\n                endif\n            elsif lastVoiced >= 0 and voicingTime >= 0 and ft - lastVoiced >= 0.02\n                candTime = ft\n            endif\n            lastVoiced = ft\n        else\n            run = 0\n            candTime = -1\n        endif\n    endif\nendfor\nRemove\nif firstVoicedTime >= 0 and firstVoicedTime <= tmin + 0.01\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmpmxim1u4z/chat_result.tsv", "自动检测失败：范围起点附近（", fixed$ (firstVoicedTime, 3), " 秒）已经是浊音（自相关基频连续成立），说明爆破不在这个范围里。请把 from 提前到闭音段（爆破之前），或直接给出 burst 和 voicing 两个时刻。", rangeNote$\nelsif burstTime < 0\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmpmxim1u4z/chat_result.tsv", "自动检测失败：", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒里高频带和全频段能量都没有 6 dB 以上的陡升，找不到爆破瞬态。请把范围收紧到爆破附近，或直接给出 burst 和 voicing 两个时刻。", rangeNote$\nelsif voicingTime < 0\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmpmxim1u4z/chat_result.tsv", "自动检测失败：爆破点 ", fixed$ (burstTime, 3), " 秒之后没有连续 3 帧以上的浊音（自相关基频），范围里可能没有浊音段。", rangeNote$\nelse\n    hnrEnd = voicingTime + 0.05\n    if hnrEnd > duration\n        hnrEnd = duration\n    endif\n    hnrMax = 0\n    if hnrEnd - voicingTime >= 0.03\n        selectObject: 1\n        Extract part: voicingTime, hnrEnd, "rectangular", 1, "no"\n        ex = selected ("Sound")\n        To Harmonicity (cc): 0.002, 75.000000, 0.1, 1.0\n        hn = Get number of frames\n        if hn >= 1\n            for i from 1 to hn\n                hv = Get value in frame: i\n                if hv > hnrMax\n                    hnrMax = hv\n                endif\n            endfor\n        endif\n        Remove\n        selectObject: ex\n        Remove\n    endif\n    vot = voicingTime - burstTime\n    caution$ = ""\n    if vot < 0.005\n        caution$ = "（不到 5 毫秒：可能范围起点已在浊音里，也可能是不送气塞音，请核对）"\n    endif\n    secondNote$ = ""\n    if secondVoicingTime >= 0\n        secondNote$ = "；范围偏大：后面还有第 2 段浊音从 " + fixed$ (secondVoicingTime, 3) + " 秒开始，本次只报了第一个候选，建议收紧范围"\n    endif\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmpmxim1u4z/chat_result.tsv", "VOT 估计值 = ", fixed$ (vot, 4), " 秒（", fixed$ (vot * 1000, 1), " 毫秒）：爆破 ", fixed$ (burstTime, 3), " 秒（占时长 ", fixed$ (burstTime / duration * 100, 0), "%，", burstBand$, " 能量升 ", fixed$ (burstRise, 1), " dB）→ 浊音起始 ", fixed$ (voicingTime, 3), " 秒（占时长 ", fixed$ (voicingTime / duration * 100, 0), "%，自相关基频 ", fixed$ (f0Onset, 1), " Hz，之后 50 毫秒内谐噪比最高 ", fixed$ (hnrMax, 1), " dB）；范围 ", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒（占时长 ", fixed$ (tmin / duration * 100, 0), "–", fixed$ (tmax / duration * 100, 0), "%）；爆破与浊音起始分开估计，请对着语图核对", caution$, secondNote$, rangeNote$\nendif\nendif\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmpmxim1u4z/chat_state.txt", "done"\n'
+
+======================================================================
+FAIL: test_omitted_boundaries_select_candidate_estimation (test_segment_analysis_tools.SegmentAnalysisToolTests.test_omitted_boundaries_select_candidate_estimation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\tests\test_segment_analysis_tools.py", line 50, in test_omitted_boundaries_select_candidate_estimation
+    self.assertIn("Write VOT analysis to file", script)
+AssertionError: 'Write VOT analysis to file' not found in 'selectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\ntmin = 0.250000\ntmax = 0.500000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax - 0.002\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmppk7aovi9/chat_result.tsv", "自动检测失败：搜索范围无效、超出声音时长或不足 2 毫秒。请在声音内重新圈选爆破和浊音起始附近的范围；未改用整个声音。"\nelse\nrangeNote$ = "（按编辑器圈选 0.250–0.500 秒）"\nselectObject: 1\nFilter (pass Hann band): 2000, 8000, 100\nhfSound = selected ("Sound")\nTo Intensity: 2000, 0.001, "yes"\nhfEnv = selected ("Intensity")\nselectObject: hfEnv\nhfN = Get number of frames\nhfRise = -1000\nhfBest = -1\nfor i from 1 to hfN\n    ft = Get time from frame number: i\n    back = i - 3\n    if back >= 1 and ft >= tmin and ft <= tmax\n        bt = Get time from frame number: back\n        if bt >= tmin\n            v = Get value in frame: i\n            v0 = Get value in frame: back\n            later = v\n            j = i + 5\n            if j <= hfN\n                later = Get value in frame: j\n            endif\n            if later >= v - 10 and v - v0 > hfRise\n                hfRise = v - v0\n                hfBest = i\n            endif\n        endif\n    endif\nendfor\nhfOnset = tmin\nif hfBest >= 1\n    hfOnset = Get time from frame number: hfBest\n    hfRef = Get value in frame: hfBest\n    k = hfBest - 1\n    found = 0\n    while k >= 1 and found = 0\n        vt = Get time from frame number: k\n        v = Get value in frame: k\n        if vt < tmin or v < hfRef - 8\n            found = 1\n        else\n            hfOnset = vt\n            k = k - 1\n        endif\n    endwhile\nendif\nselectObject: 1\nTo Intensity: 1000, 0.001, "yes"\nbbEnv = selected ("Intensity")\nselectObject: bbEnv\nbbN = Get number of frames\nbbRise = -1000\nbbBest = -1\nfor i from 1 to bbN\n    ft = Get time from frame number: i\n    back = i - 3\n    if back >= 1 and ft >= tmin and ft <= tmax\n        bt = Get time from frame number: back\n        if bt >= tmin\n            v = Get value in frame: i\n            v0 = Get value in frame: back\n            later = v\n            j = i + 5\n            if j <= bbN\n                later = Get value in frame: j\n            endif\n            if later >= v - 10 and v - v0 > bbRise\n                bbRise = v - v0\n                bbBest = i\n            endif\n        endif\n    endif\nendfor\nbbOnset = tmin\nif bbBest >= 1\n    bbOnset = Get time from frame number: bbBest\n    bbRef = Get value in frame: bbBest\n    k = bbBest - 1\n    found = 0\n    while k >= 1 and found = 0\n        vt = Get time from frame number: k\n        v = Get value in frame: k\n        if vt < tmin or v < bbRef - 8\n            found = 1\n        else\n            bbOnset = vt\n            k = k - 1\n        endif\n    endwhile\nendif\nburstTime = -1\nburstRise = 0\nburstBand$ = ""\nif hfRise >= 6.0\n    burstTime = hfOnset\n    burstRise = hfRise\n    burstBand$ = "高频带 2–8 kHz"\nelsif bbRise >= 6.0\n    burstTime = bbOnset\n    burstRise = bbRise\n    burstBand$ = "全频段"\nendif\nselectObject: hfEnv\nplusObject: bbEnv\nplusObject: hfSound\nRemove\nselectObject: 1\nTo Pitch (ac): 0.002, 75.000000, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600\npn = Get number of frames\nvoicingTime = -1\nf0Onset = 0\nfirstVoicedTime = -1\nrun = 0\nrunStart = -1\nrunStartF0 = 0\nlastVoiced = -1\ncandTime = -1\nsecondVoicingTime = -1\nfor i from 1 to pn\n    ft = Get time from frame number: i\n    if ft >= tmin and ft <= tmax\n        v = Get value in frame: i, "Hertz"\n        if v <> undefined\n            run = run + 1\n            if run = 1\n                runStart = ft\n                runStartF0 = v\n            endif\n            if firstVoicedTime < 0\n                firstVoicedTime = ft\n            endif\n            if voicingTime < 0 and run >= 3 and runStart >= burstTime\n                voicingTime = runStart\n                f0Onset = runStartF0\n            endif\n            if candTime >= 0\n                if secondVoicingTime < 0\n                    secondVoicingTime = candTime\n                endif\n            elsif lastVoiced >= 0 and voicingTime >= 0 and ft - lastVoiced >= 0.02\n                candTime = ft\n            endif\n            lastVoiced = ft\n        else\n            run = 0\n            candTime = -1\n        endif\n    endif\nendfor\nRemove\nif firstVoicedTime >= 0 and firstVoicedTime <= tmin + 0.01\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmppk7aovi9/chat_result.tsv", "自动检测失败：范围起点附近（", fixed$ (firstVoicedTime, 3), " 秒）已经是浊音（自相关基频连续成立），说明爆破不在这个范围里。请把 from 提前到闭音段（爆破之前），或直接给出 burst 和 voicing 两个时刻。", rangeNote$\nelsif burstTime < 0\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmppk7aovi9/chat_result.tsv", "自动检测失败：", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒里高频带和全频段能量都没有 6 dB 以上的陡升，找不到爆破瞬态。请把范围收紧到爆破附近，或直接给出 burst 和 voicing 两个时刻。", rangeNote$\nelsif voicingTime < 0\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmppk7aovi9/chat_result.tsv", "自动检测失败：爆破点 ", fixed$ (burstTime, 3), " 秒之后没有连续 3 帧以上的浊音（自相关基频），范围里可能没有浊音段。", rangeNote$\nelse\n    hnrEnd = voicingTime + 0.05\n    if hnrEnd > duration\n        hnrEnd = duration\n    endif\n    hnrMax = 0\n    if hnrEnd - voicingTime >= 0.03\n        selectObject: 1\n        Extract part: voicingTime, hnrEnd, "rectangular", 1, "no"\n        ex = selected ("Sound")\n        To Harmonicity (cc): 0.002, 75.000000, 0.1, 1.0\n        hn = Get number of frames\n        if hn >= 1\n            for i from 1 to hn\n                hv = Get value in frame: i\n                if hv > hnrMax\n                    hnrMax = hv\n                endif\n            endfor\n        endif\n        Remove\n        selectObject: ex\n        Remove\n    endif\n    vot = voicingTime - burstTime\n    caution$ = ""\n    if vot < 0.005\n        caution$ = "（不到 5 毫秒：可能范围起点已在浊音里，也可能是不送气塞音，请核对）"\n    endif\n    secondNote$ = ""\n    if secondVoicingTime >= 0\n        secondNote$ = "；范围偏大：后面还有第 2 段浊音从 " + fixed$ (secondVoicingTime, 3) + " 秒开始，本次只报了第一个候选，建议收紧范围"\n    endif\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmppk7aovi9/chat_result.tsv", "VOT 估计值 = ", fixed$ (vot, 4), " 秒（", fixed$ (vot * 1000, 1), " 毫秒）：爆破 ", fixed$ (burstTime, 3), " 秒（占时长 ", fixed$ (burstTime / duration * 100, 0), "%，", burstBand$, " 能量升 ", fixed$ (burstRise, 1), " dB）→ 浊音起始 ", fixed$ (voicingTime, 3), " 秒（占时长 ", fixed$ (voicingTime / duration * 100, 0), "%，自相关基频 ", fixed$ (f0Onset, 1), " Hz，之后 50 毫秒内谐噪比最高 ", fixed$ (hnrMax, 1), " dB）；范围 ", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒（占时长 ", fixed$ (tmin / duration * 100, 0), "–", fixed$ (tmax / duration * 100, 0), "%）；爆破与浊音起始分开估计，请对着语图核对", caution$, secondNote$, rangeNote$\nendif\nendif\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmppk7aovi9/chat_state.txt", "done"\n'
+
+======================================================================
+FAIL: test_zero_boundaries_are_explicit_manual_values (test_segment_analysis_tools.SegmentAnalysisToolTests.test_zero_boundaries_are_explicit_manual_values)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\tests\test_segment_analysis_tools.py", line 33, in test_zero_boundaries_are_explicit_manual_values
+    self.assertIn("Write VOT analysis to file", script)
+AssertionError: 'Write VOT analysis to file' not found in 'selectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\ntmin = 0.250000\ntmax = 0.500000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax - 0.002\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmpi31wu9vg/chat_result.tsv", "自动检测失败：搜索范围无效、超出声音时长或不足 2 毫秒。请在声音内重新圈选爆破和浊音起始附近的范围；未改用整个声音。"\nelse\nrangeNote$ = "（按编辑器圈选 0.250–0.500 秒）"\nselectObject: 1\nFilter (pass Hann band): 2000, 8000, 100\nhfSound = selected ("Sound")\nTo Intensity: 2000, 0.001, "yes"\nhfEnv = selected ("Intensity")\nselectObject: hfEnv\nhfN = Get number of frames\nhfRise = -1000\nhfBest = -1\nfor i from 1 to hfN\n    ft = Get time from frame number: i\n    back = i - 3\n    if back >= 1 and ft >= tmin and ft <= tmax\n        bt = Get time from frame number: back\n        if bt >= tmin\n            v = Get value in frame: i\n            v0 = Get value in frame: back\n            later = v\n            j = i + 5\n            if j <= hfN\n                later = Get value in frame: j\n            endif\n            if later >= v - 10 and v - v0 > hfRise\n                hfRise = v - v0\n                hfBest = i\n            endif\n        endif\n    endif\nendfor\nhfOnset = tmin\nif hfBest >= 1\n    hfOnset = Get time from frame number: hfBest\n    hfRef = Get value in frame: hfBest\n    k = hfBest - 1\n    found = 0\n    while k >= 1 and found = 0\n        vt = Get time from frame number: k\n        v = Get value in frame: k\n        if vt < tmin or v < hfRef - 8\n            found = 1\n        else\n            hfOnset = vt\n            k = k - 1\n        endif\n    endwhile\nendif\nselectObject: 1\nTo Intensity: 1000, 0.001, "yes"\nbbEnv = selected ("Intensity")\nselectObject: bbEnv\nbbN = Get number of frames\nbbRise = -1000\nbbBest = -1\nfor i from 1 to bbN\n    ft = Get time from frame number: i\n    back = i - 3\n    if back >= 1 and ft >= tmin and ft <= tmax\n        bt = Get time from frame number: back\n        if bt >= tmin\n            v = Get value in frame: i\n            v0 = Get value in frame: back\n            later = v\n            j = i + 5\n            if j <= bbN\n                later = Get value in frame: j\n            endif\n            if later >= v - 10 and v - v0 > bbRise\n                bbRise = v - v0\n                bbBest = i\n            endif\n        endif\n    endif\nendfor\nbbOnset = tmin\nif bbBest >= 1\n    bbOnset = Get time from frame number: bbBest\n    bbRef = Get value in frame: bbBest\n    k = bbBest - 1\n    found = 0\n    while k >= 1 and found = 0\n        vt = Get time from frame number: k\n        v = Get value in frame: k\n        if vt < tmin or v < bbRef - 8\n            found = 1\n        else\n            bbOnset = vt\n            k = k - 1\n        endif\n    endwhile\nendif\nburstTime = -1\nburstRise = 0\nburstBand$ = ""\nif hfRise >= 6.0\n    burstTime = hfOnset\n    burstRise = hfRise\n    burstBand$ = "高频带 2–8 kHz"\nelsif bbRise >= 6.0\n    burstTime = bbOnset\n    burstRise = bbRise\n    burstBand$ = "全频段"\nendif\nselectObject: hfEnv\nplusObject: bbEnv\nplusObject: hfSound\nRemove\nselectObject: 1\nTo Pitch (ac): 0.002, 75.000000, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600\npn = Get number of frames\nvoicingTime = -1\nf0Onset = 0\nfirstVoicedTime = -1\nrun = 0\nrunStart = -1\nrunStartF0 = 0\nlastVoiced = -1\ncandTime = -1\nsecondVoicingTime = -1\nfor i from 1 to pn\n    ft = Get time from frame number: i\n    if ft >= tmin and ft <= tmax\n        v = Get value in frame: i, "Hertz"\n        if v <> undefined\n            run = run + 1\n            if run = 1\n                runStart = ft\n                runStartF0 = v\n            endif\n            if firstVoicedTime < 0\n                firstVoicedTime = ft\n            endif\n            if voicingTime < 0 and run >= 3 and runStart >= burstTime\n                voicingTime = runStart\n                f0Onset = runStartF0\n            endif\n            if candTime >= 0\n                if secondVoicingTime < 0\n                    secondVoicingTime = candTime\n                endif\n            elsif lastVoiced >= 0 and voicingTime >= 0 and ft - lastVoiced >= 0.02\n                candTime = ft\n            endif\n            lastVoiced = ft\n        else\n            run = 0\n            candTime = -1\n        endif\n    endif\nendfor\nRemove\nif firstVoicedTime >= 0 and firstVoicedTime <= tmin + 0.01\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmpi31wu9vg/chat_result.tsv", "自动检测失败：范围起点附近（", fixed$ (firstVoicedTime, 3), " 秒）已经是浊音（自相关基频连续成立），说明爆破不在这个范围里。请把 from 提前到闭音段（爆破之前），或直接给出 burst 和 voicing 两个时刻。", rangeNote$\nelsif burstTime < 0\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmpi31wu9vg/chat_result.tsv", "自动检测失败：", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒里高频带和全频段能量都没有 6 dB 以上的陡升，找不到爆破瞬态。请把范围收紧到爆破附近，或直接给出 burst 和 voicing 两个时刻。", rangeNote$\nelsif voicingTime < 0\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmpi31wu9vg/chat_result.tsv", "自动检测失败：爆破点 ", fixed$ (burstTime, 3), " 秒之后没有连续 3 帧以上的浊音（自相关基频），范围里可能没有浊音段。", rangeNote$\nelse\n    hnrEnd = voicingTime + 0.05\n    if hnrEnd > duration\n        hnrEnd = duration\n    endif\n    hnrMax = 0\n    if hnrEnd - voicingTime >= 0.03\n        selectObject: 1\n        Extract part: voicingTime, hnrEnd, "rectangular", 1, "no"\n        ex = selected ("Sound")\n        To Harmonicity (cc): 0.002, 75.000000, 0.1, 1.0\n        hn = Get number of frames\n        if hn >= 1\n            for i from 1 to hn\n                hv = Get value in frame: i\n                if hv > hnrMax\n                    hnrMax = hv\n                endif\n            endfor\n        endif\n        Remove\n        selectObject: ex\n        Remove\n    endif\n    vot = voicingTime - burstTime\n    caution$ = ""\n    if vot < 0.005\n        caution$ = "（不到 5 毫秒：可能范围起点已在浊音里，也可能是不送气塞音，请核对）"\n    endif\n    secondNote$ = ""\n    if secondVoicingTime >= 0\n        secondNote$ = "；范围偏大：后面还有第 2 段浊音从 " + fixed$ (secondVoicingTime, 3) + " 秒开始，本次只报了第一个候选，建议收紧范围"\n    endif\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmpi31wu9vg/chat_result.tsv", "VOT 估计值 = ", fixed$ (vot, 4), " 秒（", fixed$ (vot * 1000, 1), " 毫秒）：爆破 ", fixed$ (burstTime, 3), " 秒（占时长 ", fixed$ (burstTime / duration * 100, 0), "%，", burstBand$, " 能量升 ", fixed$ (burstRise, 1), " dB）→ 浊音起始 ", fixed$ (voicingTime, 3), " 秒（占时长 ", fixed$ (voicingTime / duration * 100, 0), "%，自相关基频 ", fixed$ (f0Onset, 1), " Hz，之后 50 毫秒内谐噪比最高 ", fixed$ (hnrMax, 1), " dB）；范围 ", fixed$ (tmin, 3), "–", fixed$ (tmax, 3), " 秒（占时长 ", fixed$ (tmin / duration * 100, 0), "–", fixed$ (tmax / duration * 100, 0), "%）；爆破与浊音起始分开估计，请对着语图核对", caution$, secondNote$, rangeNote$\nendif\nendif\nappendFileLine: "<USER_HOME>/AppData/Local/Temp/tmpi31wu9vg/chat_state.txt", "done"\n'
+
+----------------------------------------------------------------------
+Ran 1165 tests in 165.658s
+
+FAILED (failures=6, errors=2)

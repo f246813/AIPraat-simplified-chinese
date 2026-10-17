@@ -62,7 +62,7 @@ function Invoke-GitHub {
 }
 
 $root = Split-Path -Parent $PSScriptRoot           # repository root (contains docs\, ai\)
-if (-not $Notes) { $Notes = Join-Path $root 'docs\2026-10-07-release-notes-v7.0-zh.8.md' }
+if (-not $Notes) { $Notes = Join-Path $root 'docs\RELEASE-NOTES.zh-CN.md' }
 if (-not $Assets -or $Assets.Count -eq 0) {
     $Assets = @(
         (Join-Path $root 'AIPraat-install.exe'),

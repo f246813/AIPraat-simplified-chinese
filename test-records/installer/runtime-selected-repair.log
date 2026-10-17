@@ -1,0 +1,68 @@
+配置所选 Python：<WORKSPACE>/installer/verification/runtime-local-env/Scripts/python.exe
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 Pillow
+Pillow: 已就绪
+正在检测 praat-parselmouth
+praat-parselmouth: 已就绪
+正在检测 pydantic-ai-slim
+pydantic-ai-slim: 已就绪
+正在检测 pydantic-graph
+pydantic-graph: 已就绪
+正在检测 jsonschema
+jsonschema: 未安装
+正在检测 pywebview
+pywebview: 已就绪
+正在检测 pythonnet
+pythonnet: 已就绪
+正在检测 PyTorch
+PyTorch: 已就绪
+正在检测 Transformers
+Transformers: 已就绪
+正在检测 Safetensors
+Safetensors: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+正在补齐未就绪的 Python 运行库：jsonschema==4.26.0
+pip install --prefer-binary --upgrade -c <USER_HOME>\AppData\Local\AIPraat\logs\runtime\install-20261012-045651-849Z-e433a9cf.constraints.txt jsonschema==4.26.0
+Collecting jsonschema==4.26.0
+  Using cached jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Requirement already satisfied: attrs>=22.2.0 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-local-env\lib\site-packages (from jsonschema==4.26.0) (26.1.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-local-env\lib\site-packages (from jsonschema==4.26.0) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-local-env\lib\site-packages (from jsonschema==4.26.0) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-local-env\lib\site-packages (from jsonschema==4.26.0) (2026.9.1)
+Requirement already satisfied: typing-extensions>=4.4.0 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-local-env\lib\site-packages (from referencing>=0.28.4->jsonschema==4.26.0) (4.16.0)
+Using cached jsonschema-4.26.0-py3-none-any.whl (90 kB)
+Installing collected packages: jsonschema
+Successfully installed jsonschema-4.26.0
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 Pillow
+Pillow: 已就绪
+正在检测 praat-parselmouth
+praat-parselmouth: 已就绪
+正在检测 pydantic-ai-slim
+pydantic-ai-slim: 已就绪
+正在检测 pydantic-graph
+pydantic-graph: 已就绪
+正在检测 jsonschema
+jsonschema: 已就绪
+正在检测 pywebview
+pywebview: 已就绪
+正在检测 pythonnet
+pythonnet: 已就绪
+正在检测 PyTorch
+PyTorch: 已就绪
+正在检测 Transformers
+Transformers: 已就绪
+正在检测 Safetensors
+Safetensors: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+逐项检测结果：<WORKSPACE>\test-records\installer\runtime-selected-repair.json
+全部必需运行库已通过复检和新前端窗口启动检查。
+配置日志：<USER_HOME>\AppData\Local\AIPraat\logs\runtime\install-20261012-045651-849Z-e433a9cf.log

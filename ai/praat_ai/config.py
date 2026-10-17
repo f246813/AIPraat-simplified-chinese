@@ -92,6 +92,9 @@ class ApiConfig:
     audio_input_path: str = ""
     audio_verified_at: str = ""
     audio_corrected_at: str = ""
+    #: 音频设置的写序号：Windows 的 ``datetime.now`` 粒度约 15 ms，同一刻的两次写入
+    #: 时间会并列，而「谁更晚」是覆盖规则的唯一依据。序号在每次写入时递增，并列时用它定序。
+    audio_setting_sequence: int = 0
     audio_test_result: dict[str, Any] = field(default_factory=dict)
     token_mode: str | None = None
     top_p: float | None = None
@@ -143,7 +146,6 @@ class ServerConfig:
 @dataclass(slots=True)
 class AnalysisConfig:
     default_error_threshold: float = 1.25
-    minimum_error_duration_sec: float = 0.04
     maximum_errors_per_phone: int = 3
 
 
@@ -159,6 +161,9 @@ class MfaAlignmentConfig:
     acoustic_models: list[str] = field(default_factory=list)
     beam: int = 10
     retry_beam: int = 40
+    #: 正式 MFA 对齐的等待上限（秒）。旧实现用无超时的 ``subprocess.run``：对齐挂住就一直等，
+    #: 用户看不到任何状态也不能停。超时后杀掉整棵进程树并按失败报告（见 forced_alignment）。
+    timeout_sec: float = 1800.0
 
 
 @dataclass(slots=True)
@@ -166,7 +171,7 @@ class Wav2Vec2AlignmentConfig:
     enabled: bool = False
     model: str = ""
     models: list[str] = field(default_factory=list)
-    device: str = "cuda"
+    device: str = "cpu"
     blank_token_id: int = 0
     sample_rate: int = 16000
     do_phonemize: bool = False
@@ -184,13 +189,54 @@ class AlignmentConfig:
     )
 
 
+# Built-in pronunciation presets. Identity is fixed here on purpose: names and rules are
+# never inferred from resources. ``rule_id`` links to ``pronunciation_rules.RuleProfile``.
+# ``phone_map`` carries only one-to-one labels that the IPA table cannot split: the MFA
+# Japanese lexicon writes long affricates with a bare length mark (dzː), which would
+# otherwise look like two phonemes. Everything else stays on the IPA table.
+_BUILTIN_PRESETS = (
+    dict(id="en-GB", name="英语（英式）", language="en", variant="en-GB", rule_id=None,
+         phone_set="custom", phone_map={}),
+    dict(id="en-US", name="英语（美式）", language="en", variant="en-US", rule_id="en-US-general-v1",
+         phone_set="custom", phone_map={}),
+    dict(id="ja-JP", name="日语（标准语）", language="ja", variant="ja-JP", rule_id="ja-JP-standard-v1",
+         phone_set="ipa",
+         phone_map={"dzː": "d͡zː", "dʑː": "d͡ʑː", "tsː": "t͡sː", "tɕː": "t͡ɕː"}),
+)
+
+
+def pronunciation_presets() -> list[dict[str, Any]]:
+    """Stable identities; never infer a dialect or bind legacy global resources."""
+    return [dict(entry, g2p="", dictionary="", acoustic="", confirmed=False,
+                 phone_map=dict(entry["phone_map"]))
+            for entry in _BUILTIN_PRESETS]
+
+
+@dataclass(slots=True)
+class PronunciationConfig:
+    resources: dict[str, list[dict[str, Any]]] = field(
+        default_factory=lambda: {"g2p": [], "dictionary": [], "acoustic": []})
+    presets: list[dict[str, Any]] = field(default_factory=pronunciation_presets)
+    default_preset: str = ""
+    launcher: dict[str, str] = field(default_factory=lambda: dict(
+        executable="mfa", conda_executable="", conda_environment=""))
+    removed_resource_ids: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class AudioDecoderConfig:
+    ffmpeg: str = ""
+
+
 @dataclass(slots=True)
 class AppConfig:
+    audio: AudioDecoderConfig = field(default_factory=AudioDecoderConfig)
     qwen: QwenConfig = field(default_factory=QwenConfig)
     server: ServerConfig = field(default_factory=ServerConfig)
     api: ApiConfig = field(default_factory=ApiConfig)
     analysis: AnalysisConfig = field(default_factory=AnalysisConfig)
     alignment: AlignmentConfig = field(default_factory=AlignmentConfig)
+    pronunciation: PronunciationConfig = field(default_factory=PronunciationConfig)
     local_qwen: QwenConfig | None = field(default=None, repr=False)
     workflow: WorkflowPolicy | None = field(default=None, repr=False)
 
@@ -343,8 +389,10 @@ def apply_api_to_qwen(config: AppConfig) -> None:
 def load_config(path: str | Path | None = None) -> AppConfig:
     config = AppConfig()
     candidate = Path(path) if path else default_config_path()
+    raw = {}
     if candidate.is_file():
         raw = json.loads(candidate.read_text(encoding="utf-8"))
+        _merge_dataclass(config.audio, raw.get("audio", {}))
         local_values = raw.get("qwen") or {}
         _merge_dataclass(config.qwen, local_values)
         # Upgrade the old shipped pair only; preserve individually tuned limits.
@@ -359,6 +407,9 @@ def load_config(path: str | Path | None = None) -> AppConfig:
         if presets_value is not None:
             config.server.presets = presets_from_raw(presets_value)
         _merge_dataclass(config.analysis, raw.get("analysis", {}))
+        pronunciation_values = raw.get("pronunciation", {})
+        if isinstance(pronunciation_values, dict):
+            _merge_dataclass(config.pronunciation, pronunciation_values)
         api_values = raw.get("api", {})
         _merge_dataclass(config.api, api_values)
         # 旧版「使用云端 API」兼作锁定开关；首次读取时沿用其选择。
@@ -402,6 +453,12 @@ def load_config(path: str | Path | None = None) -> AppConfig:
     if env_mmproj:
         config.server.mmproj_path = env_mmproj
 
+    # Preserve an existing Anki decoder path when a model/settings save first
+    # serializes the shared audio section. An explicit empty value means auto.
+    if "ffmpeg" not in raw.get("audio", {}):
+        legacy = candidate.parent / "anki_config.json"
+        if legacy.is_file():
+            config.audio.ffmpeg = str(json.loads(legacy.read_text(encoding="utf-8-sig")).get("ffmpeg", ""))
     from .model_capabilities import initialize_audio
     initialize_audio(config.api)
     config.local_qwen = deepcopy(config.qwen)

@@ -1,0 +1,7 @@
+PASS payload matches workspace: Praat.exe
+PASS payload matches workspace: AIPraat-paths.exe
+PASS payload matches workspace: ai/Install-FFmpeg.ps1
+PASS payload matches workspace: ai/praat_ai/audio_decoder.py
+PASS payload matches workspace: ai/praat_ai/config.py
+PASS payload matches workspace: ai/frontend/dist/index.html
+PASS PowerShell script retains UTF-8 BOM

@@ -1,0 +1,13 @@
+{
+  "checks": [
+    "cancel-real-hello-PCM-identity-stable-IDs-selection-TextGrid-and-responsive-modal-parent",
+    "export-failure-stops-before-launch-without-text-WAV-fallback-and-retry-restores-runner",
+    "submit-real-hello-PCM-identity-stable-IDs-selection-TextGrid-and-responsive-modal-parent",
+    "native-menu-submit-produced-real-hello-report-without-model-requests",
+    "native-parent-exit-closes-WebView-and-Python-child-without-new-analysis",
+    "original-US-UK-OGG-files-unchanged"
+  ],
+  "realCloud": false,
+  "executableSHA256": "aa39d61c4c4222f1b4976063896916efd4349575e3207d1f4b6b409942a888af",
+  "passed": true
+}

@@ -106,8 +106,8 @@ public static class PathSettingsTests
             using(var form=(Form)Activator.CreateInstance(Production("PathSettingsForm"),new object[]{settings,Path.Combine(folder,"result.txt"),0})) {
                 form.Show(); Application.DoEvents();
                 Assert(form.Controls.Find("PythonPath",true).Length==1 && form.Controls.Find("LlamaServerPath",true).Length==1 && form.Controls.Find("MmprojPath",true).Length==1,"缺少三个配置字段");
-                Assert(form.Controls.Find("ModelPath",true).Length==0,"重复添加模型字段");
-                Assert(form.Controls.Find("Wav2Vec2ModelPath",true).Length==0,"Wav2Vec2 仍显示在路径配置中");
+                Assert(form.Controls.Find("ModelPath",true).Length==0,"路径配置仍出现语言模型行");
+                Assert(form.Controls.Find("Wav2Vec2ModelPath",true).Length==0,"路径配置仍出现 wav2vec2 模型行");
                 Assert(form.Controls.Find("MfaExecutablePath",true).Length==1,"MFA 程序路径丢失");
                 Assert(!form.Controls.Find("SavePaths",true)[0].Enabled,"无效 Python 可以保存");
                 using(var bitmap=new System.Drawing.Bitmap(form.Width,form.Height)) {

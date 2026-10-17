@@ -103,7 +103,7 @@ function getTimeGroup(dateStr: string | undefined, now: Date): TimeGroup {
 
 const TIME_GROUP_ORDER: TimeGroup[] = ["today", "yesterday", "thisWeek", "older14d", "archived"];
 /** Group only normal history; callers remove global pins before any row limit. */
-export function groupSidebarSessionsByTime(sessions: SessionSummary[], now = new Date()) {
+export function groupSidebarSessionsByTime(sessions: SessionSummary[], now = new Date(), retained: readonly TimeGroup[] = []) {
   const grouped = new Map<TimeGroup, SessionSummary[]>();
   for (const session of sessions) {
     const group = getTimeGroup(session.updatedAt, now);
@@ -112,6 +112,6 @@ export function groupSidebarSessionsByTime(sessions: SessionSummary[], now = new
   }
   return TIME_GROUP_ORDER.flatMap((group) => {
     const rows = grouped.get(group);
-    return rows?.length ? [{ group, sessions: rows }] : [];
+    return rows?.length || retained.includes(group) ? [{ group, sessions: rows || [] }] : [];
   });
 }

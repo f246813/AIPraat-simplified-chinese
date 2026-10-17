@@ -4,6 +4,7 @@ import { activeTask, type Attachment, type Bootstrap, type HistorySection, type 
 export function createDemoAdapter(): Rpc {
   if (window.pywebview) throw new Error('测试适配器不能在桌面宿主中运行');
   const now = new Date().toISOString(); let seq = 0; let nextId = 0;
+  const compactProcess = new URLSearchParams(window.location.search).get('compactProcess') === '1';
   const sessions: Session[] = [{id:'demo-1',title:'新的分析',created:now,updated:now,readOnly:false,draft:'',scroll:0,anchor:null},{id:'legacy:fixture',title:'演示旧记录（只读）',created:now,updated:now,readOnly:true,draft:'',scroll:0,anchor:null},{id:'demo-history',title:'长历史与渲染夹具',created:now,updated:now,readOnly:false,draft:'',scroll:0,anchor:null}];
   const messages: Record<string,Message[]> = {
     'demo-1': [],
@@ -35,7 +36,7 @@ export function createDemoAdapter(): Rpc {
     if(archived&&members.some(s=>[...tasks.values()].some(t=>t.sessionId===s.id&&activeTask(t))))throw new Error('运行中的会话不能归档');
     members.forEach(s=>s.archived=archived);return organization();
   };
-  const boot: Bootstrap = {sessions,settings:{workflow:{...workflowPresets.balanced},api:{enabled:false,locked:false,label:'',base_url:'',model:'',has_api_key:true,request_timeout_sec:120,stop_local_service:true,use_world_knowledge:true,audio_input_enabled:false,token_mode:'auto'},local:{base_url:'http://127.0.0.1:8000/v1',model:'browser-fixture',token_mode:'manual',max_context_tokens:32768,plan_max_tokens:4096},preferences:{theme:'system',font_size:15,send_key:'enter',smooth_stream:true,sidebar_width:272,conversation_width:850},analysis:{default_error_threshold:1.25,minimum_error_duration_sec:0.04,maximum_errors_per_phone:3},alignment:{backend:'auto',agreement_threshold_sec:0.04,minimum_confidence:0.45,mfa:{enabled:false,executable:'mfa',beam:10,retry_beam:40}}},tasks:[],host:{name:'浏览器测试夹具',version:'1',cloudAllowed:false},providers:[],models:[]};
+  const boot: Bootstrap = {sessions,settings:{workflow:{...workflowPresets.balanced},api:{enabled:false,locked:false,label:'',base_url:'',model:'',has_api_key:true,request_timeout_sec:120,stop_local_service:true,use_world_knowledge:true,audio_input_enabled:false,token_mode:'auto'},local:{base_url:'http://127.0.0.1:8000/v1',model:'browser-fixture',token_mode:'manual',max_context_tokens:32768,plan_max_tokens:4096},preferences:{theme:'system',font_size:15,send_key:'enter',smooth_stream:true,sidebar_width:272,conversation_width:850},analysis:{default_error_threshold:1.25,maximum_errors_per_phone:3},alignment:{backend:'auto',agreement_threshold_sec:0.04,minimum_confidence:0.45,mfa:{enabled:false,executable:'mfa',beam:10,retry_beam:40}}},tasks:[],host:{name:'浏览器测试夹具',version:'1',cloudAllowed:false},providers:[],models:[]};
   const emit = (task: Task, type: HostEvent['type'], payload: unknown) => events.push({seq:++seq,sessionId:task.sessionId,taskId:task.id,type,payload:structuredClone(payload)});
   return (async (method: keyof Methods, params: any) => {
     if (window.pywebview) throw new Error('测试适配器已禁用：检测到桌面宿主，请移除 demo 参数并刷新');
@@ -77,7 +78,9 @@ export function createDemoAdapter(): Rpc {
         messages[s.id]=structuredClone(messages[session.id]).map(message=>{message.id=`fork-message-${++nextId}`;delete message.taskId;if(message.status==='running')message.status='interrupted';message.activities?.forEach(a=>{a.id=`fork-activity-${++nextId}`;if(a.status==='running')a.status='interrupted';});return message;});
         sessions.unshift(s);move(s,session.sectionId===pinnedId?null:session.sectionId??null);return structuredClone(s);
       }
+      case 'settings.choose_model': return {path:'D:\\models\\browser-fixture.gguf'};
       case 'sessions.delete': if (!session || [...tasks.values()].some(t => t.sessionId === session.id && activeTask(t))) throw new Error('会话不能删除'); sessions.splice(sessions.indexOf(session),1); delete messages[session.id]; return {ok:true};
+      case 'window.drag': { (window as any).__dshWindowDrags=((window as any).__dshWindowDrags||0)+1; return {ok:false, reason:'browser-fixture'}; }
       case 'sessions.view': if (session) { if (params.draft !== undefined) session.draft=params.draft; if (params.scroll !== undefined) session.scroll=params.scroll; if (params.anchor !== undefined) { if (!params.anchor || typeof params.anchor.messageId !== 'string' || !Number.isFinite(params.anchor.offset)) throw new Error('阅读锚点无效'); session.anchor={messageId:params.anchor.messageId,offset:Number(params.anchor.offset)}; } } return {ok:true};
       case 'sessions.context': {
         if (!session) throw new Error('会话不存在');
@@ -95,12 +98,17 @@ export function createDemoAdapter(): Rpc {
         const task: Task = {id:`demo-task-${++nextId}`,sessionId:session.id,status:'running',model:'browser-fixture',created:now}; tasks.set(task.id,task); emit(task,'task',task);
         const user: Message = {id:`${task.id}-user`,role:'user',content:params.text,taskId:task.id,attachments:(params.attachmentIds || []).map((id:string) => attachments.get(id)).filter(Boolean)};
         const answer: Message = {id:`${task.id}-assistant`,role:'assistant',content:'',taskId:task.id,status:'running'};
+        if (compactProcess) answer.activities = [{id:'stream-thinking',type:'thinking',text:'离线过程折叠测试。',status:'complete'}];
         messages[session.id].push(user,answer); emit(task,'message',user); emit(task,'message',answer);
         const response = '这是一条**浏览器测试响应**，没有调用模型、云端或 Praat。\n\n可以切换会话观察事件隔离，使用停止按钮取消当前夹具任务。\n\n- Markdown 与公式 $f_0 = 1/T$\n- 附件只有演示元数据\n- 所有数字都不是专业测量结果';
         let offset=0;
         const timer = setInterval(() => {
           if (!activeTask(task)) { clearInterval(timer); return; }
           const chunk=response.slice(offset,offset+5); offset+=5; answer.content+=chunk; emit(task,'delta',{messageId:answer.id,text:chunk});
+          if (compactProcess) {
+            answer.activities!.push({id:`stream-step-${offset}`,type:'tool',name:`离线测试工具 ${offset}`,args:{fixture:true},result:{measured:false},status:'success',execution:'未投递（演示夹具）'});
+            emit(task,'activity',{messageId:answer.id,activity:answer.activities![answer.activities!.length-1]});
+          }
           if (offset >= response.length) { clearInterval(timer); task.status='complete'; answer.status='complete'; emit(task,'message',answer); emit(task,'task',task); }
         },130);
         return structuredClone(task);

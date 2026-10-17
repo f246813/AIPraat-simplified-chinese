@@ -7,6 +7,7 @@
 | `project/` | 项目构建、Python 与 Praat 集成验证日志及结果 |
 | `frontend/` | React、浏览器及 WebView2 交互结果 |
 | `installer/` | 安装器、依赖环境、宿主与打包验证 |
+| `pronunciation/` | 纠音归一化的上游对照、材料审计、模板/门禁运行与各批测试日志 |
 | `diagnostics/` | 专项诊断及回归日志 |
 
 文件名用于定位检查，`red`、`green`、`before` 等标识区分运行条件，不代表产品决策。发布文件中的凭据值与 Windows 用户目录名称作脱敏处理，测试状态、异常和测量结果保留。日志按可确认的编码转为 UTF-8。

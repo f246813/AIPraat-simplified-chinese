@@ -132,6 +132,22 @@ class ModernExecutionTests(unittest.TestCase):
         self.assertEqual(result['status'],'complete')
         self.assertEqual(self.sends,[]);self.cloud.assert_not_called()
 
+    def test_input_without_a_request_routes_to_dialogue_and_never_runs_tools(self):
+        """随手敲的一个词不当成测量任务：不建工具图、不发 Praat 脚本、不调云端规划。"""
+        goals = []
+        def reply(config, state, **kwargs):
+            goals.append(state.goal)
+            state.report, state.status = '你想测量什么？可以说出对象和要测的量。', 'complete'
+        self.dialogue.side_effect = reply
+        for text in ('test', 'asdf'):
+            with self.subTest(text=text):
+                result = self.run_task(text=text)
+                self.assertEqual(result['status'], 'complete')
+                self.assertIn('你想测量什么', result['content'])
+        self.assertEqual(goals, ['test', 'asdf'])
+        self.assertEqual(self.sends, [])
+        self.cloud.assert_not_called()
+
     def test_undefined_pitch_is_a_saved_result_without_success_evidence(self):
         self.rows=['基频统计（0.200–0.500 秒）无法计算：该区间没有周期性声源']
         result=self.run_task('测量当前声音平均基频')

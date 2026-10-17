@@ -1,0 +1,698 @@
+File type = "ooTextFile"
+Object class = "TextGrid"
+
+xmin = 0
+xmax = 3.355000
+tiers? <exists>
+size = 4
+item []:
+    item [1]:
+        class = "IntervalTier"
+        name = "Target_Phones"
+        xmin = 0
+        xmax = 3.355000
+        intervals: size = 37
+        intervals [1]:
+            xmin = 0.000000
+            xmax = 0.200000
+            text = "未评估"
+        intervals [2]:
+            xmin = 0.200000
+            xmax = 0.360000
+            text = "ɔ"
+        intervals [3]:
+            xmin = 0.360000
+            xmax = 0.460000
+            text = "θ"
+        intervals [4]:
+            xmin = 0.460000
+            xmax = 0.640000
+            text = "ɚ"
+        intervals [5]:
+            xmin = 0.640000
+            xmax = 0.690000
+            text = "ə"
+        intervals [6]:
+            xmin = 0.690000
+            xmax = 0.780000
+            text = "v"
+        intervals [7]:
+            xmin = 0.780000
+            xmax = 0.820000
+            text = "ð"
+        intervals [8]:
+            xmin = 0.820000
+            xmax = 0.870000
+            text = "ə"
+        intervals [9]:
+            xmin = 0.870000
+            xmax = 0.940000
+            text = "d"
+        intervals [10]:
+            xmin = 0.940000
+            xmax = 1.060000
+            text = "eɪ"
+        intervals [11]:
+            xmin = 1.060000
+            xmax = 1.120000
+            text = "n"
+        intervals [12]:
+            xmin = 1.120000
+            xmax = 1.160000
+            text = "dʒ"
+        intervals [13]:
+            xmin = 1.160000
+            xmax = 1.230000
+            text = "ɚ"
+        intervals [14]:
+            xmin = 1.230000
+            xmax = 1.340000
+            text = "t"
+        intervals [15]:
+            xmin = 1.340000
+            xmax = 1.380000
+            text = "ɹ"
+        intervals [16]:
+            xmin = 1.380000
+            xmax = 1.510000
+            text = "eɪ"
+        intervals [17]:
+            xmin = 1.510000
+            xmax = 1.690000
+            text = "l"
+        intervals [18]:
+            xmin = 1.690000
+            xmax = 1.720000
+            text = "未评估"
+        intervals [19]:
+            xmin = 1.720000
+            xmax = 1.820000
+            text = "f"
+        intervals [20]:
+            xmin = 1.820000
+            xmax = 1.860000
+            text = "ɪ"
+        intervals [21]:
+            xmin = 1.860000
+            xmax = 1.930000
+            text = "l"
+        intervals [22]:
+            xmin = 1.930000
+            xmax = 2.000000
+            text = "ə"
+        intervals [23]:
+            xmin = 2.000000
+            xmax = 2.060000
+            text = "p"
+        intervals [24]:
+            xmin = 2.060000
+            xmax = 2.140000
+            text = "s"
+        intervals [25]:
+            xmin = 2.140000
+            xmax = 2.200000
+            text = "t"
+        intervals [26]:
+            xmin = 2.200000
+            xmax = 2.330000
+            text = "i"
+        intervals [27]:
+            xmin = 2.330000
+            xmax = 2.470000
+            text = "l"
+        intervals [28]:
+            xmin = 2.470000
+            xmax = 2.580000
+            text = "z"
+        intervals [29]:
+            xmin = 2.580000
+            xmax = 2.620000
+            text = "未评估"
+        intervals [30]:
+            xmin = 2.620000
+            xmax = 2.660000
+            text = "ɛ"
+        intervals [31]:
+            xmin = 2.660000
+            xmax = 2.720000
+            text = "t"
+        intervals [32]:
+            xmin = 2.720000
+            xmax = 2.800000
+            text = "s"
+        intervals [33]:
+            xmin = 2.800000
+            xmax = 2.880000
+            text = "ɛ"
+        intervals [34]:
+            xmin = 2.880000
+            xmax = 2.920000
+            text = "t"
+        intervals [35]:
+            xmin = 2.920000
+            xmax = 2.970000
+            text = "ɚ"
+        intervals [36]:
+            xmin = 2.970000
+            xmax = 3.180000
+            text = "ə"
+        intervals [37]:
+            xmin = 3.180000
+            xmax = 3.355000
+            text = "未评估"
+    item [2]:
+        class = "IntervalTier"
+        name = "AI_ProblemCandidates"
+        xmin = 0
+        xmax = 3.355000
+        intervals: size = 37
+        intervals [1]:
+            xmin = 0.000000
+            xmax = 0.200000
+            text = "未评估"
+        intervals [2]:
+            xmin = 0.200000
+            xmax = 0.360000
+            text = "未评估：未执行独立音素识别"
+        intervals [3]:
+            xmin = 0.360000
+            xmax = 0.460000
+            text = "未评估：未执行独立音素识别"
+        intervals [4]:
+            xmin = 0.460000
+            xmax = 0.640000
+            text = "未评估：未执行独立音素识别"
+        intervals [5]:
+            xmin = 0.640000
+            xmax = 0.690000
+            text = "未评估：未执行独立音素识别"
+        intervals [6]:
+            xmin = 0.690000
+            xmax = 0.780000
+            text = "未评估：未执行独立音素识别"
+        intervals [7]:
+            xmin = 0.780000
+            xmax = 0.820000
+            text = "未评估：未执行独立音素识别"
+        intervals [8]:
+            xmin = 0.820000
+            xmax = 0.870000
+            text = "未评估：未执行独立音素识别"
+        intervals [9]:
+            xmin = 0.870000
+            xmax = 0.940000
+            text = "未评估：未执行独立音素识别"
+        intervals [10]:
+            xmin = 0.940000
+            xmax = 1.060000
+            text = "未评估：未执行独立音素识别"
+        intervals [11]:
+            xmin = 1.060000
+            xmax = 1.120000
+            text = "未评估：未执行独立音素识别"
+        intervals [12]:
+            xmin = 1.120000
+            xmax = 1.160000
+            text = "未评估：未执行独立音素识别"
+        intervals [13]:
+            xmin = 1.160000
+            xmax = 1.230000
+            text = "未评估：未执行独立音素识别"
+        intervals [14]:
+            xmin = 1.230000
+            xmax = 1.340000
+            text = "未评估：未执行独立音素识别"
+        intervals [15]:
+            xmin = 1.340000
+            xmax = 1.380000
+            text = "未评估：未执行独立音素识别"
+        intervals [16]:
+            xmin = 1.380000
+            xmax = 1.510000
+            text = "未评估：未执行独立音素识别"
+        intervals [17]:
+            xmin = 1.510000
+            xmax = 1.690000
+            text = "未评估：未执行独立音素识别"
+        intervals [18]:
+            xmin = 1.690000
+            xmax = 1.720000
+            text = "未评估"
+        intervals [19]:
+            xmin = 1.720000
+            xmax = 1.820000
+            text = "未评估：未执行独立音素识别"
+        intervals [20]:
+            xmin = 1.820000
+            xmax = 1.860000
+            text = "未评估：未执行独立音素识别"
+        intervals [21]:
+            xmin = 1.860000
+            xmax = 1.930000
+            text = "未评估：未执行独立音素识别"
+        intervals [22]:
+            xmin = 1.930000
+            xmax = 2.000000
+            text = "未评估：未执行独立音素识别"
+        intervals [23]:
+            xmin = 2.000000
+            xmax = 2.060000
+            text = "未评估：未执行独立音素识别"
+        intervals [24]:
+            xmin = 2.060000
+            xmax = 2.140000
+            text = "未评估：未执行独立音素识别"
+        intervals [25]:
+            xmin = 2.140000
+            xmax = 2.200000
+            text = "未评估：未执行独立音素识别"
+        intervals [26]:
+            xmin = 2.200000
+            xmax = 2.330000
+            text = "未评估：未执行独立音素识别"
+        intervals [27]:
+            xmin = 2.330000
+            xmax = 2.470000
+            text = "未评估：未执行独立音素识别"
+        intervals [28]:
+            xmin = 2.470000
+            xmax = 2.580000
+            text = "未评估：未执行独立音素识别"
+        intervals [29]:
+            xmin = 2.580000
+            xmax = 2.620000
+            text = "未评估"
+        intervals [30]:
+            xmin = 2.620000
+            xmax = 2.660000
+            text = "未评估：未执行独立音素识别"
+        intervals [31]:
+            xmin = 2.660000
+            xmax = 2.720000
+            text = "未评估：未执行独立音素识别"
+        intervals [32]:
+            xmin = 2.720000
+            xmax = 2.800000
+            text = "未评估：未执行独立音素识别"
+        intervals [33]:
+            xmin = 2.800000
+            xmax = 2.880000
+            text = "未评估：未执行独立音素识别"
+        intervals [34]:
+            xmin = 2.880000
+            xmax = 2.920000
+            text = "未评估：未执行独立音素识别"
+        intervals [35]:
+            xmin = 2.920000
+            xmax = 2.970000
+            text = "未评估：未执行独立音素识别"
+        intervals [36]:
+            xmin = 2.970000
+            xmax = 3.180000
+            text = "未评估：未执行独立音素识别"
+        intervals [37]:
+            xmin = 3.180000
+            xmax = 3.355000
+            text = "未评估"
+    item [3]:
+        class = "IntervalTier"
+        name = "AI_EvidenceStatus"
+        xmin = 0
+        xmax = 3.355000
+        intervals: size = 37
+        intervals [1]:
+            xmin = 0.000000
+            xmax = 0.200000
+            text = "未评估"
+        intervals [2]:
+            xmin = 0.200000
+            xmax = 0.360000
+            text = "已生成声学观察（实验性）"
+        intervals [3]:
+            xmin = 0.360000
+            xmax = 0.460000
+            text = "已生成声学观察（实验性）"
+        intervals [4]:
+            xmin = 0.460000
+            xmax = 0.640000
+            text = "已生成声学观察（实验性）"
+        intervals [5]:
+            xmin = 0.640000
+            xmax = 0.690000
+            text = "已生成声学观察（实验性）"
+        intervals [6]:
+            xmin = 0.690000
+            xmax = 0.780000
+            text = "已生成声学观察（实验性）"
+        intervals [7]:
+            xmin = 0.780000
+            xmax = 0.820000
+            text = "已生成声学观察（实验性）"
+        intervals [8]:
+            xmin = 0.820000
+            xmax = 0.870000
+            text = "已生成声学观察（实验性）"
+        intervals [9]:
+            xmin = 0.870000
+            xmax = 0.940000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [10]:
+            xmin = 0.940000
+            xmax = 1.060000
+            text = "已生成声学观察（实验性）"
+        intervals [11]:
+            xmin = 1.060000
+            xmax = 1.120000
+            text = "已生成声学观察（实验性）"
+        intervals [12]:
+            xmin = 1.120000
+            xmax = 1.160000
+            text = "已生成声学观察（实验性）"
+        intervals [13]:
+            xmin = 1.160000
+            xmax = 1.230000
+            text = "已生成声学观察（实验性）"
+        intervals [14]:
+            xmin = 1.230000
+            xmax = 1.340000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [15]:
+            xmin = 1.340000
+            xmax = 1.380000
+            text = "已生成声学观察（实验性）"
+        intervals [16]:
+            xmin = 1.380000
+            xmax = 1.510000
+            text = "已生成声学观察（实验性）"
+        intervals [17]:
+            xmin = 1.510000
+            xmax = 1.690000
+            text = "已生成声学观察（实验性）"
+        intervals [18]:
+            xmin = 1.690000
+            xmax = 1.720000
+            text = "未评估"
+        intervals [19]:
+            xmin = 1.720000
+            xmax = 1.820000
+            text = "已生成声学观察（实验性）"
+        intervals [20]:
+            xmin = 1.820000
+            xmax = 1.860000
+            text = "已生成声学观察（实验性）"
+        intervals [21]:
+            xmin = 1.860000
+            xmax = 1.930000
+            text = "已生成声学观察（实验性）"
+        intervals [22]:
+            xmin = 1.930000
+            xmax = 2.000000
+            text = "已生成声学观察（实验性）"
+        intervals [23]:
+            xmin = 2.000000
+            xmax = 2.060000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [24]:
+            xmin = 2.060000
+            xmax = 2.140000
+            text = "已生成声学观察（实验性）"
+        intervals [25]:
+            xmin = 2.140000
+            xmax = 2.200000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [26]:
+            xmin = 2.200000
+            xmax = 2.330000
+            text = "已生成声学观察（实验性）"
+        intervals [27]:
+            xmin = 2.330000
+            xmax = 2.470000
+            text = "已生成声学观察（实验性）"
+        intervals [28]:
+            xmin = 2.470000
+            xmax = 2.580000
+            text = "已生成声学观察（实验性）"
+        intervals [29]:
+            xmin = 2.580000
+            xmax = 2.620000
+            text = "未评估"
+        intervals [30]:
+            xmin = 2.620000
+            xmax = 2.660000
+            text = "已生成声学观察（实验性）"
+        intervals [31]:
+            xmin = 2.660000
+            xmax = 2.720000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [32]:
+            xmin = 2.720000
+            xmax = 2.800000
+            text = "已生成声学观察（实验性）"
+        intervals [33]:
+            xmin = 2.800000
+            xmax = 2.880000
+            text = "已生成声学观察（实验性）"
+        intervals [34]:
+            xmin = 2.880000
+            xmax = 2.920000
+            text = "部分可评估；证据不足项见 JSON"
+        intervals [35]:
+            xmin = 2.920000
+            xmax = 2.970000
+            text = "已生成声学观察（实验性）"
+        intervals [36]:
+            xmin = 2.970000
+            xmax = 3.180000
+            text = "已生成声学观察（实验性）"
+        intervals [37]:
+            xmin = 3.180000
+            xmax = 3.355000
+            text = "未评估"
+    item [4]:
+        class = "TextTier"
+        name = "AI_Observations"
+        xmin = 0
+        xmax = 3.355000
+        points: size = 74
+        points [1]:
+            number = 0.277500
+            mark = "/ɔ/ intensity_lufs_adjusted_db：参考 77.883dB，学习者 76.470dB（实验性独立观察；未诊断重音、高低音或声调）。；/ɔ/ rms_lufs_adjusted：参考 0.162amplitude，学习者 0.143amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [2]:
+            number = 0.280000
+            mark = "/ɔ/ 的 f1 声学观察：参考 737.209Hz，学习者 763.086Hz（偏高；实验性，未判定发音对错）。；/ɔ/ 的 f2 声学观察：参考 1065.892Hz，学习者 1330.847Hz（偏高；实验性，未判定发音对错）。；/ɔ/ 的 relative_duration 时长观察：参考 1.600ratio，学习者 1.600ratio（相对时长相近；实验性，未判定发音对错）。"
+        points [3]:
+            number = 0.297500
+            mark = "/ɔ/ pitch_reliable_hz：参考 131.714Hz，学习者 220.825Hz（实验性独立观察；未诊断重音、高低音或声调）。；/ɔ/ pitch_relative_st：参考 0.516st，学习者 2.645st（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [4]:
+            number = 0.367500
+            mark = "/θ/ pitch_reliable_hz：参考 139.017Hz，学习者 220.153Hz（实验性独立观察；未诊断重音、高低音或声调）。；/θ/ pitch_relative_st：参考 1.458st，学习者 2.597st（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [5]:
+            number = 0.407500
+            mark = "/θ/ intensity_lufs_adjusted_db：参考 58.725dB，学习者 56.807dB（实验性独立观察；未诊断重音、高低音或声调）。；/θ/ rms_lufs_adjusted：参考 0.010amplitude，学习者 0.007amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [6]:
+            number = 0.410000
+            mark = "/θ/ 的 spectral_centroid 声学观察：参考 3678.086Hz，学习者 4014.778Hz（偏高；实验性，未判定发音对错）。；/θ/ 的 high_frequency_ratio 声学观察：参考 0.701ratio，学习者 0.747ratio（偏高；实验性，未判定发音对错）。；/θ/ 的 zcr 声学观察：参考 0.441ratio，学习者 0.467ratio（偏高；实验性，未判定发音对错）。；/θ/ 的 relative_duration 时长观察：参考 0.769ratio，学习者 0.588ratio（相对偏短；实验性，未判定发音对错）。"
+        points [7]:
+            number = 0.547500
+            mark = "/ɚ/ pitch_reliable_hz：参考 167.235Hz，学习者 246.709Hz（实验性独立观察；未诊断重音、高低音或声调）。；/ɚ/ pitch_relative_st：参考 4.324st，学习者 4.444st（实验性独立观察；未诊断重音、高低音或声调）。；/ɚ/ intensity_lufs_adjusted_db：参考 74.511dB，学习者 76.765dB（实验性独立观察；未诊断重音、高低音或声调）。；/ɚ/ rms_lufs_adjusted：参考 0.111amplitude，学习者 0.139amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [8]:
+            number = 0.550000
+            mark = "/ɚ/ 的 f1 声学观察：参考 477.580Hz，学习者 564.853Hz（偏高；实验性，未判定发音对错）。；/ɚ/ 的 f2 声学观察：参考 1565.837Hz，学习者 1666.701Hz（偏高；实验性，未判定发音对错）。；/ɚ/ 的 relative_duration 时长观察：参考 1.250ratio，学习者 2.400ratio（相对偏长；实验性，未判定发音对错）。"
+        points [9]:
+            number = 0.662500
+            mark = "/ə/ pitch_reliable_hz：参考 145.678Hz，学习者 217.596Hz（实验性独立观察；未诊断重音、高低音或声调）。；/ə/ pitch_relative_st：参考 2.349st，学习者 2.391st（实验性独立观察；未诊断重音、高低音或声调）。；/ə/ intensity_lufs_adjusted_db：参考 73.804dB，学习者 75.018dB（实验性独立观察；未诊断重音、高低音或声调）。；/ə/ rms_lufs_adjusted：参考 0.098amplitude，学习者 0.117amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [10]:
+            number = 0.665000
+            mark = "/ə/ 的 f1 声学观察：参考 427.917Hz，学习者 602.197Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 f2 声学观察：参考 1364.314Hz，学习者 1724.829Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 relative_duration 时长观察：参考 0.706ratio，学习者 0.370ratio（相对偏短；实验性，未判定发音对错）。"
+        points [11]:
+            number = 0.717500
+            mark = "/v/ pitch_reliable_hz：参考 140.378Hz，学习者 187.360Hz（实验性独立观察；未诊断重音、高低音或声调）。；/v/ pitch_relative_st：参考 1.565st，学习者 -0.202st（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [12]:
+            number = 0.732500
+            mark = "/v/ intensity_lufs_adjusted_db：参考 58.387dB，学习者 58.341dB（实验性独立观察；未诊断重音、高低音或声调）。；/v/ rms_lufs_adjusted：参考 0.016amplitude，学习者 0.018amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [13]:
+            number = 0.735000
+            mark = "/v/ 的 spectral_centroid 声学观察：参考 2414.446Hz，学习者 2030.220Hz（偏低；实验性，未判定发音对错）。；/v/ 的 high_frequency_ratio 声学观察：参考 0.398ratio，学习者 0.370ratio（偏低；实验性，未判定发音对错）。；/v/ 的 zcr 声学观察：参考 0.126ratio，学习者 0.098ratio（偏低；实验性，未判定发音对错）。；/v/ 的 relative_duration 时长观察：参考 1.400ratio，学习者 2.000ratio（相对偏长；实验性，未判定发音对错）。"
+        points [14]:
+            number = 0.797500
+            mark = "/ð/ intensity_lufs_adjusted_db：参考 58.430dB，学习者 59.670dB（实验性独立观察；未诊断重音、高低音或声调）。；/ð/ rms_lufs_adjusted：参考 0.003amplitude，学习者 0.009amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [15]:
+            number = 0.800000
+            mark = "/ð/ 的 spectral_centroid 声学观察：参考 2847.213Hz，学习者 4355.094Hz（偏高；实验性，未判定发音对错）。；/ð/ 的 high_frequency_ratio 声学观察：参考 0.543ratio，学习者 0.766ratio（偏高；实验性，未判定发音对错）。；/ð/ 的 zcr 声学观察：参考 0.165ratio，学习者 0.098ratio（偏低；实验性，未判定发音对错）。；/ð/ 的 relative_duration 时长观察：参考 0.667ratio，学习者 0.571ratio（相对偏短；实验性，未判定发音对错）。"
+        points [16]:
+            number = 0.842500
+            mark = "/ə/ pitch_reliable_hz：参考 131.213Hz，学习者 200.658Hz（实验性独立观察；未诊断重音、高低音或声调）。；/ə/ pitch_relative_st：参考 0.708st，学习者 0.833st（实验性独立观察；未诊断重音、高低音或声调）。；/ə/ intensity_lufs_adjusted_db：参考 73.628dB，学习者 71.496dB（实验性独立观察；未诊断重音、高低音或声调）。；/ə/ rms_lufs_adjusted：参考 0.106amplitude，学习者 0.082amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [17]:
+            number = 0.845000
+            mark = "/ə/ 的 f1 声学观察：参考 378.435Hz，学习者 390.942Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 f2 声学观察：参考 1780.913Hz，学习者 2035.718Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 relative_duration 时长观察：参考 0.714ratio，学习者 0.909ratio（相对偏长；实验性，未判定发音对错）。"
+        points [18]:
+            number = 0.902500
+            mark = "/d/ intensity_lufs_adjusted_db：参考 63.011dB，学习者 63.764dB（实验性独立观察；未诊断重音、高低音或声调）。；/d/ rms_lufs_adjusted：参考 0.023amplitude，学习者 0.023amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [19]:
+            number = 0.905000
+            mark = "/d/ 的 relative_duration 时长观察：参考 1.053ratio，学习者 0.824ratio（相对偏短；实验性，未判定发音对错）。"
+        points [20]:
+            number = 0.997500
+            mark = "/eɪ/ pitch_reliable_hz：参考 137.032Hz，学习者 199.418Hz（实验性独立观察；未诊断重音、高低音或声调）。；/eɪ/ pitch_relative_st：参考 1.095st，学习者 1.089st（实验性独立观察；未诊断重音、高低音或声调）。；/eɪ/ intensity_lufs_adjusted_db：参考 75.052dB，学习者 73.664dB（实验性独立观察；未诊断重音、高低音或声调）。；/eɪ/ rms_lufs_adjusted：参考 0.109amplitude，学习者 0.098amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [21]:
+            number = 1.000000
+            mark = "/eɪ/ 的 f1 声学观察：参考 439.698Hz，学习者 581.744Hz（偏高；实验性，未判定发音对错）。；/eɪ/ 的 f2 声学观察：参考 2369.646Hz，学习者 2546.960Hz（偏高；实验性，未判定发音对错）。；/eɪ/ 的 relative_duration 时长观察：参考 1.750ratio，学习者 1.846ratio（相对偏长；实验性，未判定发音对错）。"
+        points [22]:
+            number = 1.087500
+            mark = "/n/ pitch_reliable_hz：参考 140.760Hz，学习者 221.160Hz（实验性独立观察；未诊断重音、高低音或声调）。；/n/ pitch_relative_st：参考 1.675st，学习者 2.676st（实验性独立观察；未诊断重音、高低音或声调）。；/n/ intensity_lufs_adjusted_db：参考 73.229dB，学习者 77.989dB（实验性独立观察；未诊断重音、高低音或声调）。；/n/ rms_lufs_adjusted：参考 0.093amplitude，学习者 0.166amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [23]:
+            number = 1.090000
+            mark = "/n/ 的 spectral_centroid 声学观察：参考 569.469Hz，学习者 440.122Hz（偏低；实验性，未判定发音对错）。；/n/ 的 relative_duration 时长观察：参考 0.545ratio，学习者 0.750ratio（相对偏长；实验性，未判定发音对错）。"
+        points [24]:
+            number = 1.137500
+            mark = "/dʒ/ intensity_lufs_adjusted_db：参考 67.618dB，学习者 69.396dB（实验性独立观察；未诊断重音、高低音或声调）。；/dʒ/ rms_lufs_adjusted：参考 0.045amplitude，学习者 0.042amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [25]:
+            number = 1.140000
+            mark = "/dʒ/ 的 spectral_centroid 声学观察：参考 3556.209Hz，学习者 3289.153Hz（偏低；实验性，未判定发音对错）。；/dʒ/ 的 high_frequency_ratio 声学观察：参考 0.753ratio，学习者 0.730ratio（偏低；实验性，未判定发音对错）。；/dʒ/ 的 relative_duration 时长观察：参考 1.231ratio，学习者 0.615ratio（相对偏短；实验性，未判定发音对错）。"
+        points [26]:
+            number = 1.192500
+            mark = "/ɚ/ pitch_reliable_hz：参考 117.103Hz，学习者 206.672Hz（实验性独立观察；未诊断重音、高低音或声调）。；/ɚ/ pitch_relative_st：参考 -1.538st，学习者 1.485st（实验性独立观察；未诊断重音、高低音或声调）。；/ɚ/ intensity_lufs_adjusted_db：参考 71.235dB，学习者 73.306dB（实验性独立观察；未诊断重音、高低音或声调）。；/ɚ/ rms_lufs_adjusted：参考 0.078amplitude，学习者 0.096amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [27]:
+            number = 1.195000
+            mark = "/ɚ/ 的 f1 声学观察：参考 340.458Hz，学习者 418.093Hz（偏高；实验性，未判定发音对错）。；/ɚ/ 的 f2 声学观察：参考 1898.677Hz，学习者 1753.357Hz（偏低；实验性，未判定发音对错）。；/ɚ/ 的 relative_duration 时长观察：参考 0.609ratio，学习者 0.933ratio（相对偏长；实验性，未判定发音对错）。"
+        points [28]:
+            number = 1.237500
+            mark = "/t/ pitch_reliable_hz：参考 487.589Hz，学习者 185.574Hz（实验性独立观察；未诊断重音、高低音或声调）。；/t/ pitch_relative_st：参考 23.184st，学习者 -0.365st（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [29]:
+            number = 1.282500
+            mark = "/t/ intensity_lufs_adjusted_db：参考 57.568dB，学习者 59.294dB（实验性独立观察；未诊断重音、高低音或声调）。；/t/ rms_lufs_adjusted：参考 0.014amplitude，学习者 0.016amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [30]:
+            number = 1.285000
+            mark = "/t/ 的 relative_duration 时长观察：参考 2.500ratio，学习者 2.000ratio（相对偏短；实验性，未判定发音对错）。"
+        points [31]:
+            number = 1.357500
+            mark = "/ɹ/ intensity_lufs_adjusted_db：参考 71.877dB，学习者 69.945dB（实验性独立观察；未诊断重音、高低音或声调）。；/ɹ/ rms_lufs_adjusted：参考 0.083amplitude，学习者 0.065amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [32]:
+            number = 1.360000
+            mark = "/ɹ/ 的 f2 声学观察：参考 1224.715Hz，学习者 1818.808Hz（偏高；实验性，未判定发音对错）。；/ɹ/ 的 f3 声学观察：参考 1849.713Hz，学习者 2164.699Hz（偏高；实验性，未判定发音对错）。；/ɹ/ 的 relative_duration 时长观察：参考 0.345ratio，学习者 0.333ratio（相对偏短；实验性，未判定发音对错）。"
+        points [33]:
+            number = 1.362500
+            mark = "/ɹ/ pitch_reliable_hz：参考 106.931Hz，学习者 201.098Hz（实验性独立观察；未诊断重音、高低音或声调）。；/ɹ/ pitch_relative_st：参考 -3.083st，学习者 0.965st（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [34]:
+            number = 1.442500
+            mark = "/eɪ/ pitch_reliable_hz：参考 101.723Hz，学习者 181.296Hz（实验性独立观察；未诊断重音、高低音或声调）。；/eɪ/ pitch_relative_st：参考 -3.959st，学习者 -0.764st（实验性独立观察；未诊断重音、高低音或声调）。；/eɪ/ intensity_lufs_adjusted_db：参考 72.589dB，学习者 73.013dB（实验性独立观察；未诊断重音、高低音或声调）。；/eɪ/ rms_lufs_adjusted：参考 0.088amplitude，学习者 0.091amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [35]:
+            number = 1.445000
+            mark = "/eɪ/ 的 f1 声学观察：参考 552.436Hz，学习者 626.103Hz（偏高；实验性，未判定发音对错）。；/eɪ/ 的 f2 声学观察：参考 1868.628Hz，学习者 1941.189Hz（偏高；实验性，未判定发音对错）。；/eɪ/ 的 relative_duration 时长观察：参考 1.474ratio，学习者 1.182ratio（相对偏短；实验性，未判定发音对错）。"
+        points [36]:
+            number = 1.597500
+            mark = "/l/ intensity_lufs_adjusted_db：参考 67.470dB，学习者 68.537dB（实验性独立观察；未诊断重音、高低音或声调）。；/l/ rms_lufs_adjusted：参考 0.050amplitude，学习者 0.058amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [37]:
+            number = 1.600000
+            mark = "/l/ 的 f2 声学观察：参考 1680.691Hz，学习者 1405.808Hz（偏低；实验性，未判定发音对错）。；/l/ 的 f3 声学观察：参考 3299.046Hz，学习者 3298.400Hz（偏低；实验性，未判定发音对错）。；/l/ 的 relative_duration 时长观察：参考 0.933ratio，学习者 1.565ratio（相对偏长；实验性，未判定发音对错）。"
+        points [38]:
+            number = 1.767500
+            mark = "/f/ intensity_lufs_adjusted_db：参考 46.642dB，学习者 45.463dB（实验性独立观察；未诊断重音、高低音或声调）。；/f/ rms_lufs_adjusted：参考 0.003amplitude，学习者 0.003amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [39]:
+            number = 1.770000
+            mark = "/f/ 的 spectral_centroid 声学观察：参考 4468.888Hz，学习者 3382.036Hz（偏低；实验性，未判定发音对错）。；/f/ 的 high_frequency_ratio 声学观察：参考 0.766ratio，学习者 0.667ratio（偏低；实验性，未判定发音对错）。；/f/ 的 zcr 声学观察：参考 0.626ratio，学习者 0.373ratio（偏低；实验性，未判定发音对错）。；/f/ 的 relative_duration 时长观察：参考 1.684ratio，学习者 0.909ratio（相对偏短；实验性，未判定发音对错）。"
+        points [40]:
+            number = 1.837500
+            mark = "/ɪ/ pitch_reliable_hz：参考 141.797Hz，学习者 207.667Hz（实验性独立观察；未诊断重音、高低音或声调）。；/ɪ/ pitch_relative_st：参考 1.800st，学习者 1.558st（实验性独立观察；未诊断重音、高低音或声调）。；/ɪ/ intensity_lufs_adjusted_db：参考 73.224dB，学习者 73.667dB（实验性独立观察；未诊断重音、高低音或声调）。；/ɪ/ rms_lufs_adjusted：参考 0.096amplitude，学习者 0.095amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [41]:
+            number = 1.840000
+            mark = "/ɪ/ 的 f1 声学观察：参考 461.634Hz，学习者 600.506Hz（偏高；实验性，未判定发音对错）。；/ɪ/ 的 f2 声学观察：参考 1491.861Hz，学习者 1569.161Hz（偏高；实验性，未判定发音对错）。；/ɪ/ 的 relative_duration 时长观察：参考 0.385ratio，学习者 0.471ratio（相对偏长；实验性，未判定发音对错）。"
+        points [42]:
+            number = 1.892500
+            mark = "/l/ pitch_reliable_hz：参考 132.704Hz，学习者 197.154Hz（实验性独立观察；未诊断重音、高低音或声调）。；/l/ pitch_relative_st：参考 0.676st，学习者 0.677st（实验性独立观察；未诊断重音、高低音或声调）。；/l/ intensity_lufs_adjusted_db：参考 70.858dB，学习者 73.873dB（实验性独立观察；未诊断重音、高低音或声调）。；/l/ rms_lufs_adjusted：参考 0.067amplitude，学习者 0.096amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [43]:
+            number = 1.895000
+            mark = "/l/ 的 f2 声学观察：参考 926.376Hz，学习者 1190.445Hz（偏高；实验性，未判定发音对错）。；/l/ 的 f3 声学观察：参考 3096.551Hz，学习者 3454.503Hz（偏高；实验性，未判定发音对错）。；/l/ 的 relative_duration 时长观察：参考 1.818ratio，学习者 1.273ratio（相对偏短；实验性，未判定发音对错）。"
+        points [44]:
+            number = 1.962500
+            mark = "/ə/ pitch_reliable_hz：参考 129.015Hz，学习者 214.590Hz（实验性独立观察；未诊断重音、高低音或声调）。；/ə/ pitch_relative_st：参考 0.161st，学习者 2.109st（实验性独立观察；未诊断重音、高低音或声调）。；/ə/ intensity_lufs_adjusted_db：参考 70.464dB，学习者 70.826dB（实验性独立观察；未诊断重音、高低音或声调）。；/ə/ rms_lufs_adjusted：参考 0.069amplitude，学习者 0.071amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [45]:
+            number = 1.965000
+            mark = "/ə/ 的 f1 声学观察：参考 529.950Hz，学习者 523.805Hz（偏低；实验性，未判定发音对错）。；/ə/ 的 f2 声学观察：参考 1481.099Hz，学习者 1563.990Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 relative_duration 时长观察：参考 0.706ratio，学习者 1.077ratio（相对偏长；实验性，未判定发音对错）。"
+        points [46]:
+            number = 2.027500
+            mark = "/p/ intensity_lufs_adjusted_db：参考 50.015dB，学习者 49.504dB（实验性独立观察；未诊断重音、高低音或声调）。；/p/ rms_lufs_adjusted：参考 0.003amplitude，学习者 0.003amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [47]:
+            number = 2.030000
+            mark = "/p/ 的 relative_duration 时长观察：参考 0.778ratio，学习者 0.800ratio（相对偏长；实验性，未判定发音对错）。"
+        points [48]:
+            number = 2.097500
+            mark = "/s/ intensity_lufs_adjusted_db：参考 66.538dB，学习者 60.868dB（实验性独立观察；未诊断重音、高低音或声调）。；/s/ rms_lufs_adjusted：参考 0.044amplitude，学习者 0.023amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [49]:
+            number = 2.100000
+            mark = "/s/ 的 spectral_centroid 声学观察：参考 4943.893Hz，学习者 5408.600Hz（偏高；实验性，未判定发音对错）。；/s/ 的 high_frequency_ratio 声学观察：参考 0.959ratio，学习者 0.931ratio（偏低；实验性，未判定发音对错）。；/s/ 的 zcr 声学观察：参考 0.609ratio，学习者 0.733ratio（偏高；实验性，未判定发音对错）。；/s/ 的 relative_duration 时长观察：参考 1.714ratio，学习者 1.333ratio（相对偏短；实验性，未判定发音对错）。"
+        points [50]:
+            number = 2.167500
+            mark = "/t/ intensity_lufs_adjusted_db：参考 56.894dB，学习者 57.308dB（实验性独立观察；未诊断重音、高低音或声调）。；/t/ rms_lufs_adjusted：参考 0.009amplitude，学习者 0.008amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [51]:
+            number = 2.170000
+            mark = "/t/ 的 relative_duration 时长观察：参考 0.500ratio，学习者 0.571ratio（相对偏长；实验性，未判定发音对错）。"
+        points [52]:
+            number = 2.262500
+            mark = "/i/ intensity_lufs_adjusted_db：参考 75.489dB，学习者 73.928dB（实验性独立观察；未诊断重音、高低音或声调）。；/i/ rms_lufs_adjusted：参考 0.117amplitude，学习者 0.104amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [53]:
+            number = 2.265000
+            mark = "/i/ 的 f1 声学观察：参考 365.483Hz，学习者 434.495Hz（偏高；实验性，未判定发音对错）。；/i/ 的 f2 声学观察：参考 2251.563Hz，学习者 2274.768Hz（偏高；实验性，未判定发音对错）。；/i/ 的 relative_duration 时长观察：参考 1.524ratio，学习者 1.300ratio（相对偏短；实验性，未判定发音对错）。"
+        points [54]:
+            number = 2.267500
+            mark = "/i/ pitch_reliable_hz：参考 128.110Hz，学习者 185.667Hz（实验性独立观察；未诊断重音、高低音或声调）。；/i/ pitch_relative_st：参考 -0.097st，学习者 -0.149st（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [55]:
+            number = 2.397500
+            mark = "/l/ pitch_reliable_hz：参考 98.420Hz，学习者 185.637Hz（实验性独立观察；未诊断重音、高低音或声调）。；/l/ pitch_relative_st：参考 -4.580st，学习者 -0.356st（实验性独立观察；未诊断重音、高低音或声调）。；/l/ intensity_lufs_adjusted_db：参考 69.973dB，学习者 70.444dB（实验性独立观察；未诊断重音、高低音或声调）。；/l/ rms_lufs_adjusted：参考 0.066amplitude，学习者 0.068amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [56]:
+            number = 2.400000
+            mark = "/l/ 的 f2 声学观察：参考 1304.154Hz，学习者 1243.086Hz（偏低；实验性，未判定发音对错）。；/l/ 的 f3 声学观察：参考 3243.687Hz，学习者 3301.816Hz（偏高；实验性，未判定发音对错）。；/l/ 的 relative_duration 时长观察：参考 1.167ratio，学习者 1.167ratio（相对时长相近；实验性，未判定发音对错）。"
+        points [57]:
+            number = 2.522500
+            mark = "/z/ intensity_lufs_adjusted_db：参考 61.286dB，学习者 61.429dB（实验性独立观察；未诊断重音、高低音或声调）。；/z/ rms_lufs_adjusted：参考 0.023amplitude，学习者 0.023amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [58]:
+            number = 2.525000
+            mark = "/z/ 的 spectral_centroid 声学观察：参考 5319.472Hz，学习者 5396.442Hz（偏高；实验性，未判定发音对错）。；/z/ 的 high_frequency_ratio 声学观察：参考 0.920ratio，学习者 0.865ratio（偏低；实验性，未判定发音对错）。；/z/ 的 zcr 声学观察：参考 0.650ratio，学习者 0.695ratio（偏高；实验性，未判定发音对错）。；/z/ 的 relative_duration 时长观察：参考 0.727ratio，学习者 1.222ratio（相对偏长；实验性，未判定发音对错）。"
+        points [59]:
+            number = 2.637500
+            mark = "/ɛ/ intensity_lufs_adjusted_db：参考 64.296dB，学习者 62.675dB（实验性独立观察；未诊断重音、高低音或声调）。；/ɛ/ rms_lufs_adjusted：参考 0.033amplitude，学习者 0.030amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [60]:
+            number = 2.640000
+            mark = "/ɛ/ 的 f1 声学观察：参考 492.384Hz，学习者 441.738Hz（偏低；实验性，未判定发音对错）。；/ɛ/ 的 f2 声学观察：参考 1552.024Hz，学习者 1884.825Hz（偏高；实验性，未判定发音对错）。；/ɛ/ 的 relative_duration 时长观察：参考 1.067ratio，学习者 0.471ratio（相对偏短；实验性，未判定发音对错）。"
+        points [61]:
+            number = 2.687500
+            mark = "/t/ intensity_lufs_adjusted_db：参考 53.912dB，学习者 52.291dB（实验性独立观察；未诊断重音、高低音或声调）。；/t/ rms_lufs_adjusted：参考 0.006amplitude，学习者 0.006amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [62]:
+            number = 2.690000
+            mark = "/t/ 的 relative_duration 时长观察：参考 0.875ratio，学习者 1.000ratio（相对偏长；实验性，未判定发音对错）。"
+        points [63]:
+            number = 2.757500
+            mark = "/s/ intensity_lufs_adjusted_db：参考 67.123dB，学习者 59.449dB（实验性独立观察；未诊断重音、高低音或声调）。；/s/ rms_lufs_adjusted：参考 0.047amplitude，学习者 0.017amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [64]:
+            number = 2.760000
+            mark = "/s/ 的 spectral_centroid 声学观察：参考 5311.800Hz，学习者 5499.338Hz（偏高；实验性，未判定发音对错）。；/s/ 的 high_frequency_ratio 声学观察：参考 0.928ratio，学习者 0.906ratio（偏低；实验性，未判定发音对错）。；/s/ 的 zcr 声学观察：参考 0.701ratio，学习者 0.758ratio（偏高；实验性，未判定发音对错）。；/s/ 的 relative_duration 时长观察：参考 0.889ratio，学习者 1.143ratio（相对偏长；实验性，未判定发音对错）。"
+        points [65]:
+            number = 2.837500
+            mark = "/ɛ/ intensity_lufs_adjusted_db：参考 75.129dB，学习者 74.308dB（实验性独立观察；未诊断重音、高低音或声调）。；/ɛ/ rms_lufs_adjusted：参考 0.117amplitude，学习者 0.108amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [66]:
+            number = 2.840000
+            mark = "/ɛ/ 的 f1 声学观察：参考 621.370Hz，学习者 653.337Hz（偏高；实验性，未判定发音对错）。；/ɛ/ 的 f2 声学观察：参考 1482.487Hz，学习者 1801.678Hz（偏高；实验性，未判定发音对错）。；/ɛ/ 的 relative_duration 时长观察：参考 1.833ratio，学习者 1.333ratio（相对偏短；实验性，未判定发音对错）。"
+        points [67]:
+            number = 2.842500
+            mark = "/ɛ/ pitch_reliable_hz：参考 122.326Hz，学习者 183.957Hz（实验性独立观察；未诊断重音、高低音或声调）。；/ɛ/ pitch_relative_st：参考 -0.770st，学习者 -0.461st（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [68]:
+            number = 2.897500
+            mark = "/t/ intensity_lufs_adjusted_db：参考 69.207dB，学习者 67.953dB（实验性独立观察；未诊断重音、高低音或声调）。；/t/ rms_lufs_adjusted：参考 0.037amplitude，学习者 0.035amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [69]:
+            number = 2.900000
+            mark = "/t/ 的 relative_duration 时长观察：参考 0.471ratio，学习者 0.615ratio（相对偏长；实验性，未判定发音对错）。"
+        points [70]:
+            number = 2.942500
+            mark = "/ɚ/ pitch_reliable_hz：参考 94.143Hz，学习者 177.517Hz（实验性独立观察；未诊断重音、高低音或声调）。；/ɚ/ pitch_relative_st：参考 -5.358st，学习者 -1.130st（实验性独立观察；未诊断重音、高低音或声调）。；/ɚ/ intensity_lufs_adjusted_db：参考 69.076dB，学习者 70.460dB（实验性独立观察；未诊断重音、高低音或声调）。；/ɚ/ rms_lufs_adjusted：参考 0.055amplitude，学习者 0.069amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [71]:
+            number = 2.945000
+            mark = "/ɚ/ 的 f1 声学观察：参考 552.152Hz，学习者 656.417Hz（偏高；实验性，未判定发音对错）。；/ɚ/ 的 f2 声学观察：参考 1620.656Hz，学习者 1741.289Hz（偏高；实验性，未判定发音对错）。；/ɚ/ 的 relative_duration 时长观察：参考 0.522ratio，学习者 0.400ratio（相对偏短；实验性，未判定发音对错）。"
+        points [72]:
+            number = 3.057500
+            mark = "/ə/ pitch_reliable_hz：参考 99.130Hz，学习者 171.069Hz（实验性独立观察；未诊断重音、高低音或声调）。；/ə/ pitch_relative_st：参考 -4.412st，学习者 -1.772st（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [73]:
+            number = 3.072500
+            mark = "/ə/ intensity_lufs_adjusted_db：参考 61.946dB，学习者 63.896dB（实验性独立观察；未诊断重音、高低音或声调）。；/ə/ rms_lufs_adjusted：参考 0.028amplitude，学习者 0.037amplitude（实验性独立观察；未诊断重音、高低音或声调）。"
+        points [74]:
+            number = 3.075000
+            mark = "/ə/ 的 f1 声学观察：参考 706.217Hz，学习者 782.442Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 f2 声学观察：参考 1437.086Hz，学习者 1631.903Hz（偏高；实验性，未判定发音对错）。；/ə/ 的 relative_duration 时长观察：参考 3.167ratio，学习者 4.200ratio（相对偏长；实验性，未判定发音对错）。"

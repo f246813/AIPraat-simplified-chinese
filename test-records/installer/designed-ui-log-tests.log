@@ -1,0 +1,13 @@
+PASS denied_log_file_creation_uses_writable_fallback
+PASS all_unwritable_locations_return_no_log_stem
+PASS temporary_work_files_fall_back_to_program_directory
+PASS denied_user_and_temp_logs_use_program_directory
+PASS all_logs_denied_real_probe_returns_complete_report
+PASS denied_report_archive_does_not_discard_successful_detection
+REAL-WORKFLOW row=运行库已就绪 · 13/13 · CPU rows=13 probeValid=True log_path=''
+PASS all_logs_denied_real_panel_opens_populated_runtime_window
+PASS all_logs_denied_install_keeps_postinstall_report
+PASS missing_report_is_detection_failure_not_13_missing_dependencies
+Runtime log: <USER_HOME>\AppData\Local\AIPraat\logs\runtime\detect-20261013-190747-829Z-8ea49d55.log
+PASS delivered_runtime_probe_retains_complete_report_and_log
+RESULT 10 passed, 0 failed; fixtures=<WORKSPACE>\installer\verification\scratch\AIPraat-log-tests-f77e3c1172654c769e046d94b4a2682f

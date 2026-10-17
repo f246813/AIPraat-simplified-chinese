@@ -1,0 +1,158 @@
+{
+  "host": "anki",
+  "recordedAtUTC": "2026-10-15T12:12:39.217662+00:00",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "pywebview": "6.2.1",
+  "realDesktop": true,
+  "productionAssets": true,
+  "frontendModified": false,
+  "wholeWindowOpacityModified": false,
+  "wallpaperChanged": false,
+  "themeRequested": "light",
+  "systemTransparency": "unchanged",
+  "backgrounds": [
+    "actual Windows desktop (Wallpaper Engine is running on this PC)",
+    "real Windows Notepad displaying ai/praat_ai/webview_backdrop.py"
+  ],
+  "assetIndexSHA256": "a76b5377cf618bafe64508cb4ccccd39282ba03f864ed222c540153e94938e2e",
+  "initiallyVisible": true,
+  "notepadPID": 30444,
+  "effectiveTheme": "light",
+  "native": {
+    "state": "active",
+    "reason": null,
+    "hwnd": 2033924,
+    "windows_build": 19045,
+    "material": "accent-blur-undocumented",
+    "webview_alpha": 0,
+    "form_opacity": 1.0
+  },
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0",
+  "url": "http://127.0.0.1:59710/index.html?window=anki",
+  "dom": {
+    "html": {
+      "tag": "HTML",
+      "className": "",
+      "background": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "filter": "none",
+      "backdropFilter": "none"
+    },
+    "body": {
+      "tag": "BODY",
+      "className": "",
+      "background": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "filter": "none",
+      "backdropFilter": "none"
+    },
+    "surfaces": [],
+    "root": {
+      "tag": "DIV",
+      "className": "",
+      "background": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "filter": "none",
+      "backdropFilter": "none"
+    },
+    "centerAncestors": [
+      {
+        "tag": "SECTION",
+        "className": "",
+        "background": "rgba(255, 255, 255, 0.86)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "MAIN",
+        "className": "anki-integration",
+        "background": "rgba(255, 255, 255, 0.95)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "blur(32px) saturate(0.6)"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      }
+    ]
+  },
+  "nativeProperties": {
+    "formOpacity": 1.0,
+    "transparencyKey": 0,
+    "webviewAlpha": 0,
+    "formBackground": "Color [Black]",
+    "runtimeVersion": "155.0.4283.45"
+  },
+  "actualBackgroundDifference": {
+    "meanAbsoluteRGB": [
+      200.41716993755574,
+      153.03702274754684,
+      148.08512488849243
+    ],
+    "meanAbsolute": 167.17977252453167
+  },
+  "productionDifference": {
+    "meanAbsoluteRGB": [
+      2.648465655664585,
+      1.9405173951828725,
+      1.8649888492417483
+    ],
+    "meanAbsolute": 2.151323966696402
+  },
+  "nativeOnlyDifference": {
+    "meanAbsoluteRGB": [
+      200.331090544157,
+      149.7406913470116,
+      143.10543264942015
+    ],
+    "meanAbsolute": 164.39240484686292
+  },
+  "afterRestoreOpacity": 1.0,
+  "focusedHWND": 2033924,
+  "nativeStillActive": {
+    "state": "active",
+    "reason": null,
+    "hwnd": 2033924,
+    "windows_build": 19045,
+    "material": "accent-blur-undocumented",
+    "webview_alpha": 0,
+    "form_opacity": 1.0
+  },
+  "checksPassed": true,
+  "nativeDesktopPixelsChanged": true,
+  "productionDesktopPixelsChanged": true,
+  "productionDesktopEffectVerified": true,
+  "opaqueFallbackVerified": false,
+  "verificationScope": "real background pixels and native alpha, not full visual/UI acceptance",
+  "limitation": "Native-only screenshots hide the child: they cannot certify .95/.93 UI. Production differences must be interpreted with computed DOM backgrounds and screenshots. Win10 ACCENT_POLICY is undocumented; Win11 path has not been tested on this PC.",
+  "exitCode": 0,
+  "notepadClosed": true,
+  "systemPreferencesRestored": true,
+  "desktopWindowsRestored": true,
+  "assetIndexSHA256End": "a76b5377cf618bafe64508cb4ccccd39282ba03f864ed222c540153e94938e2e",
+  "assetsUnchangedDuringRun": true,
+  "passed": true
+}

@@ -29,6 +29,8 @@ cpSync('../third_party/codex', 'public/codex-source', {recursive:true});
 cpSync('src/codex', 'public/codex-source/modified', {recursive:true});
 cpSync('src/HistoryOrganization.tsx', 'public/codex-source/modified/HistoryOrganization.tsx');
 cpSync('src/SidebarOptions.tsx', 'public/codex-source/modified/SidebarOptions.tsx');
+mkdirSync('public/codex-source/modified/transcript', {recursive:true});
+for (const file of ['Chat.tsx','SearchBar.tsx','styles.css']) cpSync(`src/${file}`, `public/codex-source/modified/transcript/${file}`);
 mkdirSync('public/codex-source/modified-host', {recursive:true});
 for (const file of ['modern_organization.py','modern_store.py','modern_app.py','modern_search.py','modern_settings.py']) cpSync(`../praat_ai/${file}`, `public/codex-source/modified-host/${file}`);
 for (const file of ['NOTICE.md','LICENSE','UPSTREAM-NOTICE']) sections.push(`\n--- Codex ${file} ---\n${readFileSync(`../third_party/codex/${file}`, 'utf8')}\n`);

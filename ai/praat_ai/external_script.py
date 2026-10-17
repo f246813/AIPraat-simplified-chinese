@@ -1,4 +1,4 @@
-"""跑现成的（社区）Praat 脚本（C3）。
+"""在独立 Praat 批处理进程里运行现成的社区脚本。
 
 用户手里常有一堆社区 `.praat` 脚本（声学参数测量、标注、画图），它们默认是
 「在 Praat 图形界面里对选中的对象运行」。前端**不能**把这类脚本直接送进用户
@@ -201,7 +201,7 @@ def wrapper_script(
     """
 
     lines = [
-        "# 由 praat_ai 生成（C3）：在批处理里跑现成脚本的包装。",
+        "# 由 praat_ai 生成：在批处理里运行现成脚本的包装。",
         "# 现成脚本看不到用户开着的那个 Praat 的对象列表，这里的副本就是它的输入。",
         f"Read from file: {quote(str(sound_path))}",
         'soundId = selected ("Sound")',

@@ -1,0 +1,124 @@
+PRAAT_PROGRESS	0.1000	API ģʽ��������ͣ������ģ�ͷ���ʡ�Դ棩��
+PRAAT_PROGRESS	0.1000	API ģʽ��������ͣ������ģ�ͷ���ʡ�Դ棩��
+PRAAT_PROGRESS	0.6000	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	1.0000	����ģ�ͷ�����ͣ��
+PRAAT_PROGRESS	0.1000	API ģʽ��������ȡ���ˡ�˳��ͣ������ģ�ͷ��񡹣��������񱣳ֲ�����
+PRAAT_PROGRESS	1.0000	API ģʽ�������У�����ģ�ͷ������ñ�����
+.............................................................................................................................................can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+PRAAT_PROGRESS	0.0200	�лر���ģ�ͣ��ر� API ģʽ����
+...............................................invalid command name "1736759686784flush_messages"
+    while executing
+"1736759686784flush_messages"
+    ("after" script)
+invalid command name "1736759683840focus_set"
+    while executing
+"1736759683840focus_set"
+    ("after" script)
+invalid command name "1736653487936_restore_status_text"
+    while executing
+"1736653487936_restore_status_text"
+    ("after" script)
+invalid command name "1736759716800flush_messages"
+    while executing
+"1736759716800flush_messages"
+    ("after" script)
+invalid command name "1736759707200focus_set"
+    while executing
+"1736759707200focus_set"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+.......F..F.........................................................................................................................................................................................................................................��ǰ��δ������[REDACTED] [REDACTED]
+
+Python��<WORKSPACE>\venv-ai-modern\Scripts\python.exe
+���� Praat ��·��������ѡ���Ѱ�װ pywebview/pythonnet �� Python��
+�����Զ����þɽ������ģ������
+PRAAT_PROGRESS	0.1000	����ֹͣģ�ͷ���
+PRAAT_PROGRESS	1.0000	��ֹͣ��
+PRAAT_PROGRESS	0.0500	ֹͣ�ɵ�ģ�ͷ���
+PRAAT_PROGRESS	0.1500	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	0.0500	����Կ������в�����
+PRAAT_PROGRESS	0.0800	׼����������ģ�ͷ���
+PRAAT_PROGRESS	1.0000	ģ�ͷ����Ѿ�����
+PRAAT_PROGRESS	0.0500	����Կ������в�����
+PRAAT_PROGRESS	0.0800	׼����������ģ�ͷ���
+PRAAT_PROGRESS	1.0000	ģ�ͷ����Ѿ�����
+PRAAT_PROGRESS	0.0500	ֹͣ�ɵ�ģ�ͷ���
+PRAAT_PROGRESS	0.1500	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	0.0500	����Կ������в�����
+PRAAT_PROGRESS	0.0800	׼����������ģ�ͷ���
+PRAAT_PROGRESS	1.0000	ģ�ͷ����Ѿ�����
+PRAAT_PROGRESS	0.1000	��ǰ�� API ģʽ������Ҫ����ģ�ͷ���
+PRAAT_PROGRESS	1.0000	�Ѿ�����deepseek-chat���ƶˣ�
+PRAAT_PROGRESS	0.1000	��ǰ�� API ģʽ������Ҫ����ģ�ͷ���
+PRAAT_PROGRESS	1.0000	�Ѿ�����deepseek-chat���ƶˣ�
+PRAAT_PROGRESS	0.1000	API ģʽ��������ͣ������ģ�ͷ���ʡ�Դ棩��
+PRAAT_PROGRESS	0.6000	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	1.0000	����ģ�ͷ�����ͣ��
+PRAAT_PROGRESS	0.1000	API ģʽ��������ȡ���ˡ�˳��ͣ������ģ�ͷ��񡹣��������񱣳ֲ�����
+PRAAT_PROGRESS	1.0000	API ģʽ�������У�����ģ�ͷ������ñ�����
+PRAAT_PROGRESS	0.1000	API ģʽ��������ͣ������ģ�ͷ���ʡ�Դ棩��
+PRAAT_PROGRESS	0.6000	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	1.0000	����ģ�ͷ�����ͣ��
+PRAAT_PROGRESS	0.0500	����Կ������в�����
+PRAAT_PROGRESS	0.0800	׼����������ģ�ͷ���
+PRAAT_PROGRESS	1.0000	ģ�ͷ����Ѿ�����
+PRAAT_PROGRESS	0.0500	����Կ������в�����
+PRAAT_PROGRESS	0.0800	׼����������ģ�ͷ���
+PRAAT_PROGRESS	0.1000	����ֹͣģ�ͷ���
+PRAAT_PROGRESS	0.6000	�ȴ��˿��ͷš�
+PRAAT_PROGRESS	1.0000	��ֹͣ��
+PRAAT_PROGRESS	0.0500	����Կ������в�����
+PRAAT_PROGRESS	0.0800	׼����������ģ�ͷ���
+PRAAT_PROGRESS	0.0200	�лر���ģ�ͣ��ر� API ģʽ����
+........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................invalid command name "1736623328256flush_messages"
+    while executing
+"1736623328256flush_messages"
+    ("after" script)
+invalid command name "1736649832320focus_set"
+    while executing
+"1736649832320focus_set"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+invalid command name "1736816717568flush_messages"
+    while executing
+"1736816717568flush_messages"
+    ("after" script)
+invalid command name "1736816721728focus_set"
+    while executing
+"1736816721728focus_set"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+invalid command name "1736816613376flush_messages"
+    while executing
+"1736816613376flush_messages"
+    ("after" script)
+invalid command name "1736816613248focus_set"
+    while executing
+"1736816613248focus_set"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"

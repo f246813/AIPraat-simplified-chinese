@@ -1,0 +1,20 @@
+{
+  "target_audio": 10,
+  "supplementary_calibration_audio": 8,
+  "paired_cases": 5,
+  "failures": [],
+  "pitch_applied": 5,
+  "loudness_applied": 5,
+  "formants_applied": 0,
+  "json_reports": 15,
+  "textgrids_read_back": 15,
+  "png_verified": 15,
+  "downloaded_bytes": 1638902,
+  "python": "3.12.14",
+  "packages": {
+    "numpy": "2.2.6",
+    "scipy": "1.14.1",
+    "pyloudnorm": "0.2.0",
+    "praat-parselmouth": "0.4.7"
+  }
+}

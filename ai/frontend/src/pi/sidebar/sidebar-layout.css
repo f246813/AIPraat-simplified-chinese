@@ -1,0 +1,37 @@
+/* Production sidebar layout from WEBVIEW-UI-DESIGN.zh-CN.md.
+   Deliberately scoped: shared theme tokens and other WebViews belong to the shell. */
+/* backdrop-filter makes the sidebar a stacking context. Keep its resize lane
+   (which extends into the main pane) above the main surface for pointer input. */
+.pi-session-sidebar{z-index:6}
+.pi-session-sidebar .sidebar-brand-row .brand{min-width:0;gap:8px;color:var(--text)}
+.pi-session-sidebar .sidebar-brand-row .brand>svg{width:18px;height:18px}
+.pi-session-sidebar .sidebar-brand-row .brand strong{font-size:16px;font-weight:600;letter-spacing:0;white-space:nowrap}
+.sidebar-expanded .pi-session-sidebar .sidebar-brand-row{padding:18px 16px 14px;gap:12px}
+.pi-session-sidebar .sidebar-header-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.pi-session-sidebar .sidebar-header-actions>.icon-button{width:28px;height:28px;padding:5px}
+.pi-session-sidebar .brand .sidebar-options-trigger{width:18px;height:24px;padding:3px;color:var(--muted);flex-shrink:0}
+.pi-session-sidebar .new-session{height:30px;min-height:30px;padding:4px 8px;align-self:flex-start;justify-content:flex-start;border-color:transparent;background:transparent;color:var(--text);font-size:12px;font-weight:400}
+.pi-session-sidebar .new-session:hover{background:var(--soft);border-color:transparent}
+.app:not(.sidebar-expanded) .pi-session-sidebar .new-session{align-self:stretch;justify-content:center}
+.pi-session-sidebar .session-list,.sidebar-expanded .pi-session-sidebar .session-list{margin-top:16px}
+.pi-session-sidebar .history-section-header{margin-top:7px}
+.pi-session-sidebar .history-section-toggle{font-weight:400}
+.pi-session-sidebar .history-section-toggle>svg{flex-shrink:0}
+.pi-session-sidebar .history-section-count{color:var(--muted);font-weight:400}
+.pi-session-sidebar .history-section-create{flex-shrink:0;color:var(--muted)}
+.pi-session-sidebar .sidebar-group-toggle{font-weight:400}
+.pi-session-sidebar .sidebar-group-toggle>.sidebar-group-name{margin-left:0;font-size:11px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pi-session-sidebar .sidebar-origin-header>.sidebar-origin-name{margin-left:0;flex:0 1 auto;min-width:0}
+.pi-session-sidebar .sidebar-group-toggle>.sidebar-group-count{margin-left:auto;flex-shrink:0}
+.pi-session-sidebar .sidebar-origin-group .sidebar-session-group-body .thread-item-main{padding-left:16px}
+/* A neutral selected surface keeps session text ahead of navigation chrome. */
+.pi-session-sidebar .thread-item.selected{background:var(--accent-soft);box-shadow:none}
+.pi-session-sidebar .thread-item-main,.pi-session-sidebar .thread-item-main strong,.pi-session-sidebar .thread-item-title{color:var(--text);font-weight:400}
+.pi-session-sidebar .thread-item.selected .thread-item-title{font-weight:500}
+@media(hover:none){.pi-session-sidebar .history-section-more{opacity:1}}
+/* Sidebar bottom entries stay compact, left-aligned, transparent gray rows
+   (design: 侧栏底部操作), not the global white button default. Collapsed state
+   keeps its centered icon-only layout through the higher-specificity rule in styles.css. */
+.pi-session-sidebar .sidebar-bottom>button{width:100%;height:30px;min-height:30px;justify-content:flex-start;gap:8px;padding:4px 8px;border:0;background:transparent;color:var(--muted);font-size:12px;font-weight:400;box-shadow:none}
+.pi-session-sidebar .sidebar-bottom>button:hover{background:var(--soft);color:var(--text)}
+.pi-session-sidebar .sidebar-bottom>button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}

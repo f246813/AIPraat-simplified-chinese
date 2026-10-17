@@ -1,0 +1,22 @@
+{
+  "collapsed": {
+    "fontSize": "9px",
+    "borderWidth": "0px",
+    "background": "rgba(0, 0, 0, 0)",
+    "width": 6.859375,
+    "position": "absolute",
+    "railCenter": 34,
+    "iconCenters": [
+      33.5,
+      33.5
+    ]
+  },
+  "expanded": {
+    "fontSize": "9px",
+    "borderWidth": "0px",
+    "background": "rgba(0, 0, 0, 0)",
+    "width": 6.859375,
+    "position": "static",
+    "sidebarWidth": 272
+  }
+}

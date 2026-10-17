@@ -1,204 +1,204 @@
-{
-  "user_text": "分析整段语音，指出我的发音有哪些不足。",
-  "object_classes": {
-    "1": "Sound"
-  },
-  "turn_error": "",
-  "reply": "根据对整段语音（0–7.600 秒）的声学测量，以下是关键指标及分析：\n\n---\n\n## 📊 测量结果汇总\n\n| 指标 | 数值 | 说明 |\n|------|------|------|\n| **平均基频** | 198.96 Hz | 整体音调高度 |\n| **基频范围** | 179.81 – 205.23 Hz | 仅约 25 Hz 跨度 |\n| **基频标准差** | 3.01 Hz | 极小，几乎无波动 |\n| **平均强度** | 71.10 dB | 正常音量 |\n| **强度标准差** | 7.34 dB | 有一定变化 |\n| **强度局部斜率** | 70.16 dB/s | 变化较剧烈 |\n| **F1 平均** | 912.1 Hz | 元音开口度相关 |\n| **F2 平均** | 1766.9 Hz | 元音前后位置相关 |\n| **HNR 平均** | 11.73 dB | 声音周期性/清晰度 |\n| **基频峰值延迟** | 0.418 | 峰值偏前半段 |\n\n---\n\n## 🔍 主要问题分析\n\n### 1. ⚠️ 语调极度平淡（最显著的问题）\n\n- **证据**：基频标准差仅 **3.01 Hz**，范围仅 **25 Hz**（179.81–205.23 Hz）。\n- **一般知识参考**：正常说话的基频标准差通常在 **20–50 Hz** 甚至更高，取决于语言和说话者。如此小的标准差意味着整段语音的音调几乎是一条直线。\n- **影响**：语调是表达情感、强调和信息结构的重要手段。语调平淡会让听感显得机械、缺乏感染力，也可能让听众难以捕捉重点信息。\n\n### 2. ⚠️ 声音质量偏弱\n\n- **证据**：谐噪比（HNR）平均 **11.73 dB**。\n- **一般知识参考**：健康、清晰的嗓音 HNR 通常在 **20 dB 以上**。11.73 dB 属于中等偏低水平，可能表示声音带有一些嘶哑、气声或不规则的噪声成分。\n- **可能原因**：发声方式不够集中、声带闭合不完全、或录音环境有背景噪声。\n\n### 3. ⚠️ 强度变化与基频变化不协调\n\n- **证据**：强度斜率高达 **70.16 dB/s**，但基频几乎不变。\n- **分析**：正常情况下，强度和基频的变化应有一定的协同关系（例如强调某个词时两者同时升高）。这里强度变化剧烈而基频几乎不动，可能导致听感上\"忽大忽小\"但\"音调没起伏\"的不自然感。\n\n### 4. 共振峰特征\n\n- **F1 = 912.1 Hz, F2 = 1766.9 Hz**：F1 偏高、F2 中等，整体偏向央元音或开放前元音的特征。但由于这是整段语音的平均值（可能包含多个音素），单独看意义有限。如果这段语音主要是某个特定元音，可以进一步对比该元音的典型共振峰值。\n\n---\n\n## 💡 改进建议\n\n| 问题 | 练习方法 | 验证方式 |\n|------|----------|----------|\n| **语调平淡** | ① 跟读录音：选择一段语调丰富的音频（如新闻播报、故事讲述），逐句模仿其音高轮廓。<br>② 夸张练习：故意把疑问句的结尾往上扬、陈述句往下压，幅度比平时大 2–3 倍，再逐渐回归自然。<br>③ 手势辅助：说话时用手画出音高曲线，帮助建立语调意识。 | 重新录制后检查基频标准差是否提升至 **10 Hz 以上**，基频范围是否超过 **50 Hz**。 |\n| **声音质量** | ① 腹式呼吸练习：确保气息支撑充足，减少气声。<br>② 哼鸣练习：用 \"m\" 或 \"n\" 哼鸣，感受声带振动的集中感，再过渡到元音。<br>③ 避免过度用力：有些人在紧张时会挤压喉咙，反而降低 HNR。 | 重新测量 HNR，目标提升至 **15–20 dB 以上**。 |\n| **强度-基频协调** | ① 在强调关键词时，同时提高音高和音量，形成\"双升\"效果。<br>② 练习重音模式：先读出句子中的重读音节，确保它们既有更高的音高也有更大的音量。 | 观察强度变化和基频变化的相关性，两者应在重要音节上同步出现。 |\n\n---\n\n## 📌 说明与限制\n\n- **观测来源**：以上所有数字均来自本次工具的实际测量结果。\n- **一般知识**：基频/强度/HNR 的典型范围来自语音学文献中的一般描述，不同语言、性别、年龄会有差异。\n- **不确定性**：\n  - 未获知您说的具体内容、性别和年龄，因此无法精确对标特定群体的典型值。\n  - 共振峰平均值因涵盖整段多音素语音，解释力有限；如需针对特定元音分析，需提供标注或指定区间。\n  - 单凭声学指标不能断定\"发音是否标准\"，只能反映声学特征上的偏差。\n\n如果您能提供：\n1. **您说的具体内容**（或 TextGrid 标注）\n2. **您的性别/大致年龄段**\n3. **您希望达到的目标**（如普通话标准发音、演讲表达、嗓音康复等）\n\n我可以给出更有针对性的分析和练习方案。",
-  "executions": [
-    {
-      "script": "Read from file: \"D:/Praat-work/稳定早期版/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\nchannels = Get number of channels\nrate = Get sampling frequency\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"Sound「Sound aaaa02」（id 1）\", \"：时长 \", fixed$ (duration, 3), \" 秒\", \"，通道数 \", fixed$ (channels, 0), \"，采样率 \", fixed$ (rate, 0), \" Hz\"\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
-      "results": [
-        "Sound「Sound aaaa02」（id 1）：时长 7.600 秒，通道数 2，采样率 50000 Hz"
-      ],
-      "returncode": 0,
-      "done": true,
-      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-00.praat",
-      "seconds": 0.05
-    },
-    {
-      "script": "Read from file: \"D:/Praat-work/稳定早期版/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\nrangeNote$ = \"\"\ntmin = 0.000000\ntmax = 7.600000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: \"查询范围无效或超出对象时长，请在对象内重新指定起止时间。\"\nendif\nselectObject: 1\npitchId = To Pitch: 0, 75.000000, 600.000000\nselectObject: pitchId\nvalue = Get mean: tmin, tmax, \"Hertz\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"平均基频（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"平均基频（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" Hz\", rangeNote$\nendif\nselectObject: pitchId\nmedian = Get quantile: tmin, tmax, 0.5, \"Hertz\"\nfirstFrameTime = Get frame number from time: tmin\nlastFrameTime = Get frame number from time: tmax\nnFrames = Get number of frames\nfirstFrame = round (firstFrameTime)\nlastFrame = round (lastFrameTime)\nif firstFrame < 1\nfirstFrame = 1\nendif\nif lastFrame > nFrames\nlastFrame = nFrames\nendif\nif lastFrame < 1\nlastFrame = 1\nendif\nvalue = undefined\nif median <> undefined\nfloorValue = median * 0.5\nlowest = 0\nfor pitchFrame from firstFrame to lastFrame\nf = Get value in frame: pitchFrame, \"Hertz\"\nif f <> undefined and f >= floorValue\nif lowest = 0 or f < lowest\nlowest = f\nendif\nendif\nendfor\nif lowest > 0\nvalue = lowest\nendif\nendif\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最低基频（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最低基频（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" Hz\", rangeNote$\nendif\nselectObject: pitchId\nmedian = Get quantile: tmin, tmax, 0.5, \"Hertz\"\nfirstFrameTime = Get frame number from time: tmin\nlastFrameTime = Get frame number from time: tmax\nnFrames = Get number of frames\nfirstFrame = round (firstFrameTime)\nlastFrame = round (lastFrameTime)\nif firstFrame < 1\nfirstFrame = 1\nendif\nif lastFrame > nFrames\nlastFrame = nFrames\nendif\nif lastFrame < 1\nlastFrame = 1\nendif\nvalue = undefined\nif median <> undefined\nceilingValue = median * 1.5\nhighest = 0\nfor pitchFrame from firstFrame to lastFrame\nf = Get value in frame: pitchFrame, \"Hertz\"\nif f <> undefined and f <= ceilingValue and f > highest\nhighest = f\nendif\nendfor\nif highest > 0\nvalue = highest\nendif\nendif\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最高基频（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最高基频（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" Hz\", rangeNote$\nendif\nselectObject: pitchId\nvalue = Get quantile: tmin, tmax, 0.5, \"Hertz\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"基频中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"基频中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" Hz\", rangeNote$\nendif\nselectObject: pitchId\nvalue = Get standard deviation: tmin, tmax, \"Hertz\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"基频标准差（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"基频标准差（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" Hz\", rangeNote$\nendif\nselectObject: pitchId\nRemove\nselectObject: 1\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
-      "results": [
-        "平均基频（0–7.600 秒）= 198.96 Hz",
-        "最低基频（0–7.600 秒）= 179.81 Hz",
-        "最高基频（0–7.600 秒）= 205.23 Hz",
-        "基频中位数（0–7.600 秒）= 199.05 Hz",
-        "基频标准差（0–7.600 秒）= 3.01 Hz"
-      ],
-      "returncode": 0,
-      "done": true,
-      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-01.praat",
-      "seconds": 0.08
-    },
-    {
-      "script": "Read from file: \"D:/Praat-work/稳定早期版/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\nrangeNote$ = \"\"\ntmin = 0.000000\ntmax = 7.600000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: \"查询范围无效或超出对象时长，请在对象内重新指定起止时间。\"\nendif\nselectObject: 1\nintensityId = To Intensity: 100.000000, 0, \"yes\"\nselectObject: intensityId\nvalue = Get mean: tmin, tmax, \"energy\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"平均强度（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"平均强度（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" dB\", rangeNote$\nendif\nselectObject: intensityId\nvalue = Get minimum: tmin, tmax, \"Parabolic\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最低强度（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最低强度（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" dB\", rangeNote$\nendif\nselectObject: intensityId\nvalue = Get maximum: tmin, tmax, \"Parabolic\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最高强度（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最高强度（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" dB\", rangeNote$\nendif\nselectObject: intensityId\nvalue = Get quantile: tmin, tmax, 0.5\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"强度中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"强度中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" dB\", rangeNote$\nendif\nselectObject: intensityId\nvalue = Get standard deviation: tmin, tmax\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"强度标准差（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"强度标准差（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" dB\", rangeNote$\nendif\nselectObject: intensityId\nRemove\nselectObject: 1\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
-      "results": [
-        "平均强度（0–7.600 秒）= 71.10 dB",
-        "最低强度（0–7.600 秒）= 55.99 dB",
-        "最高强度（0–7.600 秒）= 76.38 dB",
-        "强度中位数（0–7.600 秒）= 72.29 dB",
-        "强度标准差（0–7.600 秒）= 7.34 dB"
-      ],
-      "returncode": 0,
-      "done": true,
-      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-02.praat",
-      "seconds": 0.06
-    },
-    {
-      "script": "Read from file: \"D:/Praat-work/稳定早期版/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\nrangeNote$ = \"\"\ntmin = 0.000000\ntmax = 7.600000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: \"查询范围无效或超出对象时长，请在对象内重新指定起止时间。\"\nendif\nselectObject: 1\nformantId = To Formant (burg): 0, 5, 5500.000000, 0.025000, 50.000000\nselectObject: formantId\nvalue = Get mean: 1, tmin, tmax, \"hertz\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 1 共振峰平均（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 1 共振峰平均（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 1), \" Hz\", rangeNote$\nendif\nselectObject: formantId\nvalue = Get mean: 2, tmin, tmax, \"hertz\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 2 共振峰平均（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 2 共振峰平均（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 1), \" Hz\", rangeNote$\nendif\nselectObject: formantId\nvalue = Get mean: 3, tmin, tmax, \"hertz\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 3 共振峰平均（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 3 共振峰平均（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 1), \" Hz\", rangeNote$\nendif\nselectObject: formantId\nvalue = Get quantile of bandwidth: 1, tmin, tmax, \"hertz\", 0.5\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 1 共振峰带宽中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 1 共振峰带宽中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 1), \" Hz\", rangeNote$\nendif\nselectObject: formantId\nvalue = Get quantile of bandwidth: 2, tmin, tmax, \"hertz\", 0.5\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 2 共振峰带宽中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 2 共振峰带宽中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 1), \" Hz\", rangeNote$\nendif\nselectObject: formantId\nvalue = Get quantile of bandwidth: 3, tmin, tmax, \"hertz\", 0.5\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 3 共振峰带宽中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 3 共振峰带宽中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 1), \" Hz\", rangeNote$\nendif\nselectObject: formantId\nRemove\nselectObject: 1\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
-      "results": [
-        "第 1 共振峰平均（0–7.600 秒）= 912.1 Hz",
-        "第 2 共振峰平均（0–7.600 秒）= 1766.9 Hz",
-        "第 3 共振峰平均（0–7.600 秒）= 3148.9 Hz",
-        "第 1 共振峰带宽中位数（0–7.600 秒）= 726.7 Hz",
-        "第 2 共振峰带宽中位数（0–7.600 秒）= 231.1 Hz",
-        "第 3 共振峰带宽中位数（0–7.600 秒）= 559.8 Hz"
-      ],
-      "returncode": 0,
-      "done": true,
-      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-03.praat",
-      "seconds": 0.14
-    },
-    {
-      "script": "Read from file: \"D:/Praat-work/稳定早期版/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\nrangeNote$ = \"\"\ntmin = 0.000000\ntmax = 7.600000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: \"查询范围无效或超出对象时长，请在对象内重新指定起止时间。\"\nendif\nTo Harmonicity (cc): 0.01, 75, 0.1, 1\nRename: \"ai-chat-temp\"\nmean = Get mean: tmin, tmax\nmaximum = Get maximum: tmin, tmax, \"Parabolic\"\nif mean = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"谐噪比 HNR（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：该区间没有周期性声源\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"谐噪比 HNR（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）：平均 \", fixed$ (mean, 2), \" dB，最高 \", fixed$ (maximum, 2), \" dB\", rangeNote$\nendif\nRemove\nselectObject: 1\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
-      "results": [
-        "谐噪比 HNR（0–7.600 秒）：平均 11.73 dB，最高 32.88 dB"
-      ],
-      "returncode": 0,
-      "done": true,
-      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-04.praat",
-      "seconds": 0.39
-    },
-    {
-      "script": "Read from file: \"D:/Praat-work/稳定早期版/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nnewId = To Spectrogram: 0.005000, 5000.000000, 0.002000, 20.000000, \"Gaussian\"\nRename: \"spec_aaaa02\"\nframes = Get number of frames\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"已生成频谱图：\", \"spec_aaaa02\", \"（id \", fixed$ (newId, 0), \"）\", \"，分析窗口 5.0 ms，最高频率 \", fixed$ (5000.000000, 0), \" Hz，共 \", fixed$ (frames, 0), \" 帧（可用 Praat 的「绘制」菜单画到 Picture 窗口）\"\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
-      "results": [
-        "已生成频谱图：spec_aaaa02（id 2），分析窗口 5.0 ms，最高频率 5000 Hz，共 3796 帧（可用 Praat 的「绘制」菜单画到 Picture 窗口）"
-      ],
-      "returncode": 0,
-      "done": true,
-      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-05.praat",
-      "seconds": 0.06
-    },
-    {
-      "script": "Read from file: \"D:/Praat-work/稳定早期版/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\nextractedId = 0\ntmin = 0\ntmax = duration\nrangeNote$ = \"\"\ntmin = 0.000000\ntmax = 7.600000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: \"查询范围无效或超出对象时长，请在对象内重新指定起止时间。\"\nendif\nif tmin > 0 or tmax < duration\nextractedId = Extract part: tmin, tmax, \"rectangular\", 1, \"no\"\nRename: \"ai-chat-temp\"\ntmin = 0\ntmax = Get total duration\nendif\nintensityId = To Intensity: 100.000000, 0.001000, \"yes\"\nDown to Matrix\nmatrixId = selected (\"Matrix\")\ncolsNum = Get number of columns\ntimeStep = Get column distance\nFormula: \"abs(self[col+1]-self[col])/dx\"\nmatSum = Get sum\nlastEl = Get value in cell: 1, colsNum\nslope = (matSum - lastEl) / (colsNum - 1)\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= \", fixed$ (slope, 2), \" dB/s（\", fixed$ (colsNum, 0), \" 个点，步长 \", fixed$ (timeStep, 6), \" 秒）\", rangeNote$\nselectObject: matrixId\nRemove\nselectObject: intensityId\nRemove\nif extractedId <> 0\n    selectObject: extractedId\n    Remove\nendif\nselectObject: 1\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
-      "results": [
-        "强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= 70.16 dB/s（7537 个点，步长 0.001000 秒）"
-      ],
-      "returncode": 0,
-      "done": true,
-      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-06.praat",
-      "seconds": 0.16
-    },
-    {
-      "script": "Read from file: \"D:/Praat-work/稳定早期版/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\nrangeNote$ = \"\"\ntmin = 0.000000\ntmax = 7.600000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: \"查询范围无效或超出对象时长，请在对象内重新指定起止时间。\"\nendif\nTo Pitch: 0, 75.000000, 600.000000\nRename: \"ai-chat-temp\"\npeakTime = Get time of maximum: tmin, tmax, \"Hertz\", \"Parabolic\"\nif peakTime = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"基频峰值延迟无法计算：\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒这一段里没有可用的基频（全是清音或无声段）。\"\nelse\nlatency = (peakTime - tmin) / (tmax - tmin)\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"基频峰值延迟 = \", fixed$ (latency, 3), \"（峰值 \", fixed$ (peakTime, 3), \" 秒出现在 \", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒这一段里；0.5 = 正好在中间）\", rangeNote$\nendif\nRemove\nselectObject: 1\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
-      "results": [
-        "基频峰值延迟 = 0.418（峰值 3.175 秒出现在 0–7.600 秒这一段里；0.5 = 正好在中间）"
-      ],
-      "returncode": 0,
-      "done": true,
-      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-07.praat",
-      "seconds": 0.08
-    },
-    {
-      "script": "Read from file: \"D:/Praat-work/稳定早期版/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nView & Edit\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"已打开编辑器：\", \"Sound aaaa02\"\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
-      "results": [],
-      "returncode": 4294967295,
-      "done": false,
-      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat\r\nError: Cannot edit a Sound from batch.\r\nScript line 3 not performed or completed:\r\n« 查看并编辑 »\r\nScript “C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat” not completed.\r\nPraat: script command <<C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat>> not completed.",
-      "seconds": 0.06
-    }
-  ],
-  "steps": [
-    {
-      "tool": "object_info",
-      "ok": true,
-      "arguments": {},
-      "observation": "工具 object_info 执行成功，结果：Sound「Sound aaaa02」（id 1）：时长 7.600 秒，通道数 2，采样率 50000 Hz"
-    },
-    {
-      "tool": "measure",
-      "ok": true,
-      "arguments": {
-        "from": 0,
-        "object": "Sound aaaa02",
-        "parameter": "mean_pitch,minimum_pitch,maximum_pitch,median_pitch,sd_pitch",
-        "to": 7.6
-      },
-      "observation": "工具 measure 执行成功，结果：平均基频（0–7.600 秒）= 198.96 Hz；最低基频（0–7.600 秒）= 179.81 Hz；最高基频（0–7.600 秒）= 205.23 Hz；基频中位数（0–7.600 秒）= 199.05 Hz；基频标准差（0–7.600 秒）= 3.01 Hz"
-    },
-    {
-      "tool": "measure",
-      "ok": true,
-      "arguments": {
-        "from": 0,
-        "object": "Sound aaaa02",
-        "parameter": "mean_intensity,minimum_intensity,maximum_intensity,median_intensity,sd_intensity",
-        "to": 7.6
-      },
-      "observation": "工具 measure 执行成功，结果：平均强度（0–7.600 秒）= 71.10 dB；最低强度（0–7.600 秒）= 55.99 dB；最高强度（0–7.600 秒）= 76.38 dB；强度中位数（0–7.600 秒）= 72.29 dB；强度标准差（0–7.600 秒）= 7.34 dB"
-    },
-    {
-      "tool": "measure",
-      "ok": true,
-      "arguments": {
-        "from": 0,
-        "object": "Sound aaaa02",
-        "parameter": "f1,f2,f3,b1,b2,b3",
-        "to": 7.6
-      },
-      "observation": "工具 measure 执行成功，结果：第 1 共振峰平均（0–7.600 秒）= 912.1 Hz；第 2 共振峰平均（0–7.600 秒）= 1766.9 Hz；第 3 共振峰平均（0–7.600 秒）= 3148.9 Hz；第 1 共振峰带宽中位数（0–7.600 秒）= 726.7 Hz；第 2 共振峰带宽中位数（0–7.600 秒）= 231.1 Hz；第 3 共振峰带宽中位数（0–7.600 秒）= 559.8 Hz"
-    },
-    {
-      "tool": "harmonicity_statistics",
-      "ok": true,
-      "arguments": {
-        "from": 0,
-        "object": "Sound aaaa02",
-        "to": 7.6
-      },
-      "observation": "工具 harmonicity_statistics 执行成功，结果：谐噪比 HNR（0–7.600 秒）：平均 11.73 dB，最高 32.88 dB"
-    },
-    {
-      "tool": "spectrogram",
-      "ok": true,
-      "arguments": {
-        "max_frequency": 5000,
-        "name": "spec_aaaa02",
-        "object": "Sound aaaa02",
-        "window_length": 0.005
-      },
-      "observation": "工具 spectrogram 执行成功，结果：已生成频谱图：spec_aaaa02（id 2），分析窗口 5.0 ms，最高频率 5000 Hz，共 3796 帧（可用 Praat 的「绘制」菜单画到 Picture 窗口）"
-    },
-    {
-      "tool": "intensity_slope",
-      "ok": true,
-      "arguments": {
-        "from": 0,
-        "method": "local",
-        "object": "Sound aaaa02",
-        "to": 7.6
-      },
-      "observation": "工具 intensity_slope 执行成功，结果：强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= 70.16 dB/s（7537 个点，步长 0.001000 秒）"
-    },
-    {
-      "tool": "pitch_peak_latency",
-      "ok": true,
-      "arguments": {
-        "from": 0,
-        "object": "Sound aaaa02",
-        "to": 7.6
-      },
-      "observation": "工具 pitch_peak_latency 执行成功，结果：基频峰值延迟 = 0.418（峰值 3.175 秒出现在 0–7.600 秒这一段里；0.5 = 正好在中间）"
-    },
-    {
-      "tool": "view_edit",
-      "ok": false,
-      "arguments": {
-        "object": "spec_aaaa02"
-      },
-      "observation": "工具 view_edit 执行失败：########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat\r\nError: Cannot edit a Sound from batch.\r\nScript line 3 not performed or completed:\r\n« 查看并编辑 »\r\nScript “C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat” not completed.\r\nPraat: script command <<C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat>> not completed."
-    }
-  ],
-  "failure": "工具 view_edit 执行失败：########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat\r\nError: Cannot edit a Sound from batch.\r\nScript line 3 not performed or completed:\r\n« 查看并编辑 »\r\nScript “C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat” not completed.\r\nPraat: script command <<C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat>> not completed.",
-  "notes": []
+{
+  "user_text": "分析整段语音，指出我的发音有哪些不足。",
+  "object_classes": {
+    "1": "Sound"
+  },
+  "turn_error": "",
+  "reply": "根据对整段语音（0–7.600 秒）的声学测量，以下是关键指标及分析：\n\n---\n\n## 📊 测量结果汇总\n\n| 指标 | 数值 | 说明 |\n|------|------|------|\n| **平均基频** | 198.96 Hz | 整体音调高度 |\n| **基频范围** | 179.81 – 205.23 Hz | 仅约 25 Hz 跨度 |\n| **基频标准差** | 3.01 Hz | 极小，几乎无波动 |\n| **平均强度** | 71.10 dB | 正常音量 |\n| **强度标准差** | 7.34 dB | 有一定变化 |\n| **强度局部斜率** | 70.16 dB/s | 变化较剧烈 |\n| **F1 平均** | 912.1 Hz | 元音开口度相关 |\n| **F2 平均** | 1766.9 Hz | 元音前后位置相关 |\n| **HNR 平均** | 11.73 dB | 声音周期性/清晰度 |\n| **基频峰值延迟** | 0.418 | 峰值偏前半段 |\n\n---\n\n## 🔍 主要问题分析\n\n### 1. ⚠️ 语调极度平淡（最显著的问题）\n\n- **证据**：基频标准差仅 **3.01 Hz**，范围仅 **25 Hz**（179.81–205.23 Hz）。\n- **一般知识参考**：正常说话的基频标准差通常在 **20–50 Hz** 甚至更高，取决于语言和说话者。如此小的标准差意味着整段语音的音调几乎是一条直线。\n- **影响**：语调是表达情感、强调和信息结构的重要手段。语调平淡会让听感显得机械、缺乏感染力，也可能让听众难以捕捉重点信息。\n\n### 2. ⚠️ 声音质量偏弱\n\n- **证据**：谐噪比（HNR）平均 **11.73 dB**。\n- **一般知识参考**：健康、清晰的嗓音 HNR 通常在 **20 dB 以上**。11.73 dB 属于中等偏低水平，可能表示声音带有一些嘶哑、气声或不规则的噪声成分。\n- **可能原因**：发声方式不够集中、声带闭合不完全、或录音环境有背景噪声。\n\n### 3. ⚠️ 强度变化与基频变化不协调\n\n- **证据**：强度斜率高达 **70.16 dB/s**，但基频几乎不变。\n- **分析**：正常情况下，强度和基频的变化应有一定的协同关系（例如强调某个词时两者同时升高）。这里强度变化剧烈而基频几乎不动，可能导致听感上\"忽大忽小\"但\"音调没起伏\"的不自然感。\n\n### 4. 共振峰特征\n\n- **F1 = 912.1 Hz, F2 = 1766.9 Hz**：F1 偏高、F2 中等，整体偏向央元音或开放前元音的特征。但由于这是整段语音的平均值（可能包含多个音素），单独看意义有限。如果这段语音主要是某个特定元音，可以进一步对比该元音的典型共振峰值。\n\n---\n\n## 💡 改进建议\n\n| 问题 | 练习方法 | 验证方式 |\n|------|----------|----------|\n| **语调平淡** | ① 跟读录音：选择一段语调丰富的音频（如新闻播报、故事讲述），逐句模仿其音高轮廓。<br>② 夸张练习：故意把疑问句的结尾往上扬、陈述句往下压，幅度比平时大 2–3 倍，再逐渐回归自然。<br>③ 手势辅助：说话时用手画出音高曲线，帮助建立语调意识。 | 重新录制后检查基频标准差是否提升至 **10 Hz 以上**，基频范围是否超过 **50 Hz**。 |\n| **声音质量** | ① 腹式呼吸练习：确保气息支撑充足，减少气声。<br>② 哼鸣练习：用 \"m\" 或 \"n\" 哼鸣，感受声带振动的集中感，再过渡到元音。<br>③ 避免过度用力：有些人在紧张时会挤压喉咙，反而降低 HNR。 | 重新测量 HNR，目标提升至 **15–20 dB 以上**。 |\n| **强度-基频协调** | ① 在强调关键词时，同时提高音高和音量，形成\"双升\"效果。<br>② 练习重音模式：先读出句子中的重读音节，确保它们既有更高的音高也有更大的音量。 | 观察强度变化和基频变化的相关性，两者应在重要音节上同步出现。 |\n\n---\n\n## 📌 说明与限制\n\n- **观测来源**：以上所有数字均来自本次工具的实际测量结果。\n- **一般知识**：基频/强度/HNR 的典型范围来自语音学文献中的一般描述，不同语言、性别、年龄会有差异。\n- **不确定性**：\n  - 未获知您说的具体内容、性别和年龄，因此无法精确对标特定群体的典型值。\n  - 共振峰平均值因涵盖整段多音素语音，解释力有限；如需针对特定元音分析，需提供标注或指定区间。\n  - 单凭声学指标不能断定\"发音是否标准\"，只能反映声学特征上的偏差。\n\n如果您能提供：\n1. **您说的具体内容**（或 TextGrid 标注）\n2. **您的性别/大致年龄段**\n3. **您希望达到的目标**（如普通话标准发音、演讲表达、嗓音康复等）\n\n我可以给出更有针对性的分析和练习方案。",
+  "executions": [
+    {
+      "script": "Read from file: \"<WORKSPACE>/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\nchannels = Get number of channels\nrate = Get sampling frequency\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"Sound「Sound aaaa02」（id 1）\", \"：时长 \", fixed$ (duration, 3), \" 秒\", \"，通道数 \", fixed$ (channels, 0), \"，采样率 \", fixed$ (rate, 0), \" Hz\"\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
+      "results": [
+        "Sound「Sound aaaa02」（id 1）：时长 7.600 秒，通道数 2，采样率 50000 Hz"
+      ],
+      "returncode": 0,
+      "done": true,
+      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-00.praat",
+      "seconds": 0.05
+    },
+    {
+      "script": "Read from file: \"<WORKSPACE>/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\nrangeNote$ = \"\"\ntmin = 0.000000\ntmax = 7.600000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: \"查询范围无效或超出对象时长，请在对象内重新指定起止时间。\"\nendif\nselectObject: 1\npitchId = To Pitch: 0, 75.000000, 600.000000\nselectObject: pitchId\nvalue = Get mean: tmin, tmax, \"Hertz\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"平均基频（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"平均基频（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" Hz\", rangeNote$\nendif\nselectObject: pitchId\nmedian = Get quantile: tmin, tmax, 0.5, \"Hertz\"\nfirstFrameTime = Get frame number from time: tmin\nlastFrameTime = Get frame number from time: tmax\nnFrames = Get number of frames\nfirstFrame = round (firstFrameTime)\nlastFrame = round (lastFrameTime)\nif firstFrame < 1\nfirstFrame = 1\nendif\nif lastFrame > nFrames\nlastFrame = nFrames\nendif\nif lastFrame < 1\nlastFrame = 1\nendif\nvalue = undefined\nif median <> undefined\nfloorValue = median * 0.5\nlowest = 0\nfor pitchFrame from firstFrame to lastFrame\nf = Get value in frame: pitchFrame, \"Hertz\"\nif f <> undefined and f >= floorValue\nif lowest = 0 or f < lowest\nlowest = f\nendif\nendif\nendfor\nif lowest > 0\nvalue = lowest\nendif\nendif\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最低基频（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最低基频（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" Hz\", rangeNote$\nendif\nselectObject: pitchId\nmedian = Get quantile: tmin, tmax, 0.5, \"Hertz\"\nfirstFrameTime = Get frame number from time: tmin\nlastFrameTime = Get frame number from time: tmax\nnFrames = Get number of frames\nfirstFrame = round (firstFrameTime)\nlastFrame = round (lastFrameTime)\nif firstFrame < 1\nfirstFrame = 1\nendif\nif lastFrame > nFrames\nlastFrame = nFrames\nendif\nif lastFrame < 1\nlastFrame = 1\nendif\nvalue = undefined\nif median <> undefined\nceilingValue = median * 1.5\nhighest = 0\nfor pitchFrame from firstFrame to lastFrame\nf = Get value in frame: pitchFrame, \"Hertz\"\nif f <> undefined and f <= ceilingValue and f > highest\nhighest = f\nendif\nendfor\nif highest > 0\nvalue = highest\nendif\nendif\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最高基频（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最高基频（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" Hz\", rangeNote$\nendif\nselectObject: pitchId\nvalue = Get quantile: tmin, tmax, 0.5, \"Hertz\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"基频中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"基频中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" Hz\", rangeNote$\nendif\nselectObject: pitchId\nvalue = Get standard deviation: tmin, tmax, \"Hertz\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"基频标准差（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"基频标准差（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" Hz\", rangeNote$\nendif\nselectObject: pitchId\nRemove\nselectObject: 1\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
+      "results": [
+        "平均基频（0–7.600 秒）= 198.96 Hz",
+        "最低基频（0–7.600 秒）= 179.81 Hz",
+        "最高基频（0–7.600 秒）= 205.23 Hz",
+        "基频中位数（0–7.600 秒）= 199.05 Hz",
+        "基频标准差（0–7.600 秒）= 3.01 Hz"
+      ],
+      "returncode": 0,
+      "done": true,
+      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-01.praat",
+      "seconds": 0.08
+    },
+    {
+      "script": "Read from file: \"<WORKSPACE>/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\nrangeNote$ = \"\"\ntmin = 0.000000\ntmax = 7.600000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: \"查询范围无效或超出对象时长，请在对象内重新指定起止时间。\"\nendif\nselectObject: 1\nintensityId = To Intensity: 100.000000, 0, \"yes\"\nselectObject: intensityId\nvalue = Get mean: tmin, tmax, \"energy\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"平均强度（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"平均强度（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" dB\", rangeNote$\nendif\nselectObject: intensityId\nvalue = Get minimum: tmin, tmax, \"Parabolic\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最低强度（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最低强度（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" dB\", rangeNote$\nendif\nselectObject: intensityId\nvalue = Get maximum: tmin, tmax, \"Parabolic\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最高强度（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"最高强度（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" dB\", rangeNote$\nendif\nselectObject: intensityId\nvalue = Get quantile: tmin, tmax, 0.5\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"强度中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"强度中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" dB\", rangeNote$\nendif\nselectObject: intensityId\nvalue = Get standard deviation: tmin, tmax\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"强度标准差（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"强度标准差（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 2), \" dB\", rangeNote$\nendif\nselectObject: intensityId\nRemove\nselectObject: 1\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
+      "results": [
+        "平均强度（0–7.600 秒）= 71.10 dB",
+        "最低强度（0–7.600 秒）= 55.99 dB",
+        "最高强度（0–7.600 秒）= 76.38 dB",
+        "强度中位数（0–7.600 秒）= 72.29 dB",
+        "强度标准差（0–7.600 秒）= 7.34 dB"
+      ],
+      "returncode": 0,
+      "done": true,
+      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-02.praat",
+      "seconds": 0.06
+    },
+    {
+      "script": "Read from file: \"<WORKSPACE>/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\nrangeNote$ = \"\"\ntmin = 0.000000\ntmax = 7.600000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: \"查询范围无效或超出对象时长，请在对象内重新指定起止时间。\"\nendif\nselectObject: 1\nformantId = To Formant (burg): 0, 5, 5500.000000, 0.025000, 50.000000\nselectObject: formantId\nvalue = Get mean: 1, tmin, tmax, \"hertz\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 1 共振峰平均（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 1 共振峰平均（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 1), \" Hz\", rangeNote$\nendif\nselectObject: formantId\nvalue = Get mean: 2, tmin, tmax, \"hertz\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 2 共振峰平均（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 2 共振峰平均（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 1), \" Hz\", rangeNote$\nendif\nselectObject: formantId\nvalue = Get mean: 3, tmin, tmax, \"hertz\"\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 3 共振峰平均（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 3 共振峰平均（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 1), \" Hz\", rangeNote$\nendif\nselectObject: formantId\nvalue = Get quantile of bandwidth: 1, tmin, tmax, \"hertz\", 0.5\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 1 共振峰带宽中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 1 共振峰带宽中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 1), \" Hz\", rangeNote$\nendif\nselectObject: formantId\nvalue = Get quantile of bandwidth: 2, tmin, tmax, \"hertz\", 0.5\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 2 共振峰带宽中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 2 共振峰带宽中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 1), \" Hz\", rangeNote$\nendif\nselectObject: formantId\nvalue = Get quantile of bandwidth: 3, tmin, tmax, \"hertz\", 0.5\nif value = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 3 共振峰带宽中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：这一段里没有可用的数据\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"第 3 共振峰带宽中位数（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）= \", fixed$ (value, 1), \" Hz\", rangeNote$\nendif\nselectObject: formantId\nRemove\nselectObject: 1\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
+      "results": [
+        "第 1 共振峰平均（0–7.600 秒）= 912.1 Hz",
+        "第 2 共振峰平均（0–7.600 秒）= 1766.9 Hz",
+        "第 3 共振峰平均（0–7.600 秒）= 3148.9 Hz",
+        "第 1 共振峰带宽中位数（0–7.600 秒）= 726.7 Hz",
+        "第 2 共振峰带宽中位数（0–7.600 秒）= 231.1 Hz",
+        "第 3 共振峰带宽中位数（0–7.600 秒）= 559.8 Hz"
+      ],
+      "returncode": 0,
+      "done": true,
+      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-03.praat",
+      "seconds": 0.14
+    },
+    {
+      "script": "Read from file: \"<WORKSPACE>/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\nrangeNote$ = \"\"\ntmin = 0.000000\ntmax = 7.600000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: \"查询范围无效或超出对象时长，请在对象内重新指定起止时间。\"\nendif\nTo Harmonicity (cc): 0.01, 75, 0.1, 1\nRename: \"ai-chat-temp\"\nmean = Get mean: tmin, tmax\nmaximum = Get maximum: tmin, tmax, \"Parabolic\"\nif mean = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"谐噪比 HNR（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）无法计算：该区间没有周期性声源\", rangeNote$\nelse\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"谐噪比 HNR（\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒）：平均 \", fixed$ (mean, 2), \" dB，最高 \", fixed$ (maximum, 2), \" dB\", rangeNote$\nendif\nRemove\nselectObject: 1\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
+      "results": [
+        "谐噪比 HNR（0–7.600 秒）：平均 11.73 dB，最高 32.88 dB"
+      ],
+      "returncode": 0,
+      "done": true,
+      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-04.praat",
+      "seconds": 0.39
+    },
+    {
+      "script": "Read from file: \"<WORKSPACE>/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nnewId = To Spectrogram: 0.005000, 5000.000000, 0.002000, 20.000000, \"Gaussian\"\nRename: \"spec_aaaa02\"\nframes = Get number of frames\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"已生成频谱图：\", \"spec_aaaa02\", \"（id \", fixed$ (newId, 0), \"）\", \"，分析窗口 5.0 ms，最高频率 \", fixed$ (5000.000000, 0), \" Hz，共 \", fixed$ (frames, 0), \" 帧（可用 Praat 的「绘制」菜单画到 Picture 窗口）\"\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
+      "results": [
+        "已生成频谱图：spec_aaaa02（id 2），分析窗口 5.0 ms，最高频率 5000 Hz，共 3796 帧（可用 Praat 的「绘制」菜单画到 Picture 窗口）"
+      ],
+      "returncode": 0,
+      "done": true,
+      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-05.praat",
+      "seconds": 0.06
+    },
+    {
+      "script": "Read from file: \"<WORKSPACE>/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\nextractedId = 0\ntmin = 0\ntmax = duration\nrangeNote$ = \"\"\ntmin = 0.000000\ntmax = 7.600000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: \"查询范围无效或超出对象时长，请在对象内重新指定起止时间。\"\nendif\nif tmin > 0 or tmax < duration\nextractedId = Extract part: tmin, tmax, \"rectangular\", 1, \"no\"\nRename: \"ai-chat-temp\"\ntmin = 0\ntmax = Get total duration\nendif\nintensityId = To Intensity: 100.000000, 0.001000, \"yes\"\nDown to Matrix\nmatrixId = selected (\"Matrix\")\ncolsNum = Get number of columns\ntimeStep = Get column distance\nFormula: \"abs(self[col+1]-self[col])/dx\"\nmatSum = Get sum\nlastEl = Get value in cell: 1, colsNum\nslope = (matSum - lastEl) / (colsNum - 1)\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= \", fixed$ (slope, 2), \" dB/s（\", fixed$ (colsNum, 0), \" 个点，步长 \", fixed$ (timeStep, 6), \" 秒）\", rangeNote$\nselectObject: matrixId\nRemove\nselectObject: intensityId\nRemove\nif extractedId <> 0\n    selectObject: extractedId\n    Remove\nendif\nselectObject: 1\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
+      "results": [
+        "强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= 70.16 dB/s（7537 个点，步长 0.001000 秒）"
+      ],
+      "returncode": 0,
+      "done": true,
+      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-06.praat",
+      "seconds": 0.16
+    },
+    {
+      "script": "Read from file: \"<WORKSPACE>/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nduration = Get total duration\ntmin = 0\ntmax = duration\nrangeNote$ = \"\"\ntmin = 0.000000\ntmax = 7.600000\nif tmin < 0\n    tmin = 0\nendif\nif tmax > duration\n    tmax = duration\nendif\nif tmin > tmax\n    exitScript: \"查询范围无效或超出对象时长，请在对象内重新指定起止时间。\"\nendif\nTo Pitch: 0, 75.000000, 600.000000\nRename: \"ai-chat-temp\"\npeakTime = Get time of maximum: tmin, tmax, \"Hertz\", \"Parabolic\"\nif peakTime = undefined\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"基频峰值延迟无法计算：\", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒这一段里没有可用的基频（全是清音或无声段）。\"\nelse\nlatency = (peakTime - tmin) / (tmax - tmin)\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"基频峰值延迟 = \", fixed$ (latency, 3), \"（峰值 \", fixed$ (peakTime, 3), \" 秒出现在 \", fixed$ (tmin, 3), \"–\", fixed$ (tmax, 3), \" 秒这一段里；0.5 = 正好在中间）\", rangeNote$\nendif\nRemove\nselectObject: 1\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
+      "results": [
+        "基频峰值延迟 = 0.418（峰值 3.175 秒出现在 0–7.600 秒这一段里；0.5 = 正好在中间）"
+      ],
+      "returncode": 0,
+      "done": true,
+      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-07.praat",
+      "seconds": 0.08
+    },
+    {
+      "script": "Read from file: \"<WORKSPACE>/test/fon/examples/sounds/aaaa02.wav\"\nselectObject: 1\nView & Edit\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_result.tsv\", \"已打开编辑器：\", \"Sound aaaa02\"\nappendFileLine: \"C:/Users/USER/AppData/Local/Temp/live-analysis-1gcn4ist/chat_state.txt\", \"done\"\n",
+      "results": [],
+      "returncode": 4294967295,
+      "done": false,
+      "console": "########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat\r\nError: Cannot edit a Sound from batch.\r\nScript line 3 not performed or completed:\r\n« 查看并编辑 »\r\nScript “C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat” not completed.\r\nPraat: script command <<C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat>> not completed.",
+      "seconds": 0.06
+    }
+  ],
+  "steps": [
+    {
+      "tool": "object_info",
+      "ok": true,
+      "arguments": {},
+      "observation": "工具 object_info 执行成功，结果：Sound「Sound aaaa02」（id 1）：时长 7.600 秒，通道数 2，采样率 50000 Hz"
+    },
+    {
+      "tool": "measure",
+      "ok": true,
+      "arguments": {
+        "from": 0,
+        "object": "Sound aaaa02",
+        "parameter": "mean_pitch,minimum_pitch,maximum_pitch,median_pitch,sd_pitch",
+        "to": 7.6
+      },
+      "observation": "工具 measure 执行成功，结果：平均基频（0–7.600 秒）= 198.96 Hz；最低基频（0–7.600 秒）= 179.81 Hz；最高基频（0–7.600 秒）= 205.23 Hz；基频中位数（0–7.600 秒）= 199.05 Hz；基频标准差（0–7.600 秒）= 3.01 Hz"
+    },
+    {
+      "tool": "measure",
+      "ok": true,
+      "arguments": {
+        "from": 0,
+        "object": "Sound aaaa02",
+        "parameter": "mean_intensity,minimum_intensity,maximum_intensity,median_intensity,sd_intensity",
+        "to": 7.6
+      },
+      "observation": "工具 measure 执行成功，结果：平均强度（0–7.600 秒）= 71.10 dB；最低强度（0–7.600 秒）= 55.99 dB；最高强度（0–7.600 秒）= 76.38 dB；强度中位数（0–7.600 秒）= 72.29 dB；强度标准差（0–7.600 秒）= 7.34 dB"
+    },
+    {
+      "tool": "measure",
+      "ok": true,
+      "arguments": {
+        "from": 0,
+        "object": "Sound aaaa02",
+        "parameter": "f1,f2,f3,b1,b2,b3",
+        "to": 7.6
+      },
+      "observation": "工具 measure 执行成功，结果：第 1 共振峰平均（0–7.600 秒）= 912.1 Hz；第 2 共振峰平均（0–7.600 秒）= 1766.9 Hz；第 3 共振峰平均（0–7.600 秒）= 3148.9 Hz；第 1 共振峰带宽中位数（0–7.600 秒）= 726.7 Hz；第 2 共振峰带宽中位数（0–7.600 秒）= 231.1 Hz；第 3 共振峰带宽中位数（0–7.600 秒）= 559.8 Hz"
+    },
+    {
+      "tool": "harmonicity_statistics",
+      "ok": true,
+      "arguments": {
+        "from": 0,
+        "object": "Sound aaaa02",
+        "to": 7.6
+      },
+      "observation": "工具 harmonicity_statistics 执行成功，结果：谐噪比 HNR（0–7.600 秒）：平均 11.73 dB，最高 32.88 dB"
+    },
+    {
+      "tool": "spectrogram",
+      "ok": true,
+      "arguments": {
+        "max_frequency": 5000,
+        "name": "spec_aaaa02",
+        "object": "Sound aaaa02",
+        "window_length": 0.005
+      },
+      "observation": "工具 spectrogram 执行成功，结果：已生成频谱图：spec_aaaa02（id 2），分析窗口 5.0 ms，最高频率 5000 Hz，共 3796 帧（可用 Praat 的「绘制」菜单画到 Picture 窗口）"
+    },
+    {
+      "tool": "intensity_slope",
+      "ok": true,
+      "arguments": {
+        "from": 0,
+        "method": "local",
+        "object": "Sound aaaa02",
+        "to": 7.6
+      },
+      "observation": "工具 intensity_slope 执行成功，结果：强度局部斜率（相邻点绝对差 ÷ 时间步长，取平均）= 70.16 dB/s（7537 个点，步长 0.001000 秒）"
+    },
+    {
+      "tool": "pitch_peak_latency",
+      "ok": true,
+      "arguments": {
+        "from": 0,
+        "object": "Sound aaaa02",
+        "to": 7.6
+      },
+      "observation": "工具 pitch_peak_latency 执行成功，结果：基频峰值延迟 = 0.418（峰值 3.175 秒出现在 0–7.600 秒这一段里；0.5 = 正好在中间）"
+    },
+    {
+      "tool": "view_edit",
+      "ok": false,
+      "arguments": {
+        "object": "spec_aaaa02"
+      },
+      "observation": "工具 view_edit 执行失败：########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat\r\nError: Cannot edit a Sound from batch.\r\nScript line 3 not performed or completed:\r\n« 查看并编辑 »\r\nScript “C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat” not completed.\r\nPraat: script command <<C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat>> not completed."
+    }
+  ],
+  "failure": "工具 view_edit 执行失败：########## Running Praat script C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat\r\nError: Cannot edit a Sound from batch.\r\nScript line 3 not performed or completed:\r\n« 查看并编辑 »\r\nScript “C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat” not completed.\r\nPraat: script command <<C:\\Users\\USER\\AppData\\Local\\Temp\\live-analysis-1gcn4ist\\step-08.praat>> not completed.",
+  "notes": []
 }

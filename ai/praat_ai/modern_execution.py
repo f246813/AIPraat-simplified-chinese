@@ -598,8 +598,7 @@ class ModernExecutor:
                         from types import SimpleNamespace
                         guard_session = SimpleNamespace(state=state, schemas=tools.tool_schemas(),
                             original_object_ids={r.id for r in dispatcher.context.objects})
-                        # 直接测量也要走同一套工具预算：以前它无条件 +1，闭式合约再多也不会
-                        # 被 tool_limit 挡住（2026-10-07 复查）。
+                        # 直接测量同样受工具预算限制，不能绕过 tool_limit 不断执行。
                         try:
                             if state.tool_attempts >= state.budget.tool_limit:
                                 raise BranchExit('跨阶段工具预算不足')
@@ -704,8 +703,8 @@ class ModernExecutor:
         if state.measurement_content and not formal_content.startswith(state.measurement_content):
             formal_content = state.measurement_content + '\n\n' + formal_content
             state.report = formal_content
-        # 遮过数值仍交付的正文（report_repaired）也算正式回合：它确实显示给了用户，
-        # 下一轮追问要能引用它。丢掉它会让「刚才那个结果」失去指代对象（2026-10-07）。
+        # 遮过数值仍交付的正文也算正式回合：它已经显示给用户，
+        # 下一轮追问需要能引用它。
         formal = not cancel.is_set() and (state.status == 'complete'
                                           or state.metrics.get('report_verified', False)
                                           or state.metrics.get('report_repaired', False))
@@ -715,9 +714,8 @@ class ModernExecutor:
         if state.coverage and state.metrics.get('route_reason') != 'measurement_complete':
             state.report += '\n\n交付项状态：\n' + '\n'.join(
                 '- ' + item['item'] + '：' + item['status'] + '。' + item['explanation'] for item in state.coverage)
-        # 模型为了让「只看这一段」成立而自建的对象（extract_part/duplicate/…），测量用完之后
-        # 要收掉：不然它会留在对象列表里，下一轮被当成测量对象（2026-10-07 实测：一轮截出的
-        # 片段在下一轮的基频统计里被顺便量了时长）。用户明确要求创建的对象不动。
+        # 为满足「只看这一段」而创建的对象在测量后清理，避免留在对象列表里
+        # 被下一轮当作测量对象；用户明确要求创建的对象不清理。
         if dispatcher and not cancel.is_set():
             try:
                 # 空列表表示没有候选；字段缺失表示没有进入清理流程。

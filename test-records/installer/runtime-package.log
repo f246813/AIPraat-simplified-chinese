@@ -1,0 +1,13 @@
+PASS AIPraat-install.exe embedded ConfigurePython.ps1 matches project source
+PASS AIPraat-install.exe embedded requirements-wav2vec2.txt matches project source
+PASS AIPraat-install.exe embedded requirements.txt matches project source
+PASS AIPraat-install.exe embedded runtime_dependencies.py matches project source
+PASS AIPraat-paths.exe embedded ConfigurePython.ps1 matches project source
+PASS AIPraat-paths.exe embedded requirements-wav2vec2.txt matches project source
+PASS AIPraat-paths.exe embedded requirements.txt matches project source
+PASS AIPraat-paths.exe embedded runtime_dependencies.py matches project source
+PASS payload ai/runtime_dependencies.py matches final delivery
+PASS payload ai/requirements.txt matches final delivery
+PASS payload ai/requirements-wav2vec2.txt matches final delivery
+PASS payload ai/ConfigurePython.ps1 matches final delivery
+PASS payload AIPraat-paths.exe matches final delivery

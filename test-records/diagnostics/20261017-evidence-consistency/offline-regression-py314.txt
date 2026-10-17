@@ -1,0 +1,139 @@
+python.exe : ======================================================================
+所在位置 行:5 字符: 1
++ & python -m unittest test_phase_context test_cloud_protocol test_dial ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (===============...===============:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ERROR: test_phase_context (unittest.loader._FailedTest.test_phase_context)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_phase_context
+Traceback (most recent call last):
+  File "<USER_HOME>\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 141, in loadTestsFromName
+    module = __import__(module_name)
+  File "<WORKSPACE>\ai\tests\test_phase_context.py", line 9, in <module>
+    from praat_ai.cloud_agent import planner_system, report_instructions, run_dialogue_turn
+  File "<WORKSPACE>\ai\praat_ai\cloud_agent.py", line 21, in <module>
+    from pydantic import BaseModel, Field
+ModuleNotFoundError: No module named 'pydantic'
+
+
+======================================================================
+ERROR: test_cloud_protocol (unittest.loader._FailedTest.test_cloud_protocol)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_cloud_protocol
+Traceback (most recent call last):
+  File "<USER_HOME>\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 141, in loadTestsFromName
+    module = __import__(module_name)
+  File "<WORKSPACE>\ai\tests\test_cloud_protocol.py", line 14, in <module>
+    from praat_ai.cloud_agent import run_cloud_turn
+  File "<WORKSPACE>\ai\praat_ai\cloud_agent.py", line 21, in <module>
+    from pydantic import BaseModel, Field
+ModuleNotFoundError: No module named 'pydantic'
+
+
+======================================================================
+ERROR: test_dialogue_protocol (unittest.loader._FailedTest.test_dialogue_protocol)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_dialogue_protocol
+Traceback (most recent call last):
+  File "<USER_HOME>\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 141, in loadTestsFromName
+    module = __import__(module_name)
+  File "<WORKSPACE>\ai\tests\test_dialogue_protocol.py", line 11, in <module>
+    from praat_ai.cloud_agent import CloudRuntime, run_dialogue_turn
+  File "<WORKSPACE>\ai\praat_ai\cloud_agent.py", line 21, in <module>
+    from pydantic import BaseModel, Field
+ModuleNotFoundError: No module named 'pydantic'
+
+
+======================================================================
+ERROR: test_cloud_escape (unittest.loader._FailedTest.test_cloud_escape)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_cloud_escape
+Traceback (most recent call last):
+  File "<USER_HOME>\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 141, in loadTestsFromName
+    module = __import__(module_name)
+  File "<WORKSPACE>\ai\tests\test_cloud_escape.py", line 5, in <module>
+    from pydantic_ai.messages import ModelResponse, TextPart, ToolCallPart
+ModuleNotFoundError: No module named 'pydantic_ai'
+
+
+======================================================================
+ERROR: test_report_guards (unittest.loader._FailedTest.test_report_guards)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_report_guards
+Traceback (most recent call last):
+  File "<USER_HOME>\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 141, in loadTestsFromName
+    module = __import__(module_name)
+  File "<WORKSPACE>\ai\tests\test_report_guards.py", line 3, in <module>
+    from pydantic_ai import ModelRetry
+ModuleNotFoundError: No module named 'pydantic_ai'
+
+
+======================================================================
+ERROR: test_tool_guards (unittest.loader._FailedTest.test_tool_guards)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_tool_guards
+Traceback (most recent call last):
+  File "<USER_HOME>\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 141, in loadTestsFromName
+    module = __import__(module_name)
+  File "<WORKSPACE>\ai\tests\test_tool_guards.py", line 6, in <module>
+    from pydantic_ai.messages import ModelResponse, TextPart, ToolCallPart
+ModuleNotFoundError: No module named 'pydantic_ai'
+
+
+======================================================================
+ERROR: test_delivery_state (unittest.loader._FailedTest.test_delivery_state)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_delivery_state
+Traceback (most recent call last):
+  File "<USER_HOME>\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 141, in loadTestsFromName
+    module = __import__(module_name)
+  File "<WORKSPACE>\ai\tests\test_delivery_state.py", line 21, in <module>
+    from pydantic_ai.messages import ModelResponse, TextPart, ToolCallPart
+ModuleNotFoundError: No module named 'pydantic_ai'
+
+
+======================================================================
+ERROR: test_report_chain_regressions (unittest.loader._FailedTest.test_report_chain_regressions)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_report_chain_regressions
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\tests\test_report_chain_regressions.py", line 15, in <module>
+    import httpx
+ModuleNotFoundError: No module named 'httpx'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<USER_HOME>\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 141, in loadTestsFromName
+    module = __import__(module_name)
+  File "<WORKSPACE>\ai\tests\test_report_chain_regressions.py", line 17, in <module>
+    import httpx2 as httpx
+ModuleNotFoundError: No module named 'httpx2'
+
+
+======================================================================
+ERROR: test_token_budget (unittest.loader._FailedTest.test_token_budget)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_token_budget
+Traceback (most recent call last):
+  File "<USER_HOME>\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 141, in loadTestsFromName
+    module = __import__(module_name)
+  File "<WORKSPACE>\ai\tests\test_token_budget.py", line 13, in <module>
+    from praat_ai import chat, qwen, tools
+  File "<WORKSPACE>\ai\praat_ai\chat.py", line 37, in <module>
+    from . import (
+    ...<14 lines>...
+    )
+  File "<WORKSPACE>\ai\praat_ai\api_settings.py", line 14, in <module>
+    from . import qwen, ui_theme, ui_widgets, ui_windows, model_capabilities, api_diagnostics
+  File "<WORKSPACE>\ai\praat_ai\ui_widgets.py", line 16, in <module>
+    from PIL import Image, ImageDraw, ImageTk
+ModuleNotFoundError: No module named 'PIL'
+
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.000s
+
+FAILED (errors=9)

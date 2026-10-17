@@ -1,4 +1,5 @@
 import unittest
+import math
 
 from praat_ai.models import (
     AnalysisRequest,
@@ -54,6 +55,17 @@ class PronunciationTests(unittest.TestCase):
         errors = compare_phone(self.request, reference, learner)
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0].feature, "f1")
+
+    def test_nonfinite_learner_samples_do_not_enter_dtw(self) -> None:
+        reference = PhoneFeatureTracks(1, "a", 0.0, 0.1, {
+            "f1": FeatureTrack("f1", [0.0, 0.1], [700.0, 700.0], "Hz", 1.0, 100.0)})
+        learner = PhoneFeatureTracks(1, "a", 0.0, 0.1, {
+            "f1": FeatureTrack("f1", [0.0, 0.05, 0.1], [1100.0, math.nan, 1100.0], "Hz", 1.0, 100.0)})
+        errors = compare_phone(self.request, reference, learner)
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0].learner_value, 1100.0)
+        self.assertTrue(math.isfinite(errors[0].score))
+        self.assertTrue(math.isnan(learner.tracks["f1"].values[1]))
 
 
 if __name__ == "__main__":

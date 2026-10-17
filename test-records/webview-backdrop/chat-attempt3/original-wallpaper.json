@@ -1,0 +1,4 @@
+{
+  "wallpaper": "C:\\WINDOWS\\web\\wallpaper\\Windows\\img0.jpg",
+  "restore": "SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, wallpaper, SPIF_SENDCHANGE)"
+}

@@ -1,0 +1,10 @@
+﻿python.exe : ----------------------------------------------------------------------
+所在位置 行:4 字符: 1
++ & $py -m unittest test_phase_context test_cloud_protocol test_dialogu ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (---------------...---------------:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Ran 132 tests in 12.166s
+
+OK

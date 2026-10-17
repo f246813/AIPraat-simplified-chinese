@@ -1,0 +1,8 @@
+START alignment probe suite
+PASS probe_report_parses_and_describes_every_item
+PASS missing_probe_result_is_not_reported_as_healthy
+PASS alignment_paths_round_trip_preserves_conda_launcher
+PASS panel_keeps_mfa_unverified_when_nothing_is_configured
+PASS panel_flags_a_broken_alignment_environment
+PASS alignment_dialog_edits_the_launcher_and_redetects
+Screenshots: <WORKSPACE>\scratch\tmp-mfaui\AIPraat-mfa-ui-0650ea325ea44207b15bafde03d540ae

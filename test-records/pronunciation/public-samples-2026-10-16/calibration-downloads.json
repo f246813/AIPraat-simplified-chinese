@@ -1,0 +1,90 @@
+[
+  {
+    "id": "bdl_arctic_a0531",
+    "speaker": "bdl",
+    "utterance": "arctic_a0531",
+    "transcript": "In what bucolic school of fence he had been taught was beyond imagining.",
+    "path": "calibration-audio\\bdl_arctic_a0531.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0531.wav",
+    "sha256": "181376d9676854a493c53e6ce9e62e1fcf4ecc5c8d487ba18833a2c144995350",
+    "bytes": 132046,
+    "duration": 4.1250625
+  },
+  {
+    "id": "bdl_arctic_b0242",
+    "speaker": "bdl",
+    "utterance": "arctic_b0242",
+    "transcript": "The Japanese understood as we could never school ourselves or hope to understand.",
+    "path": "calibration-audio\\bdl_arctic_b0242.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_b0242.wav",
+    "sha256": "31b8c369dc6bba5ad74e7eb011cbddc66dcd8ff9fa109c12d361d0f59f877925",
+    "bytes": 131726,
+    "duration": 4.1150625
+  },
+  {
+    "id": "bdl_arctic_b0375",
+    "speaker": "bdl",
+    "utterance": "arctic_b0375",
+    "transcript": "Man could not conquer them.",
+    "path": "calibration-audio\\bdl_arctic_b0375.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_b0375.wav",
+    "sha256": "1d44140906a74cd69e59b39685345d2849c582800116f6d06041bed3ae434f00",
+    "bytes": 42446,
+    "duration": 1.3250625
+  },
+  {
+    "id": "bdl_arctic_b0166",
+    "speaker": "bdl",
+    "utterance": "arctic_b0166",
+    "transcript": "Fast, but endure.",
+    "path": "calibration-audio\\bdl_arctic_b0166.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_b0166.wav",
+    "sha256": "8d53ae15fe14c937fafda91253fe1d3a475c8fcd662fb35390e65cb239c094e9",
+    "bytes": 38926,
+    "duration": 1.2150625
+  },
+  {
+    "id": "slt_arctic_a0531",
+    "speaker": "slt",
+    "utterance": "arctic_a0531",
+    "transcript": "In what bucolic school of fence he had been taught was beyond imagining.",
+    "path": "calibration-audio\\slt_arctic_a0531.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0531.wav",
+    "sha256": "66412273ec3cfc5113c007c597ff85d2dd7114d7d1910f5d278f1f8a71f6cf4d",
+    "bytes": 125966,
+    "duration": 3.9350625
+  },
+  {
+    "id": "slt_arctic_b0242",
+    "speaker": "slt",
+    "utterance": "arctic_b0242",
+    "transcript": "The Japanese understood as we could never school ourselves or hope to understand.",
+    "path": "calibration-audio\\slt_arctic_b0242.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_b0242.wav",
+    "sha256": "4c4f69d6730d7aac6eca704fd488f4e6bd00ff86bc063cda44249d9ab1f09b73",
+    "bytes": 145806,
+    "duration": 4.5550625
+  },
+  {
+    "id": "slt_arctic_b0375",
+    "speaker": "slt",
+    "utterance": "arctic_b0375",
+    "transcript": "Man could not conquer them.",
+    "path": "calibration-audio\\slt_arctic_b0375.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_b0375.wav",
+    "sha256": "ba84821494b465993f9745f3d8a13aa489f684664373b1fbf7f55abf0d187e12",
+    "bytes": 62606,
+    "duration": 1.9550625
+  },
+  {
+    "id": "slt_arctic_b0166",
+    "speaker": "slt",
+    "utterance": "arctic_b0166",
+    "transcript": "Fast, but endure.",
+    "path": "calibration-audio\\slt_arctic_b0166.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_b0166.wav",
+    "sha256": "8045b0300b66a7d1f0340f2a1953ec5e3591e9f519ceeb54bca854c521b1f610",
+    "bytes": 58124,
+    "duration": 1.815
+  }
+]

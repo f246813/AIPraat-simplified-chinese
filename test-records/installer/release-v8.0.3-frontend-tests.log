@@ -1,0 +1,41 @@
+
+> praat-assistant-frontend@1.0.0 test
+> vitest run
+
+
+ RUN  v3.2.4 <WORKSPACE>/ai/frontend
+
+ ✓ tests/search.test.ts (8 tests) 37ms
+ ✓ tests/bridge-store.test.ts (17 tests) 48ms
+ ✓ tests/session-menu.test.ts (7 tests) 33ms
+ ✓ tests/organization-store.test.ts (9 tests) 351ms
+ ✓ tests/workflow-settings.test.tsx (2 tests) 400ms
+   ✓ workflow presets, custom edit, host save and reopen never start model tests  398ms
+ ✓ tests/startup-session.test.ts (3 tests) 25ms
+ ✓ tests/archived-settings.test.tsx (2 tests) 515ms
+   ✓ failed restore keeps history visible, reports the error and permits a successful retry  367ms
+ ✓ tests/archived-groups.test.ts (2 tests) 17ms
+ ✓ tests/model-settings-navigation.test.tsx (2 tests) 545ms
+   ✓ repeated menu requests select Model/API and keep unsaved settings  539ms
+ ✓ tests/layout.test.ts (7 tests) 23ms
+ ✓ tests/composer-status.test.tsx (8 tests) 933ms
+   ✓ debounces real host estimates and ignores stale session replies  353ms
+ ✓ tests/local-model-path-settings.test.tsx (2 tests) 662ms
+   ✓ local connection settings offer a model picker and save its path  459ms
+ ✓ tests/sidebar-search.test.tsx (5 tests) 664ms
+ ✓ tests/editor.test.ts (10 tests) 17ms
+ ✓ tests/speech-dictionaries.test.tsx (9 tests) 1466ms
+   ✓ opens the Wav2Vec2 folder picker and selects a model through its own namespace  443ms
+ ✓ tests/modern-boundaries.test.ts (2 tests) 8ms
+ ✓ tests/transcript-window.test.ts (6 tests) 6ms
+ ✓ tests/transcript-menu.test.ts (5 tests) 6ms
+ ✓ tests/completions.test.ts (4 tests) 5ms
+ ✓ tests/minimap.test.ts (6 tests) 8ms
+ ✓ tests/sidebar-origins.test.ts (2 tests) 5ms
+ ✓ tests/scroll.test.ts (5 tests) 3ms
+
+ Test Files  22 passed (22)
+      Tests  123 passed (123)
+   Start at  03:34:16
+   Duration  4.29s (transform 1.63s, setup 0ms, collect 7.59s, tests 5.78s, environment 22.03s, prepare 3.41s)
+

@@ -1,0 +1,11 @@
+{
+  "action": "cancel",
+  "realCloud": false,
+  "checks": [
+    "production-React-assets-real-WebView2-RPC-and-local-model-label",
+    "cancel-or-native-close-produces-no-analysis"
+  ],
+  "exitCode": 0,
+  "reportsGenerated": 0,
+  "passed": true
+}

@@ -1,0 +1,61 @@
+test_status_write_does_not_reuse_unwritable_pid_temporary_file (ai.tests.test_desktop_launch.DesktopLaunchTests.test_status_write_does_not_reuse_unwritable_pid_temporary_file) ... ERROR
+test_status_write_failure_reports_original_error_without_second_exception (ai.tests.test_desktop_launch.DesktopLaunchTests.test_status_write_failure_reports_original_error_without_second_exception) ... ERROR
+
+======================================================================
+ERROR: test_status_write_does_not_reuse_unwritable_pid_temporary_file (ai.tests.test_desktop_launch.DesktopLaunchTests.test_status_write_does_not_reuse_unwritable_pid_temporary_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\praat_ai\desktop_launch.py", line 37, in write_record
+    temporary.write_text(json.dumps(values, ensure_ascii=False, indent=2), encoding='utf8')
+  File "<USER_HOME>\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<USER_HOME>\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '<USER_HOME>\\AppData\\Local\\Temp\\tmp5plllq1o\\status.json.26008.tmp'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\tests\test_desktop_launch.py", line 48, in test_status_write_does_not_reuse_unwritable_pid_temporary_file
+    launch.write_record(status, {'success': True})
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\praat_ai\desktop_launch.py", line 40, in write_record
+    temporary.unlink(missing_ok=True)
+  File "<USER_HOME>\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1342, in unlink
+    os.unlink(self)
+PermissionError: [WinError 5] �ܾ����ʡ�: '<USER_HOME>\\AppData\\Local\\Temp\\tmp5plllq1o\\status.json.26008.tmp'
+
+======================================================================
+ERROR: test_status_write_failure_reports_original_error_without_second_exception (ai.tests.test_desktop_launch.DesktopLaunchTests.test_status_write_failure_reports_original_error_without_second_exception)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\tests\test_desktop_launch.py", line 62, in test_status_write_failure_reports_original_error_without_second_exception
+    self.assertEqual(launch.menu_control_main([]), 1)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\praat_ai\desktop_launch.py", line 116, in menu_control_main
+    write_record(runtime / 'status.json', dict(success=False, frontend_running=False,
+  File "<USER_HOME>\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<USER_HOME>\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<USER_HOME>\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "<WORKSPACE>\�ȶ����ڰ�\ai\praat_ai\desktop_launch.py", line 110, in menu_control_main
+    write_record(runtime / 'status.json', dict(
+  File "<USER_HOME>\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<USER_HOME>\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<USER_HOME>\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+PermissionError: status.json.8064.tmp access denied
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.012s
+
+FAILED (errors=2)

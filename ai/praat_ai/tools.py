@@ -362,8 +362,8 @@ def _integer(
 #: 会因为模型选了不同工具而成功或失败）。与 measures.tsv 的 @@ settings 保持一致。
 PITCH_FLOOR_BOUNDS = (10.0, 2000.0)
 PITCH_CEILING_BOUNDS = (20.0, 5000.0)
-#: 范围端点的同义写法：说明书写过 finish，代码却只读 to/end（2026-10-07 实测：
-#: ``from`` + ``finish`` 会静默变成整段测量）。
+#: 范围端点的同义写法：说明书写过 finish，代码只读 to/end 时
+#: ``from`` + ``finish`` 会被静默当作整段测量。
 RANGE_START_KEYS = ("from", "start")
 RANGE_END_KEYS = ("to", "end", "finish")
 
@@ -1198,8 +1198,8 @@ def _build_harmonicity_statistics(
         "谐噪比分析需要 Sound 或 Harmonicity 对象",
     )
     temporary = row.class_name != "Harmonicity"
-    # 谐噪比的基频下限就是 measures.tsv 里的 harmonicity_floor（20–1000 Hz）；以前写死 75，
-    # 用户说「用 40 Hz 下限」也没用（2026-10-07 实测）。这里用它的界限，并在越界时说清楚。
+    # 谐噪比的基频下限使用 measures.tsv 的 harmonicity_floor（20–1000 Hz），
+    # 与默认 75 Hz 不同；越界时明确报错。
     try:
         floor = _number(arguments, "pitch_floor", 75.0, 20.0, 1000.0)
     except ToolError as error:
@@ -1622,7 +1622,7 @@ def _build_vot_explicit(arguments: Mapping[str, Any], context: ToolContext) -> s
     if voicing <= burst:
         raise ToolError(
             f"浊音起始必须晚于爆破时刻（现在 burst={burst:.3f} 秒、"
-            f"voicing={voicing:.3f} 秒）。"
+            f"voicing={voicing:.3f} 秒）；先浊后爆（prevoiced）的负 VOT 需要原生动作，那条路线已暂停。"
         )
     tier = _tier_number(arguments)
     lines = [
@@ -2284,8 +2284,8 @@ def _build_read_file(arguments: Mapping[str, Any], context: ToolContext) -> str:
     raw = raw.strip('"')
     if not raw:
         raise ToolError("需要给出要读取的文件路径（path），例如 D:/in/a.wav。")
-    # 只转义一次：praat_path() 已经处理过引号，再交给 quote() 会变成 """"q""""，
-    # Praat 解出来的路径就不是用户给的那个了（2026-10-07 实测）。
+    # 路径只转义一次：praat_path() 已处理引号，再交给 quote() 会使 Praat
+    # 解析到与用户输入不同的路径。
     path = str(Path(raw)).replace("\\", "/")
     lines = [
         f"if not fileReadable ({quote(path)})",
@@ -2424,9 +2424,8 @@ def _build_spectral_emphasis(
         "else",
         f"cutoff = meanPitch * {multiplier:.6f}",
         f"Filter (pass Hann band): 0, cutoff, {smoothing:.6f}",
-        # Filter 会新建一个 "<名字>_band" 的 Sound 并选中它。以前用裸 Remove 删「当前选中」，
-        # 一旦选择状态不是它就会留下副本或误删（2026-10-07 实测：对象列表里多出一个副本）。
-        # 这里显式记下它，并且绝不删原对象。
+        # Filter 会新建 "<名字>_band" 的 Sound 并选中它。显式记录该对象并按 id 删除，
+        # 不依赖当前选择状态，也绝不删除原对象。
         'filteredId = selected ("Sound")',
         "filtered = Get intensity (dB)",
         f"if filteredId <> 0 and filteredId <> {row.id}",
@@ -2910,8 +2909,8 @@ def _measure_entries(arguments: Mapping[str, Any]) -> list[measures.Entry]:
     table = measures.load_table()
     raw = arguments.get("parameter", arguments.get("parameters"))
     entries: list[measures.Entry] = []
-    # 整串先当**一个**参数试一次：这样 "jitter local"、"第 1 共振峰" 这类带空格的常见
-    # 说法不会被按空格切开（2026-10-07 实测：切开后变成「不认识参数「jitter」」）。
+    # 整串先作为一个参数尝试：带空格的常见写法（"jitter local"、"第 1 共振峰"）
+    # 不会被拆成多个未知参数。
     if isinstance(raw, str) and raw.strip():
         try:
             return [table.find(raw)]
@@ -2957,9 +2956,8 @@ def _measure_settings(
     if isinstance(floor, (int, float)) and isinstance(ceiling, (int, float)):
         if floor >= ceiling:
             raise ToolError("pitch_floor（基频下限）必须小于 pitch_ceiling（基频上限）。")
-    # 用户说「用 40 Hz 下限算谐噪比」时填的是 pitch_floor；谐噪比的派生用的是
-    # harmonicity_floor，两张表分开写着，以前这句话会被静默忽略（2026-10-07 实测）。
-    # 只有这次真的要求 hnr 时才折算，免得把纯基频测量的 pitch_floor 也拿去卡谐噪比界限。
+    # 用户给 pitch_floor 时，谐噪比派生使用独立的 harmonicity_floor 占位符。
+    # 只有本次确实请求 hnr 时才折算，避免影响纯基频测量的参数范围。
     needs_harmonicity = any("harmonicity" in measures.source_keys(entry.source) for entry in entries)
     if (needs_harmonicity and arguments.get("pitch_floor") not in (None, "")
             and arguments.get("harmonicity_floor") in (None, "")):
@@ -3168,8 +3166,8 @@ def _build_measure(arguments: Mapping[str, Any], context: ToolContext) -> str:
         )
         lines.append("endif")
 
-    # 编辑器专属参数不能在对象列表里算：以前这里写一行中文说明就算「调用成功」，
-    # 报告阶段会把它当成一次有结果的测量（2026-10-07）。执行前拒绝，并指出替代做法。
+    # 编辑器专属参数在对象列表上不可用：执行前拒绝并给出替代做法，
+    # 不能只写一行说明却记作成功测量。
     if editor_only:
         labels = "、".join(f"{entry.parameter}（{entry.label}）" for entry in editor_only)
         raise ToolError(
@@ -3185,7 +3183,7 @@ def _build_measure(arguments: Mapping[str, Any], context: ToolContext) -> str:
 
 
 # ---------------------------------------------------------------------------
-# C3：把现成的（社区）Praat 脚本跑起来。
+# 社区 Praat 脚本在独立批处理进程中运行。
 #
 # 不走「渲染脚本 → 投递给开着的 Praat」：现成脚本普遍带表单和报错对话框，两条都
 # 会把用户开着的 Praat 卡住（模态框挡住后面所有消息）。所以这里导出对象副本、
@@ -3349,7 +3347,7 @@ class LocalEnvironment:
     execute: Callable[[str], tuple[bool, list[str], str]]
     praat_executable: str
     runtime_directory: Path
-    #: 用户按了「停止」没有（C7）：批处理、多步流程每一步都问一次。
+    #: 用户是否已按下「停止」：批处理和多步流程在执行每一步前检查。
     cancelled: Callable[[], bool] | None = None
 
 
@@ -4334,8 +4332,8 @@ ALIAS_ARGUMENTS: dict[str, frozenset[str]] = {
     "vot": frozenset({"onset", "start", "end", "finish", "tier_number"}),
     "custom_script": frozenset({"script"}),
 }
-#: 这些工具按定义只作用于整个对象：给了范围参数就是听不懂用户要什么，
-#: 与其静默按整段测（2026-10-07 实测：一个**正确**的范围被无声丢掉），不如说清楚。
+#: 这些工具按定义作用于整个对象：给出范围参数说明请求未被理解，
+#: 静默按整段测量会丢掉用户明确的范围。
 WHOLE_OBJECT_ONLY = frozenset({
     "duration", "object_info", "spectral_emphasis", "hl_ratio", "hammarberg_index",
     "spectrogram", "resample_sound", "save_sound",

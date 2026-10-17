@@ -1,0 +1,124 @@
+{
+  "schema": "mfa-alignment-probe-v1",
+  "preset": {
+    "id": "ja-JP",
+    "name": "日语（标准语）",
+    "language": "ja",
+    "variant": "ja-JP",
+    "dictionary": "dictionary-35b59f2dfd664675a4ffb510dddaec05",
+    "acoustic": "acoustic-965c57da4e294ee389d9667e9946f85e"
+  },
+  "launcher": {
+    "executable": "",
+    "conda_executable": "<USER_HOME>\\miniforge3\\Scripts\\conda.exe",
+    "conda_environment": "aligner"
+  },
+  "ready": true,
+  "summary": "对齐环境可用（conda run -n aligner mfa）；资源静态检查：未验证",
+  "environment": {
+    "schema": "mfa-alignment-probe-v1",
+    "ready": true,
+    "summary": "对齐环境可用：3.4.2",
+    "launcher": "conda run -n aligner mfa",
+    "environment": "aligner",
+    "version": "3.4.2",
+    "python": "<USER_HOME>\\miniforge3\\envs\\aligner\\python.exe",
+    "checks": [
+      {
+        "id": "launcher",
+        "label": "MFA 启动方式",
+        "status": "ok",
+        "detail": "conda run -n aligner mfa · 3.4.2",
+        "repair": ""
+      },
+      {
+        "id": "soundfile",
+        "label": "libsndfile 音频读写",
+        "status": "ok",
+        "detail": "0.14.0 / libsndfile 1.2.2",
+        "repair": ""
+      },
+      {
+        "id": "openfst",
+        "label": "openfst（fstcompile）",
+        "status": "ok",
+        "detail": "<USER_HOME>\\miniforge3\\envs\\aligner\\Library\\bin\\fstcompile.EXE",
+        "repair": ""
+      },
+      {
+        "id": "kalpy",
+        "label": "kalpy/kaldi 绑定",
+        "status": "ok",
+        "detail": "installed",
+        "repair": ""
+      },
+      {
+        "id": "librosa",
+        "label": "librosa + numba 缓存",
+        "status": "ok",
+        "detail": "1.0.0",
+        "repair": ""
+      },
+      {
+        "id": "mfa",
+        "label": "Montreal Forced Aligner",
+        "status": "ok",
+        "detail": "3.4.2",
+        "repair": ""
+      },
+      {
+        "id": "temp",
+        "label": "临时目录可写",
+        "status": "ok",
+        "detail": "X:\\scratch\\tmp-mfaenv",
+        "repair": ""
+      },
+      {
+        "id": "dictionary",
+        "label": "MFA 词典",
+        "status": "ok",
+        "detail": ".dict，21264022 字节，约 100000 条",
+        "repair": ""
+      },
+      {
+        "id": "acoustic",
+        "label": "声学模型",
+        "status": "ok",
+        "detail": ".zip，92191596 字节",
+        "repair": ""
+      }
+    ],
+    "blocking": []
+  },
+  "resources": {
+    "g2p": null,
+    "dictionary": {
+      "id": "dictionary-35b59f2dfd664675a4ffb510dddaec05",
+      "name": "japanese_mfa.dict",
+      "path": "<USER_HOME>\\Documents\\MFA\\pretrained_models\\dictionary\\japanese_mfa.dict",
+      "exists": true
+    },
+    "acoustic": {
+      "id": "acoustic-965c57da4e294ee389d9667e9946f85e",
+      "name": "japanese_mfa.zip",
+      "path": "<USER_HOME>\\Documents\\MFA\\pretrained_models\\acoustic\\japanese_mfa.zip",
+      "exists": true
+    }
+  },
+  "status": {
+    "g2p": "未配置",
+    "dictionary": "静态检查通过",
+    "acoustic": "静态检查通过",
+    "compatibility": "未验证",
+    "issues": [],
+    "mapping_ready": true,
+    "can_generate": false
+  },
+  "blocking": [],
+  "notes": [
+    "本检测会启动 MFA/conda 与一个子进程 Python，但不会安装、下载或修改任何配置。",
+    "环境可用只说明这套 MFA 能跑对齐，不代表资源与目标口音匹配，也不替代一次真实双音频验证。"
+  ],
+  "marker": "REAL-ENVIRONMENT-NOT-ACCEPTANCE",
+  "scenario": "preset"
+}

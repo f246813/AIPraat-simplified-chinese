@@ -55,6 +55,7 @@ namespace AIPraat.Setup
         }
         void Copy(string source,string destination,bool countBytes)
         {
+            if(countBytes)Progress(lastPercent,"正在安装："+Path.GetFileName(destination));
             Backup(destination); EnsureDirectory(Path.GetDirectoryName(destination));
             using(var input=File.OpenRead(source))
             using(var output=new FileStream(destination,FileMode.Create,FileAccess.Write,FileShare.None)) {
@@ -79,6 +80,20 @@ namespace AIPraat.Setup
                 throw new InvalidDataException("安装资源越过目标目录："+name);
             return full;
         }
+        static string CreateWorkingDirectory()
+        {
+            Exception lastError=null;
+            foreach(string parent in RuntimeDependencies.WorkRoots()) {
+                string folder=Path.Combine(parent,"AIPraat-install-"+Guid.NewGuid().ToString("N"));
+                try {
+                    Directory.CreateDirectory(folder);string check=Path.Combine(folder,"write-check");
+                    using(var file=File.Create(check)){}File.Delete(check);return folder;
+                }catch(UnauthorizedAccessException error){lastError=error;}
+                catch(IOException error){lastError=error;}
+                try{if(Directory.Exists(folder))Directory.Delete(folder,true);}catch(UnauthorizedAccessException){}catch(IOException){}
+            }
+            throw new IOException("无法创建可写的安装工作目录。",lastError);
+        }
         static string Hash(string file)
         {
             using(var sha=SHA256.Create()) using(var input=File.OpenRead(file))
@@ -91,6 +106,13 @@ namespace AIPraat.Setup
             if(error!=null) throw new IOException(error);
             string root=Path.GetFullPath(PathValidation.Clean(request.InstallDirectory)).TrimEnd('\\');
             request.InstallDirectory=root;
+            if(!request.ConfigurePrerequisites)throw new IOException("安装前必须配置 Python 和全部必需运行库。");
+            var runtimeProbe=RuntimeDependencies.Probe(request.PythonPath,request.RuntimeDevice=="cuda"?"cuda":"cpu",true,
+                message=>Progress(0,message));
+            if(!runtimeProbe.Valid)throw new IOException(runtimeProbe.Message);
+            var audioProbe=FfmpegDependencies.Probe(request.FfmpegPath);
+            if(!audioProbe.Ready)throw new IOException(audioProbe.Message);
+            request.FfmpegPath=audioProbe.Executable;
             if(request.ConfigurePrerequisites) {
                 error=PathValidation.OptionalPathsError(request);
                 if(error!=null) throw new IOException(error);
@@ -102,8 +124,7 @@ namespace AIPraat.Setup
                         throw new IOException("请先关闭这个安装目录中的 Praat，再重新安装。");
                 } catch(System.ComponentModel.Win32Exception) { }
             }
-            stage=Path.Combine(Path.GetTempPath(),"AIPraat-install-"+Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(stage);
+            stage=CreateWorkingDirectory();
             bool succeeded=false; DirectorySecurity previousAcl=null;
             try {
                 Progress(0,"准备安装文件…");

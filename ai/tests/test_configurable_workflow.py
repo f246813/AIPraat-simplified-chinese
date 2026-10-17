@@ -120,6 +120,14 @@ class WorkflowSettingsTests(unittest.TestCase):
             source.write_bytes(b'original version');cfg.api.audio_input_enabled=False
             self.assertNotIn('L3',app.followup_actions(cfg,record))
 
+    def test_general_discussion_followup_needs_actual_results(self):
+        """「基于这些结果进行通用讨论」只在真有结果时提供：没有测量的轮次不给续接入口。"""
+        from praat_ai.modern_app import ModernApplication
+        cfg = config(); cfg.workflow = WorkflowPolicy.for_preset('balanced')
+        app = ModernApplication.__new__(ModernApplication)
+        self.assertEqual(app.followup_actions(cfg, dict(evidence=[], goal='test')), [])
+        self.assertIn('L4', app.followup_actions(cfg, dict(evidence=[{'tool': 'duration'}], goal='测时长')))
+
 
 class WorkflowRoutingTests(unittest.TestCase):
     def run_tools(self, goal='测量 Sound 1 的总时长', policy=None, calls=None, failing=False):

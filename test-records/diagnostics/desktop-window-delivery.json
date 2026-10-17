@@ -1,0 +1,24 @@
+{
+  "workspace_executable": "<WORKSPACE>/Praat.exe",
+  "executable_sha256": "F08F13C17823042258CFEBAE9B2FEA77292D1699432F3AE9E76E735E659A6B3D",
+  "executable_matches_repair_build": true,
+  "frontend_dist": "<WORKSPACE>/ai/frontend/dist",
+  "frontend_index_sha256": "04F8F34BD4699C905D035C2E705EE11A2A0B148949F3EA10B39440B358C91D31",
+  "collapsed_gear_category": "模型",
+  "expanded_gear_category": "会话与存储",
+  "header_model_button_removed": true,
+  "python_checks": 37,
+  "frontend_unit_checks": 123,
+  "edge_browser_checks": 6,
+  "new_window_shown_and_loaded_foreground": true,
+  "reused_window_foreground_from_sound_editor": true,
+  "evidence": [
+    "desktop-focus-existing.json",
+    "desktop-focus-new.log",
+    "desktop-focus-python.log",
+    "desktop-settings-browser-green.log",
+    "desktop-settings-frontend-suite-rerun.log",
+    "desktop-settings-build.log"
+  ],
+  "verified_at": "2026-10-13T22:10:40.3502096+08:00"
+}

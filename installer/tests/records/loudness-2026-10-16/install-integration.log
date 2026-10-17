@@ -1,0 +1,489 @@
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\missing-scipy
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\missing-scipy\pyloudnorm-0.2.0-py3-none-any.whl
+INFO: pip is looking at multiple versions of pyloudnorm to determine which version is compatible with other requirements. This could take a while.
+
+The conflict is caused by:
+    pyloudnorm 0.2.0 depends on scipy>=1.0.1
+    The user requested (constraint) scipy<1.15,>=1.14.1
+
+To fix this you could try to:
+1. loosen the range of package versions you've specified
+2. remove package versions to allow pip attempt to solve the dependency conflict
+
+ERROR: Cannot install pyloudnorm==0.2.0 because these package versions have conflicting dependencies.
+ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 380, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 368, in main
+    local_install(args.requirements, json.loads(Path(args.local_plan).read_text(encoding="utf-8-sig")))
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 334, in local_install
+    subprocess.run(download+targets, check=True)
+  File "D:\ForSLM-LocalAIsearch\runtime\python\cpython-3.11.17-windows-x86_64-none\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['<WORKSPACE>\\scratch\\normalization-runtime\\real-install-中文-apk1orii\\venv\\Scripts\\python.exe', '-I', '-m', 'pip', '--isolated', 'download', '--disable-pip-version-check', '--no-index', '--no-cache-dir', '--only-binary=:all:', '-c', '<WORKSPACE>\\AIPraat-pip-sdxxbudp\\constraints.txt', '--dest', '<WORKSPACE>\\AIPraat-pip-sdxxbudp\\closure', '--find-links', '<WORKSPACE>\\scratch\\normalization-runtime\\real-install-中文-apk1orii\\missing-scipy', 'pyloudnorm @ file:///<WORKSPACE>/scratch/normalization-runtime/real-install-%E4%B8%AD%E6%96%87-apk1orii/missing-scipy/pyloudnorm-0.2.0-py3-none-any.whl']' returned non-zero exit status 1.
+PASS missing real wheel closure before installation: scipy
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\missing-numpy
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\missing-numpy\pyloudnorm-0.2.0-py3-none-any.whl
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\missing-numpy\scipy-1.14.1-cp311-cp311-win_amd64.whl (from pyloudnorm@ file:///<WORKSPACE>/scratch/normalization-runtime/real-install-%E4%B8%AD%E6%96%87-apk1orii/missing-numpy/pyloudnorm-0.2.0-py3-none-any.whl)
+INFO: pip is looking at multiple versions of pyloudnorm to determine which version is compatible with other requirements. This could take a while.
+
+The conflict is caused by:
+    pyloudnorm 0.2.0 depends on numpy>=1.14.2
+    The user requested (constraint) numpy<2.3,>=2.0
+
+To fix this you could try to:
+1. loosen the range of package versions you've specified
+2. remove package versions to allow pip attempt to solve the dependency conflict
+
+ERROR: Cannot install pyloudnorm==0.2.0 because these package versions have conflicting dependencies.
+ERROR: ResolutionImpossible: for help visit https://pip.pypa.io/en/latest/topics/dependency-resolution/#dealing-with-dependency-conflicts
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 380, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 368, in main
+    local_install(args.requirements, json.loads(Path(args.local_plan).read_text(encoding="utf-8-sig")))
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 334, in local_install
+    subprocess.run(download+targets, check=True)
+  File "D:\ForSLM-LocalAIsearch\runtime\python\cpython-3.11.17-windows-x86_64-none\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['<WORKSPACE>\\scratch\\normalization-runtime\\real-install-中文-apk1orii\\venv\\Scripts\\python.exe', '-I', '-m', 'pip', '--isolated', 'download', '--disable-pip-version-check', '--no-index', '--no-cache-dir', '--only-binary=:all:', '-c', '<WORKSPACE>\\AIPraat-pip-sdoas5jf\\constraints.txt', '--dest', '<WORKSPACE>\\AIPraat-pip-sdoas5jf\\closure', '--find-links', '<WORKSPACE>\\scratch\\normalization-runtime\\real-install-中文-apk1orii\\missing-numpy', 'pyloudnorm @ file:///<WORKSPACE>/scratch/normalization-runtime/real-install-%E4%B8%AD%E6%96%87-apk1orii/missing-numpy/pyloudnorm-0.2.0-py3-none-any.whl']' returned non-zero exit status 1.
+PASS missing real wheel closure before installation: numpy
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\pyloudnorm-0.2.0-py3-none-any.whl
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\scipy-1.14.1-cp311-cp311-win_amd64.whl (from pyloudnorm@ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/pyloudnorm-0.2.0-py3-none-any.whl)
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\numpy-2.2.6-cp311-cp311-win_amd64.whl (from pyloudnorm@ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/pyloudnorm-0.2.0-py3-none-any.whl)
+Saved <WORKSPACE>\�ȶ����ڰ�\aipraat-pip-6dxwn1j1\closure\pyloudnorm-0.2.0-py3-none-any.whl
+Saved <WORKSPACE>\�ȶ����ڰ�\aipraat-pip-6dxwn1j1\closure\numpy-2.2.6-cp311-cp311-win_amd64.whl
+Saved <WORKSPACE>\�ȶ����ڰ�\aipraat-pip-6dxwn1j1\closure\scipy-1.14.1-cp311-cp311-win_amd64.whl
+Successfully downloaded pyloudnorm numpy scipy
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\pyloudnorm-0.2.0-py3-none-any.whl
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\scipy-1.14.1-cp311-cp311-win_amd64.whl (from pyloudnorm@ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/pyloudnorm-0.2.0-py3-none-any.whl)
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\numpy-2.2.6-cp311-cp311-win_amd64.whl (from pyloudnorm@ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/pyloudnorm-0.2.0-py3-none-any.whl)
+Installing collected packages: numpy, scipy, pyloudnorm
+Successfully installed numpy-2.2.6 pyloudnorm-0.2.0 scipy-1.14.1
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 加载/功能检测失败：Traceback (most recent call last):
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 380, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 354, in main
+    child_check(args.child, args.device, args.smoke)
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 165, in child_check
+    exec("DEVICE="+repr(device)+"\n"+CHECKS[item], {})
+  File "<string>", line 3, in <module>
+  File "<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\venv\Lib\site-packages\scipy\signal\__init__.py", line 1, in <module>
+    raise ImportError('deliberate scratch ABI failure')
+ImportError: deliberate scratch ABI failure
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 加载/功能检测失败：Traceback (most recent call last):
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 380, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 354, in main
+    child_check(args.child, args.device, args.smoke)
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 165, in child_check
+    exec("DEVICE="+repr(device)+"\n"+CHECKS[item], {})
+  File "<string>", line 3, in <module>
+  File "<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\venv\Lib\site-packages\pyloudnorm\__init__.py", line 4, in <module>
+    from .meter import Meter, IIRfilter
+  File "<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\venv\Lib\site-packages\pyloudnorm\meter.py", line 4, in <module>
+    from .iirfilter import IIRfilter
+  File "<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\venv\Lib\site-packages\pyloudnorm\iirfilter.py", line 2, in <module>
+    import scipy.signal
+  File "<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\venv\Lib\site-packages\scipy\signal\__init__.py", line 1, in <module>
+    raise ImportError('deliberate scratch ABI failure')
+ImportError: deliberate scratch ABI failure
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\scipy-1.14.1-cp311-cp311-win_amd64.whl
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\numpy-2.2.6-cp311-cp311-win_amd64.whl (from scipy@ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/scipy-1.14.1-cp311-cp311-win_amd64.whl)
+Saved <WORKSPACE>\�ȶ����ڰ�\aipraat-pip-0z88k58q\closure\scipy-1.14.1-cp311-cp311-win_amd64.whl
+Saved <WORKSPACE>\�ȶ����ڰ�\aipraat-pip-0z88k58q\closure\numpy-2.2.6-cp311-cp311-win_amd64.whl
+Successfully downloaded scipy numpy
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\scipy-1.14.1-cp311-cp311-win_amd64.whl
+Requirement already satisfied: numpy<2.3,>=1.23.5 in <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\venv\lib\site-packages (from scipy@ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/scipy-1.14.1-cp311-cp311-win_amd64.whl) (2.2.6)
+scipy is already installed with the same version as the provided wheel. Use --force-reinstall to force an installation of the wheel.
+定向重装功能失败项（不重装其健康依赖）：scipy @ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/scipy-1.14.1-cp311-cp311-win_amd64.whl
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\scipy-1.14.1-cp311-cp311-win_amd64.whl
+Installing collected packages: scipy
+  Attempting uninstall: scipy
+    Found existing installation: scipy 1.14.1
+    Uninstalling scipy-1.14.1:
+      Successfully uninstalled scipy-1.14.1
+Successfully installed scipy-1.14.1
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+PASS offline same-version targeted repair, healthy NumPy untouched: scipy
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 加载/功能检测失败：Traceback (most recent call last):
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 380, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 354, in main
+    child_check(args.child, args.device, args.smoke)
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 165, in child_check
+    exec("DEVICE="+repr(device)+"\n"+CHECKS[item], {})
+  File "<string>", line 5, in <module>
+AssertionError: array([0., 0., 0., 0.])
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 加载/功能检测失败：Traceback (most recent call last):
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 380, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 354, in main
+    child_check(args.child, args.device, args.smoke)
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 165, in child_check
+    exec("DEVICE="+repr(device)+"\n"+CHECKS[item], {})
+  File "<string>", line 7, in <module>
+  File "<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\venv\Lib\site-packages\pyloudnorm\meter.py", line 66, in integrated_loudness
+    input_data[:,ch] = filter_stage.apply_filter(input_data[:,ch])
+    ~~~~~~~~~~^^^^^^
+ValueError: could not broadcast input array from shape (4,) into shape (48000,)
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\scipy-1.14.1-cp311-cp311-win_amd64.whl
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\numpy-2.2.6-cp311-cp311-win_amd64.whl (from scipy@ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/scipy-1.14.1-cp311-cp311-win_amd64.whl)
+Saved <WORKSPACE>\�ȶ����ڰ�\aipraat-pip-xe6uiaob\closure\scipy-1.14.1-cp311-cp311-win_amd64.whl
+Saved <WORKSPACE>\�ȶ����ڰ�\aipraat-pip-xe6uiaob\closure\numpy-2.2.6-cp311-cp311-win_amd64.whl
+Successfully downloaded scipy numpy
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\scipy-1.14.1-cp311-cp311-win_amd64.whl
+Requirement already satisfied: numpy<2.3,>=1.23.5 in <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\venv\lib\site-packages (from scipy@ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/scipy-1.14.1-cp311-cp311-win_amd64.whl) (2.2.6)
+scipy is already installed with the same version as the provided wheel. Use --force-reinstall to force an installation of the wheel.
+定向重装功能失败项（不重装其健康依赖）：scipy @ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/scipy-1.14.1-cp311-cp311-win_amd64.whl
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\scipy-1.14.1-cp311-cp311-win_amd64.whl
+Installing collected packages: scipy
+  Attempting uninstall: scipy
+    Found existing installation: scipy 1.14.1
+    Uninstalling scipy-1.14.1:
+      Successfully uninstalled scipy-1.14.1
+Successfully installed scipy-1.14.1
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+PASS offline same-version targeted repair, healthy NumPy untouched: scipy
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 加载/功能检测失败：Traceback (most recent call last):
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 380, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 354, in main
+    child_check(args.child, args.device, args.smoke)
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 165, in child_check
+    exec("DEVICE="+repr(device)+"\n"+CHECKS[item], {})
+  File "<string>", line 9, in <module>
+AssertionError: -23.0
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\pyloudnorm-0.2.0-py3-none-any.whl
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\scipy-1.14.1-cp311-cp311-win_amd64.whl (from pyloudnorm@ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/pyloudnorm-0.2.0-py3-none-any.whl)
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\numpy-2.2.6-cp311-cp311-win_amd64.whl (from pyloudnorm@ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/pyloudnorm-0.2.0-py3-none-any.whl)
+Saved <WORKSPACE>\�ȶ����ڰ�\aipraat-pip-junfqd2c\closure\pyloudnorm-0.2.0-py3-none-any.whl
+Saved <WORKSPACE>\�ȶ����ڰ�\aipraat-pip-junfqd2c\closure\numpy-2.2.6-cp311-cp311-win_amd64.whl
+Saved <WORKSPACE>\�ȶ����ڰ�\aipraat-pip-junfqd2c\closure\scipy-1.14.1-cp311-cp311-win_amd64.whl
+Successfully downloaded pyloudnorm numpy scipy
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\pyloudnorm-0.2.0-py3-none-any.whl
+Requirement already satisfied: scipy>=1.0.1 in <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\venv\lib\site-packages (from pyloudnorm@ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/pyloudnorm-0.2.0-py3-none-any.whl) (1.14.1)
+Requirement already satisfied: numpy>=1.14.2 in <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\venv\lib\site-packages (from pyloudnorm@ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/pyloudnorm-0.2.0-py3-none-any.whl) (2.2.6)
+pyloudnorm is already installed with the same version as the provided wheel. Use --force-reinstall to force an installation of the wheel.
+定向重装功能失败项（不重装其健康依赖）：pyloudnorm @ file:///<WORKSPACE>/scratch/normalization-runtime/wheels/pyloudnorm-0.2.0-py3-none-any.whl
+Looking in links: <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels
+Processing <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\wheels\pyloudnorm-0.2.0-py3-none-any.whl
+Installing collected packages: pyloudnorm
+  Attempting uninstall: pyloudnorm
+    Found existing installation: pyloudnorm 0.2.0
+    Uninstalling pyloudnorm-0.2.0:
+      Successfully uninstalled pyloudnorm-0.2.0
+Successfully installed pyloudnorm-0.2.0
+127.0.0.1 - - [16/Oct/2026 12:17:39] "GET /simple/pyloudnorm/ HTTP/1.1" 200 -
+127.0.0.1 - - [16/Oct/2026 12:17:39] "GET /pyloudnorm-0.2.0-py3-none-any.whl HTTP/1.1" 200 -
+127.0.0.1 - - [16/Oct/2026 12:17:44] "GET /simple/pyloudnorm/ HTTP/1.1" 200 -
+127.0.0.1 - - [16/Oct/2026 12:17:45] "GET /simple/pyloudnorm/ HTTP/1.1" 200 -
+127.0.0.1 - - [16/Oct/2026 12:17:45] "GET /pyloudnorm-0.2.0-py3-none-any.whl HTTP/1.1" 200 -
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+PASS offline same-version targeted repair, healthy NumPy untouched: pyloudnorm
+Found existing installation: pyloudnorm 0.2.0
+Uninstalling pyloudnorm-0.2.0:
+  Successfully uninstalled pyloudnorm-0.2.0
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 未安装
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+正在补齐未就绪的 Python 运行库：pyloudnorm==0.2.0
+TEST TRANSPORT pip install --prefer-binary --upgrade -c <WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\missing.constraints.txt pyloudnorm==0.2.0
+Looking in indexes: http://127.0.0.1:53616/simple
+Collecting pyloudnorm==0.2.0
+  Downloading http://127.0.0.1:53616/pyloudnorm-0.2.0-py3-none-any.whl (10 kB)
+Requirement already satisfied: scipy>=1.0.1 in <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\venv\lib\site-packages (from pyloudnorm==0.2.0) (1.14.1)
+Requirement already satisfied: numpy>=1.14.2 in <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\venv\lib\site-packages (from pyloudnorm==0.2.0) (2.2.6)
+Installing collected packages: pyloudnorm
+Successfully installed pyloudnorm-0.2.0
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+PASS shipping Online branch HTTP index: http://127.0.0.1:53616/simple missing
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 加载/功能检测失败：Traceback (most recent call last):
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 380, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 354, in main
+    child_check(args.child, args.device, args.smoke)
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 165, in child_check
+    exec("DEVICE="+repr(device)+"\n"+CHECKS[item], {})
+  File "<string>", line 9, in <module>
+AssertionError: -23.0
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+正在补齐未就绪的 Python 运行库：pyloudnorm==0.2.0
+TEST TRANSPORT pip install --prefer-binary --upgrade -c <WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\functional.constraints.txt pyloudnorm==0.2.0
+Looking in indexes: http://127.0.0.1:53616/simple
+Requirement already satisfied: pyloudnorm==0.2.0 in <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\venv\lib\site-packages (0.2.0)
+Requirement already satisfied: scipy>=1.0.1 in <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\venv\lib\site-packages (from pyloudnorm==0.2.0) (1.14.1)
+Requirement already satisfied: numpy>=1.14.2 in <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\venv\lib\site-packages (from pyloudnorm==0.2.0) (2.2.6)
+定向重装版本满足但功能失败项（不重装其健康依赖）：pyloudnorm==0.2.0
+TEST TRANSPORT pip install --only-binary=:all: --force-reinstall --no-deps -c <WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\functional.constraints.txt pyloudnorm==0.2.0
+Looking in indexes: http://127.0.0.1:53616/simple
+Collecting pyloudnorm==0.2.0
+  Downloading http://127.0.0.1:53616/pyloudnorm-0.2.0-py3-none-any.whl (10 kB)
+Installing collected packages: pyloudnorm
+  Attempting uninstall: pyloudnorm
+    Found existing installation: pyloudnorm 0.2.0
+    Uninstalling pyloudnorm-0.2.0:
+      Successfully uninstalled pyloudnorm-0.2.0
+Successfully installed pyloudnorm-0.2.0
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+PASS shipping Online branch HTTP index: http://127.0.0.1:53616/simple functional
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+其他 Python 运行库已就绪，无需重新安装。
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+PASS shipping Online branch HTTP index: http://127.0.0.1:53616/simple complete
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 加载/功能检测失败：Traceback (most recent call last):
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 380, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 354, in main
+    child_check(args.child, args.device, args.smoke)
+  File "<WORKSPACE>\ai\runtime_dependencies.py", line 165, in child_check
+    exec("DEVICE="+repr(device)+"\n"+CHECKS[item], {})
+  File "<string>", line 9, in <module>
+AssertionError: -23.0
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+正在补齐未就绪的 Python 运行库：pyloudnorm==0.2.0
+TEST TRANSPORT pip install --prefer-binary --upgrade -c <WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\functional.constraints.txt pyloudnorm==0.2.0
+Requirement already satisfied: pyloudnorm==0.2.0 in <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\venv\lib\site-packages (0.2.0)
+Requirement already satisfied: scipy>=1.0.1 in <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\venv\lib\site-packages (from pyloudnorm==0.2.0) (1.14.1)
+Requirement already satisfied: numpy>=1.14.2 in <WORKSPACE>\�ȶ����ڰ�\scratch\normalization-runtime\real-install-����-apk1orii\venv\lib\site-packages (from pyloudnorm==0.2.0) (2.2.6)
+定向重装版本满足但功能失败项（不重装其健康依赖）：pyloudnorm==0.2.0
+TEST TRANSPORT pip install --only-binary=:all: --force-reinstall --no-deps -c <WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\functional.constraints.txt pyloudnorm==0.2.0
+Collecting pyloudnorm==0.2.0
+  Downloading pyloudnorm-0.2.0-py3-none-any.whl.metadata (6.6 kB)
+Downloading pyloudnorm-0.2.0-py3-none-any.whl (10 kB)
+Installing collected packages: pyloudnorm
+  Attempting uninstall: pyloudnorm
+    Found existing installation: pyloudnorm 0.2.0
+    Uninstalling pyloudnorm-0.2.0:
+      Successfully uninstalled pyloudnorm-0.2.0
+Successfully installed pyloudnorm-0.2.0
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+PASS shipping Online branch HTTP index: https://pypi.org/simple functional
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 已就绪
+正在检测 Pillow
+Pillow: 未安装
+正在检测 praat-parselmouth
+praat-parselmouth: 未安装
+正在检测 pydantic-ai-slim
+pydantic-ai-slim: 未安装
+正在检测 pydantic-graph
+pydantic-graph: 未安装
+正在检测 jsonschema
+jsonschema: 未安装
+正在检测 pywebview
+pywebview: 未安装
+正在检测 pythonnet
+pythonnet: 未安装
+正在检测 PyTorch
+PyTorch: 未安装
+正在检测 Transformers
+Transformers: 未安装
+正在检测 Safetensors
+Safetensors: 未安装
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+配置所选 Python：<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\venv\Scripts\python.exe
+配置未完成：Program 'python.exe' failed to run: Win32 internal error "Access is denied" 0x5 occurred while reading the console output buffer. Contact Microsoft Customer Support Services.At <WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\full-resources\ConfigurePython.ps1:209 char:21
++ ... needsPip) { & $PythonPath -I -c 'import importlib.util; raise SystemE ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 已就绪
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 已就绪
+正在检测 Pillow
+Pillow: 未安装
+正在检测 praat-parselmouth
+praat-parselmouth: 未安装
+正在检测 pydantic-ai-slim
+pydantic-ai-slim: 未安装
+正在检测 pydantic-graph
+pydantic-graph: 未安装
+正在检测 jsonschema
+jsonschema: 未安装
+正在检测 pywebview
+pywebview: 未安装
+正在检测 pythonnet
+pythonnet: 未安装
+正在检测 PyTorch
+PyTorch: 未安装
+正在检测 Transformers
+Transformers: 未安装
+正在检测 Safetensors
+Safetensors: 未安装
+正在检测 WebView2 Runtime
+WebView2 Runtime: 加载/功能检测失败：Traceback (most recent call last):
+  File "<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\full-resources\runtime_dependencies.py", line 380, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\full-resources\runtime_dependencies.py", line 354, in main
+    child_check(args.child, args.device, args.smoke)
+  File "<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\full-resources\runtime_dependencies.py", line 163, in child_check
+    frontend_smoke()
+  File "<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\full-resources\runtime_dependencies.py", line 145, in frontend_smoke
+    import webview
+ModuleNotFoundError: No module named 'webview'
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+逐项检测结果：<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\full-final.json
+配置日志：<WORKSPACE>\scratch\normalization-runtime\real-install-中文-apk1orii\full-flow.log
+PASS full shipping Local/finally flow returns nonready 15-item smoke report for incomplete dev env
+PASS real wheel offline/online scoped integration; no production environment touched

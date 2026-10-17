@@ -1,0 +1,7 @@
+PASS AIPraat-install.exe contains shared panel, discovery and current embedded resources
+PASS AIPraat-paths.exe contains shared panel, discovery and current embedded resources
+PASS payload AIPraat-paths.exe matches final delivery
+PASS payload Praat.exe matches final delivery
+PASS payload ai/runtime_dependencies.py matches final delivery
+PASS payload ai/Install-FFmpeg.ps1 matches final delivery
+PASS installer SHA-256 matches build report

@@ -1,0 +1,275 @@
+[
+  {
+    "id": "bdl_arctic_a0001",
+    "speaker": "bdl",
+    "utterance": "arctic_a0001",
+    "path": "audio\\bdl_arctic_a0001.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0001.wav",
+    "sha256": "2594562568c97203d6c3c2c2ff87b9a7c62389100a014934ab0ad39d15af0384",
+    "bytes": 103566,
+    "channels": 1,
+    "sample_width": 2,
+    "rate": 16000,
+    "duration": 3.2350625,
+    "transcript": "Author of the danger trail, Philip Steels, etc.",
+    "measurement": {
+      "integrated_lufs": -22.37474426133329,
+      "gain_to_minus23_db": -0.6252557386667092,
+      "peak": 0.64996337890625,
+      "would_clip_if_exported": false,
+      "pitch_status": "applied",
+      "f0_baseline_hz": 127.77631100412029,
+      "reliable_f0_frames": 173,
+      "pitch_quality": {
+        "rejected_frames": 147,
+        "octave_jump_frames": []
+      }
+    }
+  },
+  {
+    "id": "bdl_arctic_a0002",
+    "speaker": "bdl",
+    "utterance": "arctic_a0002",
+    "path": "audio\\bdl_arctic_a0002.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0002.wav",
+    "sha256": "88b2c3f29f696637ec34f8a031964920d7e187a903ba88fd720d3cb1b0d50c2a",
+    "bytes": 108046,
+    "channels": 1,
+    "sample_width": 2,
+    "rate": 16000,
+    "duration": 3.3750625,
+    "transcript": "Not at this particular case, Tom, apologized Whittemore.",
+    "measurement": {
+      "integrated_lufs": -21.314970404463743,
+      "gain_to_minus23_db": -1.6850295955362569,
+      "peak": 0.64996337890625,
+      "would_clip_if_exported": false,
+      "pitch_status": "applied",
+      "f0_baseline_hz": 121.93961891063788,
+      "reliable_f0_frames": 206,
+      "pitch_quality": {
+        "rejected_frames": 128,
+        "octave_jump_frames": []
+      }
+    }
+  },
+  {
+    "id": "bdl_arctic_a0003",
+    "speaker": "bdl",
+    "utterance": "arctic_a0003",
+    "path": "audio\\bdl_arctic_a0003.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0003.wav",
+    "sha256": "6bf2ec5e40a8a01a690d7aa5d1aa3a1489baae614850c7a716bf00092b005028",
+    "bytes": 107726,
+    "channels": 1,
+    "sample_width": 2,
+    "rate": 16000,
+    "duration": 3.3650625,
+    "transcript": "For the twentieth time that evening the two men shook hands.",
+    "measurement": {
+      "integrated_lufs": -21.156622984966454,
+      "gain_to_minus23_db": -1.8433770150335462,
+      "peak": 0.64996337890625,
+      "would_clip_if_exported": false,
+      "pitch_status": "applied",
+      "f0_baseline_hz": 124.35900989141604,
+      "reliable_f0_frames": 209,
+      "pitch_quality": {
+        "rejected_frames": 124,
+        "octave_jump_frames": []
+      }
+    }
+  },
+  {
+    "id": "bdl_arctic_a0004",
+    "speaker": "bdl",
+    "utterance": "arctic_a0004",
+    "path": "audio\\bdl_arctic_a0004.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0004.wav",
+    "sha256": "9014c7af0c450ffab8a64f211559ed6eb61d1eb6c8a8288cca40325e64f702e7",
+    "bytes": 82446,
+    "channels": 1,
+    "sample_width": 2,
+    "rate": 16000,
+    "duration": 2.5750625,
+    "transcript": "Lord, but I'm glad to see you again, Phil.",
+    "measurement": {
+      "integrated_lufs": -18.323438565719623,
+      "gain_to_minus23_db": -4.6765614342803765,
+      "peak": 0.649932861328125,
+      "would_clip_if_exported": false,
+      "pitch_status": "applied",
+      "f0_baseline_hz": 120.03777076526856,
+      "reliable_f0_frames": 177,
+      "pitch_quality": {
+        "rejected_frames": 77,
+        "octave_jump_frames": []
+      }
+    }
+  },
+  {
+    "id": "bdl_arctic_a0005",
+    "speaker": "bdl",
+    "utterance": "arctic_a0005",
+    "path": "audio\\bdl_arctic_a0005.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0005.wav",
+    "sha256": "b654e28a68b0f49d40f715744f99f4bba338b1f66e61b58e428588e886d8fa1f",
+    "bytes": 41486,
+    "channels": 1,
+    "sample_width": 2,
+    "rate": 16000,
+    "duration": 1.2950625,
+    "transcript": "Will we ever forget it.",
+    "measurement": {
+      "integrated_lufs": -20.354365348315106,
+      "gain_to_minus23_db": -2.645634651684894,
+      "peak": 0.64996337890625,
+      "would_clip_if_exported": false,
+      "pitch_status": "applied",
+      "f0_baseline_hz": 126.92776399515091,
+      "reliable_f0_frames": 90,
+      "pitch_quality": {
+        "rejected_frames": 36,
+        "octave_jump_frames": []
+      }
+    }
+  },
+  {
+    "id": "slt_arctic_a0001",
+    "speaker": "slt",
+    "utterance": "arctic_a0001",
+    "path": "audio\\slt_arctic_a0001.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0001.wav",
+    "sha256": "7862eb2cccb56875910f6bf46f9b8d26dac36e7672829aabe3956b0837ae122e",
+    "bytes": 107404,
+    "channels": 1,
+    "sample_width": 2,
+    "rate": 16000,
+    "duration": 3.355,
+    "transcript": "Author of the danger trail, Philip Steels, etc.",
+    "measurement": {
+      "integrated_lufs": -19.13046549135223,
+      "gain_to_minus23_db": -3.869534508647771,
+      "peak": 0.649932861328125,
+      "would_clip_if_exported": false,
+      "pitch_status": "applied",
+      "f0_baseline_hz": 189.47224099341778,
+      "reliable_f0_frames": 206,
+      "pitch_quality": {
+        "rejected_frames": 126,
+        "octave_jump_frames": []
+      }
+    }
+  },
+  {
+    "id": "slt_arctic_a0002",
+    "speaker": "slt",
+    "utterance": "arctic_a0002",
+    "path": "audio\\slt_arctic_a0002.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0002.wav",
+    "sha256": "d09c9367d7e756cb5f6854d4e8a279e6e6e543fafeb4d04b32757c639f7f38d3",
+    "bytes": 120204,
+    "channels": 1,
+    "sample_width": 2,
+    "rate": 16000,
+    "duration": 3.755,
+    "transcript": "Not at this particular case, Tom, apologized Whittemore.",
+    "measurement": {
+      "integrated_lufs": -20.82419957296457,
+      "gain_to_minus23_db": -2.17580042703543,
+      "peak": 0.649932861328125,
+      "would_clip_if_exported": false,
+      "pitch_status": "applied",
+      "f0_baseline_hz": 169.3241818321984,
+      "reliable_f0_frames": 202,
+      "pitch_quality": {
+        "rejected_frames": 170,
+        "octave_jump_frames": [
+          324,
+          325
+        ]
+      }
+    }
+  },
+  {
+    "id": "slt_arctic_a0003",
+    "speaker": "slt",
+    "utterance": "arctic_a0003",
+    "path": "audio\\slt_arctic_a0003.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0003.wav",
+    "sha256": "0b32e00846e132826f46d7e5cabb2d8b370a5dc654bac0447cb63285f81cc413",
+    "bytes": 102606,
+    "channels": 1,
+    "sample_width": 2,
+    "rate": 16000,
+    "duration": 3.2050625,
+    "transcript": "For the twentieth time that evening the two men shook hands.",
+    "measurement": {
+      "integrated_lufs": -16.88781071801462,
+      "gain_to_minus23_db": -6.11218928198538,
+      "peak": 0.649932861328125,
+      "would_clip_if_exported": false,
+      "pitch_status": "applied",
+      "f0_baseline_hz": 187.59734459823432,
+      "reliable_f0_frames": 209,
+      "pitch_quality": {
+        "rejected_frames": 108,
+        "octave_jump_frames": []
+      }
+    }
+  },
+  {
+    "id": "slt_arctic_a0004",
+    "speaker": "slt",
+    "utterance": "arctic_a0004",
+    "path": "audio\\slt_arctic_a0004.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0004.wav",
+    "sha256": "2a653cf74346ff24690f8a2abcff5091b81463f277b0062c851031a293f25167",
+    "bytes": 80206,
+    "channels": 1,
+    "sample_width": 2,
+    "rate": 16000,
+    "duration": 2.5050625,
+    "transcript": "Lord, but I'm glad to see you again, Phil.",
+    "measurement": {
+      "integrated_lufs": -18.499726192897207,
+      "gain_to_minus23_db": -4.5002738071027935,
+      "peak": 0.649932861328125,
+      "would_clip_if_exported": false,
+      "pitch_status": "applied",
+      "f0_baseline_hz": 187.7800745798334,
+      "reliable_f0_frames": 177,
+      "pitch_quality": {
+        "rejected_frames": 70,
+        "octave_jump_frames": []
+      }
+    }
+  },
+  {
+    "id": "slt_arctic_a0005",
+    "speaker": "slt",
+    "utterance": "arctic_a0005",
+    "path": "audio\\slt_arctic_a0005.wav",
+    "url": "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_slt_arctic/wav/arctic_a0005.wav",
+    "sha256": "f93c823f955875d2389ae0f731a95128afb1ee096df7614e063e8b4b5695801d",
+    "bytes": 47566,
+    "channels": 1,
+    "sample_width": 2,
+    "rate": 16000,
+    "duration": 1.4850625,
+    "transcript": "Will we ever forget it.",
+    "measurement": {
+      "integrated_lufs": -17.098976534271724,
+      "gain_to_minus23_db": -5.901023465728276,
+      "peak": 0.649932861328125,
+      "would_clip_if_exported": false,
+      "pitch_status": "applied",
+      "f0_baseline_hz": 193.20221078698165,
+      "reliable_f0_frames": 90,
+      "pitch_quality": {
+        "rejected_frames": 55,
+        "octave_jump_frames": []
+      }
+    }
+  }
+]

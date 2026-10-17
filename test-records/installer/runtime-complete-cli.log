@@ -1,0 +1,31 @@
+配置所选 Python：<WORKSPACE>/installer/verification/runtime-online-env/Scripts/python.exe
+其他 Python 运行库已就绪，无需重新安装。
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 Pillow
+Pillow: 已就绪
+正在检测 praat-parselmouth
+praat-parselmouth: 已就绪
+正在检测 pydantic-ai-slim
+pydantic-ai-slim: 已就绪
+正在检测 pydantic-graph
+pydantic-graph: 已就绪
+正在检测 jsonschema
+jsonschema: 已就绪
+正在检测 pywebview
+pywebview: 已就绪
+正在检测 pythonnet
+pythonnet: 已就绪
+正在检测 PyTorch
+PyTorch: 已就绪
+正在检测 Transformers
+Transformers: 已就绪
+正在检测 Safetensors
+Safetensors: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+逐项检测结果：<WORKSPACE>\test-records\installer\runtime-complete-cli.json
+全部必需运行库已通过复检和新前端窗口启动检查。
+配置日志：<USER_HOME>\AppData\Local\AIPraat\logs\runtime\install-20261012-050244-621Z-0ef55ba9.log

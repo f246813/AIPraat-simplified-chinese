@@ -1,0 +1,21 @@
+{
+  "frontend_dist": "<WORKSPACE>/ai/frontend/dist",
+  "frontend_index_sha256": "9E6C21CE33140E516C492AC74B436A715031BC785CBD0DC73E5F84C2E3F42966",
+  "inner_toggle_persistent": true,
+  "external_toggle_removed": true,
+  "fields_aligned_at_widths": [
+    900,
+    390
+  ],
+  "edge_browser_checks": 7,
+  "frontend_unit_checks": 123,
+  "evidence": [
+    "api-key-visibility-red.log",
+    "api-key-visibility-green.log",
+    "api-key-visibility-frontend-suite.log",
+    "api-key-visibility-build.log",
+    "api-key-visibility-900.png",
+    "api-key-visibility-390.png"
+  ],
+  "verified_at": "2026-10-13T22:41:12.3551572+08:00"
+}

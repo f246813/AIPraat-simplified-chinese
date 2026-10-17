@@ -408,6 +408,11 @@ all: all-external all-self
 		external/blake3/libblake3.a \
 		external/zlib/libzlib.a \
                $(NON_PRAAT_LIBRARIES) $(LDFLAGS)
+ifeq ($(OS_IS_WINDOWS),1)
+	# A new EXE can inherit Low from this workspace and break Medium runtime writes.
+	# Publish the final file object as Medium; see docs/ai-frontend/windows-integrity-design.md.
+	powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/Publish-NativeExecutable.ps1 -Source "$(EXECUTABLE_FILE)" -Destination "$(EXECUTABLE_FILE)" -MediumDirectory ".."
+endif
 
 all-external:
 	$(MAKE) -C external/clapack

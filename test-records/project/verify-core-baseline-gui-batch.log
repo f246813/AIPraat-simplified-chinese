@@ -1,6 +1,6 @@
-Error: Cannot view or edit a TextGrid from batch.
-Script line 17 not performed or completed:
-« 查看并编辑 »
-Script “D:\Praat-work\稳定早期版\test\fon\LongSoundEditor_GUI_.praat” not completed.
-Praat: script command <<D:\Praat-work\稳定早期版\test\fon\LongSoundEditor_GUI_.praat>> not completed.
-
+Error: Cannot view or edit a TextGrid from batch.
+Script line 17 not performed or completed:
+« 查看并编辑 »
+Script “<WORKSPACE>\test\fon\LongSoundEditor_GUI_.praat” not completed.
+Praat: script command <<<WORKSPACE>\test\fon\LongSoundEditor_GUI_.praat>> not completed.
+

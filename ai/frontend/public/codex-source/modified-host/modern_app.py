@@ -288,10 +288,9 @@ class ModernApplication:
         text = str(text).strip()
         if not text or len(text) > 100000:
             raise ValueError('请输入 1–100000 字符')
-        # 目标捕获要在 PRAAT_LOCK 下等 Praat 回应，上限 EXECUTION_TIMEOUT_SEC（25 秒）。
-        # 以前整段都在 self.guard 里，期间 events.poll（前端 220ms 心跳）一起被挡住，
-        # 界面会显示成断线（2026-10-07）。所以先在 guard 外把配置、历史和目标都备好，
-        # 再进 guard 只做需要原子性的检查与登记；并发提交仍由 guard 内的 ACTIVE 检查挡住。
+        # 目标捕获会在 PRAAT_LOCK 下等待 Praat 回应（上限 EXECUTION_TIMEOUT_SEC）。
+        # 先在 guard 外准备配置、历史和目标，再在 guard 内只做需要原子性的检查与登记；
+        # 并发提交仍由 guard 内的活动任务检查挡住。
         cfg = self.prepared()
         values = [self.attachments.resolve(aid) for aid in attachment_ids]
         if len(values) > 8 or sum(a['size'] for a in values) > Attachments.LIMIT:
@@ -456,7 +455,9 @@ class ModernApplication:
                 pass
         if available:
             actions.append('L3')
-        if cfg.workflow.l4_enabled:
+        if record.get('evidence') and cfg.workflow.l4_enabled:
+            # 「基于这些结果进行通用讨论」要有结果才算数：没有测量的轮次（例如随手一句问候）
+            # 不给这个续接入口，否则点下去是对着没有目标依据的旧任务重跑报告阶段。
             actions.append('L4')
         return actions
 
@@ -482,8 +483,7 @@ class ModernApplication:
             task = self.tasks.get(task_id)
             if task is None:
                 raise ValueError('任务不存在')
-            # 重复取消要幂等：已经在 cancelling 的任务不再发一次事件（2026-10-07 实测
-            # 连续三次取消会往事件流里塞三条同样的 task 事件）。
+            # 重复取消要幂等：已在 cancelling 的任务不再重复发送任务事件。
             if task['status'] in {'running', 'queued'}:
                 task['cancel'].set()
                 task['status'] = 'cancelling'
@@ -502,9 +502,8 @@ class ModernApplication:
                 raise ValueError('events.poll 的 after 必须是整数游标') from None
             reset = after > self.cursor or bool(self.events and after < self.events[0]['seq'] - 1)
             pending = [e for e in self.events if e['seq'] > after]
-            # 单次返回量要封顶：events 最多留 4000 条，一次全量序列化约 2 MB，
-            # 前端 220ms 一次轮询会把这 2 MB 反复搬过 WebView2 桥（2026-10-07）。
-            # 截断时游标跟着最后一条返回的事件走，客户端下一次轮询自然续上。
+            # 单次返回量封顶：事件队列最多保留 4000 条，全量序列化的载荷会反复
+            # 经过 WebView2 桥。截断时游标跟随最后一条返回的事件，客户端下次续读。
             if len(pending) > POLL_EVENT_LIMIT:
                 reset = True
                 pending = pending[:POLL_EVENT_LIMIT]
@@ -539,6 +538,50 @@ class ModernApplication:
         result['identity'] = request_identity(cfg.qwen.base_url, cfg.qwen.model, cfg.qwen.api_key)
         return self.store.clean(result)
 
+    def begin_window_drag(self):
+        """Hand an in-page drag handle over to the native window-move loop.
+
+        The WebView2 client area is not a caption, so dragging the in-page header
+        would only try to select text. Posting WM_NCLBUTTONDOWN/HTCAPTION to the
+        host form makes Windows move the window until the pointer is released.
+        """
+        import os
+        if os.name != 'nt':
+            return {'ok': False, 'reason': 'unsupported-platform'}
+        window = getattr(self, 'window', None)
+        native = getattr(window, 'native', None) if window is not None else None
+        if native is None:
+            return {'ok': False, 'reason': 'no-native-window'}
+        try:
+            handle = native.Handle
+            hwnd = int(handle.ToInt64()) if hasattr(handle, 'ToInt64') else int(handle)
+        except Exception:
+            return {'ok': False, 'reason': 'no-window-handle'}
+        try:
+            import ctypes
+            from ctypes import wintypes
+            user32 = ctypes.WinDLL('user32', use_last_error=True)
+            user32.GetCursorPos.argtypes = [ctypes.POINTER(wintypes.POINT)]
+            user32.GetCursorPos.restype = wintypes.BOOL
+            user32.ReleaseCapture.argtypes = []
+            user32.ReleaseCapture.restype = wintypes.BOOL
+            user32.PostMessageW.argtypes = [wintypes.HWND, wintypes.UINT, wintypes.WPARAM, wintypes.LPARAM]
+            user32.PostMessageW.restype = wintypes.BOOL
+            point = wintypes.POINT()
+            if not user32.GetCursorPos(ctypes.byref(point)):
+                return {'ok': False, 'reason': 'cursor-position-failed'}
+            position = (point.x & 0xffff) | ((point.y & 0xffff) << 16)
+            # Mouse capture belongs to the WinForms UI thread, not the RPC worker.
+            # Release it there before posting the caption message to the same queue.
+            from System import Action
+            def start_move():
+                user32.ReleaseCapture()
+                user32.PostMessageW(hwnd, 0x00A1, 2, position)
+            native.BeginInvoke(Action(start_move))
+        except Exception as error:
+            return {'ok': False, 'reason': 'native-call-failed', 'detail': str(error)}
+        return {'ok': True}
+
     def close(self):
         with self.guard:
             self.closed = True
@@ -552,12 +595,15 @@ class ModernApplication:
                     # 退出时库里写不进去（临时目录已删、库被占用）不该让 close() 崩掉：
                     # 之前这里会抛出 sqlite3.OperationalError，现在是中文 ValueError。
                     self.store_last_error = str(error)
-            if self._created_sessions:
-                try:
-                    self.store.discard_empty_sessions(self._created_sessions)
-                    self._created_sessions.clear()
-                except (OSError, ValueError) as error:
-                    self.store_last_error = str(error)
+            # Scan the whole library, not just this window's set: a crashed or
+            # force-killed window leaves the same kind of blank session behind.
+            # ``preferences.save_empty_sessions`` opts out of the close-time scan.
+            try:
+                if not self.settings.get().get('preferences', {}).get('save_empty_sessions'):
+                    self.store.discard_all_empty_sessions()
+                self._created_sessions.clear()
+            except (OSError, ValueError) as error:
+                self.store_last_error = str(error)
         for task in active:
             thread = task.get('thread')
             if thread is not None:
@@ -609,6 +655,7 @@ class ModernApplication:
                 return organization.archive(ids,params.get('archived'))
         try:
             if method == 'bootstrap': return self.bootstrap()
+            if method == 'window.drag': return self.begin_window_drag()
             if method == 'sessions.create':
                 with self.guard:
                     session = self.store.organization.create_session(params.get('title', '新会话'),params.get('sectionId'))
@@ -635,6 +682,14 @@ class ModernApplication:
             if method == 'settings.get': return self.settings.get()
             if method == 'settings.save': return self.settings.save(param(params, 'settings'))
             if method == 'settings.test': return self.test_connection(param(params, 'kind'), param(params, 'settings'))
+            if method == 'settings.choose_model':
+                if self.window is None: raise RuntimeError('原生文件选择器需要桌面宿主')
+                import webview
+                current = self.settings.get()['server']['model_path']
+                directory = str(Path(current).parent) if current and Path(current).parent.is_dir() else ''
+                paths = self.window.create_file_dialog(webview.FileDialog.OPEN, directory=directory,
+                    allow_multiple=False, file_types=('GGUF 模型 (*.gguf)',)) or []
+                return dict(path=str(paths[0]) if paths else None)
             if method == 'attachments.import':
                 raw = str(param(params, 'data'))
                 if len(raw) > Attachments.LIMIT * 4 // 3 + 4:

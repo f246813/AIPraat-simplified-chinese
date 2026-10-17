@@ -1,0 +1,127 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - img [ref=e6]
+    - text: AIPraat
+    - generic [ref=e7]: AI 纠音
+  - main [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]: PRONUNCIATION
+        - heading "分析两段音频，比较差异" [level=1] [ref=e12]
+        - paragraph [ref=e13]: 选择标准音与学习者录音，设置本次分析的发音目标。
+      - img [ref=e15]
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - group [ref=e19]:
+          - generic [ref=e20]:
+            - generic [ref=e21]:
+              - generic [ref=e22]: "01"
+              - heading "录音对象" [level=2] [ref=e23]
+            - generic [ref=e24]:
+              - generic [ref=e25]:
+                - generic [ref=e26]: 标准音范本
+                - combobox "标准音范本" [ref=e27]:
+                  - 'option "4: 标准音_hello" [selected]'
+                  - 'option "9: 学习者_hello"'
+              - generic [ref=e28]:
+                - generic [ref=e29]: 学习者录音
+                - combobox "学习者录音" [ref=e30]:
+                  - 'option "4: 标准音_hello"'
+                  - 'option "9: 学习者_hello" [selected]'
+            - paragraph [ref=e31]: 来自 Praat 当前选中的 Sound 对象。
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - generic [ref=e34]: "02"
+              - heading "发音目标" [level=2] [ref=e35]
+            - generic [ref=e36]:
+              - generic [ref=e37]:
+                - generic [ref=e38]:
+                  - generic [ref=e39]: 目标语言与读音
+                  - combobox "目标语言与读音" [ref=e40]:
+                    - option "高级手动 IPA（普通话 / 日语 / 自定义）" [selected]
+                    - option "英语（英式）"
+                    - option "英语（美式）"
+                - button "配置配套资源" [ref=e41] [cursor=pointer]
+              - generic [ref=e42]:
+                - generic [ref=e43]: 目标语言代码
+                - textbox "目标语言代码 手动语言代码，例如 cmn、en、ja；不会自动运行通用分词。" [ref=e44]: cmn
+                - generic [ref=e45]: 手动语言代码，例如 cmn、en、ja；不会自动运行通用分词。
+              - generic [ref=e47]:
+                - generic [ref=e48]:
+                  - text: 参考文本
+                  - emphasis [ref=e49]: · 选填
+                - textbox "参考文本 · 选填 使用旧 MFA 词典对齐时填写对应文本。" [ref=e50]:
+                  - /placeholder: 例如 hello world
+                - generic [ref=e51]: 使用旧 MFA 词典对齐时填写对应文本。
+              - generic [ref=e52]:
+                - generic [ref=e53]:
+                  - text: 目标音位
+                  - emphasis [ref=e54]: · IPA
+                - textbox "目标音位 · IPA 用空格、逗号或分号分隔。" [ref=e55]
+                - generic [ref=e56]: 用空格、逗号或分号分隔。
+          - generic [ref=e57]:
+            - generic [ref=e58]:
+              - generic [ref=e59]: "03"
+              - heading "分析方式" [level=2] [ref=e60]
+            - radiogroup "分析方式" [ref=e61]:
+              - generic [ref=e62] [cursor=pointer]:
+                - radio "声学对比 沿用现有声学差异阈值" [checked] [ref=e63]
+                - generic [ref=e64]:
+                  - strong [ref=e65]: 声学对比
+                  - generic [ref=e66]: 沿用现有声学差异阈值
+              - generic [ref=e67] [cursor=pointer]:
+                - radio "音位判据 实验性 英语 / 日语的分音类观察" [ref=e68]
+                - generic [ref=e69]:
+                  - strong [ref=e70]: 音位判据 实验性
+                  - generic [ref=e71]: 英语 / 日语的分音类观察
+            - generic [ref=e72] [cursor=pointer]:
+              - generic [ref=e73]:
+                - strong [ref=e74]: 使用 AI 生成解释
+                - generic [ref=e75]: 当前模型：本地模型 · local-fixture（仅用于解释，不用于 G2P 或对齐）
+              - checkbox "使用 AI 生成解释 当前模型：本地模型 · local-fixture（仅用于解释，不用于 G2P 或对齐）" [checked] [ref=e76]
+            - group [ref=e77]:
+              - generic "高级设置" [ref=e78] [cursor=pointer]
+              - generic [ref=e79]:
+                - generic [ref=e80]:
+                  - generic [ref=e81]: 声学对比阈值
+                  - spinbutton "声学对比阈值" [ref=e82]: "1.25"
+                - generic [ref=e83] [cursor=pointer]:
+                  - generic [ref=e84]:
+                    - strong [ref=e85]: AI 视觉解释
+                    - generic [ref=e86]: 将对比图交给当前模型解释
+                  - checkbox "AI 视觉解释 将对比图交给当前模型解释" [checked] [active] [ref=e87]
+        - complementary [ref=e88]:
+          - generic [ref=e89]:
+            - heading "本次分析" [level=2] [ref=e90]:
+              - img [ref=e91]
+              - text: 本次分析
+            - generic [ref=e92]:
+              - term [ref=e93]: 标准音 → 学习者
+              - definition [ref=e94]: 标准音_hello → 学习者_hello
+              - term [ref=e95]: 目标语言与读音
+              - definition [ref=e96]: 手动 IPA · cmn
+              - term [ref=e97]: 目标音位
+              - definition [ref=e98]: 未填写
+              - term [ref=e99]: 音位来源
+              - definition [ref=e100]: 手动 IPA
+              - term [ref=e101]: 分析方式
+              - definition [ref=e102]: 声学对比
+              - term [ref=e103]: 结果解释
+              - definition [ref=e104]: AI 文字解释 + AI 视觉解释
+              - term [ref=e105]: 解释模型
+              - definition [ref=e106]: 本地模型 · local-fixture
+            - paragraph [ref=e107]: 分析会比较两段录音的声学特征，输出发音差异与参考解释。
+          - generic [ref=e108]:
+            - img [ref=e109]
+            - paragraph [ref=e111]: 音位判据用于观察声学特征，实验性结果不作为已校准的发音评分。
+      - generic [ref=e112]:
+        - paragraph [ref=e113]: 检查录音顺序与目标音位后，开始本次分析。
+        - generic [ref=e114]:
+          - button "取消" [ref=e115] [cursor=pointer]
+          - button "开始分析" [ref=e116] [cursor=pointer]:
+            - text: 开始分析
+            - img [ref=e117]
+```

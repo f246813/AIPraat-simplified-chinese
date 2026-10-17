@@ -66,12 +66,18 @@ export function ComposerStatus({store, session, composer, onSettings}: {store: C
     sync(); return composer.subscribe(sync);
   }, [composer]);
   useEffect(() => {
-    let cancelled = false;
+    // A different conversation/configuration cannot reuse this estimate.
     setContext(undefined); setContextError('');
+  }, [session.id, boot.settings]);
+  useEffect(() => {
+    let cancelled = false;
+    // Keep the last valid value while the same conversation's draft changes.
+    // Clearing here blanks the ring on every key, before debounce even runs.
+    setContextError('');
     const timer = setTimeout(() => {
       void store.rpc('sessions.context', {sessionId: session.id, ...inputs}).then(value => {
         if (!cancelled && value.sessionId === session.id) setContext(value);
-      }).catch(error => { if (!cancelled) setContextError(error instanceof Error ? error.message : String(error)); });
+      }).catch(error => { if (!cancelled) { setContext(undefined); setContextError(error instanceof Error ? error.message : String(error)); } });
     }, 350);
     return () => { cancelled = true; clearTimeout(timer); };
   }, [store, session.id, inputs, boot.settings, historyRevision]);

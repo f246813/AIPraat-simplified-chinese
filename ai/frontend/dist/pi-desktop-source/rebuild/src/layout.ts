@@ -24,7 +24,7 @@ export const MAIN_PANE_MIN_WIDTH = 450;
 
 /** Centered conversation band shared by the transcript, the empty state and the composer. */
 export const CONVERSATION_WIDTH_MIN = 560;
-export const CONVERSATION_WIDTH_DEFAULT = 850;
+export const CONVERSATION_WIDTH_DEFAULT = 720;
 export const CONVERSATION_WIDTH_MAX = 4000;
 /** Gutter kept on each side of the pane so the handles stay usable. */
 export const CONVERSATION_WIDTH_GUTTER = 24;

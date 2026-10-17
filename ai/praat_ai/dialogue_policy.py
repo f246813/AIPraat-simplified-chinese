@@ -31,8 +31,8 @@ _ORDINARY = re.compile(
     r'介绍(?:一下)?(?:你自己|你的功能)|讲(?:个|一个)(?:笑话|故事)|聊聊天|随便聊聊)'
     +_SEPARATOR, re.I)
 
-#: 「你都能测哪些声学参数？」这类能力问题：2026-10-07 实测它没有进对话，而是启动了
-#: 一整轮分析（L0 工具 → L2 报告），最后以「audio_input 为 false，无法测量」作答。
+#: 「你都能测哪些声学参数？」这类能力问题直接进入对话；不匹配时会启动完整分析，
+#: 最后以「无法测量」作答而用户问题并未回答。
 _CAPABILITY = re.compile(
     r'你(?:都)?能(?:测|做|干|分析|看)(?:哪些|什么|些什么|点啥)?|'
     r'(?:都)?能测(?:哪些|什么|些什么)|'
@@ -47,6 +47,33 @@ _INTERFACE = re.compile(
     r'.{0,12}(?:调|改|换|设|变大|变小|大一点|小一点|宽一点|窄一点|打开|在哪|怎么)|'
     r'(?:调|改|换|设)(?:一下)?.{0,8}(?:字体|字号|主题|界面|窗口)|'
     r'(?:打开|进入)(?:设置|偏好|配置)(?:页|页面|窗口)?', re.I)
+
+
+#: 请求动作词：出现任何一个都说明用户提了要求，不能当成无请求输入。
+_REQUEST_ACTION = re.compile(
+    r'[测查读看听算画做改调建开删存截播比导标复重生拼合转裁归滤分试修换设记写讲帮请问给出找显]|'
+    r'\b(?:please|can you|could you|what|how|why|when|which|where|who|is|are|does|'
+    r'measure|calculate|read|show|list|tell|explain|open|delete|create|save|extract|'
+    r'play|analy[sz]e|compare|export|annotate|copy|rename|generate|resample|invert|'
+    r'join|merge|plot)\b', re.I)
+
+
+def no_executable_request(goal: str) -> bool:
+    """输入里没有任何可执行请求（例如随手敲的一个词或一串无意义字符）。
+
+    判定刻意保守：命中材料引用、领域词、概念问句、能力/界面问题、练习建议，
+    或者出现任何请求动作词，都返回 ``False`` 走原有分析阶梯。因此真实测量请求
+    不会被误判成闲聊；漏判的代价只是这类输入仍按分析处理。
+    """
+
+    text = goal.strip()
+    if not text or len(text) > 24:
+        return False
+    if _MATERIAL.search(text) or _DOMAIN.search(text) or _CONCEPT.search(text):
+        return False
+    if _CAPABILITY.search(text) or _INTERFACE.search(text) or advice_request(text):
+        return False
+    return not _REQUEST_ACTION.search(text)
 
 
 def advice_request(goal: str) -> bool:
@@ -84,6 +111,8 @@ def dialogue_kind(goal: str) -> str | None:
         return 'concept'
     if _DOMAIN.search(goal):
         return None
+    if no_executable_request(goal):
+        return 'conversation'
     return None
 
 

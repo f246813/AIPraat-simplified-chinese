@@ -1,0 +1,25 @@
+test_accessibility_and_system_preferences_skip_material (test_webview_backdrop.BackdropTests.test_accessibility_and_system_preferences_skip_material) ... ok
+test_attach_waits_for_before_show_and_is_idempotent (test_webview_backdrop.BackdropTests.test_attach_waits_for_before_show_and_is_idempotent) ... ok
+test_creation_paths_opt_in_only_their_explicit_webview (test_webview_backdrop.BackdropTests.test_creation_paths_opt_in_only_their_explicit_webview) ... ok
+test_failed_material_rolls_back_both_backgrounds (test_webview_backdrop.BackdropTests.test_failed_material_rolls_back_both_backgrounds) ... WebView backdrop unavailable; opaque fallback: DWM failed
+ok
+test_foreign_hwnd_is_never_modified (test_webview_backdrop.BackdropTests.test_foreign_hwnd_is_never_modified) ... ok
+test_missing_undocumented_entrypoint_returns_failure (test_webview_backdrop.BackdropTests.test_missing_undocumented_entrypoint_returns_failure) ... ok
+test_native_backend_selection (test_webview_backdrop.BackdropTests.test_native_backend_selection) ... ok
+test_native_cleanup_disables_only_selected_backend (test_webview_backdrop.BackdropTests.test_native_cleanup_disables_only_selected_backend) ... ok
+test_non_webview2_is_never_modified (test_webview_backdrop.BackdropTests.test_non_webview2_is_never_modified) ... ok
+test_non_windows_does_not_touch_native_or_import_windows (test_webview_backdrop.BackdropTests.test_non_windows_does_not_touch_native_or_import_windows) ... ok
+test_pointer_sized_native_composition_structure (test_webview_backdrop.BackdropTests.test_pointer_sized_native_composition_structure) ... ok
+test_rollback_does_not_restore_an_already_transparent_default (test_webview_backdrop.BackdropTests.test_rollback_does_not_restore_an_already_transparent_default) ... WebView backdrop unavailable; opaque fallback: not available
+ok
+test_rollback_restores_background_even_if_disable_raises (test_webview_backdrop.BackdropTests.test_rollback_restores_background_even_if_disable_raises) ... ok
+test_simple_test_host_without_events_and_backend_initialization_failure (test_webview_backdrop.BackdropTests.test_simple_test_host_without_events_and_backend_initialization_failure) ... WebView backdrop initialization skipped: unsupported runtime
+ok
+test_transparent_canvas_does_not_reduce_content_opacity_or_use_colorkey (test_webview_backdrop.BackdropTests.test_transparent_canvas_does_not_reduce_content_opacity_or_use_colorkey) ... ok
+test_unsupported_build_or_failed_native_call_never_claims_success (test_webview_backdrop.BackdropTests.test_unsupported_build_or_failed_native_call_never_claims_success) ... ok
+test_win10_accent_abi_uses_blur_not_opaque_acrylic (test_webview_backdrop.BackdropTests.test_win10_accent_abi_uses_blur_not_opaque_acrylic) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.004s
+
+OK

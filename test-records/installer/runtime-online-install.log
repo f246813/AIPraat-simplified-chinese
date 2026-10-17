@@ -1,0 +1,240 @@
+配置所选 Python：<WORKSPACE>/installer/verification/runtime-online-env/Scripts/python.exe
+<WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-online-env\Lib\site-packages\torch\_subclasses\functional_tensor.py:368: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\torch\csrc\utils\tensor_numpy.cpp:84.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+正在根据项目 requirements 安装全部必需 Python 运行库（包含 openai 扩展依赖）…
+Collecting numpy>=2.0 (from -r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 1))
+  Downloading numpy-2.5.4-cp312-cp312-win_amd64.whl.metadata (6.6 kB)
+Collecting Pillow>=10.0 (from -r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 2))
+  Downloading pillow-12.3.0-cp312-cp312-win_amd64.whl.metadata (9.3 kB)
+Collecting praat-parselmouth>=0.4.7 (from -r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 3))
+  Downloading praat_parselmouth-0.4.7-cp312-cp312-win_amd64.whl.metadata (3.0 kB)
+Collecting pydantic-ai-slim==2.52.0 (from pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading pydantic_ai_slim-2.52.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting pydantic-graph==2.52.0 (from -r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 5))
+  Downloading pydantic_graph-2.52.0-py3-none-any.whl.metadata (4.3 kB)
+Collecting jsonschema==4.26.0 (from -r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 6))
+  Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting pywebview==6.2.1 (from -r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 7))
+  Downloading pywebview-6.2.1-py3-none-any.whl.metadata (4.9 kB)
+Collecting pythonnet==3.2.0 (from -r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 8))
+  Downloading pythonnet-3.2.0-cp311.cp312.cp313.cp314.cp315-none-any.whl.metadata (6.5 kB)
+Requirement already satisfied: torch>=2.3 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-online-env\lib\site-packages (from -r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 1)) (2.14.1+cpu)
+Collecting transformers>=4.57 (from -r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading transformers-5.19.0-py3-none-any.whl.metadata (32 kB)
+Collecting safetensors>=0.4 (from -r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 3))
+  Downloading safetensors-0.8.0-cp310-abi3-win_amd64.whl.metadata (4.2 kB)
+Collecting anyio>=4.7.0 (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+Collecting genai-prices>=0.1.9 (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading genai_prices-0.1.10-py3-none-any.whl.metadata (10 kB)
+Collecting griffelib>=2.0 (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading griffelib-2.3.2-py3-none-any.whl.metadata (1.3 kB)
+Collecting httpx2>=2.7 (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading httpx2-2.13.1-py3-none-any.whl.metadata (9.8 kB)
+Collecting opentelemetry-api>=1.28.0 (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading opentelemetry_api-1.45.1-py3-none-any.whl.metadata (1.4 kB)
+Collecting pydantic>=2.12 (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading pydantic-2.14.1-py3-none-any.whl.metadata (133 kB)
+Collecting typing-inspection>=0.4.0 (from pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+Collecting logfire-api>=3.14.1 (from pydantic-graph==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 5))
+  Downloading logfire_api-5.1.1-py3-none-any.whl.metadata (972 bytes)
+Collecting attrs>=22.2.0 (from jsonschema==4.26.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 6))
+  Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+Collecting jsonschema-specifications>=2023.03.6 (from jsonschema==4.26.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 6))
+  Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting referencing>=0.28.4 (from jsonschema==4.26.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 6))
+  Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting rpds-py>=0.25.0 (from jsonschema==4.26.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 6))
+  Downloading rpds_py-2026.9.1-cp312-cp312-win_amd64.whl.metadata (4.2 kB)
+Collecting proxy_tools (from pywebview==6.2.1->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 7))
+  Downloading proxy_tools-0.1.0.tar.gz (3.0 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting bottle (from pywebview==6.2.1->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 7))
+  Downloading bottle-0.13.4-py2.py3-none-any.whl.metadata (1.6 kB)
+Requirement already satisfied: typing_extensions in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-online-env\lib\site-packages (from pywebview==6.2.1->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 7)) (4.16.0)
+Collecting clr_loader<0.4.0,>=0.3.1 (from pythonnet==3.2.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 8))
+  Downloading clr_loader-0.3.1-py3-none-any.whl.metadata (1.4 kB)
+Collecting openai>=3.19.0 (from pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading openai-3.29.0-py3-none-any.whl.metadata (44 kB)
+Collecting tiktoken>=0.12.0 (from pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading tiktoken-0.14.0-cp312-cp312-win_amd64.whl.metadata (6.8 kB)
+Requirement already satisfied: filelock in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-online-env\lib\site-packages (from torch>=2.3->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 1)) (3.32.3)
+Requirement already satisfied: setuptools>=77.0.3 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-online-env\lib\site-packages (from torch>=2.3->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 1)) (78.1.0)
+Requirement already satisfied: sympy>=1.13.3 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-online-env\lib\site-packages (from torch>=2.3->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 1)) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-online-env\lib\site-packages (from torch>=2.3->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 1)) (3.6.1)
+Requirement already satisfied: jinja2 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-online-env\lib\site-packages (from torch>=2.3->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 1)) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-online-env\lib\site-packages (from torch>=2.3->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 1)) (2026.7.0)
+Collecting huggingface-hub<3.0,>=1.31.0 (from transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading huggingface_hub-2.2.0-py3-none-any.whl.metadata (16 kB)
+Collecting packaging>=20.0 (from transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pyyaml>=5.1 (from transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading pyyaml-6.0.3-cp312-cp312-win_amd64.whl.metadata (2.4 kB)
+Collecting regex>=2025.10.22 (from transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading regex-2026.9.29-cp312-cp312-win_amd64.whl.metadata (41 kB)
+Collecting tokenizers<0.24.0,>=0.23.1 (from transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading tokenizers-0.23.3-cp310-abi3-win_amd64.whl.metadata (10 kB)
+Collecting typer (from transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading typer-0.27.3-py3-none-any.whl.metadata (16 kB)
+Collecting tqdm>=4.60 (from transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading tqdm-4.70.1-py3-none-any.whl.metadata (57 kB)
+Collecting idna>=2.8 (from anyio>=4.7.0->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+Collecting cffi>=1.17 (from clr_loader<0.4.0,>=0.3.1->pythonnet==3.2.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 8))
+  Downloading cffi-2.1.1-cp312-cp312-win_amd64.whl.metadata (2.6 kB)
+Collecting httpcore2==2.13.1 (from httpx2>=2.7->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading httpcore2-2.13.1-py3-none-any.whl.metadata (26 kB)
+Collecting truststore>=0.10 (from httpx2>=2.7->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading truststore-0.10.4-py3-none-any.whl.metadata (4.4 kB)
+Collecting h11>=0.16 (from httpcore2==2.13.1->httpx2>=2.7->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting click<9.0.0,>=8.4.2 (from huggingface-hub<3.0,>=1.31.0->transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting hf-xet<2.0.0,>=1.6.0 (from huggingface-hub<3.0,>=1.31.0->transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading hf_xet-1.7.0-cp38-abi3-win_amd64.whl.metadata (4.9 kB)
+Collecting jiter<1,>=0.16.0 (from openai>=3.19.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading jiter-0.17.0-cp312-cp312-win_amd64.whl.metadata (5.3 kB)
+Collecting sniffio (from openai>=3.19.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+Collecting annotated-types>=0.6.0 (from pydantic>=2.12->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.50.1 (from pydantic>=2.12->pydantic-ai-slim==2.52.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading pydantic_core-2.50.1-cp312-cp312-win_amd64.whl.metadata (6.7 kB)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-online-env\lib\site-packages (from sympy>=1.13.3->torch>=2.3->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 1)) (1.3.0)
+Collecting requests (from tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+Collecting colorama (from tqdm>=4.60->transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+Requirement already satisfied: MarkupSafe>=2.0 in <WORKSPACE>\�ȶ����ڰ�\installer\verification\runtime-online-env\lib\site-packages (from jinja2->torch>=2.3->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 1)) (3.0.3)
+Collecting shellingham>=1.3.0 (from typer->transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+Collecting rich>=13.8.0 (from typer->transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+Collecting annotated-doc>=0.0.2 (from typer->transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+Collecting pycparser (from cffi>=1.17->clr_loader<0.4.0,>=0.3.1->pythonnet==3.2.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 8))
+  Downloading pycparser-3.11-py3-none-any.whl.metadata (8.2 kB)
+Collecting markdown-it-py>=2.2.0 (from rich>=13.8.0->typer->transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting pygments<3.0.0,>=2.13.0 (from rich>=13.8.0->typer->transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting charset_normalizer<4,>=2 (from requests->tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading charset_normalizer-3.5.2-cp312-cp312-win_amd64.whl.metadata (47 kB)
+Collecting urllib3<3,>=1.26 (from requests->tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting certifi>=2023.5.7 (from requests->tiktoken>=0.12.0->pydantic-ai-slim[openai]==2.52.0->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements.txt (line 4))
+  Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->transformers>=4.57->-r <WORKSPACE>\�ȶ����ڰ�\ai\requirements-wav2vec2.txt (line 2))
+  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Downloading pydantic_ai_slim-2.52.0-py3-none-any.whl (2.1 MB)
+   ---------------------------------------- 2.1/2.1 MB 5.5 MB/s eta 0:00:00
+Downloading pydantic_graph-2.52.0-py3-none-any.whl (52 kB)
+Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+Downloading pywebview-6.2.1-py3-none-any.whl (525 kB)
+   --------------------------------------- 525.5/525.5 kB 17.6 MB/s eta 0:00:00
+Downloading pythonnet-3.2.0-cp311.cp312.cp313.cp314.cp315-none-any.whl (222 kB)
+Downloading numpy-2.5.4-cp312-cp312-win_amd64.whl (12.6 MB)
+   ---------------------------------------- 12.6/12.6 MB 9.0 MB/s eta 0:00:00
+Downloading pillow-12.3.0-cp312-cp312-win_amd64.whl (7.2 MB)
+   ---------------------------------------- 7.2/7.2 MB 10.1 MB/s eta 0:00:00
+Downloading praat_parselmouth-0.4.7-cp312-cp312-win_amd64.whl (9.0 MB)
+   ---------------------------------------- 9.0/9.0 MB 9.8 MB/s eta 0:00:00
+Downloading transformers-5.19.0-py3-none-any.whl (12.6 MB)
+   ---------------------------------------- 12.6/12.6 MB 11.0 MB/s eta 0:00:00
+Downloading safetensors-0.8.0-cp310-abi3-win_amd64.whl (355 kB)
+Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+Downloading clr_loader-0.3.1-py3-none-any.whl (55 kB)
+Downloading genai_prices-0.1.10-py3-none-any.whl (132 kB)
+Downloading griffelib-2.3.2-py3-none-any.whl (169 kB)
+Downloading httpx2-2.13.1-py3-none-any.whl (95 kB)
+Downloading httpcore2-2.13.1-py3-none-any.whl (83 kB)
+Downloading huggingface_hub-2.2.0-py3-none-any.whl (839 kB)
+   ---------------------------------------- 839.9/839.9 kB 9.3 MB/s eta 0:00:00
+Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Downloading logfire_api-5.1.1-py3-none-any.whl (148 kB)
+Downloading openai-3.29.0-py3-none-any.whl (2.2 MB)
+   ---------------------------------------- 2.2/2.2 MB 1.8 MB/s eta 0:00:00
+Downloading opentelemetry_api-1.45.1-py3-none-any.whl (60 kB)
+Downloading packaging-26.3-py3-none-any.whl (129 kB)
+Downloading pydantic-2.14.1-py3-none-any.whl (488 kB)
+Downloading pydantic_core-2.50.1-cp312-cp312-win_amd64.whl (2.2 MB)
+   ---------------------------------------- 2.2/2.2 MB 2.6 MB/s eta 0:00:00
+Downloading pyyaml-6.0.3-cp312-cp312-win_amd64.whl (154 kB)
+Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+Downloading regex-2026.9.29-cp312-cp312-win_amd64.whl (280 kB)
+Downloading rpds_py-2026.9.1-cp312-cp312-win_amd64.whl (222 kB)
+Downloading tiktoken-0.14.0-cp312-cp312-win_amd64.whl (941 kB)
+   ---------------------------------------- 941.2/941.2 kB 3.1 MB/s eta 0:00:00
+Downloading tokenizers-0.23.3-cp310-abi3-win_amd64.whl (2.9 MB)
+   ---------------------------------------- 2.9/2.9 MB 3.5 MB/s eta 0:00:00
+Downloading tqdm-4.70.1-py3-none-any.whl (80 kB)
+Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+Downloading bottle-0.13.4-py2.py3-none-any.whl (103 kB)
+Downloading typer-0.27.3-py3-none-any.whl (123 kB)
+Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Downloading cffi-2.1.1-cp312-cp312-win_amd64.whl (185 kB)
+Downloading click-8.5.0-py3-none-any.whl (125 kB)
+Downloading hf_xet-1.7.0-cp38-abi3-win_amd64.whl (3.8 MB)
+   ---------------------------------------- 3.8/3.8 MB 4.4 MB/s eta 0:00:00
+Downloading idna-3.20-py3-none-any.whl (69 kB)
+Downloading jiter-0.17.0-cp312-cp312-win_amd64.whl (227 kB)
+Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+Downloading truststore-0.10.4-py3-none-any.whl (18 kB)
+Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+Downloading sniffio-1.3.1-py3-none-any.whl (10 kB)
+Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+Downloading charset_normalizer-3.5.2-cp312-cp312-win_amd64.whl (207 kB)
+Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+   ---------------------------------------- 1.3/1.3 MB 3.2 MB/s eta 0:00:00
+Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+Downloading pycparser-3.11-py3-none-any.whl (51 kB)
+Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Building wheels for collected packages: proxy_tools
+  Building wheel for proxy_tools (pyproject.toml): started
+  Building wheel for proxy_tools (pyproject.toml): finished with status 'done'
+  Created wheel for proxy_tools: filename=proxy_tools-0.1.0-py3-none-any.whl size=2944 sha256=fb120d65098efe68c797972fd9339f977858328b676d9f88b64b7c58826e3cc4
+  Stored in directory: <USER_HOME>\AppData\Local\Temp\pip-ephem-wheel-cache-ma65qdi6\wheels\07\37\12\f3390260c831aa68c3835d6ec2e10d8da094b5fc0ac32feb14
+Successfully built proxy_tools
+Installing collected packages: proxy_tools, bottle, urllib3, typing-inspection, truststore, sniffio, shellingham, safetensors, rpds-py, regex, pyyaml, pygments, pydantic-core, pycparser, Pillow, packaging, opentelemetry-api, numpy, mdurl, logfire-api, jiter, idna, hf-xet, h11, griffelib, colorama, click, charset_normalizer, certifi, attrs, annotated-types, annotated-doc, tqdm, requests, referencing, pydantic, praat-parselmouth, markdown-it-py, httpcore2, cffi, anyio, tiktoken, rich, pydantic-graph, jsonschema-specifications, httpx2, clr_loader, typer, pythonnet, openai, jsonschema, huggingface-hub, genai-prices, tokenizers, pywebview, pydantic-ai-slim, transformers
+Successfully installed Pillow-12.3.0 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 attrs-26.1.0 bottle-0.13.4 certifi-2026.7.22 cffi-2.1.1 charset_normalizer-3.5.2 click-8.5.0 clr_loader-0.3.1 colorama-0.4.6 genai-prices-0.1.10 griffelib-2.3.2 h11-0.16.0 hf-xet-1.7.0 httpcore2-2.13.1 httpx2-2.13.1 huggingface-hub-2.2.0 idna-3.20 jiter-0.17.0 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 logfire-api-5.1.1 markdown-it-py-4.2.0 mdurl-0.1.2 numpy-2.5.4 openai-3.29.0 opentelemetry-api-1.45.1 packaging-26.3 praat-parselmouth-0.4.7 proxy_tools-0.1.0 pycparser-3.11 pydantic-2.14.1 pydantic-ai-slim-2.52.0 pydantic-core-2.50.1 pydantic-graph-2.52.0 pygments-2.21.0 pythonnet-3.2.0 pywebview-6.2.1 pyyaml-6.0.3 referencing-0.37.0 regex-2026.9.29 requests-2.34.2 rich-15.0.0 rpds-py-2026.9.1 safetensors-0.8.0 shellingham-1.5.4 sniffio-1.3.1 tiktoken-0.14.0 tokenizers-0.23.3 tqdm-4.70.1 transformers-5.19.0 truststore-0.10.4 typer-0.27.3 typing-inspection-0.4.4 urllib3-2.8.0
+正在检测 NumPy
+NumPy: 已就绪
+正在检测 Pillow
+Pillow: 已就绪
+正在检测 praat-parselmouth
+praat-parselmouth: 已就绪
+正在检测 pydantic-ai-slim
+pydantic-ai-slim: 已就绪
+正在检测 pydantic-graph
+pydantic-graph: 已就绪
+正在检测 jsonschema
+jsonschema: 已就绪
+正在检测 pywebview
+pywebview: 已就绪
+正在检测 pythonnet
+pythonnet: 已就绪
+正在检测 PyTorch
+PyTorch: 已就绪
+正在检测 Transformers
+Transformers: 已就绪
+正在检测 Safetensors
+Safetensors: 已就绪
+正在检测 WebView2 Runtime
+WebView2 Runtime: 已就绪
+正在检测 Tcl/Tk
+Tcl/Tk: 已就绪
+{"python": "<WORKSPACE>\\installer\\verification\\runtime-online-env\\Scripts\\python.exe", "version": "3.12.14", "architecture": "AMD64", "device": "cpu", "supported": true, "ready": true, "completed": true, "items": [{"id": "numpy", "label": "NumPy", "required": true, "requirement": "numpy>=2.0", "spec": ">=2.0", "installed": "2.5.4", "ok": true, "status": "已就绪"}, {"id": "pillow", "label": "Pillow", "required": true, "requirement": "pillow>=10.0", "spec": ">=10.0", "installed": "12.3.0", "ok": true, "status": "已就绪"}, {"id": "praat-parselmouth", "label": "praat-parselmouth", "required": true, "requirement": "praat-parselmouth>=0.4.7", "spec": ">=0.4.7", "installed": "0.4.7", "ok": true, "status": "已就绪"}, {"id": "pydantic-ai-slim", "label": "pydantic-ai-slim", "required": true, "requirement": "pydantic-ai-slim[openai]==2.52.0", "spec": "==2.52.0", "installed": "2.52.0", "ok": true, "status": "已就绪"}, {"id": "pydantic-graph", "label": "pydantic-graph", "required": true, "requirement": "pydantic-graph==2.52.0", "spec": "==2.52.0", "installed": "2.52.0", "ok": true, "status": "已就绪"}, {"id": "jsonschema", "label": "jsonschema", "required": true, "requirement": "jsonschema==4.26.0", "spec": "==4.26.0", "installed": "4.26.0", "ok": true, "status": "已就绪"}, {"id": "pywebview", "label": "pywebview", "required": true, "requirement": "pywebview==6.2.1", "spec": "==6.2.1", "installed": "6.2.1", "ok": true, "status": "已就绪"}, {"id": "pythonnet", "label": "pythonnet", "required": true, "requirement": "pythonnet==3.2.0", "spec": "==3.2.0", "installed": "3.2.0", "ok": true, "status": "已就绪"}, {"id": "torch", "label": "PyTorch", "required": true, "requirement": "torch>=2.3", "spec": ">=2.3", "installed": "2.14.1+cpu", "ok": true, "status": "已就绪"}, {"id": "transformers", "label": "Transformers", "required": true, "requirement": "transformers>=4.57", "spec": ">=4.57", "installed": "5.19.0", "ok": true, "status": "已就绪"}, {"id": "safetensors", "label": "Safetensors", "required": true, "requirement": "safetensors>=0.4", "spec": ">=0.4", "installed": "0.8.0", "ok": true, "status": "已就绪"}, {"id": "webview2", "label": "WebView2 Runtime", "required": true, "requirement": "Microsoft Evergreen x64", "spec": "", "installed": "154.0.4258.62", "ok": true, "status": "已就绪"}, {"id": "tk", "label": "Tcl/Tk", "required": true, "requirement": "可创建 Tk 窗口", "spec": "", "installed": "8.6.12", "ok": true, "status": "已就绪"}], "message": ""}
+逐项检测结果：<WORKSPACE>/test-records/installer/runtime-online.json
+全部必需运行库已通过复检和新前端窗口启动检查。

@@ -31,7 +31,9 @@ test('published result remains readable after explanation cancellation',async({p
   await expect(page.getByRole('region',{name:'已保存的工具结果'})).toBeVisible();
   await expect(page.getByRole('region',{name:'已保存的工具结果'})).toContainText('1.250000 秒');
   await expect(page.getByText('已取消后续解释。离线展示夹具。')).toBeVisible();
-  await page.getByRole('region',{name:'已保存的工具结果'}).getByText('duration · success · delivered').click();
-  await expect(page.getByRole('region',{name:'已保存的工具结果'})).toContainText('离线工具结果夹具');
+  await expect(page.locator('.process-details')).not.toHaveAttribute('open','');
+  await page.locator('.process-details > summary').click();
+  await page.getByRole('region',{name:'工具执行记录'}).getByText('duration · 成功 · delivered').click();
+  await expect(page.getByRole('region',{name:'工具执行记录'})).toContainText('离线工具结果夹具');
   await page.screenshot({path:join(process.env.PI_SCRATCH_DIR || 'test-results','workflow-results.png'),fullPage:true});
 });

@@ -11,6 +11,7 @@ from pathlib import Path
 
 PROBE = r'''
 import ctypes as c
+import time
 from ctypes import wintypes as w
 import tkinter as tk
 from tkinter import ttk
@@ -73,16 +74,24 @@ try:
                     for size, weight in ((10, 'normal'), (12, 'bold'), (-18, 'normal')):
                         field.configure(font=('Microsoft YaHei UI', size, weight))
                         window.root.update_idletasks()
-                        field.event_generate('<FocusIn>')
-                        window.root.update()
-                        context = imm.ImmGetContext(field.winfo_id())
-                        assert context, 'Missing IME input context'
-                        native = LOGFONT()
-                        try:
-                            assert imm.ImmGetCompositionFontW(context, c.byref(native))
-                        finally:
-                            imm.ImmReleaseContext(field.winfo_id(), context)
                         expected_pixels = abs(size) if size < 0 else round(size * float(window.root.tk.call('tk', 'scaling')))
+                        # IME 的组合字体是共享状态：别的窗口（负载下同时跑的 UI 测试）可能把它抢回去，
+                        # 读回来的高度就会变成 IME 自己的默认值。让 app 重新施加一次（<FocusIn> 正是它
+                        # 的真实入口），在有限次数内等它稳定；一直不对仍按失败报，不放过真实回归。
+                        native = LOGFONT()
+                        for _attempt in range(10):
+                            field.focus_set()
+                            field.event_generate('<FocusIn>')
+                            window.root.update()
+                            context = imm.ImmGetContext(field.winfo_id())
+                            assert context, 'Missing IME input context'
+                            try:
+                                assert imm.ImmGetCompositionFontW(context, c.byref(native))
+                            finally:
+                                imm.ImmReleaseContext(field.winfo_id(), context)
+                            if native.height == -expected_pixels and native.face == 'Microsoft YaHei UI':
+                                break
+                            time.sleep(0.02)
                         assert native.face == 'Microsoft YaHei UI', f'{field.winfo_class()} DPI {dpi} size {size} IME family: {native.face}'
                         assert native.height == -expected_pixels, f'{field.winfo_class()} DPI {dpi}: IME height {native.height}, expected {-expected_pixels}'
                         assert native.weight == (700 if weight == 'bold' else 400), f'IME weight: {native.weight}'

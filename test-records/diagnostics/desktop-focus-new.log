@@ -1,0 +1,19 @@
+[pywebview] Failed to delete user data folder: [WinError 5] 拒绝访问。: '<USER_HOME>\\AppData\\Local\\Temp\\praat-desktop-focus-o7_eo8jc\\profile\\EBWebView\\CrashpadMetrics-active.pma'
+{
+  "before": {
+    "pid": 51020,
+    "title": "AIPraat · AI 工作台"
+  },
+  "desktop_pid": 13880,
+  "shown": {
+    "pid": 13880,
+    "title": "AIPraat · AI 工作台"
+  },
+  "loaded": {
+    "pid": 13880,
+    "title": "AIPraat · AI 工作台"
+  },
+  "header_visible": true,
+  "model_header_button": false,
+  "gear_visible": true
+}

@@ -1,0 +1,6 @@
+PASS denied_log_file_creation_uses_writable_fallback
+PASS both_unwritable_locations_return_specific_error
+PASS missing_report_is_detection_failure_not_13_missing_dependencies
+Runtime log: <USER_HOME>\AppData\Local\AIPraat\logs\runtime\detect-20261013-164610-768Z-e8af1711.log
+PASS delivered_runtime_probe_retains_complete_report_and_log
+RESULT 4 passed, 0 failed; fixtures=<USER_HOME>\AppData\Local\Temp\AIPraat-log-tests-68b823954d33454ead2d94db09094c13

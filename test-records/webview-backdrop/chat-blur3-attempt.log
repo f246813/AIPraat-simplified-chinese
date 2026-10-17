@@ -1,0 +1,172 @@
+{
+  "host": "chat",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "pywebview": "6.2.1",
+  "realDesktop": true,
+  "productionAssets": true,
+  "frontendModified": false,
+  "wholeWindowOpacityModified": false,
+  "wallpapers": [
+    "C:\\WINDOWS\\Web\\Wallpaper\\Windows\\img0.jpg",
+    "C:\\WINDOWS\\Web\\Wallpaper\\Theme1\\img1.jpg"
+  ],
+  "wallpaperHashes": [
+    "a63ed4cf89181233746c694bd4c0ffe697c7fc137be8a0387671e49b725d3d7e",
+    "cda281e6a6fed33dcb8b9a9542642bd62400ef031daaf7e4b68c00fb5e912cee"
+  ],
+  "assetIndexSHA256": "2925bedf733bcce6ba0a3c1b2bcd68a799748b8873d21bbcb040cd48f1ff2edd",
+  "initiallyVisible": false,
+  "native": {
+    "state": "active",
+    "reason": null,
+    "hwnd": 5245264,
+    "windows_build": 19045,
+    "material": "accent-acrylic-undocumented",
+    "webview_alpha": 0,
+    "form_opacity": 1.0
+  },
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0",
+  "url": "http://127.0.0.1:55844/index.html",
+  "dom": {
+    "html": {
+      "tag": "HTML",
+      "className": "",
+      "background": "rgb(250, 251, 249)",
+      "opacity": "1",
+      "filter": "none",
+      "backdropFilter": "none"
+    },
+    "body": {
+      "tag": "BODY",
+      "className": "",
+      "background": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "filter": "none",
+      "backdropFilter": "none"
+    },
+    "root": {
+      "tag": "DIV",
+      "className": "",
+      "background": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "filter": "none",
+      "backdropFilter": "none"
+    },
+    "centerAncestors": [
+      {
+        "tag": "DIV",
+        "className": "welcome",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "DIV",
+        "className": "transcript-shell",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "DIV",
+        "className": "thread",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "MAIN",
+        "className": "main-surface",
+        "background": "rgb(250, 251, 249)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "DIV",
+        "className": "app ",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "background": "rgb(250, 251, 249)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      }
+    ]
+  },
+  "nativeProperties": {
+    "formOpacity": 1.0,
+    "transparencyKey": 0,
+    "webviewAlpha": 0,
+    "formBackground": "Color [Black]",
+    "runtimeVersion": "155.0.4283.45"
+  },
+  "actualDesktopDifference": {
+    "meanAbsoluteRGB": [
+      4.299926020408163,
+      3.4608622448979593,
+      2.8827755102040817
+    ],
+    "meanAbsolute": 3.547854591836735
+  },
+  "productionDifference": {
+    "meanAbsoluteRGB": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "meanAbsolute": 0.0
+  },
+  "nativeOnlyDifference": {
+    "meanAbsoluteRGB": [
+      4.011451530612245,
+      3.0583010204081633,
+      2.51909693877551
+    ],
+    "meanAbsolute": 3.1962831632653064
+  },
+  "afterRestoreOpacity": 1.0,
+  "focusedHWND": 5245264,
+  "nativeStillActive": {
+    "state": "active",
+    "reason": null,
+    "hwnd": 5245264,
+    "windows_build": 19045,
+    "material": "accent-acrylic-undocumented",
+    "webview_alpha": 0,
+    "form_opacity": 1.0
+  },
+  "checksPassed": true,
+  "nativeDesktopPixelsChanged": true,
+  "productionDesktopEffectVerified": false,
+  "limitation": "Unmodified production frontend paints its own backgrounds. Native-only screenshots hide the child and do not certify .95/.93 surfaces or final UI. Win10 ACCENT_POLICY is undocumented; Win11 documented path not tested here.",
+  "wallpaperRestored": true,
+  "desktopWindowsRestored": true,
+  "passed": true
+}

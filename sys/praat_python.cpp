@@ -8,6 +8,7 @@
 #include "praat_script.h"
 #include "praat_python.h"
 #include "praat_python_workspace.h"
+#include "praat_python_wait.h"
 #include "Preferences.h"
 #include "melder_sysenv.h"
 #include "melder_progress.h"
@@ -32,6 +33,8 @@
 	#include <sys/wait.h>
 	#include <sys/types.h>
 #endif
+
+static bool thePythonRunnerActive = false;
 
 static std::filesystem::path get_process_workspace () {
 #if defined (_WIN32)
@@ -660,7 +663,12 @@ static void ensure_helper_module (const std::filesystem::path& tempDir) {
 	}
 }
 
-static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring32 optionalWorkingDir) {
+static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring32 optionalWorkingDir, unsigned int maximumWaitMilliseconds) {
+	Melder_require (! thePythonRunnerActive, U"当前 Python 任务尚未结束，请完成或取消后再运行。");
+	thePythonRunnerActive = true;
+	struct ResetRunning {
+		~ResetRunning () { thePythonRunnerActive = false; }
+	} resetRunning;
 	if (! filePath || filePath [0] == U'\0')
 		Melder_throw (U"No Python script file specified.");
 
@@ -682,23 +690,26 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 	} catch (...) {}
 
 	// Record currently selected objects
-	std::vector<integer> selectedIds;
+	std::vector<integer> selectedIndices;
 	if (theCurrentPraatObjects && theCurrentPraatObjects -> totalSelection > 0) {
 		for (integer iobj = 1; iobj <= theCurrentPraatObjects -> n; iobj ++) {
 			if (theCurrentPraatObjects -> list [iobj]. isSelected)
-				selectedIds.push_back (iobj);
+				selectedIndices.push_back (iobj);
 		}
 	}
 
 	// Export selected objects to workspace
 	std::filesystem::path contextJsonPath = tempDir / "praat_context.json";
 	std::ofstream jsonOfs (contextJsonPath, std::ios::out | std::ios::trunc);
+	if (! jsonOfs.is_open())
+		Melder_throw (U"无法写入 Python 对象上下文。");
 	if (jsonOfs.is_open()) {
 		jsonOfs << "{\n  \"selected_objects\": [\n";
 		bool first = true;
-		for (integer iobj : selectedIds) {
+		for (integer iobj : selectedIndices) {
 			Daata object = theCurrentPraatObjects -> list [iobj]. object;
 			if (! object) continue;
+			const integer objectId = theCurrentPraatObjects -> list [iobj]. id;
 
 			if (! first) jsonOfs << ",\n";
 			first = false;
@@ -717,7 +728,7 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 			const char32 *ext = isSound ? U".wav" : (isTextGrid ? U".TextGrid" : U".ooTextFile");
 
 			autoMelderString objFileName;
-			MelderString_append (& objFileName, iobj, U"_", sanitizedBaseName, ext);
+			MelderString_append (& objFileName, objectId, U"_", sanitizedBaseName, ext);
 			autostring8 objFileName8 = Melder_32to8 (objFileName.string);
 			/*
 				对象名按 UTF-8 通过 utf8_to_path() 转为系统路径，避免 Windows
@@ -726,41 +737,23 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 			std::filesystem::path objPath = tempDir / utf8_to_path (objFileName8 ? objFileName8.get() : "obj");
 			std::string objPathStr = path_to_utf8 (objPath);
 
-			if (isSound) {
-				// Export Sound as standard PCM WAV file
-				autoMelderString saveCmd;
-				autostring32 objPath32 = Melder_8to32_e (objPathStr.c_str());
-				autoMelderString escapedObjPath;
-				if (objPath32) {
-					for (const char32 *p = objPath32.get(); *p != U'\0'; p++) {
-						if (*p == U'"')
-							MelderString_append (& escapedObjPath, U"\"\"");
-						else
-							MelderString_appendCharacter (& escapedObjPath, *p);
-					}
-				}
-				MelderString_append (& saveCmd, U"selectObject: ", iobj, U"\nSave as WAV file: \"", escapedObjPath.string, U"\"\n");
-				try {
-					praat_executeScriptFromText_withFullTrust (saveCmd.string);
-				} catch (...) {
-					structMelderFile objMelderFile { };
-					Melder_pathToFile (objPath32.get(), & objMelderFile);
-					try { Data_writeToTextFile (object, & objMelderFile); } catch (...) {}
-				}
-			} else {
-				structMelderFile objMelderFile { };
-				autostring32 objPath32 = Melder_8to32_e (objPathStr.c_str());
-				Melder_pathToFile (objPath32.get(), & objMelderFile);
-				try {
+			structMelderFile objMelderFile { };
+			autostring32 objPath32 = Melder_8to32_e (objPathStr.c_str());
+			Melder_pathToFile (objPath32.get(), & objMelderFile);
+			try {
+				if (isSound)
+					Sound_saveAsAudioFile (static_cast <Sound> (object), & objMelderFile, Melder_WAV, 16);
+				else
 					Data_writeToTextFile (object, & objMelderFile);
-				} catch (...) {}
+			} catch (MelderError) {
+				Melder_throw (U"无法为 Python 导出对象 ", objectId, U"（", theCurrentPraatObjects -> list [iobj]. name.get(), U"）。");
 			}
 
 			autostring8 utf8Name = Melder_32to8 (theCurrentPraatObjects -> list [iobj]. name.get());
 			autostring8 utf8Class = Melder_32to8 (className);
 
 			jsonOfs << "    {\n"
-			        << "      \"id\": " << iobj << ",\n"
+			        << "      \"id\": " << objectId << ",\n"
 			        << "      \"name\": \"" << escape_json_string (utf8Name ? utf8Name.get() : "") << "\",\n"
 			        << "      \"class\": \"" << escape_json_string (utf8Class ? utf8Class.get() : "") << "\",\n"
 			        << "      \"file\": \"" << escape_json_string (objPathStr) << "\"\n"
@@ -768,18 +761,8 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 		}
 		jsonOfs << "\n  ]\n}\n";
 		jsonOfs.close();
-	}
-
-	// Restore original selection
-	if (! selectedIds.empty ()) {
-		autoMelderString restoreSelectionCmd;
-		MelderString_append (& restoreSelectionCmd, U"selectObject: ", selectedIds [0], U"\n");
-		for (size_t i = 1; i < selectedIds.size (); i ++) {
-			MelderString_append (& restoreSelectionCmd, U"plusObject: ", selectedIds [i], U"\n");
-		}
-		try {
-			praat_executeScriptFromText_withFullTrust (restoreSelectionCmd.string);
-		} catch (...) {}
+		if (jsonOfs.fail())
+			Melder_throw (U"无法完成 Python 对象上下文写入。");
 	}
 
 	conststring32 pyExec = praat_python_getExecutablePath ();
@@ -816,12 +799,16 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 		DWORD oldIOEncLen = GetEnvironmentVariableW (L"PYTHONIOENCODING", oldIOEnc, 4096);
 		wchar_t oldUnbuf [4096] = {0};
 		DWORD oldUnbufLen = GetEnvironmentVariableW (L"PYTHONUNBUFFERED", oldUnbuf, 4096);
+		wchar_t oldPraatPid [64] = {0};
+		DWORD oldPraatPidLen = GetEnvironmentVariableW (L"PRAAT_AI_PRAAT_PID", oldPraatPid, 64);
 
 		// Set Environment variables for python
 		SetEnvironmentVariableW (L"PRAAT_CONTEXT", contextJsonPath.wstring().c_str());
 		SetEnvironmentVariableW (L"PRAAT_TEMP_DIR", tempDir.wstring().c_str());
 		SetEnvironmentVariableW (L"PYTHONIOENCODING", L"utf-8");
 		SetEnvironmentVariableW (L"PYTHONUNBUFFERED", L"1");
+		const std::wstring parentPid = std::to_wstring (GetCurrentProcessId ());
+		SetEnvironmentVariableW (L"PRAAT_AI_PRAAT_PID", parentPid.c_str());
 
 		std::wstring existingPythonPath;
 		if (oldPythonPathLen > 0)
@@ -856,13 +843,17 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 		std::vector<wchar_t> cmdLineMutable (cmdLineW.begin(), cmdLineW.end());
 		cmdLineMutable.push_back (L'\0');
 
+		// Child token integrity follows the desktop parent. Publishing a new PE
+		// inside the Low workspace can lower both Praat and this Python process,
+		// causing Medium runtime/status.json writes to fail. Final EXE publication
+		// must satisfy docs/ai-frontend/windows-integrity-design.md.
 		BOOL success = CreateProcessW (
 			nullptr,
 			cmdLineMutable.data(),
 			nullptr,
 			nullptr,
 			TRUE,
-			CREATE_NO_WINDOW,
+			CREATE_NO_WINDOW | (maximumWaitMilliseconds ? CREATE_SUSPENDED : 0),
 			nullptr,
 			cwd,
 			& si,
@@ -887,19 +878,59 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 
 		if (oldUnbufLen > 0) SetEnvironmentVariableW (L"PYTHONUNBUFFERED", oldUnbuf);
 		else SetEnvironmentVariableW (L"PYTHONUNBUFFERED", NULL);
+		if (oldPraatPidLen > 0) SetEnvironmentVariableW (L"PRAAT_AI_PRAAT_PID", oldPraatPid);
+		else SetEnvironmentVariableW (L"PRAAT_AI_PRAAT_PID", NULL);
 
 		if (! success) {
 			CloseHandle (hPipeRead);
 			Melder_throw (U"Cannot start Python subprocess: <<", pyExec, U">>.\nPlease check your Python executable path in Praat -> Python settings.");
 		}
+		HANDLE controlJob = nullptr;
+		if (maximumWaitMilliseconds) {
+			// A venv python.exe can be a shim that starts the actual interpreter.
+			// Suspend first so the timeout owns that whole helper process tree.
+			controlJob = CreateJobObjectW (nullptr, nullptr);
+			if (! controlJob || ! AssignProcessToJobObject (controlJob, pi.hProcess) || ResumeThread (pi.hThread) == static_cast <DWORD> (-1)) {
+				const DWORD launchError = GetLastError ();
+				TerminateProcess (pi.hProcess, launchError);
+				if (controlJob) CloseHandle (controlJob);
+				CloseHandle (pi.hThread);
+				CloseHandle (pi.hProcess);
+				CloseHandle (hPipeRead);
+				Melder_throw (U"无法设置前端控制程序的超时保护（Windows 错误 ", launchError, U"）。");
+			}
+		}
 
 		// Read output continuously
+		praat_python_WindowsWait modalWait;
 		std::string outputAccum, pendingOutput;
 		bool progressWasShown = false;
 		char buffer [4096];
 		DWORD bytesRead = 0;
 
-		while (ReadFile (hPipeRead, buffer, sizeof (buffer) - 1, & bytesRead, NULL) && bytesRead > 0) {
+		const ULONGLONG started = GetTickCount64 ();
+		bool timedOut = false;
+		for (;;) {
+			modalWait.pump ();
+			if (maximumWaitMilliseconds && GetTickCount64 () - started >= maximumWaitMilliseconds) {
+				timedOut = true;
+				break;
+			}
+			DWORD available = 0;
+			if (! PeekNamedPipe (hPipeRead, nullptr, 0, nullptr, & available, nullptr))
+				break;
+			if (! available) {
+				if (modalWait.wait (pi.hProcess, 10) == WAIT_OBJECT_0) {
+					// Drain the last bytes after exit; descendants may still hold
+					// inherited write handles, so EOF is not a completion signal.
+					if (! PeekNamedPipe (hPipeRead, nullptr, 0, nullptr, & available, nullptr) || ! available)
+						break;
+				}
+				if (! available)
+					continue;
+			}
+			if (! ReadFile (hPipeRead, buffer, std::min <DWORD> (available, sizeof (buffer) - 1), & bytesRead, nullptr) || ! bytesRead)
+				break;
 			buffer [bytesRead] = '\0';
 			pendingOutput.append (buffer, bytesRead);
 			size_t newlinePosition;
@@ -916,13 +947,33 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 		if (progressWasShown)
 			finishProgressWindow ();
 
-		WaitForSingleObject (pi.hProcess, INFINITE);
+		if (! timedOut) {
+			const ULONGLONG elapsed = GetTickCount64 () - started;
+			const DWORD remaining = maximumWaitMilliseconds ?
+				(elapsed >= maximumWaitMilliseconds ? 0 : maximumWaitMilliseconds - static_cast <DWORD> (elapsed)) : INFINITE;
+			timedOut = modalWait.wait (pi.hProcess, remaining) == WAIT_TIMEOUT;
+		}
+		if (timedOut) {
+			if (! TerminateJobObject (controlJob, ERROR_TIMEOUT))
+				TerminateProcess (pi.hProcess, ERROR_TIMEOUT);
+			WaitForSingleObject (pi.hProcess, 1000);
+			std::error_code directoryError;
+			const auto runtime = std::filesystem::path (cwdW) / "runtime";
+			std::filesystem::create_directories (runtime, directoryError);
+			std::ofstream diagnostic (runtime / "frontend-startup-error.json");
+			diagnostic << "{\"error\":\"Python menu control timed out\",\"timeout_ms\":"
+				<< maximumWaitMilliseconds << ",\"pid\":" << pi.dwProcessId << "}\n";
+		}
 		DWORD exitCode = 0;
 		GetExitCodeProcess (pi.hProcess, & exitCode);
 
 		CloseHandle (pi.hProcess);
 		CloseHandle (pi.hThread);
 		CloseHandle (hPipeRead);
+		if (controlJob) CloseHandle (controlJob);
+		if (timedOut)
+			Melder_throw (U"前端控制程序在 ", maximumWaitMilliseconds,
+				U" 毫秒内未完成，已停止等待。诊断见 runtime/frontend-startup-error.json。");
 
 		autostring32 out32 = Melder_8to32_e (outputAccum.c_str());
 
@@ -1075,6 +1126,7 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 }
 
 static void praat_runPythonScriptText_impl (conststring32 scriptText, conststring32 optionalScriptDirectory) {
+	Melder_require (! thePythonRunnerActive, U"当前 Python 任务尚未结束，请完成或取消后再运行。");
 	if (! scriptText || scriptText [0] == U'\0')
 		Melder_throw (U"Python script text is empty.");
 
@@ -1119,8 +1171,12 @@ static void guardPythonRunner (conststring32 action, Callback &&callback) {
 }
 
 void praat_runPythonScriptFile (conststring32 filePath, conststring32 optionalWorkingDir) {
+	praat_runPythonScriptFile (filePath, optionalWorkingDir, 0);
+}
+
+void praat_runPythonScriptFile (conststring32 filePath, conststring32 optionalWorkingDir, unsigned int maximumWaitMilliseconds) {
 	guardPythonRunner (U"运行脚本文件", [&] () {
-		praat_runPythonScriptFile_impl (filePath, optionalWorkingDir);
+		praat_runPythonScriptFile_impl (filePath, optionalWorkingDir, maximumWaitMilliseconds);
 	});
 }
 
@@ -1210,7 +1266,7 @@ autostring32 praat_python_generateAgentPrompt () {
 			conststring32 className = (object ? Thing_className (object) : U"Unknown");
 			bool isSelected = theCurrentPraatObjects -> list [iobj]. isSelected;
 
-			MelderString_append (& prompt, U"  ", (isSelected ? U"▶" : U"•"), U" [ID ", iobj, U"] ", className, U" \"", (name ? name : U""), U"\"");
+			MelderString_append (& prompt, U"  ", (isSelected ? U"▶" : U"•"), U" [ID ", theCurrentPraatObjects -> list [iobj]. id, U"] ", className, U" \"", (name ? name : U""), U"\"");
 
 			if (object) {
 				if (str32equ (className, U"Sound")) {

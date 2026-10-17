@@ -1,0 +1,98 @@
+{
+  "schema_version": "normalization-materials-v1",
+  "corpus_id": "",
+  "configuration": {
+    "language": "ja",
+    "profile_id": "ja-JP-standard-v1",
+    "reading_id": "ja-JP-standard-v1",
+    "normalization_version": "normalization-v1",
+    "protocol": "balanced-monophthong-middle-40-60-three-v1",
+    "measurement_settings": {
+      "extractor": "praat-parselmouth-burg",
+      "time_step_sec": 0.01,
+      "max_number_of_formants": 5.0,
+      "maximum_formant_hz": 5500.0,
+      "window_length_sec": 0.025,
+      "pre_emphasis_from_hz": 50.0,
+      "sampling": "basic-rms-frame-centers-v1"
+    },
+    "normalization_options": {
+      "pitch": true,
+      "pitch_confirmed": true,
+      "pitch_settings": {
+        "floor_hz": 75,
+        "ceiling_hz": 600
+      },
+      "pitch_baseline_mode": "utterance",
+      "loudness": true
+    }
+  },
+  "speakers": [],
+  "materials": [],
+  "cases": [],
+  "instructions": "Empty template, NOT acceptance evidence. Fill actual source/speakers and four independent materials per case. Never generate human judgments.",
+  "material_template": {
+    "id": "",
+    "speaker_id": "",
+    "role": "calibration",
+    "language": "ja",
+    "profile_id": "ja-JP-standard-v1",
+    "reading_id": "ja-JP-standard-v1",
+    "normalization_version": "normalization-v1",
+    "protocol": "balanced-monophthong-middle-40-60-three-v1",
+    "measurement_settings": {
+      "extractor": "praat-parselmouth-burg",
+      "time_step_sec": 0.01,
+      "max_number_of_formants": 5.0,
+      "maximum_formant_hz": 5500.0,
+      "window_length_sec": 0.025,
+      "pre_emphasis_from_hz": 50.0,
+      "sampling": "basic-rms-frame-centers-v1"
+    },
+    "normalization_options": {
+      "pitch": true,
+      "pitch_confirmed": true,
+      "pitch_settings": {
+        "floor_hz": 75,
+        "ceiling_hz": 600
+      },
+      "pitch_baseline_mode": "utterance",
+      "loudness": true
+    },
+    "source": {
+      "kind": "",
+      "origin": "",
+      "permission": "",
+      "recorded_at": "",
+      "recording_id": ""
+    },
+    "audio": {
+      "path": "",
+      "sha256": ""
+    },
+    "annotation": {
+      "path": "",
+      "sha256": ""
+    }
+  },
+  "annotation_template": {
+    "schema_version": "normalization-human-phones-v1",
+    "audio_sha256": "",
+    "speaker_id": "",
+    "language": "ja",
+    "profile_id": "ja-JP-standard-v1",
+    "reading_id": "ja-JP-standard-v1",
+    "annotator": "",
+    "reviewed_at": "",
+    "method": "",
+    "label_set": "IPA",
+    "phones": []
+  },
+  "case_template": {
+    "id": "",
+    "reference_target": "",
+    "learner_target": "",
+    "reference_calibration": "",
+    "learner_calibration": ""
+  }
+}

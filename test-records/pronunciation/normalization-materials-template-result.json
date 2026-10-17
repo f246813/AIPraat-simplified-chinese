@@ -1,0 +1,22 @@
+{
+  "executed_at_utc": "2026-10-16T04:00:55.923580+00:00",
+  "manifests": [
+    {
+      "manifest": "test-records\\pronunciation\\normalization-materials-template.json",
+      "schema_version": "normalization-materials-v1",
+      "manifest_sha256": "55aab89e3f7cdc95e63772d51eeefd4aae4df90eb401d2427d99de578a158fb6",
+      "status": "blocked",
+      "global_gaps": [
+        "missing corpus_id",
+        "no acceptance cases; awaiting user materials"
+      ],
+      "provenance_notice": "Human/source declarations require external audit; hashes do not prove authenticity.",
+      "accuracy": {
+        "status": "not_measured",
+        "reason": "No automatic accuracy claim from manifest or predictions."
+      },
+      "materials": [],
+      "cases": []
+    }
+  ]
+}

@@ -1,0 +1,206 @@
+{
+  "host": "dictionaries",
+  "recordedAtUTC": "2026-10-15T12:07:40.476049+00:00",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "pywebview": "6.2.1",
+  "realDesktop": true,
+  "productionAssets": true,
+  "frontendModified": false,
+  "wholeWindowOpacityModified": false,
+  "wallpaperChanged": false,
+  "themeRequested": "light",
+  "systemTransparency": "unchanged",
+  "backgrounds": [
+    "actual Windows desktop (Wallpaper Engine is running on this PC)",
+    "real Windows Notepad displaying ai/praat_ai/webview_backdrop.py"
+  ],
+  "assetIndexSHA256": "a9620b02a7d9fff5d752e8ec2259e27eb75e4f301e1b6e619e62b95da9a57f33",
+  "initiallyVisible": true,
+  "notepadPID": 37356,
+  "effectiveTheme": "light",
+  "native": {
+    "state": "active",
+    "reason": null,
+    "hwnd": 2033452,
+    "windows_build": 19045,
+    "material": "accent-blur-undocumented",
+    "webview_alpha": 0,
+    "form_opacity": 1.0
+  },
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36 Edg/155.0.0.0",
+  "url": "http://127.0.0.1:59461/index.html?window=dictionaries",
+  "dom": {
+    "html": {
+      "tag": "HTML",
+      "className": "",
+      "background": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "filter": "none",
+      "backdropFilter": "none"
+    },
+    "body": {
+      "tag": "BODY",
+      "className": "",
+      "background": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "filter": "none",
+      "backdropFilter": "none"
+    },
+    "surfaces": [],
+    "root": {
+      "tag": "DIV",
+      "className": "",
+      "background": "rgba(0, 0, 0, 0)",
+      "opacity": "1",
+      "filter": "none",
+      "backdropFilter": "none"
+    },
+    "centerAncestors": [
+      {
+        "tag": "DIV",
+        "className": "dictionary-empty",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "SECTION",
+        "className": "dictionary-list",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "MAIN",
+        "className": "dictionary-window",
+        "background": "rgba(255, 255, 255, 0.95)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "blur(32px) saturate(0.6)"
+      },
+      {
+        "tag": "SECTION",
+        "className": "settings-dashboard dictionary-manager",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "filter": "none",
+        "backdropFilter": "none"
+      }
+    ]
+  },
+  "nativeProperties": {
+    "formOpacity": 1.0,
+    "transparencyKey": 0,
+    "webviewAlpha": 0,
+    "formBackground": "Color [Black]",
+    "runtimeVersion": "155.0.4283.45"
+  },
+  "actualBackgroundDifference": {
+    "meanAbsoluteRGB": [
+      201.6610338680927,
+      152.1591221033868,
+      145.42144385026737
+    ],
+    "meanAbsolute": 166.41386660724893
+  },
+  "productionDifference": {
+    "meanAbsoluteRGB": [
+      10.710521390374332,
+      7.922014260249554,
+      7.476069518716577
+    ],
+    "meanAbsolute": 8.702868389780155
+  },
+  "nativeOnlyDifference": {
+    "meanAbsoluteRGB": [
+      200.5551559714795,
+      148.7174688057041,
+      141.17861408199644
+    ],
+    "meanAbsolute": 163.48374628639337
+  },
+  "afterRestoreOpacity": 1.0,
+  "focusedHWND": 2033452,
+  "nativeStillActive": {
+    "state": "active",
+    "reason": null,
+    "hwnd": 2033452,
+    "windows_build": 19045,
+    "material": "accent-blur-undocumented",
+    "webview_alpha": 0,
+    "form_opacity": 1.0
+  },
+  "checksPassed": true,
+  "nativeDesktopPixelsChanged": true,
+  "productionDesktopPixelsChanged": true,
+  "productionDesktopEffectVerified": true,
+  "opaqueFallbackVerified": false,
+  "verificationScope": "real background pixels and native alpha, not full visual/UI acceptance",
+  "extraPages": {
+    "mfa-presets": {
+      "meanAbsoluteRGB": [
+        5.010954407294832,
+        3.455401215805471,
+        3.2865927051671733
+      ],
+      "meanAbsolute": 3.9176494427558257
+    },
+    "mfa-resource-dialog": {
+      "meanAbsoluteRGB": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "meanAbsolute": 0.0
+    }
+  },
+  "modalComputedStyles": {
+    "dialog": {
+      "background": "rgba(255, 255, 255, 0.94)",
+      "opacity": "1",
+      "backdropFilter": "none",
+      "filter": "none"
+    },
+    "backdrop": {
+      "background": "rgba(17, 17, 17, 0.2)",
+      "opacity": "1",
+      "backdropFilter": "blur(5px)",
+      "filter": "none"
+    }
+  },
+  "limitation": "Native-only screenshots hide the child: they cannot certify .95/.93 UI. Production differences must be interpreted with computed DOM backgrounds and screenshots. Win10 ACCENT_POLICY is undocumented; Win11 path has not been tested on this PC.",
+  "exitCode": 0,
+  "notepadClosed": true,
+  "systemPreferencesRestored": true,
+  "desktopWindowsRestored": true,
+  "assetIndexSHA256End": "a9620b02a7d9fff5d752e8ec2259e27eb75e4f301e1b6e619e62b95da9a57f33",
+  "assetsUnchangedDuringRun": true,
+  "passed": true
+}

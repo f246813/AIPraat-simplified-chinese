@@ -1,0 +1,65 @@
+
+> praat-assistant-frontend@1.0.0 test
+> vitest run --run
+
+
+ RUN  v3.2.4 <WORKSPACE>/ai/frontend
+
+ ✓ tests/archived-settings.test.tsx (2 tests) 559ms
+   ✓ failed restore keeps history visible, reports the error and permits a successful retry  346ms
+ ✓ tests/model-settings-navigation.test.tsx (2 tests) 702ms
+   ✓ repeated menu requests select Model/API and keep unsaved settings  694ms
+ ✓ tests/mfa-preset-editor.test.tsx (5 tests) 1170ms
+   ✓ keeps names immutable and imports persistent resources separately from unsaved bindings  353ms
+   ✓ validates custom JSON and saves partial configurations using the complete immutable preset contract  313ms
+ ✓ tests/local-model-path-settings.test.tsx (2 tests) 855ms
+   ✓ local connection settings offer a model picker and save its path  561ms
+ ✓ tests/composer-status.test.tsx (8 tests) 1298ms
+   ✓ debounces real host estimates and ignores stale session replies  427ms
+ ✓ tests/sidebar-layout.test.tsx (3 tests) 1142ms
+   ✓ renders the real brand dropdown and explicit panel icons, with search initially hidden  365ms
+   ✓ keeps default, pinned and custom sections as independently collapsible siblings  520ms
+ ✓ tests/normalization.test.tsx (4 tests) 1709ms
+   ✓ defaults to raw and excludes normalization entirely from legacy submissions  499ms
+   ✓ imports both slots, previews F1/F2 only after confirmation and submits host receipts, not client fitted parameters  589ms
+   ✓ clears imported identities and confirmation when changing speakers or reading presets  386ms
+ ✓ tests/sidebar-search.test.tsx (7 tests) 1568ms
+   ✓ searches unopened messages with one compact host request and no full history hydration  445ms
+ ✓ tests/prosody-settings.test.tsx (5 tests) 2261ms
+   ✓ keeps both independent switches off by default and submits explicit utterance pitch confirmation  857ms
+   ✓ imports neutral baselines via receipts, clears them and confirmation after range/speaker changes  739ms
+ ✓ tests/bridge-store.test.ts (17 tests) 66ms
+ ✓ tests/organization-store.test.ts (9 tests) 315ms
+ ✓ tests/session-menu.test.ts (7 tests) 64ms
+ ✓ tests/speech-dictionaries.test.tsx (13 tests) 2966ms
+   ✓ opens the Wav2Vec2 folder picker and selects a model through its own namespace  519ms
+   ✓ right-click deletion requires choosing delete; cancel leaves configuration intact  428ms
+   ✓ models share deletion confirmation and return to dictionaries through the sidebar  456ms
+ ✓ tests/search.test.ts (8 tests) 44ms
+ ✓ tests/startup-session.test.ts (5 tests) 33ms
+ ✓ tests/webview-form-semantics.test.tsx (1 test) 400ms
+   ✓ square lock is an explicit styling exception, not a different business control  398ms
+ ✓ tests/layout.test.ts (7 tests) 26ms
+ ✓ tests/workflow-settings.test.tsx (2 tests) 424ms
+   ✓ workflow presets, custom edit, host save and reopen never start model tests  422ms
+ ✓ tests/archived-groups.test.ts (2 tests) 22ms
+ ✓ tests/minimap.test.ts (6 tests) 6ms
+ ✓ tests/modern-boundaries.test.ts (2 tests) 11ms
+ ✓ tests/transcript-window.test.ts (6 tests) 6ms
+ ✓ tests/transcript-menu.test.ts (5 tests) 8ms
+ ✓ tests/editor.test.ts (10 tests) 17ms
+ ✓ tests/completions.test.ts (4 tests) 6ms
+ ✓ tests/sidebar-origins.test.ts (2 tests) 6ms
+ ✓ tests/scroll.test.ts (5 tests) 4ms
+ ✓ tests/pronunciation.test.tsx (17 tests) 4814ms
+   ✓ submits selected sounds and AI options through the real tutor namespace  644ms
+   ✓ shows empty IPA inline and does not submit; selects Japanese rules and disables threshold  434ms
+   ✓ requires all multiple candidates to be chosen and applied, preserving manually entered IPA until explicit application  548ms
+   ✓ invalidates applied results on transcript changes and preserves old IPA for explicit manual conversion  346ms
+   ✓ allows generation without acoustic resources, but blocks analysis and keeps host failures actionable  326ms
+
+ Test Files  28 passed (28)
+      Tests  166 passed (166)
+   Start at  15:05:50
+   Duration  7.05s (transform 1.80s, setup 0ms, collect 11.20s, tests 20.50s, environment 27.78s, prepare 4.72s)
+

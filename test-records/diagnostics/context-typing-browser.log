@@ -1,0 +1,14 @@
+[WebServer] (node:49268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:2944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\browser\composer-status.spec.ts:3:1 › Pi-style status, numbers, popover dismissal, model and strength changes (1.7s)
+  ok 2 tests\browser\composer-status.spec.ts:90:1 › compact dark layout and context updates from draft/attachments (1.7s)
+  ok 3 tests\browser\composer-status.spec.ts:138:1 › typing keeps the context ring and number visible until a debounced estimate replaces them (2.2s)
+
+  3 passed (7.4s)

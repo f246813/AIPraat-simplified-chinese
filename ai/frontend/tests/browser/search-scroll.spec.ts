@@ -2,6 +2,7 @@ import {expect,test} from '@playwright/test';
 
 test('opening and scrolling a body-search conversation does not rebuild the sidebar results',async({page})=>{
   await page.goto('/?demo=1');await page.getByRole('button',{name:'展开会话侧栏'}).click();
+  await page.getByRole('button',{name:'搜索会话与消息',exact:true}).click();
   await page.getByRole('textbox',{name:'搜索会话与消息'}).fill('仅离线渲染测试');
   await expect(page.locator('.session-row')).toHaveCount(1);
   await expect(page.locator('.search-status')).toHaveCount(0);

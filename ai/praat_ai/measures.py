@@ -30,9 +30,8 @@ from pathlib import Path
 
 TABLE_PATH = Path(__file__).with_name("measures.tsv")
 
-#: 用户/模型实际会说的参数名 → 表里的规范名。以前只认精确名，于是「F0」「jitter local」
-#: 「共振峰」这类再常见的说法也被判成不认识（2026-10-07 实测）。这里只收**无歧义**的写法：
-#: 「共振峰」这种既可能指 F1 也可能指全部的说法不进表，仍然按未知参数报错。
+#: 用户/模型常见参数名 → 表里的规范名。只收无歧义的写法：
+#: 「共振峰」既可能指 F1 也可能指全部，不进入该表，仍按未知参数报错。
 PARAMETER_ALIASES: dict[str, str] = {
     "f0": "mean_pitch", "基频": "mean_pitch", "平均基频": "mean_pitch",
     "pitch": "mean_pitch", "meanpitch": "mean_pitch",

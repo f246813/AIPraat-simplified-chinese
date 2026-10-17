@@ -6,6 +6,16 @@ from praat_ai.modern_settings import SettingsService
 
 
 class SidebarSettingsTests(unittest.TestCase):
+    def test_cleared_time_group_survives_reopen_and_other_preference_saves(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path=Path(temporary)/'config.json'
+            retained=[{'mode':'project','origin':{'id':'project:local','label':'其他聊天','detail':''},'group':'today'}]
+            SettingsService(path).save({'preferences':{'sidebar_retained_time_groups':retained}})
+            reopened=SettingsService(path)
+            self.assertEqual(reopened.get()['preferences']['sidebar_retained_time_groups'],retained)
+            reopened.save({'preferences':{'theme':'dark'}})
+            self.assertEqual(SettingsService(path).get()['preferences']['sidebar_retained_time_groups'],retained)
+
     def test_grouping_survives_reopen_and_preserves_sort_and_keys(self):
         with tempfile.TemporaryDirectory() as temporary:
             path=Path(temporary)/'config.json'

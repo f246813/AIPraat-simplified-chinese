@@ -1,0 +1,41 @@
+test_complete_environment_generates_empty_repair_list (test_runtime_dependencies.RuntimeTests.test_complete_environment_generates_empty_repair_list) ... ok
+test_dependency_folder_resolves_missing_indirect_package_offline (test_runtime_dependencies.RuntimeTests.test_dependency_folder_resolves_missing_indirect_package_offline) ... ok
+test_filename_cannot_masquerade_as_other_package (test_runtime_dependencies.RuntimeTests.test_filename_cannot_masquerade_as_other_package) ... ok
+���ڼ�� NumPy
+NumPy: DLL load failed / WebView2 missing
+���ڼ�� Pillow
+Pillow: �汾������ pillow>=10.0
+���ڼ�� praat-parselmouth
+praat-parselmouth: DLL load failed / WebView2 missing
+���ڼ�� pydantic-ai-slim
+pydantic-ai-slim: DLL load failed / WebView2 missing
+���ڼ�� pydantic-graph
+pydantic-graph: DLL load failed / WebView2 missing
+���ڼ�� jsonschema
+jsonschema: �汾������ jsonschema==4.26.0
+���ڼ�� pywebview
+pywebview: �汾������ pywebview==6.2.1
+���ڼ�� pythonnet
+pythonnet: �汾������ pythonnet==3.2.0
+���ڼ�� PyTorch
+PyTorch: DLL load failed / WebView2 missing
+���ڼ�� Transformers
+Transformers: �汾������ transformers>=4.57
+���ڼ�� Safetensors
+Safetensors: DLL load failed / WebView2 missing
+���ڼ�� WebView2 Runtime
+WebView2 Runtime: DLL load failed / WebView2 missing
+���ڼ�� Tcl/Tk
+Tcl/Tk: DLL load failed / WebView2 missing
+test_import_dll_and_webview_failure_prevents_readiness (test_runtime_dependencies.RuntimeTests.test_import_dll_and_webview_failure_prevents_readiness) ... ok
+test_offline_url_dependency_is_rejected_before_pip (test_runtime_dependencies.RuntimeTests.test_offline_url_dependency_is_rejected_before_pip) ... ok
+test_other_python_device_or_incomplete_report_is_redetected (test_runtime_dependencies.RuntimeTests.test_other_python_device_or_incomplete_report_is_redetected) ... ok
+test_reject_wrong_package_version_architecture_and_python (test_runtime_dependencies.RuntimeTests.test_reject_wrong_package_version_architecture_and_python) ... ok
+test_repair_plan_targets_only_failed_items_preserving_extras_and_constraints (test_runtime_dependencies.RuntimeTests.test_repair_plan_targets_only_failed_items_preserving_extras_and_constraints) ... ok
+test_requirements_include_all_required_and_openai_extra (test_runtime_dependencies.RuntimeTests.test_requirements_include_all_required_and_openai_extra) ... ok
+test_supported_python_is_310_to_312_x64 (test_runtime_dependencies.RuntimeTests.test_supported_python_is_310_to_312_x64) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 4.697s
+
+OK

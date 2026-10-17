@@ -69,10 +69,16 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 				const COLORREF colours [] { RGB (128,128,128), RGB (220,38,38), RGB (234,179,8), RGB (22,163,74) };
 				const int saved = SaveDC (dc);
 				IntersectClipRect (dc, row.left, row.top, row.right, row.bottom);
-				HBRUSH brush = CreateSolidBrush (colours [dot.colour]);
-				SelectObject (dc, brush); SelectObject (dc, GetStockObject (NULL_PEN));
-				Ellipse (dc, x, y, x + diameter, y + diameter);
-				RestoreDC (dc, saved); DeleteObject (brush);
+				_GuiWin_ensureGdiplus ();
+				{
+					Gdiplus::Graphics graphics (dc);
+					graphics.SetSmoothingMode (Gdiplus::SmoothingModeAntiAlias);
+					graphics.SetPixelOffsetMode (Gdiplus::PixelOffsetModeHighQuality);
+					const COLORREF colour = colours [dot.colour];
+					Gdiplus::SolidBrush brush (Gdiplus::Color (255, GetRValue (colour), GetGValue (colour), GetBValue (colour)));
+					graphics.FillEllipse (& brush, float (x), float (y), float (diameter), float (diameter));
+				}
+				RestoreDC (dc, saved);
 				return;
 			}
 		}

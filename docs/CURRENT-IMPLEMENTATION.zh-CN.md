@@ -1,103 +1,67 @@
-# 当前实现与检查入口
+# 当前实现与维护入口
 
-本文按仓库源码说明当前模块职责、用户入口与实现限制。源码是判断实现行为的依据；检查脚本是复现方法，不代表已在当前环境通过。安装包、配置、供应商服务和运行中的窗口需分别核实，不能由旧构建记录推断。
+本文描述仓库源码的当前职责和边界。源码能力、运行中进程、供应商服务及安装包载荷需要分别核实；文档或已有日志不构成当前环境测试通过的证明。
 
 ## 桌面工作台
 
-默认入口为 `ai/start_ai_chat.py`、`ai/run_ai_chat.py` 与 `ai/praat_ai/modern_host.py`，界面使用 `ai/frontend` 的 React 资源和 WebView2 宿主。显式 `--legacy` 路径使用 Tk。现代后端仍通过 `modern_execution.py` 适配 `chat.py` 中的部分工具和投递逻辑。
+`ai/start_ai_chat.py`、`ai/run_ai_chat.py` 和 `modern_host.py` 启动 React／assistant-ui 与 WebView2 工作台，显式 `--legacy` 使用 Tk。`modern_app.py` 提供白名单 RPC、后台任务和按游标读取的事件；会话数据由 `modern_store.py` 保存，分组、归档、分叉和搜索分别由组织与搜索模块管理。
 
-`modern_app.py` 提供白名单 RPC、后台任务和按游标读取事件；每个会话同时一个任务，全局最多八个任务。Praat 投递由执行器共享锁串行管理，本地推理资源也串行租用。切换会话保留后台任务，关闭后不会自动重放工具。
+现代库位于运行目录 `modern/sessions.sqlite3`，`conversations.sqlite3` 作为只读会话来源。恢复或分叉复制记录和证据，不重放 Praat 操作，也不保证任务临时音频仍存在。
 
-`modern_store.py` 保存现代会话；`modern_organization.py` 管理分区、置顶、归档和分叉；`modern_search.py` 提供搜索。现代数据库在运行目录的 `modern/sessions.sqlite3`，旧 `conversations.sqlite3` 作为只读历史来源。分叉复制记录和证据，创建独立会话，不重放操作。归档、移除分区和删除会话是不同操作。
+详见[前端架构](ai-frontend/CHAT-UI-ARCHITECTURE.zh-CN.md)、[宿主契约](ai-frontend/HOST-CONTRACT.md)与[代码来源](ai-frontend/FRONTEND-SOURCES.md)。
 
-前端交互与第三方来源见 [前端架构](ai-frontend/CHAT-UI-ARCHITECTURE.zh-CN.md)、[宿主协议](ai-frontend/HOST-CONTRACT.md) 与 [来源说明](ai-frontend/FRONTEND-SOURCES.md)。布局像素值和菜单文案以当前组件、样式与原生菜单实现为准。
+## 对话测量与解释
 
-检查入口：`ai/tests/verify_modern_desktop.py`、`test_modern_app.py` 及 `ai/frontend` 的测试配置。桌面检查应使用隔离配置和数据库；真实云端、模型加载及用户音频需要独立验证。
+`dialogue_policy.py` 保守区分明确普通问答和材料任务，不额外调用模型分类；没有材料引用、领域词和请求动作词的短输入（例如随手敲的一个词）也判为一般讨论，不进入工具阶梯。`modern_execution.py` 负责绑定 Praat 进程、对象与范围，并适配已有工具。`tools.py`、`measures.py` 和 `measures.tsv` 提供确定性测量。
 
-## 云端对话与分析
+云端使用 `cloud_agent.py`、Pydantic AI 和 `cloud_runtime.py`：L0 执行工具，L1 有限纠正，L2 解释证据，L3 按设置与用户动作分析原音频，L4 一般讨论。单轮默认预算为 12 次模型请求、20 次工具尝试；流程设置还可限制解释阶段。执行前被拒的提案与实际运行失败分别处理。
 
-`dialogue_policy.py` 用本地保守匹配区分明确寒暄、概念问题和分析请求。涉及材料、对象、范围、操作、指代或继续任务时保留分析路径。分流不增加模型分类请求；它不能理解全部自然语言意图。
+本地 Qwen 使用 `chat.run_turn` 的独立规划循环，默认最多 3 轮、5 个动作；现代适配仍通过函数全局命名空间绑定动作回调。它不走云端报告同一套数值与引用守卫，不能把云端验证能力概括为所有模型路径均具备。
 
-`api.force_deep_thinking` 默认关闭，仅对最高思考档位生效。明确普通对话在最高档且开关关闭时使用关闭额外思考的请求；概念解释与分析保留相应强度。供应商是否接受思考字段由实际 API 路径决定。
+`tool_guards.py` 核查对象、范围、工具参数及脚本；`report_guards.py` 核查可识别的数值、单位、量名、引证及部分音调结论。云端核对不通过时可有限修正或保留遮蔽数值的正文；保留草稿时附的核对说明面向用户，不含对模型下达的指令句，也不把未通过核对的数值当实测。已有测量证据、或对象列表里有可测量的声音对象时，「没有音频输入／无法测量」不能作为结论，按 `report.input_claim_conflict` 阻断；报告指令与报告上下文都不把「没有音频」写成可复述的句式，只有在音频确实随请求发出时才声明收到音频。守卫不能证明所有自然语言解释或语言学诊断正确。
 
-`cloud_agent.py` 承担模型与图执行；`escape_policy.py` 的 `AnalysisState` 保留原始目标、交付项、证据、失败和总预算。L0 为工具执行，L1 为有区别的纠正，L2 为证据解释，L3 为直接音频分析，L4 为一般讨论。默认单轮模型请求限额为 12，工具尝试限额为 20；连续两轮无新增证据退出当前执行分支。执行前参数提案被拒与实际执行失败分别处理，不能把一切参数错误当成已运行工具失败。
+详见[AI 模块](../handoff/AI-MODULE.zh-CN.md)、[原生 Hooks](../ai/docs/native-hooks.md)和[接口参考](../ai/docs/adr/README.md)。
 
-继续动作携带原目标、已有证据、上一份报告和覆盖信息，建立新轮次预算。成功证据不会因失败分支而被抹去。材料身份、当前能力与预算仍需在执行时重新检查；保存过报告不代表源材料仍可取得。
+## 投递、取消与材料
 
-检查入口：`ai/tests/test_dialogue_fastpath.py`、`test_dialogue_measurement.py`、`test_cloud_escape.py`、`test_staircase.py`、`test_staircase_review_fixes.py`。这些检查的既有期待可能与实现存在差异，差异需要判断后处理，不能直接变成产品规则。
+Windows 默认使用 `%APPDATA%\Praat\Message.txt` 和定向 `WM_APP`，请求编号与开始／完成标记用于核对。`sendpraat.command_lock()` 为使用该接口的调用方提供跨进程锁；现代执行器另有进程内 `PRAAT_LOCK`。未使用共享锁的外部脚本不受保护。
 
-## 输出与上下文预算
+投递事实区分未发送、已发送、结果未知和阻断。现代执行器在未知状态下阻止普通操作，允许向原进程发送核对请求；完整快照与进程核对成功后解除阻断。核对失败不能沿用旧快照或盲目重发修改操作。停止等待不能撤销 GUI Praat 已运行的脚本。
 
-`Budget` 区分可见正文额度和推理预留。思考预留为 off=0、low=1024、medium=4096、high=8192、auto=4096；这是应用估算，不是服务端实际消耗的保证。上下文检查同时预留输出、误差和新增结果空间。
+`materials.py` 保存任务音频快照及来源。精确测量、转写、音频定性观察和一般知识是不同证据；模型听感不替代专业数值。音频能力的启用、模型名称预设、实测结果及实际可用性分别管理，需用当前端点诊断。
 
-`api.dialogue_max_tokens` 默认 2048，对话正文额度还受本轮回复预算约束。未开启用户 token 限制时，应用仍有上下文和输出保护值；其中 131072 是应用上下文保护值，不能宣称为所选模型的真实窗口。
+## 上下文与预算
 
-流式对话因 `length` 截断时有一次续写路径；再次截断可保留已生成正文并标记未完成。输出上限被服务端拒绝、传输失败、结构化报告校验失败各有独立的有限恢复路径，均受总预算和取消控制。工具阶段不能为恢复输出而自动重放已投递操作。恢复不保证所有供应商或所有输出格式都能成功。
+`session_context.PhaseContext` 管理 SDK 消息、正式历史、配置身份和上下文版本；`skill_registry.py` 将任务匹配的技能追加到阶段材料，不注册工具或扩大权限。`modern_budget.py` 管理估算和摘要。摘要不等于新增测量，继续分析仍需保留目标、证据、缺口和投递事实。
 
-检查入口：`ai/tests/test_dialogue_protocol.py`、`test_cloud_protocol.py`、`test_token_budget.py`、`test_report_chain_regressions.py`。
+运行时按会话复用连接，按配置身份更新客户端。连接复用不等于提示缓存命中。`cloud_metrics.py` 归一化供应商用量，缺失字段保持未知；缓存覆盖率本身不能证明耗时减少。
 
-## 阶段历史、技能与缓存
+详见[上下文预算](../ai/docs/adr/ADR-008-context-token-budget.md)和[验证入口](../ai/docs/validation.zh-CN.md)。
 
-现代执行器通过 `session_runtime(session_id)` 为会话复用 `CloudRuntime`。runtime 按端点、模型、密钥与超时配置身份更新客户端；会话释放和执行器关闭时关闭资源。连接复用不等于服务端提示缓存命中。
+## 双音频对比
 
-`session_context.py` 的 `PhaseContext` 管理 SDK 原生消息、正式历史同步、配置身份和上下文版本。配置或历史前缀变化会重建相应上下文。其持久化协议标识为 `pydantic-ai-2.52.0`；包含非文本用户内容的消息不直接序列化到该持久载荷，音频与附件保持任务范围。
+`ui.py` 收集标准音、学习者录音、目标读音、资源与可选归一化设置；`tutor.py` 执行双方定位、测量、比较、可选模型解释和报告导出。
 
-`skill_registry.py` 从 `ai/skills` 按现有任务匹配加载 prosody、placement、failure 指导。技能正文追加到任务阶段消息，不注册工具或执行脚本；代码守卫继续管理权限与证据。技能文件本身不能证明输入更少或缓存更快。
+当前有通用 DTW 和英语／日语实验性音位规则两条路径。它们的状态与限制不同，不能把声学差异、未测得和音素错误混为一谈。未实现独立错音识别或经过校准的发音总分。正式 tutor 的全链路取消、MFA 对齐超时及可选解释的证据守卫尚未统一。
 
-`cloud_metrics.py` 和请求观察逻辑记录阶段用量与请求指标。缓存收益需核对最终序列化请求、供应商返回的缓存用量和等价样本的时序；未知统计保留未知，不能用单个场景推广为全场景提速。来源和许可见 [上下文组件来源](../ai/third_party/pi-context/SOURCES.md)。
+详见[音位判据与当前限制](PRONUNCIATION.zh-CN.md)、[归一化](NORMALIZATION.zh-CN.md)和[真实材料协议](NORMALIZATION-MATERIALS.zh-CN.md)。
 
-可复现检查方法见 [上下文与缓存检查](verification/2026-10-06-pi-context-cache-results.md)。
+## 原生 VOT
 
-## 工具、报告守卫与投递事实
+`fon/SegmentAcousticAnalysis.cpp`、`SegmentAcousticVOT.h` 和 `praat_Sound.cpp` 提供 VOT 手动边界、候选估计、Sound／LongSound 适配和 TSV 导出。原生手动值按浊音起始减爆破时刻计算，可表示零和负值；候选需要人工确认。
 
-`tool_guards.py` 校验工具参数、目标和执行条件；`tools.py` 的参数表及 schema 应保持一致。`measure` 接受受支持的多个参数名，并规范化分隔符；这不表示任意专用工具参数都能并入通用测量。
+AI `vot` 工具使用独立脚本模板，显式边界拒绝 `voicing <= burst`，LongSound 需要提取为 Sound。它未调用原生 VOT 导出链路。这是适配差异，不能推导出 VOT 在业务上只允许正值。
 
-`report_guards.py` 核对报告中的对象、来源、量纲、数值和部分结论。引用修复、推导标注及覆盖项整理与阻断分别计数。报告守卫可以发现特定不一致，不能证明语言学结论正确；自由标签的同值匹配也不能证明语义对应唯一。
+## Windows 与安装
 
-报告拒绝后，`cloud_agent.py` 可保留草稿并遮罩未通过核对的位置；没有可保留草稿时生成阶段记录。救援稿的核对状态不能显示为已验证。`escape_policy.note_guard` 将稳定规则 ID 写入 `metrics.guard_blocks` 和 `metrics.guard_repairs`，方便区分阻断与自动修复。
+`installer/src` 提供安装向导、路径配置、运行库检测与启动器；`installer/build.ps1` 打包。支持的 Python、依赖与 FFmpeg 门禁见[安装说明](../installer/README.zh-CN.md)。
 
-`delivery.py` 区分 `not_delivered`、`delivered`、`unknown` 和 `blocked`。脚本交出后没等到完成标记属于执行结果不明，不能按未投递处理或盲目再投。测量完成、音频发送、收到音频响应和报告完成也分别记录。
+`sys/praat_python_workspace.h` 根据 Windows 进程完整性选择工作根目录：低于 Medium 时使用 LocalLow 下的 `Praat/Python`，其他情况使用系统临时目录；`get_process_workspace()` 在其下创建按进程 ID 命名的目录。这不等于所有低完整性文件访问都已可用，消息文件与实际安装产物仍需单独检查。
 
-检查入口：`ai/tests/test_tool_guards.py`、`test_report_guards.py`、`test_report_chain_regressions.py`；报告链路检查方法见 [报告与重试检查](verification/2026-10-06-report-chain-fixes.md)。
+Tk 的 DPI／输入法适配和现代编辑器组合输入由不同路径处理；实际窗口、菜单、权限及多屏表现须桌面实测，不能由浏览器测试代替。
 
-## API 音频与材料
+## 文档与验证约定
 
-`model_capabilities.py` 区分启用设置、名称预设、能力事实和当前可用性；名称预设是代码内的登记，不是实时供应商能力查询。未知名称默认关闭，自定义网关按名称推定也不能证明实际协议可用。`api_diagnostics.py` 与 `audio_probe.py` 提供连接诊断和可选音频验证。
-
-明确的模型或端点不支持音频错误可纠正当前路径的启用设置；账号错误、限流、超时、格式问题不能统一归为模型不支持。纠正写回前应核对请求配置身份，避免覆盖用户随后切换的配置。一次探针结果只支持相应测试范围，不能证明供应商内部处理方式。
-
-`materials.py` 管理目标材料与临时快照；持久记录保存来源、范围与相关证据，不把 SDK 音频字节长期嵌入阶段历史。转写、测量、模型听感与一般知识是不同证据来源。缺少原始音频或实际调用证据时，报告不能声称已听取材料。
-
-检查入口：`ai/tests/test_api_capability_status.py` 及音频能力相关测试。供应商端点的真实可用性、静默忽略音频和 HTTP 状态传播需要按当前配置检查；旧记录不能作为当前通过结论。
-
-## VOT 与语音资源
-
-当前原生语音段扩展为 VOT：`fon/SegmentAcousticAnalysis.cpp`、`fon/SegmentAcousticVOT.h` 和 `fon/praat_Sound.cpp` 提供手动边界、候选估计、Sound/LongSound 适配与 TSV 导出。原生手动值按 `(voicingTime - burstTime) * 1000` 计算，可表达零值和负值；候选结果需人工确认。TSV 保留来源、范围、参数、单位、状态和原因。
-
-AI `vot` 工具在 `ai/praat_ai/tools.py` 使用独立脚本模板。显式边界目前拒绝 `voicing <= burst`；LongSound 需先提取成 Sound。它未统一调用原生 `Write VOT analysis to file` 路径。这是当前适配差异，不能据此规定 VOT 业务上只允许正值。统一行为的产品取舍仍需明确。
-
-此前包含元音鼻化、鼻辅音、R 音及通用目标/参考比较编辑器的扩展方案不属于当前实现范围，不能作为仍待执行的计划。已有 Praat 基础测量工具不等于该扩展已实现。
-
-`speech_dictionaries.py`、`alignment.py`、`forced_alignment.py` 管理语音词典、模型及对齐资源。词典与音频模型不同；资源存在和模型可加载也不保证用户材料的对齐质量。
-
-检查入口：`ai/tests/test_vot_dispatch.py`、`test_segment_analysis_tools.py`、`verify_segment_analysis_templates.py`、语音词典相关检查。原生与 AI 两条 VOT 路径应分别检查，不能沿用另一条路径的通过结论。
-
-## Windows 启动、菜单与安装
-
-`installer/src` 提供安装向导、路径配置、Python 环境设置和启动器；`installer/build.ps1` 构建安装包。安装与依赖要求以当前向导及配置校验源码为准。构建产物是否含最新源码、离线资源和许可证需核对载荷，仓库内旧哈希或版本说明不能证明当前安装器状态。
-
-`modern_app.LocalResources` 在任务租用时，对已配置 llama-server 和模型、端口匹配的回环服务按需启动；等待加载后再发模型请求。外部服务按其配置连接，管理器只停止自有进程。
-
-原生菜单和状态由 `sys/PraatAiControl.cpp` 与相关 Windows GUI 实现维护。API 模式不应把本地模型资源显示成已加载；API 设置入口、模型页跳转和语音资源入口需结合当前宿主和菜单动作核对。
-
-当前 `sys/praat_python.cpp:get_process_workspace` 使用系统临时目录与进程 ID 创建工作目录。源码中没有旧验收文档描述的 `praat_python_workspace.h` 或 LocalLow 选择逻辑；Low 完整性进程写普通 TEMP 可能失败。`Message.txt`、偏好文件或 EXE 的访问状态属于实际环境条件，不能把某台机器的标签修复当成源码已解决。
-
-Tk 的 `ui_windows.py` 提供 DPI 与输入法组合字体同步；旧窗口发送键处理与现代编辑器的组合状态处理应分别检查。第三方输入法、多屏缩放和实际菜单重绘表现不能仅由源码确认。
-
-检查入口：`installer/tests`、`installer/verification`、`ai/tests/test_ime.py`、`test_ime_keys.py` 和菜单/权限相关验证脚本。运行前阅读脚本，使用私有环境，检查是否会启动原生程序、加载模型或调用云端。
-
-## 当前核实边界
-
-检查结果只适用于其源码版本、环境和材料。功能测试、真实云端请求、模型推理、音频分析与安装包构建需要分别记录结果；本页的源码说明不构成这些检查已通过的证明。
-
-需要独立核实的事项包括 VOT 两条路径的产品取舍、API 诊断异常中的 HTTP 状态传播、继续分析的音频完成状态、旧 Tk 交互、真实供应商音频协议，以及当前安装包与源码的一致性。这里只说明可见实现和检查入口，不将未确认偏差转成业务规则。
+- [文档索引](README.md)按主题组织现状；临时开发阶段、AI 修改流水及废弃决策不属于产品文档或代码注释。
+- 未核实的实现偏差不升级为业务规则。记录限制时区分源码事实、已复现缺陷和仍待核实的判断。
+- [验证入口](../ai/docs/validation.zh-CN.md)区分离线、真实模型、Praat、桌面和安装检查；原始证据按[测试记录说明](../test-records/README.md)保存。

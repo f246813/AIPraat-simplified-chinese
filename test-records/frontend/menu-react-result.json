@@ -1,70 +1,70 @@
-{
-  "praatPid": 24288,
-  "before": {
-    "Praat.exe": "777b54ff1ed57484be27aba83f79c22c62b87c3ce8406b2a4f2b0f3b8e7ab37f",
-    "ai/ai_config.json": "0adf11e5b667b8f7cd9e362ca780eca3b4f9d3fa9d5562e06599b7f27ba17c75",
-    "ai/runtime/conversations.sqlite3": "a1f30eb3fcc03397c7dc97af230dc952d9589e6f72f851393d8534fcad7cf258",
-    "ai/runtime/modern/sessions.sqlite3": "54f7b4fb3b30bce4a3df3956377afb20c4cd705dff2f95340e41f39e6803500d"
-  },
-  "reactObserved": true,
-  "noAutoLaunch": true,
-  "editorTitle": "1. Sound menu-isolated-synthetic",
-  "menu": "前端 / 启动前端",
-  "ready": {
-    "pid": 12252,
-    "identity": {
-      "executable": "C:\\Users\\f2468\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
-      "started": "win:134355142088018732"
-    },
-    "python": "C:\\Users\\f2468\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
-    "phase": "react-connected",
-    "executor": "ModernExecutor",
-    "praatPid": 24288
-  },
-  "startupSeconds": 3.72,
-  "react": {
-    "url": "http://127.0.0.1:63913/index.html",
-    "api": [
-      "rpc"
-    ],
-    "host": {
-      "name": "pywebview / WebView2",
-      "version": "6.2.1",
-      "cloudAllowed": false,
-      "praat": {
-        "pid": 24288,
-        "objects": [
-          {
-            "id": 1,
-            "className": "Sound",
-            "name": "Sound menu-isolated-synthetic",
-            "selected": true
-          }
-        ]
-      }
-    },
-    "taskCount": 0,
-    "demoBanner": false
-  },
-  "responsiveSeconds": [
-    0.0,
-    0.0
-  ],
-  "repeatMenu": "前端 / 启动前端",
-  "reusedPid": 12252,
-  "restored": true,
-  "foregroundIsChat": true,
-  "responsiveAfterRepeat": [
-    0.0,
-    0.0
-  ],
-  "audioUnchanged": true,
-  "after": {
-    "Praat.exe": "777b54ff1ed57484be27aba83f79c22c62b87c3ce8406b2a4f2b0f3b8e7ab37f",
-    "ai/ai_config.json": "0adf11e5b667b8f7cd9e362ca780eca3b4f9d3fa9d5562e06599b7f27ba17c75",
-    "ai/runtime/conversations.sqlite3": "a1f30eb3fcc03397c7dc97af230dc952d9589e6f72f851393d8534fcad7cf258",
-    "ai/runtime/modern/sessions.sqlite3": "54f7b4fb3b30bce4a3df3956377afb20c4cd705dff2f95340e41f39e6803500d"
-  },
-  "parentCloseCleanup": true,
-  "passed": true
+{
+  "praatPid": 24288,
+  "before": {
+    "Praat.exe": "777b54ff1ed57484be27aba83f79c22c62b87c3ce8406b2a4f2b0f3b8e7ab37f",
+    "ai/ai_config.json": "0adf11e5b667b8f7cd9e362ca780eca3b4f9d3fa9d5562e06599b7f27ba17c75",
+    "ai/runtime/conversations.sqlite3": "a1f30eb3fcc03397c7dc97af230dc952d9589e6f72f851393d8534fcad7cf258",
+    "ai/runtime/modern/sessions.sqlite3": "54f7b4fb3b30bce4a3df3956377afb20c4cd705dff2f95340e41f39e6803500d"
+  },
+  "reactObserved": true,
+  "noAutoLaunch": true,
+  "editorTitle": "1. Sound menu-isolated-synthetic",
+  "menu": "前端 / 启动前端",
+  "ready": {
+    "pid": 12252,
+    "identity": {
+      "executable": "<USER_HOME>\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "started": "win:134355142088018732"
+    },
+    "python": "<USER_HOME>\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "phase": "react-connected",
+    "executor": "ModernExecutor",
+    "praatPid": 24288
+  },
+  "startupSeconds": 3.72,
+  "react": {
+    "url": "http://127.0.0.1:63913/index.html",
+    "api": [
+      "rpc"
+    ],
+    "host": {
+      "name": "pywebview / WebView2",
+      "version": "6.2.1",
+      "cloudAllowed": false,
+      "praat": {
+        "pid": 24288,
+        "objects": [
+          {
+            "id": 1,
+            "className": "Sound",
+            "name": "Sound menu-isolated-synthetic",
+            "selected": true
+          }
+        ]
+      }
+    },
+    "taskCount": 0,
+    "demoBanner": false
+  },
+  "responsiveSeconds": [
+    0.0,
+    0.0
+  ],
+  "repeatMenu": "前端 / 启动前端",
+  "reusedPid": 12252,
+  "restored": true,
+  "foregroundIsChat": true,
+  "responsiveAfterRepeat": [
+    0.0,
+    0.0
+  ],
+  "audioUnchanged": true,
+  "after": {
+    "Praat.exe": "777b54ff1ed57484be27aba83f79c22c62b87c3ce8406b2a4f2b0f3b8e7ab37f",
+    "ai/ai_config.json": "0adf11e5b667b8f7cd9e362ca780eca3b4f9d3fa9d5562e06599b7f27ba17c75",
+    "ai/runtime/conversations.sqlite3": "a1f30eb3fcc03397c7dc97af230dc952d9589e6f72f851393d8534fcad7cf258",
+    "ai/runtime/modern/sessions.sqlite3": "54f7b4fb3b30bce4a3df3956377afb20c4cd705dff2f95340e41f39e6803500d"
+  },
+  "parentCloseCleanup": true,
+  "passed": true
 }

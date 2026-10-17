@@ -1,0 +1,145 @@
+{
+    "python":  "<WORKSPACE>\\installer\\verification\\runtime-online-env\\Scripts\\python.exe",
+    "version":  "3.12.14",
+    "architecture":  "AMD64",
+    "device":  "cpu",
+    "supported":  true,
+    "ready":  true,
+    "completed":  true,
+    "items":  [
+                  {
+                      "id":  "numpy",
+                      "label":  "NumPy",
+                      "required":  true,
+                      "requirement":  "numpy\u003e=2.0",
+                      "spec":  "\u003e=2.0",
+                      "installed":  "2.5.4",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  },
+                  {
+                      "id":  "pillow",
+                      "label":  "Pillow",
+                      "required":  true,
+                      "requirement":  "pillow\u003e=10.0",
+                      "spec":  "\u003e=10.0",
+                      "installed":  "12.3.0",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  },
+                  {
+                      "id":  "praat-parselmouth",
+                      "label":  "praat-parselmouth",
+                      "required":  true,
+                      "requirement":  "praat-parselmouth\u003e=0.4.7",
+                      "spec":  "\u003e=0.4.7",
+                      "installed":  "0.4.7",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  },
+                  {
+                      "id":  "pydantic-ai-slim",
+                      "label":  "pydantic-ai-slim",
+                      "required":  true,
+                      "requirement":  "pydantic-ai-slim[openai]==2.52.0",
+                      "spec":  "==2.52.0",
+                      "installed":  "2.52.0",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  },
+                  {
+                      "id":  "pydantic-graph",
+                      "label":  "pydantic-graph",
+                      "required":  true,
+                      "requirement":  "pydantic-graph==2.52.0",
+                      "spec":  "==2.52.0",
+                      "installed":  "2.52.0",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  },
+                  {
+                      "id":  "jsonschema",
+                      "label":  "jsonschema",
+                      "required":  true,
+                      "requirement":  "jsonschema==4.26.0",
+                      "spec":  "==4.26.0",
+                      "installed":  "4.26.0",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  },
+                  {
+                      "id":  "pywebview",
+                      "label":  "pywebview",
+                      "required":  true,
+                      "requirement":  "pywebview==6.2.1",
+                      "spec":  "==6.2.1",
+                      "installed":  "6.2.1",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  },
+                  {
+                      "id":  "pythonnet",
+                      "label":  "pythonnet",
+                      "required":  true,
+                      "requirement":  "pythonnet==3.2.0",
+                      "spec":  "==3.2.0",
+                      "installed":  "3.2.0",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  },
+                  {
+                      "id":  "torch",
+                      "label":  "PyTorch",
+                      "required":  true,
+                      "requirement":  "torch\u003e=2.3",
+                      "spec":  "\u003e=2.3",
+                      "installed":  "2.14.1+cpu",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  },
+                  {
+                      "id":  "transformers",
+                      "label":  "Transformers",
+                      "required":  true,
+                      "requirement":  "transformers\u003e=4.57",
+                      "spec":  "\u003e=4.57",
+                      "installed":  "5.19.0",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  },
+                  {
+                      "id":  "safetensors",
+                      "label":  "Safetensors",
+                      "required":  true,
+                      "requirement":  "safetensors\u003e=0.4",
+                      "spec":  "\u003e=0.4",
+                      "installed":  "0.8.0",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  },
+                  {
+                      "id":  "webview2",
+                      "label":  "WebView2 Runtime",
+                      "required":  true,
+                      "requirement":  "Microsoft Evergreen x64",
+                      "spec":  "",
+                      "installed":  "154.0.4258.62",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  },
+                  {
+                      "id":  "tk",
+                      "label":  "Tcl/Tk",
+                      "required":  true,
+                      "requirement":  "可创建 Tk 窗口",
+                      "spec":  "",
+                      "installed":  "8.6.12",
+                      "ok":  true,
+                      "status":  "已就绪"
+                  }
+              ],
+    "message":  "",
+    "checked_at":  "2026-10-12T05:02:57.478024+00:00",
+    "smoke":  true,
+    "log_path":  "<USER_HOME>\\AppData\\Local\\AIPraat\\logs\\runtime\\install-20261012-050244-621Z-0ef55ba9.log"
+}

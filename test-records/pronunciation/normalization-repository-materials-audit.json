@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-16",
+  "status": "awaiting_user_materials",
+  "inventory": "normalization-media-inventory.json",
+  "scope": "Current workspace media, including untracked evidence and scratch; excludes .git, node_modules, virtualenv directories, symlinks. No new speaker data downloaded.",
+  "counts": {"total": 56, "audio": 32, "textgrid": 24},
+  "acceptance_ready_real_cases": 0,
+  "accuracy": {"status": "not_measured", "reason": "No independently calibrated, language-matched reference/learner pair with provenance and reviewed human correctness labels was established."},
+  "groups": [
+    {
+      "paths": ["test-records/En-uk-hello.ogg", "test-records/En-us-hello.ogg"],
+      "source_status": "documented_real_word_demos_with_matching_existing_sha1",
+      "source_evidence": "test-records/ai-tutor-demo-20261013/README.md, samples section",
+      "speakers_as_documented": ["Judith Franck / Association Shtooka (UK, CC BY 3.0 US)", "Dvortygirl (US, public domain)"],
+      "actual_sha1": ["b7b60280c9a307cb762a72412f8f4d55047680ba", "4cda0527da53ae7534968dcba6ec986c243ff072"],
+      "gaps": ["Only hello, no independent balanced multi-vowel calibration for either speaker", "UK and US labels do not establish a matched en-US-general-v1 reading profile; no UK normalization protocol", "No reviewed human target phone boundaries and local-deviation judgments for this acceptance task"],
+      "status": "blocked"
+    },
+    {
+      "paths": ["scratch/python-bridge-fix/uk.wav", "test-records/ai-tutor-demo-20261013/hello-fallback.aac"],
+      "source_status": "documented_or_script-linked_derivatives_of_hello_demos",
+      "source_evidence": ["ai/tests/verify_python_bridge_hello.py: source OGG and WAV export", "test-records/ai-tutor-demo-20261013/README.md: AAC derived from US hello"],
+      "gaps": ["Conversion is not an independent calibration recording", "No additional human correctness labels or multi-vowel coverage"],
+      "status": "blocked"
+    },
+    {
+      "paths": ["test-records/ai-tutor-demo-20261013/native-write-probe.wav", "test-records/pronunciation/synthetic-rule-observations.TextGrid"],
+      "source_status": "synthetic_or_probe_not_real_acceptance",
+      "source_evidence": "native-write-probe.praat creates 0.1 s zero-valued sound; synthetic-rule-observations is explicitly synthetic",
+      "gaps": ["Not real speaker correctness evidence"],
+      "status": "not_applicable"
+    },
+    {
+      "paths": ["dwtest/sa1.wav", "dwtest/TIMIT_train_dr1_fcjf0_sa1_extended.TextGrid", "dwtest/s_egg_test.wav", "dwtest/Example_opus_audio.ogg", "dwtest/Example_vorbis_audio.ogg"],
+      "source_status": "bundled_test_materials_not_acceptance_manifest",
+      "source_evidence": "dwtest/test_LPC.praat, test_TextGridNavigator.praat, test_readAudioFiles.praat reference these regression fixtures",
+      "gaps": ["A TIMIT-labelled path/TextGrid alone does not establish its provenance, authorization, reviewed annotator or matching learner", "No paired speakers each with independent balanced vowel calibration", "No reviewed per-phone correctness judgments or normalization configuration binding"],
+      "status": "blocked"
+    },
+    {
+      "paths": ["test/fon ExperimentMFC/Sounds/*", "test/fon/examples/*", "test/fon/test.*", "test/fon/texio/*", "test/kar/*", "test/manually/*", "test/speed/*", "ai/ffmpeg-probe.ogg"],
+      "source_status": "mixed_regression_media_and_text_io_fixtures",
+      "source_evidence": "ExperimentMFC files reference heed/hid/hood/hud; example directory includes elephant calls and sine/noise TextGrid",
+      "gaps": ["Filenames or isolated vowel examples do not establish speaker identity, authorization, reviewed language and target profile", "No four-file independent reference/learner target/calibration protocol established", "No matching reviewed human target error labels; do not silently treat test expectations or auto alignment as human gold"],
+      "status": "blocked"
+    }
+  ],
+  "requested_user_materials": [
+    "Two identified speakers with permitted source/origin and agreed language plus supported reading profile",
+    "Four distinct recordings per pair: reference target, learner target, independent reference calibration and independent learner calibration",
+    "For each calibration, at least three manually delimited tokens for every protocol vowel (Japanese five vowels or supported US English nine vowels); valid measured F1/F2 still required at runtime",
+    "Human IPA target/calibration intervals, annotator/review date, hash binding; target correctness judgments and rationale (no automatic fake annotations)",
+    "PCM WAV files and JSON annotations matching the empty template; all paths contained in a corpus directory",
+    "Explicit normalization settings; utterance pitch is not a full independent speaker-pitch calibration",
+    "For future accuracy claims, an agreed evaluation protocol, feature-specific gold labels, sufficient positive/negative cases and human review of false positives/negatives"
+  ]
+}

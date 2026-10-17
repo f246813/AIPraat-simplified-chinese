@@ -1,0 +1,54 @@
+
+ RUN  v3.2.4 <WORKSPACE>/ai/frontend
+
+ ❯ tests/composer-status.test.tsx (7 tests | 2 failed) 287ms
+   ✓ quick changes save only the required fields, never credentials/endpoints 2ms
+   ✓ model suggestions are scoped to the configured official endpoint 1ms
+   ✓ debounces real host estimates and ignores stale session replies 125ms
+   ✓ unknown windows and RPC failures never fabricate a percentage 49ms
+   × keeps the displayed budget throughout typing, debounce and pending refresh; ignores obsolete replies 43ms
+     → expected '…' to be '20%' // Object.is equality
+   × keeps the previous estimate while attachments change but reveals a refresh failure 31ms
+     → expected '…' to be '20%' // Object.is equality
+   ✓ failed quick-save shows an error without optimistic configuration changes 36ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/composer-status.test.tsx > keeps the displayed budget throughout typing, debounce and pending refresh; ignores obsolete replies
+AssertionError: expected '…' to be '20%' // Object.is equality
+
+Expected: "20%"
+Received: "…"
+
+ ❯ tests/composer-status.test.tsx:85:33
+     83|   for (const text of ['草','草稿','草稿材料']) {
+     84|     await act(async () => {fixture.current.text=text;fixture.listeners…
+     85|     expect(trigger.textContent).toBe('20%');
+       |                                 ^
+     86|     expect(ring.getAttribute('stroke-dasharray')).toBe('20 100');
+     87|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/composer-status.test.tsx > keeps the previous estimate while attachments change but reveals a refresh failure
+AssertionError: expected '…' to be '20%' // Object.is equality
+
+Expected: "20%"
+Received: "…"
+
+ ❯ tests/composer-status.test.tsx:113:65
+    111|   fail=true;
+    112|   await act(async()=>{fixture.current.attachments=[];fixture.listeners…
+    113|   expect(screen.getByRole('button',{name:'上下文用量'}).textContent).toBe('…
+       |                                                                 ^
+    114|   await act(async()=>{await vi.advanceTimersByTimeAsync(350);});
+    115|   expect(screen.getByRole('button',{name:'上下文用量'}).textContent).toBe('…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 5 passed (7)
+   Start at  21:34:46
+   Duration  1.34s (transform 79ms, setup 0ms, collect 271ms, tests 287ms, environment 470ms, prepare 103ms)
+

@@ -1,0 +1,12 @@
+[pywebview] Error occurred in script
+Traceback (most recent call last):
+  File "<WORKSPACE>\venv-ai-modern\Lib\site-packages\webview\platforms\edgechromium.py", line 152, in evaluate_js
+    self.webview.Invoke(
+System.ObjectDisposedException: 无法访问已释放的对象。
+
+对象名:“WebView2”。
+
+   在 System.Windows.Forms.Control.MarshaledInvoke(Control caller, Delegate method, Object[] args, Boolean synchronous)
+
+   在 System.Windows.Forms.Control.Invoke(Delegate method, Object[] args)
+PASS actual AIPraat React frontend / WebView2 / pythonnet RPC bridge {'rendered': True, 'bridge': True, 'text': 72}

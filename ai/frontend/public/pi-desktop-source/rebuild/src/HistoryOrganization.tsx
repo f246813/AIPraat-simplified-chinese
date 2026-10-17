@@ -2,18 +2,18 @@
 import {useState,type MouseEvent,type KeyboardEvent,type DragEvent} from 'react';
 import {Archive,ArchiveRestore,ChevronDown,Folder,FolderPlus,MoreHorizontal,Pencil,Plus,Trash2} from 'lucide-react';
 import {ChatStore,useChatState} from './store';
-import {readOnly,type HistorySection,type Session,type HistoryGroupAction} from './types';
+import {readOnly,type HistorySection,type Session,type HistoryGroupAction,type RetainedTimeGroup} from './types';
 import {ContextMenu,type ContextMenuState} from './pi/ContextMenu';
 import {Modal} from './ui';
 import './codex/organization.css';
 
 type Anchor=Pick<ContextMenuState,'point'|'trigger'>;
 type Editing={section?:HistorySection;session?:Session};
-type TimeGroup={name:string;sessionIds:string[]};
+type TimeGroup={name:string;sessionIds:string[];retention?:RetainedTimeGroup};
 type GroupMenuAction=HistoryGroupAction|'clear';
 const groupActionLabels:Record<GroupMenuAction,string>={delete:'删除分区及其内容',detach:'仅删除分区',clear:'删除分区内所有内容',archive:'全部归档'};
 const PINNED='01984de2-8f74-7c91-a3b2-5c5e937cf318';
-export const ordinarySection:HistorySection={id:'',name:'对话历史',appearance:null,builtin:true};
+export const ordinarySection:HistorySection={id:'',name:'会话',appearance:null,builtin:true};
 
 export function useHistoryOrganization(store:ChatStore,archived:boolean,onCreate:(section:string|null)=>void){
   const state=useChatState(store);
@@ -28,6 +28,15 @@ export function useHistoryOrganization(store:ChatStore,archived:boolean,onCreate
   const edit=(request:Editing)=>{setName(request.section?.name||'');setIcon(request.section?.appearance?.icon||'');setColor(request.section?.appearance?.color||'');setError('');setEditing(request);};
   const action=async(operation:()=>Promise<unknown>,close:()=>void)=>{setBusy(true);setError('');try{await operation();close();}catch(error){setError(error instanceof Error?error.message:String(error));}finally{setBusy(false);}};
   const members=(section:HistorySection,inArchive=archived)=>state.sessions.filter(s=>Boolean(s.archived)===inArchive&&(section.builtin&&section.id===PINNED?Boolean(s.pinned):!s.pinned&&(s.sectionId||'')===section.id));
+  const manageGroup=async(group:TimeGroup & {action:GroupMenuAction})=>{
+    if(group.sessionIds.length)await store.manageGroup(group.sessionIds,group.action==='clear'?'delete':group.action);
+    if(group.retention&&group.action!=='archive'){
+      const saved=(store.getSnapshot().boot?.settings.preferences.sidebar_retained_time_groups||[]) as RetainedTimeGroup[];
+      const retained=saved.filter(item=>item.mode!==group.retention!.mode||item.origin?.id!==group.retention!.origin?.id||item.group!==group.retention!.group);
+      if(group.action==='clear')retained.push(group.retention);
+      if(group.action==='clear'||retained.length!==saved.length)await store.save({preferences:{sidebar_retained_time_groups:retained}});
+    }
+  };
   const groupMenuState:ContextMenuState|null=groupMenu?{...groupMenu.anchor,label:`分组操作 ${groupMenu.name}`,items:(['detach','clear','archive','delete'] as const).map(kind=>({id:`group-${kind}`,label:groupActionLabels[kind],icon:kind==='archive'?<Archive size={14}/>:<Trash2 size={14}/>,danger:kind==='delete'||kind==='clear',separatorBefore:kind==='archive',disabled:state.organizationBusy||busy||(kind!=='detach'&&groupMenu.sessionIds.some(id=>store.running(id)||state.submitting[id])),onSelect:()=>{setError('');setGroupConfirm({...groupMenu,action:kind});}}))}:null;
   const menuState:ContextMenuState|null=menu?{...menu.anchor,label:`分区操作 ${menu.section.name}`,items:[
     {id:'edit-section',label:'编辑分区',icon:<Pencil size={14}/>,disabled:menu.section.builtin||state.organizationBusy,onSelect:()=>edit({section:menu.section})},
@@ -46,13 +55,13 @@ export function useHistoryOrganization(store:ChatStore,archived:boolean,onCreate
     newSection:()=>edit({}),
     move:(session:Session,anchor:Anchor,back:()=>void)=>setMoving({session,anchor,back}),
     openMenu:(section:HistorySection,event:MouseEvent<HTMLButtonElement>)=>{const target=event.currentTarget,rect=target.getBoundingClientRect();setMenu(old=>old?.section.id===section.id?undefined:{section,anchor:{point:{x:rect.right+4,y:rect.bottom+4},trigger:target}});},
-    openGroupMenu:(name:string,sessions:Session[],event:MouseEvent<HTMLButtonElement>|KeyboardEvent<HTMLButtonElement>)=>{event.preventDefault();event.stopPropagation();const target=event.currentTarget,rect=target.getBoundingClientRect();setGroupMenu({name,sessionIds:sessions.map(s=>s.id),anchor:{point:'clientX'in event&&(event.clientX||event.clientY)?{x:event.clientX+4,y:event.clientY+4}:{x:rect.right+4,y:rect.bottom+4},trigger:target}});},
+    openGroupMenu:(name:string,sessions:Session[],event:MouseEvent<HTMLButtonElement>|KeyboardEvent<HTMLButtonElement>,retention?:RetainedTimeGroup)=>{event.preventDefault();event.stopPropagation();const target=event.currentTarget,rect=target.getBoundingClientRect();setGroupMenu({name,sessionIds:sessions.map(s=>s.id),retention,anchor:{point:'clientX'in event&&(event.clientX||event.clientY)?{x:event.clientX+4,y:event.clientY+4}:{x:rect.right+4,y:rect.bottom+4},trigger:target}});},
     dialogs:<>
       <ContextMenu state={menuState} onClose={()=>setMenu(undefined)}/><ContextMenu state={movingState} onClose={()=>setMoving(undefined)}/>
       <ContextMenu state={groupMenuState} onClose={()=>setGroupMenu(undefined)}/>
       {groupConfirm&&<Modal title={groupActionLabels[groupConfirm.action]} onClose={()=>{if(!busy)setGroupConfirm(undefined);}}>
-        <p>{groupConfirm.action==='detach'?`仅删除“${groupConfirm.name}”分区？其中 ${groupConfirm.sessionIds.length} 个会话会保留，并直接显示在上一级。`:groupConfirm.action==='clear'?`删除“${groupConfirm.name}”中的全部 ${groupConfirm.sessionIds.length} 个会话？删除后无法在本应用中恢复。清空的时间分区会暂时隐藏，有新的会话时自动显示。`:groupConfirm.action==='delete'?`删除“${groupConfirm.name}”及其中 ${groupConfirm.sessionIds.length} 个会话？删除后无法在本应用中恢复。`:`归档“${groupConfirm.name}”中的全部 ${groupConfirm.sessionIds.length} 个会话？可从“设置 → 已归档会话”恢复。`}</p>
-        {error&&<p role="alert">{error}</p>}<div className="actions"><button disabled={busy} onClick={()=>setGroupConfirm(undefined)}>取消</button><button aria-label={`确认${groupActionLabels[groupConfirm.action]}`} className={groupConfirm.action==='delete'||groupConfirm.action==='clear'?'danger':'primary'} disabled={busy||state.organizationBusy} onClick={()=>void action(()=>store.manageGroup(groupConfirm.sessionIds,groupConfirm.action==='clear'?'delete':groupConfirm.action),()=>setGroupConfirm(undefined))}>{busy?'处理中…':'确认'}</button></div>
+        <p>{groupConfirm.action==='detach'?`仅删除“${groupConfirm.name}”分区？其中 ${groupConfirm.sessionIds.length} 个会话会保留，并直接显示在上一级。`:groupConfirm.action==='clear'?`删除“${groupConfirm.name}”中的全部 ${groupConfirm.sessionIds.length} 个会话？删除后无法在本应用中恢复。分区会保留，清空后显示“暂无会话”。`:groupConfirm.action==='delete'?`删除“${groupConfirm.name}”及其中 ${groupConfirm.sessionIds.length} 个会话？删除后无法在本应用中恢复。`:`归档“${groupConfirm.name}”中的全部 ${groupConfirm.sessionIds.length} 个会话？可从“设置 → 已归档会话”恢复。`}</p>
+        {error&&<p role="alert">{error}</p>}<div className="actions"><button disabled={busy} onClick={()=>setGroupConfirm(undefined)}>取消</button><button aria-label={`确认${groupActionLabels[groupConfirm.action]}`} className={groupConfirm.action==='delete'||groupConfirm.action==='clear'?'danger':'primary'} disabled={busy||state.organizationBusy} onClick={()=>void action(()=>manageGroup(groupConfirm),()=>setGroupConfirm(undefined))}>{busy?'处理中…':'确认'}</button></div>
       </Modal>}
       {editing&&<Modal title={editing.section?'编辑分区':'新建分区'} onClose={()=>{if(!busy)setEditing(undefined);}}>
         <label className="field"><span>分区名称</span><input aria-label="分区名称" autoFocus maxLength={100} value={name} onChange={e=>setName(e.target.value)}/></label>
@@ -64,11 +73,12 @@ export function useHistoryOrganization(store:ChatStore,archived:boolean,onCreate
   };
 }
 
-export function HistorySectionHeader({section,count,collapsed,onToggle,onMenu,onDrop}: {section:HistorySection;count:number;collapsed:boolean;onToggle:()=>void;onMenu:(event:MouseEvent<HTMLButtonElement>)=>void;onDrop:(id:string)=>void}){
+export function HistorySectionHeader({section,count,collapsed,onToggle,onMenu,onDrop,onCreate}: {section:HistorySection;count:number;collapsed:boolean;onToggle:()=>void;onMenu:(event:MouseEvent<HTMLButtonElement>)=>void;onDrop:(id:string)=>void;onCreate?:()=>void}){
   const [over,setOver]=useState(false);
   const drag=(event:DragEvent)=>{if(Array.from(event.dataTransfer.types).includes('application/x-aipraat-history')){event.preventDefault();event.dataTransfer.dropEffect='move';setOver(true);}};
   return <div className={`history-section-header${over?' is-drop-target':''}`} onDragOver={drag} onDragLeave={()=>setOver(false)} onDrop={event=>{setOver(false);const id=event.dataTransfer.getData('application/x-aipraat-history');if(id){event.preventDefault();event.stopPropagation();onDrop(id);}}}>
-    <button className="history-section-toggle" aria-label={`${collapsed?'展开':'折叠'}分区 ${section.name}`} aria-expanded={!collapsed} onClick={onToggle}><ChevronDown className={collapsed?'collapsed':''} size={12}/><span className="history-section-symbol" style={{color:section.appearance?.color||undefined}}>{section.appearance?.icon||<Folder size={13}/>}</span><span className="history-section-name">{section.name}</span><span className="history-section-count">{count}</span></button>
-    <button className="history-section-more" aria-label={`分区操作 ${section.name}`} aria-haspopup="menu" onClick={onMenu}><MoreHorizontal size={14}/></button>
+    <button type="button" className="history-section-toggle" aria-label={`${collapsed?'展开':'折叠'}分区 ${section.name}`} aria-expanded={!collapsed} onClick={onToggle}><span className="history-section-symbol" aria-hidden style={{color:section.appearance?.color||undefined}}>{section.appearance?.icon||<Folder size={13}/>}</span><span className="history-section-name">{section.name}</span><ChevronDown aria-hidden className={collapsed?'collapsed':''} size={12}/><span className="history-section-count">{count}</span></button>
+    <button type="button" className="history-section-more" aria-label={`分区操作 ${section.name}`} aria-haspopup="menu" onClick={onMenu}><MoreHorizontal size={14}/></button>
+    {onCreate&&<button type="button" className="history-section-create sidebar-toolbar-button" aria-label="新建分区" title="新建分区" onClick={onCreate}><FolderPlus size={14}/></button>}
   </div>;
 }

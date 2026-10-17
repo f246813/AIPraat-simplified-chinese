@@ -1,0 +1,12 @@
+test_legacy_direct_entry_uses_same_gate (test_modern_host.ModernHostTests.test_legacy_direct_entry_uses_same_gate) ... ok
+test_modern_model_request_never_follows_redirect (test_modern_host.ModernHostTests.test_modern_model_request_never_follows_redirect) ... ok
+test_offline_assets_origin_headers_and_no_directory_listing (test_modern_host.ModernHostTests.test_offline_assets_origin_headers_and_no_directory_listing) ... ok
+test_parent_watch_closes_on_replaced_process_identity (test_modern_host.ModernHostTests.test_parent_watch_closes_on_replaced_process_identity) ... ok
+test_parent_watch_stops_when_window_is_closed (test_modern_host.ModernHostTests.test_parent_watch_stops_when_window_is_closed) ... ok
+test_parent_watch_without_explicit_parent_does_not_guess (test_modern_host.ModernHostTests.test_parent_watch_without_explicit_parent_does_not_guess) ... ok
+test_shared_gate_excludes_another_process_and_releases (test_modern_host.ModernHostTests.test_shared_gate_excludes_another_process_and_releases) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.357s
+
+OK

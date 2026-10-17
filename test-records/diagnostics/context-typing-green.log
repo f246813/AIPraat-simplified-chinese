@@ -1,0 +1,10 @@
+
+ RUN  v3.2.4 <WORKSPACE>/ai/frontend
+
+ ✓ tests/composer-status.test.tsx (7 tests) 446ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  21:36:12
+   Duration  1.56s (transform 92ms, setup 0ms, collect 308ms, tests 446ms, environment 472ms, prepare 123ms)
+

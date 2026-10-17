@@ -1,0 +1,59 @@
+
+> praat-assistant-frontend@1.0.0 test
+> vitest run --run
+
+
+[1m[46m RUN [49m[22m [36mv3.2.4 [39m[90m<WORKSPACE>/ai/frontend[39m
+
+ [32m✓[39m tests/workflow-settings.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 463[2mms[22m[39m
+   [33m[2m✓[22m[39m workflow presets, custom edit, host save and reopen never start model tests [33m 461[2mms[22m[39m
+ [32m✓[39m tests/archived-settings.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 535[2mms[22m[39m
+   [33m[2m✓[22m[39m failed restore keeps history visible, reports the error and permits a successful retry [33m 351[2mms[22m[39m
+ [32m✓[39m tests/model-settings-navigation.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 651[2mms[22m[39m
+   [33m[2m✓[22m[39m repeated menu requests select Model/API and keep unsaved settings [33m 643[2mms[22m[39m
+ [32m✓[39m tests/composer-status.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 1012[2mms[22m[39m
+   [33m[2m✓[22m[39m debounces real host estimates and ignores stale session replies [33m 366[2mms[22m[39m
+ [32m✓[39m tests/local-model-path-settings.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 734[2mms[22m[39m
+   [33m[2m✓[22m[39m local connection settings offer a model picker and save its path [33m 452[2mms[22m[39m
+ [32m✓[39m tests/mfa-preset-editor.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 1195[2mms[22m[39m
+   [33m[2m✓[22m[39m keeps names immutable and imports persistent resources separately from unsaved bindings [33m 368[2mms[22m[39m
+ [32m✓[39m tests/sidebar-layout.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 997[2mms[22m[39m
+   [33m[2m✓[22m[39m renders the real brand dropdown and explicit panel icons, with search initially hidden [33m 350[2mms[22m[39m
+   [33m[2m✓[22m[39m keeps default, pinned and custom sections as independently collapsible siblings [33m 413[2mms[22m[39m
+ [32m✓[39m tests/normalization.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1564[2mms[22m[39m
+   [33m[2m✓[22m[39m defaults to raw and excludes normalization entirely from legacy submissions [33m 451[2mms[22m[39m
+   [33m[2m✓[22m[39m imports both slots, previews F1/F2 only after confirmation and submits host receipts, not client fitted parameters [33m 525[2mms[22m[39m
+   [33m[2m✓[22m[39m clears imported identities and confirmation when changing speakers or reading presets [33m 383[2mms[22m[39m
+ [32m✓[39m tests/sidebar-search.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1504[2mms[22m[39m
+   [33m[2m✓[22m[39m searches unopened messages with one compact host request and no full history hydration [33m 394[2mms[22m[39m
+ [32m✓[39m tests/bridge-store.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 52[2mms[22m[39m
+ [32m✓[39m tests/search.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+ [32m✓[39m tests/session-menu.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m tests/organization-store.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 337[2mms[22m[39m
+ [32m✓[39m tests/startup-session.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m tests/speech-dictionaries.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[33m 2660[2mms[22m[39m
+   [33m[2m✓[22m[39m opens the Wav2Vec2 folder picker and selects a model through its own namespace [33m 554[2mms[22m[39m
+   [33m[2m✓[22m[39m right-click deletion requires choosing delete; cancel leaves configuration intact [33m 315[2mms[22m[39m
+   [33m[2m✓[22m[39m models share deletion confirmation and return to dictionaries through the sidebar [33m 423[2mms[22m[39m
+ [32m✓[39m tests/layout.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m tests/archived-groups.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m tests/webview-form-semantics.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 402[2mms[22m[39m
+   [33m[2m✓[22m[39m square lock is an explicit styling exception, not a different business control [33m 400[2mms[22m[39m
+ [32m✓[39m tests/editor.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m tests/transcript-menu.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/modern-boundaries.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m tests/minimap.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/transcript-window.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/completions.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/scroll.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/sidebar-origins.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/pronunciation.test.tsx [2m([22m[2m17 tests[22m[2m)[22m[33m 4201[2mms[22m[39m
+   [33m[2m✓[22m[39m submits selected sounds and AI options through the real tutor namespace [33m 557[2mms[22m[39m
+   [33m[2m✓[22m[39m shows empty IPA inline and does not submit; selects Japanese rules and disables threshold [33m 304[2mms[22m[39m
+   [33m[2m✓[22m[39m requires all multiple candidates to be chosen and applied, preserving manually entered IPA until explicit application [33m 473[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m27 passed[39m[22m[90m (27)[39m
+[2m      Tests [22m [1m[32m161 passed[39m[22m[90m (161)[39m
+[2m   Start at [22m 02:33:57
+[2m   Duration [22m 6.15s[2m (transform 1.69s, setup 0ms, collect 9.51s, tests 16.52s, environment 23.73s, prepare 4.44s)[22m
+

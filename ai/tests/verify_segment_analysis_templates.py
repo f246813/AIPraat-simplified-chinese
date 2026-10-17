@@ -1,5 +1,13 @@
 """Run generated VOT templates in Praat and verify the shared C++ TSV contract."""
 
+# 注意（2026-10-17 第 3 轮）：这条脚本校验的是**已暂停**的「统一 VOT」原生路线
+# （`739cdd86` 暂停开发、只保留共享修复）。它断言的是 `test/fon/segmentAcousticVOT.praat`
+# 模板、原生动作 `Write VOT analysis to file...` 以及核心里的 analyseVOT/TSV 契约；
+# 其中原生动作在本仓库**只声明未实现**（没有 `praat_addAction` 注册），所以这条脚本
+# 现在必然失败——它是「恢复原生路线时要做成什么样」的对照，**不是**当前验收门槛。
+# 保留实现的验收入口是 `ai/tests/test_segment_analysis_tools.py` 与
+# `ai/tests/test_chat_tools.py`（0/0 = 未指定、单向参数报错、手工相减 + appendFileLine）。
+
 from __future__ import annotations
 
 import os

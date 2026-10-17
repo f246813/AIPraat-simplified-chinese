@@ -1,0 +1,164 @@
+{
+  "python": "<USER_HOME>\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+  "version": "3.14.7",
+  "architecture": "AMD64",
+  "device": "cpu",
+  "supported": false,
+  "ready": false,
+  "completed": true,
+  "items": [
+    {
+      "id": "numpy",
+      "label": "NumPy",
+      "required": true,
+      "requirement": "numpy>=2.0,<2.3",
+      "spec": ">=2.0,<2.3",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "scipy",
+      "label": "SciPy（响度滤波）",
+      "required": true,
+      "requirement": "scipy>=1.14.1,<1.15",
+      "spec": ">=1.14.1,<1.15",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "pyloudnorm",
+      "label": "pyloudnorm（响度归一化）",
+      "required": true,
+      "requirement": "pyloudnorm==0.2.0",
+      "spec": "==0.2.0",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "pillow",
+      "label": "Pillow",
+      "required": true,
+      "requirement": "pillow>=10.0",
+      "spec": ">=10.0",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "praat-parselmouth",
+      "label": "praat-parselmouth",
+      "required": true,
+      "requirement": "praat-parselmouth>=0.4.7",
+      "spec": ">=0.4.7",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "pydantic-ai-slim",
+      "label": "pydantic-ai-slim",
+      "required": true,
+      "requirement": "pydantic-ai-slim[openai]==2.52.0",
+      "spec": "==2.52.0",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "pydantic-graph",
+      "label": "pydantic-graph",
+      "required": true,
+      "requirement": "pydantic-graph==2.52.0",
+      "spec": "==2.52.0",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "jsonschema",
+      "label": "jsonschema",
+      "required": true,
+      "requirement": "jsonschema==4.26.0",
+      "spec": "==4.26.0",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "pywebview",
+      "label": "pywebview",
+      "required": true,
+      "requirement": "pywebview==6.2.1",
+      "spec": "==6.2.1",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "pythonnet",
+      "label": "pythonnet",
+      "required": true,
+      "requirement": "pythonnet==3.2.0",
+      "spec": "==3.2.0",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "torch",
+      "label": "PyTorch",
+      "required": true,
+      "requirement": "torch>=2.3",
+      "spec": ">=2.3",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "transformers",
+      "label": "Transformers",
+      "required": true,
+      "requirement": "transformers>=4.57",
+      "spec": ">=4.57",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "safetensors",
+      "label": "Safetensors",
+      "required": true,
+      "requirement": "safetensors>=0.4",
+      "spec": ">=0.4",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "webview2",
+      "label": "WebView2 Runtime",
+      "required": true,
+      "requirement": "Microsoft Evergreen x64",
+      "spec": "",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    },
+    {
+      "id": "tk",
+      "label": "Tcl/Tk",
+      "required": true,
+      "requirement": "可创建 Tk 窗口",
+      "spec": "",
+      "installed": "",
+      "ok": false,
+      "status": "不支持所选 Python：需要 3.10–3.12 x64"
+    }
+  ],
+  "message": "Python 3.10–3.12 x64（推荐 3.12）",
+  "checked_at": "2026-10-16T16:41:14.469298+00:00",
+  "smoke": false
+}

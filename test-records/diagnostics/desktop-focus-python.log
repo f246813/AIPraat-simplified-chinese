@@ -1,0 +1,10 @@
+.........................新前端未启动：[REDACTED] [REDACTED]
+
+Python：<WORKSPACE>\venv-ai-modern\Scripts\python.exe
+请在 Praat 的路径配置中选择已安装 pywebview/pythonnet 的 Python。
+不会自动改用旧界面或发送模型请求。
+............
+----------------------------------------------------------------------
+Ran 37 tests in 1.896s
+
+OK

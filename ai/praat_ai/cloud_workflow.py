@@ -73,8 +73,8 @@ def target_context(goal: str, text: str) -> str:
     targets = identifiers | named
     known = {row.id for row in rows}
     missing_ids = sorted(targets - known)
-    # 名字也对一遍：用户说「名为 my_recording.wav 的对象」时，以前既没有提示，
-    # 模型只能自己猜（2026-07-10 实测它答成「未收到音频」）。这里把不存在的名字也记下来。
+    # 用户点名但不在对象列表里的名字也要记下来：否则模型只能自己猜，
+    # 可能答成「未收到音频」而不是说明该对象不存在。
     quoted = {name.strip() for name in re.findall(r'[“"「\']([^”"」\']{1,60})[”"」\']', goal) if name.strip()}
     quoted |= {name.strip() for name in re.findall(
         r'(?:名为|名字(?:是|叫|为)|叫作|叫做|named?)\s*([^\s，,。；;的]{1,60})', goal, re.I) if name.strip()}

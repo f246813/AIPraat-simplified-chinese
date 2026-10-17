@@ -77,26 +77,7 @@ namespace AIPraat.Setup
         }
         public static PythonProbe ProbePython(string path)
         {
-            path=Clean(path);
-            if(path=="" || !File.Exists(path)) return new PythonProbe(false,"请选择已安装环境中的 python.exe。");
-            if(!Path.GetFileName(path).Equals("python.exe",StringComparison.OrdinalIgnoreCase))
-                return new PythonProbe(false,"请选择 python.exe（不要选择 pythonw.exe 或安装程序）。");
-            const string code="import sys,json,importlib,importlib.metadata\nmissing=[]\nfor name in ('tkinter','numpy','PIL','pydantic_ai','pydantic_graph','jsonschema'):\n try:\n  m=importlib.import_module(name)\n  if name=='tkinter':\n   root=m.Tk(); root.withdraw(); root.destroy()\n  if name=='numpy' and int(m.__version__.split('.')[0])<2: missing.append('NumPy >= 2')\n  if name=='PIL' and int(m.__version__.split('.')[0])<10: missing.append('Pillow >= 10')\n  if name=='pydantic_ai':\n   from pydantic_ai.models.openai import OpenAIChatModel\n   if importlib.metadata.version('pydantic-ai-slim')!='2.52.0': missing.append('pydantic-ai-slim == 2.52.0')\n  if name=='pydantic_graph' and importlib.metadata.version('pydantic-graph')!='2.52.0': missing.append('pydantic-graph == 2.52.0')\n  if name=='jsonschema' and importlib.metadata.version('jsonschema')!='4.26.0': missing.append('jsonschema == 4.26.0')\n except Exception: missing.append(name)\nprint(json.dumps({'version':list(sys.version_info[:3]),'missing':missing}))";
-            try {
-                var start=new ProcessStartInfo(path,"-I -c "+QuoteArgument(code)) {
-                    UseShellExecute=false, CreateNoWindow=true, RedirectStandardOutput=true, RedirectStandardError=true };
-                using(var p=Process.Start(start)) {
-                    var output=p.StandardOutput.ReadToEndAsync(); var errors=p.StandardError.ReadToEndAsync();
-                    if(!p.WaitForExit(12000)) { p.Kill(); return new PythonProbe(false,"Python 环境检查超时，请确认解释器可以运行。"); }
-                    Task.WaitAll(new Task[]{output,errors});
-                    if(p.ExitCode!=0) return new PythonProbe(false,"无法运行此 Python，请检查环境是否完整。");
-                    var data=new JavaScriptSerializer().Deserialize<Dictionary<string,object>>(output.Result);
-                    var version=(ArrayList)data["version"]; var missing=(ArrayList)data["missing"];
-                    if((int)version[0]<3 || ((int)version[0]==3 && (int)version[1]<10)) return new PythonProbe(false,"需要 Python 3.10 或更高版本。");
-                    if(missing.Count>0) return new PythonProbe(false,"环境缺少："+string.Join("、",missing.ToArray())+"。请运行下方的一键配置。",true);
-                    return new PythonProbe(true,"环境可用：Python "+string.Join(".",version.ToArray())+"，Tk / NumPy / Pillow 与云端编排已就绪。");
-                }
-            } catch(Exception) { return new PythonProbe(false,"此文件无法作为 Python 环境使用，请重新选择。"); }
+            return RuntimeDependencies.Probe(path,"cpu",true,null);
         }
     }
 }

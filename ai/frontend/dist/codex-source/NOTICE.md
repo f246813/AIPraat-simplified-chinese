@@ -1,5 +1,21 @@
 # Codex public thread-section protocol / Apache-2.0
 
+Conversation disclosures (2026-10-17): `upstream/transcript/` retains complete,
+unchanged `exec_cell/compact.rs` and `history_cell/activity_preview.rs` from the
+same pinned revision. Its SOURCE.json records verified Git blob identities and
+SHA-256 checksums. `src/codex/activity-state.ts` ports the failure / active /
+completed precedence from `compact_command_lines`, using host statuses in place
+of shell exit codes. The originals retain full command/output behind compact
+previews. `Chat.tsx` locally adapts that disclosure pattern to one native HTML
+details element per reply, closed by default, with nested step/tool records;
+the aggregate disclosure and its CSS are local implementations. User-requested
+avatar/name removal, compact typography and borderless message bubbles are also
+local React/CSS changes. Public Codex does not provide the desktop React chat
+renderer; no desktop UI source is claimed as copied. Human-readable saved
+measurements remain visible, including after cancellation. Complete modified
+Chat.tsx, SearchBar.tsx and styles.css ship in codex-source/modified/transcript/;
+the full rebuild inputs also ship in pi-desktop-source/rebuild/.
+
 Upstream: https://github.com/openai/codex
 Fixed revision: `ab45264919aaeb8a421cc156f1a5459ef9d60b72`.
 Copyright and author notice: see `UPSTREAM-NOTICE`. License: Apache-2.0 (`LICENSE`).

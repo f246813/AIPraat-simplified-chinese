@@ -29,8 +29,8 @@ API 分析各阶段共用每轮 12 次模型请求和 20 次工具尝试；失�
 
 - 正常桌面入口在用户提交任务时允许已启用 API 配置的远程调用；其他宿主可用 `--allow-cloud` 提供进程级授权。地址检查在 `modern_app.py` / `modern_settings.py`。查看配置和打开窗口本身不会开始分析。
 - API key 从本地配置或 `PRAAT_AI_API_KEY` 读取；状态、日志和错误展示应使用脱敏接口。
-- Windows 投递使用 `%APPDATA%\Praat\Message.txt` 与 `WM_APP`。该文件全局共享，现代执行器共用进程内投递锁；其他进程中的 Tk 投递器不参加该锁。
-- 已投递但未确认完成属于执行状态不明。现代调度器会停止后续投递，需重启桌面执行进程并核实对象状态；取消等待不能中止 GUI Praat 中已运行的脚本。
+- Windows 投递使用 `%APPDATA%\Praat\Message.txt` 与 `WM_APP`。现代执行器的 `PRAAT_LOCK` 串行管理进程内操作；`chat._send_script` 和 Anki 投递通过 `sendpraat.command_lock()` 共用跨进程锁。未使用该接口的外部写入者不受保护。
+- 已投递但未确认完成属于执行状态不明，现代执行器阻止普通操作，允许向原进程定向核对；完整快照与进程检查成功后解除阻断。核对失败不得使用旧快照或盲目重发。取消等待不能中止 GUI Praat 中已运行的脚本。
 - 自定义脚本接受语法、对象引用和命令检查；这不是操作系统沙箱。社区脚本在独立 Praat 批处理进程中运行，看不到当前 GUI 对象或编辑器选区。
 - 写入消息文件失败是投递环境限制，不能解释为模型缺少音频能力。Windows 文件标签或目录权限依安装环境而定，排障时核查实际进程和目标文件权限。
 - 临时 WAV 最多 120 秒、20 MiB，特定供应商另有编码体积限制；精确声学数值来自专业测量，直接音频输入只提供定性观察。
@@ -40,6 +40,9 @@ API 分析各阶段共用每轮 12 次模型请求和 20 次工具尝试；失�
 - [使用与配置](../ai/README.zh-CN.md)
 - [插件安装](../ai/plugin/README.zh-CN.md)
 - [原生 Hooks 与守卫](../ai/docs/native-hooks.md)
+- [后端验证入口](../ai/docs/validation.zh-CN.md)
+- [双音频判据与限制](../docs/PRONUNCIATION.zh-CN.md)
+- [归一化与材料协议](../docs/NORMALIZATION-MATERIALS.zh-CN.md)
 - [模块参考索引](../ai/docs/adr/README.md)
 - [现代前端架构](../docs/ai-frontend/CHAT-UI-ARCHITECTURE.zh-CN.md)
 

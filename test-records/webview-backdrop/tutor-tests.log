@@ -1,0 +1,11 @@
+test_cancel_returns_no_request_without_reading_audio (test_tutor_webview.TutorWebviewTests.test_cancel_returns_no_request_without_reading_audio) ... ok
+test_model_source_uses_effective_config_and_does_not_return_key (test_tutor_webview.TutorWebviewTests.test_model_source_uses_effective_config_and_does_not_return_key) ... ok
+test_rejected_request_keeps_form_open_and_can_retry (test_tutor_webview.TutorWebviewTests.test_rejected_request_keeps_form_open_and_can_retry) ... ok
+test_submit_preserves_selected_ids_and_analysis_options (test_tutor_webview.TutorWebviewTests.test_submit_preserves_selected_ids_and_analysis_options) ... ok
+test_text_object_disguised_as_wav_has_actionable_error (test_tutor_webview.TutorWebviewTests.test_text_object_disguised_as_wav_has_actionable_error) ... ok
+test_webview_lifecycle_returns_request_and_closes_asset_server (test_tutor_webview.TutorWebviewTests.test_webview_lifecycle_returns_request_and_closes_asset_server) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.067s
+
+OK

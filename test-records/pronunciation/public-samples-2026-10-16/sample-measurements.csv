@@ -1,0 +1,11 @@
+﻿sample,speaker,seconds,LUFS,gain_to_minus23_dB,F0_baseline_Hz,voiced_frames,would_clip_if_exported
+bdl_arctic_a0001,bdl,3.235,-22.375,-0.625,127.776,173,False
+bdl_arctic_a0002,bdl,3.375,-21.315,-1.685,121.94,206,False
+bdl_arctic_a0003,bdl,3.365,-21.157,-1.843,124.359,209,False
+bdl_arctic_a0004,bdl,2.575,-18.323,-4.677,120.038,177,False
+bdl_arctic_a0005,bdl,1.295,-20.354,-2.646,126.928,90,False
+slt_arctic_a0001,slt,3.355,-19.13,-3.87,189.472,206,False
+slt_arctic_a0002,slt,3.755,-20.824,-2.176,169.324,202,False
+slt_arctic_a0003,slt,3.205,-16.888,-6.112,187.597,209,False
+slt_arctic_a0004,slt,2.505,-18.5,-4.5,187.78,177,False
+slt_arctic_a0005,slt,1.485,-17.099,-5.901,193.202,90,False

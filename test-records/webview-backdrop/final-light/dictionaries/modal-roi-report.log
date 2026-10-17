@@ -1,0 +1,414 @@
+D:\Praat-work\ÎÈ¶¨ÔçÆÚ°æ\ai\tests\report_webview_modal_pixels.py:54: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  count = sum(1 for pixel in delta.getdata() if any(pixel))
+{
+  "evidence": "test-records\\webview-backdrop\\final-light\\dictionaries",
+  "assetIndexSHA256": "a76b5377cf618bafe64508cb4ccccd39282ba03f864ed222c540153e94938e2e",
+  "screenshotSize": [
+    800,
+    620
+  ],
+  "units": "8-bit RGB absolute difference, screenshot-pixel boxes",
+  "sourceHashes": {
+    "mfa-resource-dialog-background-1.png": "cb80ed180d51922cd9ee809449fdadf853eef272cb6e7006643f43c04c7254b0",
+    "mfa-resource-dialog-background-2.png": "c9293cf36514907adeede9408e6592e8cf8465ffd640ea1c2afb428c248764e8",
+    "mfa-resource-dialog-repeat-background-1.png": "bb78ab922e264e5a29fe1b5d66eb466ab44831ae2b8830d92c34b6e1ff1e8cc2"
+  },
+  "nativeTitlebarExcluded": true,
+  "repeatAvailable": true,
+  "modalComputedStyles": {
+    "dialog": {
+      "background": "rgba(255, 255, 255, 0.94)",
+      "opacity": "1",
+      "backdropFilter": "none",
+      "filter": "none"
+    },
+    "backdrop": {
+      "background": "rgba(17, 17, 17, 0.2)",
+      "opacity": "1",
+      "backdropFilter": "none",
+      "filter": "none"
+    },
+    "ancestors": [
+      {
+        "tag": "MAIN",
+        "className": "dictionary-window",
+        "background": "rgba(255, 255, 255, 0.95)",
+        "opacity": "1",
+        "backdropFilter": "blur(32px) saturate(0.6)",
+        "filter": "none"
+      },
+      {
+        "tag": "SECTION",
+        "className": "settings-dashboard dictionary-manager",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "backdropFilter": "none",
+        "filter": "none"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "backdropFilter": "none",
+        "filter": "none"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "backdropFilter": "none",
+        "filter": "none"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "background": "rgba(0, 0, 0, 0)",
+        "opacity": "1",
+        "backdropFilter": "none",
+        "filter": "none"
+      }
+    ],
+    "viewport": {
+      "width": 784,
+      "height": 581,
+      "dpr": 1
+    },
+    "rect": {
+      "x": 32,
+      "y": 12,
+      "width": 720,
+      "height": 557
+    }
+  },
+  "regions": {
+    "client-all": {
+      "box": [
+        8,
+        31,
+        792,
+        612
+      ],
+      "backgroundAB": {
+        "meanAbsolute": 1.0953925029564322,
+        "meanAbsoluteRGB": [
+          1.2805507745266782,
+          1.025231392040465,
+          0.9803953423021532
+        ],
+        "channelExtrema": [
+          [
+            0,
+            14
+          ],
+          [
+            0,
+            11
+          ],
+          [
+            0,
+            11
+          ]
+        ],
+        "changedPixelFraction": 0.3973378938494503
+      },
+      "sameBackgroundAA": {
+        "meanAbsolute": 0.011587164986476517,
+        "meanAbsoluteRGB": [
+          0.014722153921809688,
+          0.011437879799079701,
+          0.008601461238540166
+        ],
+        "channelExtrema": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "changedPixelFraction": 0.028201728195581158
+      }
+    },
+    "modal-outside-left": {
+      "box": [
+        10,
+        50,
+        30,
+        590
+      ],
+      "backgroundAB": {
+        "meanAbsolute": 8.239598765432099,
+        "meanAbsoluteRGB": [
+          11.028518518518519,
+          7.0274074074074075,
+          6.662870370370371
+        ],
+        "channelExtrema": [
+          [
+            2,
+            14
+          ],
+          [
+            1,
+            9
+          ],
+          [
+            1,
+            9
+          ]
+        ],
+        "changedPixelFraction": 1.0
+      },
+      "sameBackgroundAA": {
+        "meanAbsolute": 0.05839506172839506,
+        "meanAbsoluteRGB": [
+          0.08166666666666667,
+          0.05425925925925926,
+          0.03925925925925926
+        ],
+        "channelExtrema": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "changedPixelFraction": 0.1650925925925926
+      }
+    },
+    "dialog-whole": {
+      "box": [
+        44,
+        47,
+        756,
+        596
+      ],
+      "backgroundAB": {
+        "meanAbsolute": 0.27694548481065334,
+        "meanAbsoluteRGB": [
+          0.291093612492581,
+          0.2726868054276417,
+          0.26705603651173737
+        ],
+        "channelExtrema": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "changedPixelFraction": 0.3041178035652156
+      },
+      "sameBackgroundAA": {
+        "meanAbsolute": 0.0031961414352278234,
+        "meanAbsoluteRGB": [
+          0.0021259286547553264,
+          0.003990912998096642,
+          0.0034715826528315015
+        ],
+        "channelExtrema": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "changedPixelFraction": 0.00715806062094513
+      }
+    },
+    "dialog-header-blank": {
+      "box": [
+        436,
+        61,
+        616,
+        91
+      ],
+      "backgroundAB": {
+        "meanAbsolute": 0.9390123456790124,
+        "meanAbsoluteRGB": [
+          0.8251851851851851,
+          0.9959259259259259,
+          0.9959259259259259
+        ],
+        "channelExtrema": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "changedPixelFraction": 0.9959259259259259
+      },
+      "sameBackgroundAA": {
+        "meanAbsolute": 0.001851851851851852,
+        "meanAbsoluteRGB": [
+          0.005555555555555556,
+          0.0,
+          0.0
+        ],
+        "channelExtrema": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "changedPixelFraction": 0.005555555555555556
+      }
+    },
+    "dialog-body": {
+      "box": [
+        64,
+        131,
+        736,
+        576
+      ],
+      "backgroundAB": {
+        "meanAbsolute": 0.14890538612448725,
+        "meanAbsoluteRGB": [
+          0.16098180845371857,
+          0.14559590690208668,
+          0.1401384430176565
+        ],
+        "channelExtrema": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "changedPixelFraction": 0.16631554307116106
+      },
+      "sameBackgroundAA": {
+        "meanAbsolute": 0.0018971820938113073,
+        "meanAbsoluteRGB": [
+          0.00027086677367576243,
+          0.0030196629213483147,
+          0.002401016586409845
+        ],
+        "channelExtrema": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "changedPixelFraction": 0.0041900749063670415
+      }
+    },
+    "original-cropped-ROI": {
+      "box": [
+        50,
+        80,
+        750,
+        550
+      ],
+      "backgroundAB": {
+        "meanAbsolute": 0.18469098277608917,
+        "meanAbsoluteRGB": [
+          0.1969209726443769,
+          0.18214893617021277,
+          0.17500303951367782
+        ],
+        "channelExtrema": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "changedPixelFraction": 0.20338297872340425
+      },
+      "sameBackgroundAA": {
+        "meanAbsolute": 0.0005015197568389057,
+        "meanAbsoluteRGB": [
+          0.00041033434650455925,
+          0.0004924012158054711,
+          0.0006018237082066869
+        ],
+        "channelExtrema": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "changedPixelFraction": 0.0014984802431610943
+      }
+    }
+  },
+  "clientBackgroundPixelsChanged": true,
+  "modalPanelNearOpaque": true,
+  "interpretation": "Client and outside-strip measurements answer desktop-through-host questions. A zero in dialog-body alone is NOT evidence of an opaque client or a WebView2 limitation. Light .94 panel over .95 main and .2 scrim leaves about .0024 desktop contribution; cards and 8-bit quantization can eliminate observable center differences. Removing the extra CSS filter layer is a frontend choice, not a proven host requirement."
+}

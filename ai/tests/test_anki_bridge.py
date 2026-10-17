@@ -30,21 +30,21 @@ class BridgeTests(unittest.TestCase):
             with self.subTest(start=start, end=end), self.assertRaises(ValueError):
                 bridge.time_range(start, end)
 
-    def test_native_first_fallback_preserves_source_and_cleans_wav(self):
+    def test_shared_reader_reports_conversion_without_python_retry(self):
         with tempfile.TemporaryDirectory() as raw:
             source = Path(raw) / '接する.m4a'; source.touch()
             calls = []
             def native(audio, original, start, end, pid, directory):
                 calls.append((audio, original, start, end))
-                return 'codec unavailable' if len(calls) == 1 else ''
+                (directory/'result.txt').write_text('ok\nconverted\n',encoding='utf-8')
+                return ''
             def decode(audio, target):
                 target.touch(); return target
             with patch.object(bridge, 'command_lock', contextlib.nullcontext), patch.object(bridge, '_target', return_value=123), patch.object(bridge, '_open_native', side_effect=native), patch.object(bridge, 'decode_wav', side_effect=decode), patch.object(bridge, 'settings', return_value=bridge.DEFAULTS):
                 result = bridge.open_audio(str(source), start=.1, end=.8)
             self.assertTrue(result['converted'])
             self.assertEqual(calls[0][:2], (source, source))
-            self.assertEqual(calls[1][1:], (source, .1, .8))
-            self.assertFalse(calls[1][0].exists())
+            self.assertEqual(len(calls), 1)
             self.assertTrue(source.exists())
 
     def test_unconfirmed_delivery_does_not_retry(self):
@@ -54,7 +54,7 @@ class BridgeTests(unittest.TestCase):
                 with self.assertRaises(TimeoutError): bridge.open_audio(str(source))
                 native.assert_called_once(); decode.assert_not_called()
 
-    def test_disable_fallback(self):
+    def test_shared_reader_failure_is_not_retried_in_python(self):
         with tempfile.TemporaryDirectory() as raw:
             source = Path(raw) / 'clip.m4a'; source.touch()
             with patch.object(bridge, 'command_lock', contextlib.nullcontext), patch.object(bridge, '_target', return_value=1), patch.object(bridge, '_open_native', return_value='bad codec'), patch.object(bridge, 'settings', return_value={**bridge.DEFAULTS, 'fallback': False}), patch.object(bridge, 'decode_wav') as decode:

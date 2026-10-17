@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-16",
+  "purpose": "Development-only actual pinned phonR source execution; not an application dependency",
+  "local_search": {
+    "status": "not_found_in_searched_locations",
+    "scope": "command -v / where.exe Rscript; selected Program Files, user AppData/Local, miniforge3 and D: directories (bounded depth), not an exhaustive forensic disk scan"
+  },
+  "r_download": {
+    "index_url": "https://cran.r-project.org/bin/windows/base/",
+    "url": "https://cran.r-project.org/bin/windows/base/R-4.6.1-win.exe",
+    "path": "scratch/normalization-acceptance/R-4.6.1-win.exe",
+    "sha256": "c5424c40cd70ef85765a55d2ff96bb602b5f30ed536938ff004f14db5db3c2df",
+    "publisher_checksum_url": "https://cran.r-project.org/bin/windows/base/md5sum.R-4.6.1.txt",
+    "publisher_md5": "7907f3a20ec8ec88cd0da279024b8e27",
+    "actual_md5": "7907f3a20ec8ec88cd0da279024b8e27",
+    "publisher_md5_match": true,
+    "authenticode_verified": false,
+    "note": "HTTPS official CRAN origin and publisher MD5 consistency checked; SHA-256 recorded locally, not claimed to be a publisher-signed SHA-256. MD5 alone is not a cryptographic authenticity proof."
+  },
+  "unpacker": {
+    "url": "https://constexpr.org/innoextract/files/innoextract-1.9-windows.zip",
+    "archive_sha256": "6989342c9b026a00a72a38f23b62a8e6a22cc5de69805cf47d68ac2fec993065",
+    "executable_sha256": "946bd06d8b3722a791fea4d84f496139eef6faef61640924cb72f5f1998a68e1",
+    "command": "scratch/normalization-acceptance/innoextract/innoextract.exe --extract --output-dir scratch/normalization-acceptance/R-portable scratch/normalization-acceptance/R-4.6.1-win.exe",
+    "result": "Done. Installer was not executed.",
+    "prior_blocker": "GitHub releases API returned HTTP 403; downloaded from innoextract author's site instead."
+  },
+  "execution": {
+    "rscript": "scratch/normalization-acceptance/R-portable/app/bin/x64/Rscript.exe",
+    "version": "Rscript (R) version 4.6.1 (2026-06-24)",
+    "result": "normalization-actual-r.json",
+    "evidence_directory": "normalization-actual-r",
+    "startup": "--vanilla",
+    "temporary_directory": "Native child-process TMPDIR under evidence workspace; removed after execution",
+    "initial_blocker": "R could not create R_TempDir with inherited MSYS /tmp or native user Temp. Both failures preserved in normalization-r-first-attempt.json and normalization-r-native-temp-attempt.json. Workspace-local child TMPDIR resolved this."
+  },
+  "side_effects": {
+    "user_path_changed": false,
+    "registry_changed": false,
+    "installer_executed": false,
+    "production_runtime_modified": false,
+    "packages_installed": false,
+    "speaker_data_downloaded": false,
+    "paid_api_called": false
+  }
+}

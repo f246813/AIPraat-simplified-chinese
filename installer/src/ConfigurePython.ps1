@@ -1,9 +1,105 @@
-﻿param([Parameter(Mandatory=$true)][string]$PythonPath,[switch]$NoPause)
+﻿param([Parameter(Mandatory=$true)][string]$PythonPath,[ValidateSet('Online','Local')][string]$Mode='Online',[ValidateSet('cpu','cuda')][string]$Device='cpu',[string]$PlanPath='',[string]$ResultPath='',[string]$LogPath='',[switch]$NoLog,[switch]$NoPause)
 $ErrorActionPreference='Stop'
 [Console]::OutputEncoding=[Text.UTF8Encoding]::new($false)
 $env:PYTHONIOENCODING='utf-8'
 $exitStatus=1
 $downloadDirectory=$null
+$webviewDownload=$null
+$probeScript=Join-Path $PSScriptRoot 'runtime_dependencies.py'
+$requirementsFile=Join-Path $PSScriptRoot 'requirements.txt'
+if(-not (Test-Path -LiteralPath $probeScript)) {
+    $runtimeSource=Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) 'ai'
+    $probeScript=Join-Path $runtimeSource 'runtime_dependencies.py'
+    $requirementsFile=Join-Path $runtimeSource 'requirements.txt'
+}
+$installationError=''
+$logDirectory=Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'AIPraat/logs/runtime'
+if($NoLog){$LogPath=''}
+elseif(-not $LogPath) {
+    $LogPath=Join-Path $logDirectory ('install-'+[DateTime]::UtcNow.ToString('yyyyMMdd-HHmmss-fff')+'Z-'+[guid]::NewGuid().ToString('N').Substring(0,8)+'.log')
+}
+$transcribing=$false
+if($LogPath) {
+    try {
+        $LogPath=[IO.Path]::GetFullPath($LogPath)
+        New-Item -ItemType Directory -Path (Split-Path -Parent $LogPath) -Force | Out-Null
+        # Windows PowerShell 5.1 otherwise appends transcripts as ASCII and loses Chinese.
+        if(-not (Test-Path -LiteralPath $LogPath) -or (Get-Item -LiteralPath $LogPath).Length -eq 0){[IO.File]::WriteAllText($LogPath,'',[Text.UTF8Encoding]::new($true))}
+        Start-Transcript -LiteralPath $LogPath -Append | Out-Null
+        $transcribing=$true
+    } catch {$LogPath=''}
+}
+if(-not $LogPath){Write-Host '日志未保存，不影响检测。'}
+if(-not $ResultPath){$ResultPath=if($LogPath){[IO.Path]::ChangeExtension($LogPath,'.json')}else{Join-Path ([IO.Path]::GetTempPath()) ('AIPraat-install-'+[guid]::NewGuid().ToString('N')+'.json')}}
+$ResultPath=[IO.Path]::GetFullPath($ResultPath)
+New-Item -ItemType Directory -Path (Split-Path -Parent $ResultPath) -Force | Out-Null
+$script:lastNativeOutput=''
+
+function Invoke-Python([string[]]$Arguments) {
+    # Native stderr warnings on Windows PowerShell 5.1 must not abort pip.
+    $ErrorActionPreference='Continue'
+    $capture=New-Object Text.StringBuilder
+    & $PythonPath @Arguments 2>&1 | ForEach-Object { $line=$_.ToString();[void]$capture.AppendLine($line);Write-Host $line }
+    $script:lastNativeOutput=$capture.ToString()
+    return $LASTEXITCODE
+}
+
+function Test-PipCacheFailure([string]$Text) {
+    $cache='(?:pip[\\/]+cache|[\\/]+cache[\\/]+(?:wheels|http[^\\/\s]*))'
+    $error='(?:permission denied|access is denied|access denied|拒绝访问|PermissionError|invalid wheel|invalid zip|BadZipFile|corrupt)'
+    return $Text -match ('(?is)'+$error+'.{0,800}'+$cache+'|'+$cache+'.{0,800}'+$error)
+}
+
+function Invoke-Pip([string[]]$Arguments) {
+    Write-Host ('pip install '+($Arguments -join ' '))
+    $prefix=@('-I','-m','pip','--isolated','install','--disable-pip-version-check')
+    $status=Invoke-Python -Arguments ($prefix+$Arguments)
+    if($status -ne 0 -and (Test-PipCacheFailure $script:lastNativeOutput)) {
+        Write-Host '检测到 pip 缓存错误；本次安装禁用缓存重试一次，其他安装仍使用缓存。'
+        $status=Invoke-Python -Arguments ($prefix+@('--no-cache-dir')+$Arguments)
+    }
+    return $status
+}
+
+function Test-WebView2 {
+    $key='Software\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}'
+    foreach($hive in @([Microsoft.Win32.RegistryHive]::CurrentUser,[Microsoft.Win32.RegistryHive]::LocalMachine)) {
+        foreach($view in @([Microsoft.Win32.RegistryView]::Registry32,[Microsoft.Win32.RegistryView]::Registry64)) {
+            $base=[Microsoft.Win32.RegistryKey]::OpenBaseKey($hive,$view)
+            try {
+                $entry=$base.OpenSubKey($key)
+                if($entry){try {$version=[string]$entry.GetValue('pv');if($version -and $version -ne '0.0.0.0'){return $true}}finally{$entry.Dispose()}}
+            } finally {$base.Dispose()}
+        }
+    }
+    return $false
+}
+
+function Install-WebView2([string]$LocalInstaller) {
+    if(Test-WebView2){return}
+    if($Mode -eq 'Local') {
+        if(-not $LocalInstaller -or -not (Test-Path -LiteralPath $LocalInstaller -PathType Leaf)) {
+            throw '缺少 WebView2 Runtime：请选择微软 x64 Evergreen 离线完整安装程序，或主动选择联网补齐。'
+        }
+        if((Split-Path -Leaf $LocalInstaller) -notmatch '^MicrosoftEdgeWebView2RuntimeInstallerX64.*\.exe$') {
+            throw '离线方式需要 MicrosoftEdgeWebView2RuntimeInstallerX64.exe 完整包；不能使用联网 Bootstrapper 或其他软件安装器。'
+        }
+        $bundle=$LocalInstaller
+    } else {
+        $script:webviewDownload=Join-Path ([IO.Path]::GetTempPath()) ('AIPraat-webview-'+[guid]::NewGuid().ToString('N')+'.exe')
+        $bundle=$script:webviewDownload
+        [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12
+        Write-Host '正在下载微软官方 WebView2 Evergreen Bootstrapper…'
+        Invoke-WebRequest -UseBasicParsing -Uri 'https://go.microsoft.com/fwlink/p/?LinkId=2124703' -OutFile $bundle
+    }
+    $signature=Get-AuthenticodeSignature -LiteralPath $bundle
+    if($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'O=Microsoft Corporation') {
+        throw 'WebView2 安装程序的微软签名验证失败。'
+    }
+    $process=Start-Process -FilePath $bundle -ArgumentList @('/silent','/install') -WindowStyle Hidden -PassThru -Wait
+    if($process.ExitCode -notin @(0,3010)){throw "WebView2 安装失败，退出码：$($process.ExitCode)。"}
+    if(-not (Test-WebView2)){throw 'WebView2 安装后仍未检测到 Runtime。'}
+}
 
 function Test-Tk {
     # Python single quotes survive PowerShell 5.1's legacy native argument passing.
@@ -102,30 +198,95 @@ try {
     $metadataJson=& $PythonPath -I -c 'import sys,json,platform,sysconfig; print(json.dumps(dict(base=sys.base_prefix,version=platform.python_version(),machine=sysconfig.get_platform(),implementation=sys.implementation.name,version_info=list(sys.version_info[:2]))))'
     if($LASTEXITCODE -ne 0){throw '无法运行所选 Python。'}
     $metadata=$metadataJson | ConvertFrom-Json
-    if($metadata.version_info[0] -ne 3 -or $metadata.version_info[1] -lt 10){throw '需要 Python 3.10 或更高版本。'}
-    & $PythonPath -I -c 'import importlib.util; raise SystemExit(0 if importlib.util.find_spec(''pip'') else 1)'
-    if($LASTEXITCODE -ne 0) {
+    if($metadata.version_info[0] -ne 3 -or $metadata.version_info[1] -notin @(10,11,12) -or $metadata.machine -ne 'win-amd64') {throw '需要 Python 3.10–3.12 x64（推荐 3.12）；Parselmouth 是必需运行库。'}
+    if(-not (Test-Path -LiteralPath $probeScript)){throw '共用运行库检测脚本缺失。'}
+    $repairFile=[IO.Path]::ChangeExtension($ResultPath,'.repair.json')
+    $repairArguments=@('-I',$probeScript,'--requirements',$requirementsFile,'--device',$Device,'--repair-plan','--output',$repairFile)
+    if($PlanPath -and (Test-Path -LiteralPath $PlanPath)){$repairArguments+=@('--before-plan',$PlanPath)}
+    if((Invoke-Python -Arguments $repairArguments) -ne 0){throw '无法根据逐项检测结果生成补齐清单。'}
+    $repair=Get-Content -LiteralPath $repairFile -Raw -Encoding UTF8 | ConvertFrom-Json
+    $needsPip=if($Mode -eq 'Local'){$true}else{[bool]($repair.torch -or @($repair.requirements).Count)}
+    # Capture even a silent native command: a GUI/redirected PowerShell host
+    # may not have a readable console buffer (Python 3.12 returns Win32 0x5).
+    $pipProbeExit=if($needsPip){Invoke-Python @('-I','-c','import importlib.util; raise SystemExit(0 if importlib.util.find_spec(''pip'') else 1)')}else{0}
+    if($needsPip -and $pipProbeExit -ne 0) {
         Write-Host '正在配置 pip…'
-        & $PythonPath -I -m ensurepip --upgrade
-        if($LASTEXITCODE -ne 0){throw 'pip 配置失败，请修复所选 Python 的 pip 组件后重试。'}
+        if((Invoke-Python @('-I','-m','ensurepip','--upgrade')) -ne 0){throw 'pip 配置失败，请修复所选 Python 的 pip 组件后重试。'}
     }
-    Write-Host '正在安装前端、阶梯编排与云端会话依赖…'
-    & $PythonPath -I -m pip install --disable-pip-version-check --only-binary=:all: 'Pillow>=10' 'numpy>=2' 'pydantic-ai-slim[openai]==2.52.0' 'pydantic-graph==2.52.0' 'jsonschema==4.26.0'
-    if($LASTEXITCODE -ne 0){throw '依赖安装失败，请检查网络或该 Python 目录的写入权限，查看上方信息后重试。'}
-    if(-not (Test-Tk)){Install-Tk $metadata}
-    Write-Host '正在复检 Tk、Pillow、NumPy 与云端编排…'
-    & $PythonPath -I -c 'import tkinter,numpy,PIL,pydantic_ai,pydantic_graph,jsonschema; assert int(numpy.__version__.split(''.'')[0])>=2; assert int(PIL.__version__.split(''.'')[0])>=10; r=tkinter.Tk(); r.withdraw(); r.destroy(); print(''Tk / Pillow / NumPy / cloud orchestration OK'')'
-    if($LASTEXITCODE -ne 0){throw '复检未通过，请查看上方信息，补齐 Tcl/Tk 或其他依赖后重试。'}
-    Write-Host '运行环境配置完成。返回配置界面后将自动检查。' -ForegroundColor Green
+    $localWebview=''
+    if($Mode -eq 'Local') {
+        if(-not $PlanPath -or -not (Test-Path -LiteralPath $PlanPath)){throw '本地安装需要 PlanPath JSON：packages、dependency_folder、webview2。'}
+        $plan=Get-Content -LiteralPath $PlanPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        $localWebview=[string]$plan.webview2
+        Write-Host '正在验证逐项 wheel 名称、版本、Python 和架构，并离线解析间接依赖…'
+        if((Invoke-Python @('-I',$probeScript,'--requirements',$requirementsFile,'--local-plan',$PlanPath)) -ne 0) {
+            throw '本地包安装失败：具体缺包或不匹配项见上方 pip/校验日志。请补包后重试，或主动选择联网补齐。'
+        }
+    } else {
+        $constraintsFile=[IO.Path]::ChangeExtension($ResultPath,'.constraints.txt')
+        [IO.File]::WriteAllLines($constraintsFile,[string[]]$repair.constraints,[Text.UTF8Encoding]::new($false))
+        if($repair.torch) {
+            $torchIndex=if($Device -eq 'cpu'){'https://download.pytorch.org/whl/cpu'}else{'https://download.pytorch.org/whl/cu128'}
+            if((Invoke-Pip -Arguments @('--only-binary=:all:','--upgrade',[string]$repair.torch,'--index-url',$torchIndex,'-c',$constraintsFile)) -ne 0){throw 'PyTorch 安装失败，请查看上方信息。'}
+        }
+        $missing=@($repair.requirements)
+        if($missing.Count) {
+            Write-Host ('正在补齐未就绪的 Python 运行库：'+($missing -join '、'))
+            if((Invoke-Pip -Arguments (@('--prefer-binary','--upgrade','-c',$constraintsFile)+$missing)) -ne 0) {throw '依赖安装失败，请查看网络、权限或版本冲突信息。'}
+        } else {Write-Host '其他 Python 运行库已就绪，无需重新安装。'}
+        # Normal --upgrade can leave a broken same-version installation untouched.
+        # Resolve dependencies above, then replace ONLY the failed distributions.
+        foreach($target in @($repair.reinstall)) {
+            Write-Host ('定向重装版本满足但功能失败项（不重装其健康依赖）：'+$target)
+            $arguments=@('--only-binary=:all:','--force-reinstall','--no-deps','-c',$constraintsFile,[string]$target)
+            if($target -match '^torch[<>=]'){$arguments+=@('--index-url',$torchIndex)}
+            if((Invoke-Pip -Arguments $arguments) -ne 0){throw ('定向重装失败：'+$target)}
+        }
+    }
+    if($repair.tk) {
+        if($Mode -eq 'Local'){throw 'Tcl/Tk 缺失：请用所选 Python/Conda 的本地安装组件修复 Tk，或主动选择联网补齐。'}
+        Install-Tk $metadata
+    }
+    if($repair.webview2){Install-WebView2 $localWebview}
     $exitStatus=0
 } catch {
-    Write-Host ("配置未完成："+$_.Exception.Message) -ForegroundColor Red
+    $installationError=$_.Exception.Message
+    Write-Host ("配置未完成："+$installationError) -ForegroundColor Red
 } finally {
+    # Every caller consumes this same per-item contract, including failed installs.
+    if((Test-Path -LiteralPath $PythonPath -PathType Leaf) -and (Test-Path -LiteralPath $probeScript)) {
+        $probeExit=Invoke-Python @('-I',$probeScript,'--requirements',$requirementsFile,'--device',$Device,'--smoke','--output',$ResultPath)
+        if($probeExit -ne 0){$exitStatus=1}
+        if(Test-Path -LiteralPath $ResultPath) {
+            $result=Get-Content -LiteralPath $ResultPath -Raw -Encoding UTF8 | ConvertFrom-Json
+            if($installationError) {
+                $result.ready=$false
+                $result | Add-Member -NotePropertyName installation_error -NotePropertyValue $installationError -Force
+            }
+            $result | Add-Member -NotePropertyName log_path -NotePropertyValue $LogPath -Force
+            [IO.File]::WriteAllText($ResultPath,($result | ConvertTo-Json -Depth 8),[Text.UTF8Encoding]::new($false))
+            Write-Host "逐项检测结果：$ResultPath"
+        }
+    }
+    if($exitStatus -eq 0){Write-Host '全部必需运行库已通过复检和新前端窗口启动检查。' -ForegroundColor Green}
     # Remove only the specific installer downloaded by this invocation.
     if($downloadDirectory) {
         Get-ChildItem -LiteralPath $downloadDirectory -File | Remove-Item
         Remove-Item -LiteralPath $downloadDirectory
     }
+    if($webviewDownload -and (Test-Path -LiteralPath $webviewDownload)){Remove-Item -LiteralPath $webviewDownload}
+    if($LogPath) {
+        foreach($extension in @('.repair.json','.constraints.txt')) {
+            $workingFile=[IO.Path]::ChangeExtension($ResultPath,$extension)
+            $savedFile=[IO.Path]::ChangeExtension($LogPath,$extension)
+            if($workingFile -ne $savedFile -and (Test-Path -LiteralPath $workingFile)) {
+                try {Copy-Item -LiteralPath $workingFile -Destination $savedFile -Force}
+                catch {Write-Host '补齐清单或版本约束未保存，不影响检测。'}
+            }
+        }
+        Write-Host "配置日志：$LogPath"
+    }
+    if($transcribing){try {Stop-Transcript | Out-Null}catch {Write-Host '日志未完整保存，不影响检测。'}}
 }
 if(-not $NoPause){[void](Read-Host '按 Enter 关闭 PowerShell 并返回配置界面')}
 exit $exitStatus

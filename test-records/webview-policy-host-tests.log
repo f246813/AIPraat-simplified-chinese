@@ -1,0 +1,24 @@
+python.exe : ..........................................................................................................
+......
+所在位置 行:3 字符: 1
++ & '<WORKSPACE>\venv-ai-modern\Scripts\python.exe' -m unittest disco ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (.................................:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+----------------------------------------------------------------------
+Ran 112 tests in 6.237s
+
+OK
+python.exe : ........
+所在位置 行:4 字符: 1
++ & '<WORKSPACE>\venv-ai-modern\Scripts\python.exe' -m unittest disco ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (........:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+----------------------------------------------------------------------
+Ran 8 tests in 1.425s
+
+OK
+HOST DONE

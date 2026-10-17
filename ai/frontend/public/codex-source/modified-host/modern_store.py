@@ -64,8 +64,8 @@ class ModernStore:
                 # replace an already recorded origin or write the legacy database.
                 db.execute('UPDATE sessions SET project_path=? WHERE project_path IS NULL AND connection_id=?',(self.project_path,'local'))
             # Restart means no task is resumed. Preserve partial text and delivery facts.
-            # 除了 running，还要收掉 queued / cancelling：它们同样不会有人继续跑，
-            # 留在库里会被当成正常助手回合回灌进下一轮历史（2026-10-07）。
+            # 除 running 外还要收掉 queued / cancelling：它们同样不会继续运行，
+            # 留在库里会被当成正常助手回合回灌进下一轮历史。
             for mid, payload in db.execute('SELECT id,payload FROM messages').fetchall():
                 message = json.loads(payload)
                 if message.get('status') in {'running', 'queued', 'cancelling'}:
@@ -83,8 +83,8 @@ class ModernStore:
 
     @contextmanager
     def connect(self):
-        # timeout 是等锁的上限：以前 15 秒 + 重试，持 guard 的写操作要 21 秒才失败，
-        # 期间前端的轮询一直卡着（2026-10-07 实测）。缩短到 5 秒并给出可读的错误。
+        # timeout 是等锁上限；过长会让持 guard 的写操作迟迟不返回，
+        # 期间前端轮询一并被挡住。超时给出可读错误。
         try:
             db = sqlite3.connect(self.path, timeout=5)
         except sqlite3.OperationalError as error:
@@ -157,6 +157,27 @@ class ModernStore:
                   AND NOT EXISTS (SELECT 1 FROM session_pins WHERE session=sessions.id)
                   AND NOT EXISTS (SELECT 1 FROM history_metadata WHERE session=sessions.id)
             ''', ((sid,) for sid in session_ids))
+
+    def discard_all_empty_sessions(self):
+        """Delete every unused session, including blanks left by a crashed window.
+
+        Same conservative boundary as discard_empty_sessions: default title, no
+        draft, no summary, no messages/evidence/model events, not pinned and not
+        placed in any history section. Returns the deleted session ids.
+        """
+        with self.connect() as db:
+            ids = [row[0] for row in db.execute('''
+                SELECT id FROM sessions
+                WHERE title='新会话' AND draft='' AND summary=''
+                  AND NOT EXISTS (SELECT 1 FROM messages WHERE session=sessions.id)
+                  AND NOT EXISTS (SELECT 1 FROM evidence WHERE session=sessions.id)
+                  AND NOT EXISTS (SELECT 1 FROM model_events WHERE session=sessions.id)
+                  AND NOT EXISTS (SELECT 1 FROM session_pins WHERE session=sessions.id)
+                  AND NOT EXISTS (SELECT 1 FROM history_metadata WHERE session=sessions.id)
+            ''').fetchall()]
+            if ids:
+                db.executemany('DELETE FROM sessions WHERE id=?', ((sid,) for sid in ids))
+        return ids
 
     def writable(self, sid):
         if not isinstance(sid, str) or sid.startswith('legacy:'):
@@ -273,9 +294,8 @@ class ModernStore:
             else:
                 db.execute('INSERT INTO evidence(session,task,payload) VALUES (?,?,?)', (sid, task_id, self.encode(payload)))
 
-    #: 单条证据记录的上限。正常情况下测量行只有几十字，这条上限是给「自定义脚本把几万行
-    #: 输出塞进结果文件」那种失控情况兜底的：以前一条 4 MB 的记录会在持 self.guard 时
-    #: 写库并整份回读（2026-10-07 复查）。超限就截断并标明，原始文件仍在任务目录里。
+    #: 单条证据记录的上限，用于兜底自定义脚本把大量行写入结果文件的情况。
+    #: 超限则截断并标明，原始文件仍保留在任务目录中。
     EVIDENCE_PAYLOAD_LIMIT = 1_000_000
     EVIDENCE_ROW_LIMIT = 4000
 

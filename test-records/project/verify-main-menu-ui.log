@@ -1,24 +1,24 @@
-EXE: D:\Praat-work\稳定早期版\Praat.exe; SHA-256: 6d6020954eab4ad4d08c4a24fd589b72fe5530ad79cce0dd67d5580ef1818eec; window DPI: 96 (100%)
-'绘制': row=(1015, 315, 1249, 343), button=(1015, 315, 1249, 343)
-'查询': row=(1015, 348, 1249, 376), button=(1015, 348, 1249, 376)
-'修改': row=(1015, 381, 1249, 409), button=(1015, 381, 1249, 409)
-'标注': row=(1015, 414, 1249, 442), button=(1015, 414, 1249, 442)
-'分析周期性': row=(1015, 447, 1249, 475), button=(1015, 447, 1249, 475)
-'分析频谱': row=(1015, 480, 1249, 508), button=(1015, 480, 1249, 508)
-'操作': row=(1015, 546, 1249, 574), button=(1015, 546, 1249, 574)
-'转换': row=(1015, 579, 1249, 607), button=(1015, 579, 1249, 607)
-'滤波': row=(1015, 612, 1249, 640), button=(1015, 612, 1249, 640)
-'合并': row=(1015, 645, 1249, 673), button=(1015, 645, 1249, 673)
-Measured heights: ordinary=28px, dynamic rows=[28], cascade buttons=[28]; expected=28px
-Measured widths: ordinary=[234], dynamic rows=[234], cascade buttons=[234]
-PASS: 10 cascade titles are centered between the fixed rails
-PASS: scrollbar transition 1: all 10 submenu bounds match
-PASS: scrollbar transition 2: all 10 submenu bounds match
-PASS: automatic scrollbar hides and returns width when content fits (218px -> 234px)
-Visible scrollbars at minimum window size: [(5638088, 'ScrollBar', 'verticalScrollBar', (1087, 215, 1103, 276))]
-PASS: scrollbar transition 3: all 10 submenu bounds match
-PASS: 10 submenu buttons fill their row containers
-PASS: dynamic and ordinary action rows are 28px high with 5px spacing
-Screenshot: D:\Praat-work\稳定早期版\ai\runtime\dynamic_action_area.png
-PASS: action-row geometry remains consistent after resize
-PASS: minimum-height window keeps normal button size and scrolls to the final action
+EXE: <WORKSPACE>\Praat.exe; SHA-256: 6d6020954eab4ad4d08c4a24fd589b72fe5530ad79cce0dd67d5580ef1818eec; window DPI: 96 (100%)
+'绘制': row=(1015, 315, 1249, 343), button=(1015, 315, 1249, 343)
+'查询': row=(1015, 348, 1249, 376), button=(1015, 348, 1249, 376)
+'修改': row=(1015, 381, 1249, 409), button=(1015, 381, 1249, 409)
+'标注': row=(1015, 414, 1249, 442), button=(1015, 414, 1249, 442)
+'分析周期性': row=(1015, 447, 1249, 475), button=(1015, 447, 1249, 475)
+'分析频谱': row=(1015, 480, 1249, 508), button=(1015, 480, 1249, 508)
+'操作': row=(1015, 546, 1249, 574), button=(1015, 546, 1249, 574)
+'转换': row=(1015, 579, 1249, 607), button=(1015, 579, 1249, 607)
+'滤波': row=(1015, 612, 1249, 640), button=(1015, 612, 1249, 640)
+'合并': row=(1015, 645, 1249, 673), button=(1015, 645, 1249, 673)
+Measured heights: ordinary=28px, dynamic rows=[28], cascade buttons=[28]; expected=28px
+Measured widths: ordinary=[234], dynamic rows=[234], cascade buttons=[234]
+PASS: 10 cascade titles are centered between the fixed rails
+PASS: scrollbar transition 1: all 10 submenu bounds match
+PASS: scrollbar transition 2: all 10 submenu bounds match
+PASS: automatic scrollbar hides and returns width when content fits (218px -> 234px)
+Visible scrollbars at minimum window size: [(5638088, 'ScrollBar', 'verticalScrollBar', (1087, 215, 1103, 276))]
+PASS: scrollbar transition 3: all 10 submenu bounds match
+PASS: 10 submenu buttons fill their row containers
+PASS: dynamic and ordinary action rows are 28px high with 5px spacing
+Screenshot: <WORKSPACE>\ai\runtime\dynamic_action_area.png
+PASS: action-row geometry remains consistent after resize
+PASS: minimum-height window keeps normal button size and scrolls to the final action

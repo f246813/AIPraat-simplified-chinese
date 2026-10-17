@@ -1,0 +1,31 @@
+正在检测 NumPy
+NumPy: DLL load failed / WebView2 missing
+正在检测 Pillow
+Pillow: 版本不满足 pillow>=10.0
+正在检测 praat-parselmouth
+praat-parselmouth: DLL load failed / WebView2 missing
+正在检测 pydantic-ai-slim
+pydantic-ai-slim: DLL load failed / WebView2 missing
+正在检测 pydantic-graph
+pydantic-graph: DLL load failed / WebView2 missing
+正在检测 jsonschema
+jsonschema: 版本不满足 jsonschema==4.26.0
+正在检测 pywebview
+pywebview: 版本不满足 pywebview==6.2.1
+正在检测 pythonnet
+pythonnet: 版本不满足 pythonnet==3.2.0
+正在检测 PyTorch
+PyTorch: DLL load failed / WebView2 missing
+正在检测 Transformers
+Transformers: 版本不满足 transformers>=4.57
+正在检测 Safetensors
+Safetensors: DLL load failed / WebView2 missing
+正在检测 WebView2 Runtime
+WebView2 Runtime: DLL load failed / WebView2 missing
+正在检测 Tcl/Tk
+Tcl/Tk: DLL load failed / WebView2 missing
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 4.308s
+
+OK

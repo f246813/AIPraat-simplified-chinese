@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { SpeechDictionaries, type DictionaryResult } from '../src/SpeechDictionaries';
+import { mfaFixture } from './mfa-fixtures';
 
 const data: DictionaryResult = {dictionaries: [{name: '中文.dict', path: 'C:/词典/中文.dict', exists: true, active: true}], theme: 'system'};
 beforeEach(() => {
@@ -51,10 +52,11 @@ it('right-click deletion requires choosing delete; cancel leaves configuration i
   fireEvent.contextMenu(row, {clientX: 80, clientY: 100});
   fireEvent.click(screen.getByRole('menuitem', {name: '删除'}));
   fireEvent.click(screen.getByRole('button', {name: '取消'}));
-  expect(rpc).toHaveBeenCalledTimes(1);
+  expect(rpc).toHaveBeenCalledTimes(2); expect(rpc).toHaveBeenLastCalledWith('mfa.list',{});
   fireEvent.contextMenu(row, {clientX: 80, clientY: 100});
   fireEvent.click(screen.getByRole('menuitem', {name: '删除'}));
   rpc.mockResolvedValue({dictionaries: [], theme: 'system'});
+  await waitFor(() => expect((screen.getByRole('button',{name:'删除'}) as HTMLButtonElement).disabled).toBe(false));
   fireEvent.click(screen.getByRole('button', {name: '删除'}));
   await screen.findByText('尚未配置MFA语音词典');
   expect(rpc).toHaveBeenLastCalledWith('dictionaries.remove', {path: data.dictionaries[0].path});
@@ -143,10 +145,11 @@ it('models share deletion confirmation and return to dictionaries through the si
   fireEvent.click(screen.getByRole('menuitem', {name: '删除'}));
   expect(screen.getByRole('dialog', {name: '删除MFA声学模型'})).toBeTruthy();
   fireEvent.click(screen.getByRole('button', {name: '取消'}));
-  expect(rpc).toHaveBeenCalledTimes(2);
+  expect(rpc).toHaveBeenCalledTimes(3); expect(rpc).toHaveBeenLastCalledWith('mfa.list',{});
   fireEvent.contextMenu(row, {clientX: 80, clientY: 100});
   fireEvent.click(screen.getByRole('menuitem', {name: '删除'}));
   rpc.mockResolvedValue({models: [], theme: 'dark'});
+  await waitFor(() => expect((screen.getByRole('button',{name:'删除'}) as HTMLButtonElement).disabled).toBe(false));
   fireEvent.click(screen.getByRole('button', {name: '删除'}));
   await screen.findByText('尚未配置MFA声学模型');
   expect(rpc).toHaveBeenLastCalledWith('acoustic_models.remove', {path: model.path});
@@ -154,4 +157,35 @@ it('models share deletion confirmation and return to dictionaries through the si
   fireEvent.click(screen.getByRole('button', {name: 'MFA语音词典'}));
   await screen.findByText('中文.dict');
   expect(rpc).toHaveBeenLastCalledWith('dictionaries.list', {});
+});
+
+it('registers G2P resources in their own namespace and warns about referenced presets before removal', async () => {
+  const rpc = vi.fn(async (method: string) => method.startsWith('mfa.') ? mfaFixture : data);
+  render(<SpeechDictionaries rpc={rpc}/>); await screen.findByText('中文.dict');
+  fireEvent.click(screen.getByRole('button',{name:'MFA G2P 模型'})); await screen.findByText('English G2P.zip');
+  expect(rpc).toHaveBeenLastCalledWith('mfa.list',{});
+  fireEvent.click(screen.getByRole('button',{name:'添加 MFA G2P 模型'})); await waitFor(() => expect(rpc).toHaveBeenLastCalledWith('mfa.choose',{kind:'g2p'}));
+  await waitFor(() => expect((screen.getByRole('button',{name:'移除 English G2P.zip 登记'}) as HTMLButtonElement).disabled).toBe(false));
+  fireEvent.click(screen.getByRole('button',{name:'移除 English G2P.zip 登记'}));
+  expect(screen.getByText(/受影响预设：英语（美式）/)).toBeTruthy();
+  fireEvent.click(screen.getByRole('button',{name:'移除登记'})); await waitFor(() => expect(rpc).toHaveBeenLastCalledWith('mfa.remove',{kind:'g2p',id:'g'}));
+  expect(rpc.mock.calls.some(([method]) => method === 'dictionaries.select')).toBe(false);
+});
+it('opens the same editor from resource pairing entry without changing legacy active configuration', async () => {
+  const rpc = vi.fn(async (method: string) => method === 'mfa.list' ? mfaFixture : data);
+  render(<SpeechDictionaries rpc={rpc}/>); await screen.findByText('中文.dict');
+  fireEvent.click(screen.getByRole('button',{name:'纠音资源配套'}));
+  fireEvent.click(await screen.findByRole('button',{name:'配置 英语（英式） 配套资源'}));
+  expect(screen.getByRole('dialog',{name:'配置配套资源 · 英语（英式）'})).toBeTruthy();
+  fireEvent.click(screen.getByRole('button',{name:'取消'})); expect(screen.queryByRole('dialog')).toBeNull(); expect(rpc).toHaveBeenCalledTimes(2);
+});
+
+it.each(['dictionaries','acoustic_models'])('warns about exact referenced preset names before legacy %s deletion', async category => {
+  const kind = category === 'dictionaries' ? 'dictionary' : 'acoustic'; const resource = mfaFixture.resources[kind][0];
+  const rpc = vi.fn(async (method: string) => method === 'mfa.list' ? mfaFixture : {dictionaries:[{...resource,active:true}],models:[{...resource,active:true}],theme:'system'});
+  render(<SpeechDictionaries rpc={rpc}/>); await screen.findByText(resource.name);
+  if (category === 'acoustic_models') {fireEvent.click(screen.getByRole('button',{name:'MFA声学模型'})); await screen.findByRole('heading',{name:'管理MFA声学模型'});}
+  fireEvent.contextMenu(screen.getByRole('button',{name:new RegExp(resource.name)})); fireEvent.click(screen.getByRole('menuitem',{name:'删除'}));
+  await screen.findByText(/受影响纠音预设：英语（美式）/);
+  expect(rpc).toHaveBeenLastCalledWith('mfa.list',{}); expect(screen.getByText(/不会自动替换绑定/)).toBeTruthy();
 });

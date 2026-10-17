@@ -1,0 +1,40 @@
+{
+  "ready": false,
+  "summary": "对齐环境不完整（1 项）：临时目录为 ASCII 路径 — <WORKSPACE>\\scratch\\tmp-mfaenv",
+  "blocking": [
+    "临时目录为 ASCII 路径：<WORKSPACE>\\scratch\\tmp-mfaenv",
+    "dictionary 缺少或无效 IPA 映射：dzː, dʑː, tsː, tɕː",
+    "音位体系或 IPA 映射未就绪",
+    "acoustic：模型语言与所选语言不符"
+  ],
+  "checks": [
+    [
+      "launcher",
+      "ok",
+      "conda run -n aligner mfa · 3.4.2"
+    ],
+    [
+      "soundfile",
+      "ok",
+      "0.14.0 / libsndfile 1.2.2"
+    ],
+    [
+      "openfst",
+      "ok",
+      "<USER_HOME>\\miniforge3\\envs\\aligner\\Library\\bin\\fstcompile.EXE"
+    ],
+    [
+      "kalpy",
+      "ok",
+      "installed"
+    ],
+    [
+      "librosa",
+      "ok",
+      "1.0.0"
+    ],
+    [
+      "mfa",
+      "ok",
+      "3.4.2"
+    ],

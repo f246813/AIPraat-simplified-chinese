@@ -1,0 +1,66 @@
+
+> praat-assistant-frontend@1.0.0 test
+> vitest run
+
+
+ RUN  v3.2.4 <WORKSPACE>/ai/frontend
+
+ ✓ tests/model-settings-navigation.test.tsx (2 tests) 645ms
+   ✓ repeated menu requests select Model/API and keep unsaved settings  638ms
+ ✓ tests/archived-settings.test.tsx (2 tests) 662ms
+   ✓ failed restore keeps history visible, reports the error and permits a successful retry  460ms
+ ✓ tests/local-model-path-settings.test.tsx (2 tests) 782ms
+   ✓ local connection settings offer a model picker and save its path  540ms
+ ✓ tests/composer-status.test.tsx (8 tests) 1189ms
+   ✓ debounces real host estimates and ignores stale session replies  436ms
+ ✓ tests/mfa-preset-editor.test.tsx (7 tests) 1501ms
+   ✓ keeps names immutable and imports persistent resources separately from unsaved bindings  372ms
+ ✓ tests/sidebar-layout.test.tsx (3 tests) 959ms
+   ✓ renders the real brand dropdown and explicit panel icons, with search initially hidden  315ms
+   ✓ keeps default, pinned and custom sections as independently collapsible siblings  426ms
+ ✓ tests/normalization.test.tsx (5 tests) 1638ms
+   ✓ defaults to raw and excludes normalization entirely from legacy submissions  508ms
+   ✓ imports both slots, previews F1/F2 only after confirmation and submits host receipts, not client fitted parameters  431ms
+   ✓ clears imported identities and confirmation when changing speakers or reading presets  372ms
+ ✓ tests/sidebar-search.test.tsx (7 tests) 1424ms
+   ✓ searches unopened messages with one compact host request and no full history hydration  424ms
+ ✓ tests/prosody-settings.test.tsx (7 tests) 2184ms
+   ✓ keeps both independent switches off by default and submits explicit utterance pitch confirmation  585ms
+   ✓ imports neutral baselines via receipts, clears them and confirmation after range/speaker changes  621ms
+ ✓ tests/speech-dictionaries.test.tsx (13 tests) 2450ms
+   ✓ opens the Wav2Vec2 folder picker and selects a model through its own namespace  467ms
+   ✓ right-click deletion requires choosing delete; cancel leaves configuration intact  329ms
+   ✓ models share deletion confirmation and return to dictionaries through the sidebar  376ms
+ ✓ tests/bridge-store.test.ts (17 tests) 46ms
+ ✓ tests/organization-store.test.ts (9 tests) 336ms
+ ✓ tests/session-menu.test.ts (7 tests) 39ms
+ ✓ tests/search.test.ts (8 tests) 38ms
+ ✓ tests/startup-session.test.ts (5 tests) 32ms
+ ✓ tests/webview-form-semantics.test.tsx (1 test) 338ms
+   ✓ square lock is an explicit styling exception, not a different business control  337ms
+ ✓ tests/workflow-settings.test.tsx (2 tests) 346ms
+   ✓ workflow presets, custom edit, host save and reopen never start model tests  344ms
+ ✓ tests/layout.test.ts (7 tests) 24ms
+ ✓ tests/archived-groups.test.ts (2 tests) 18ms
+ ✓ tests/modern-boundaries.test.ts (2 tests) 11ms
+ ✓ tests/transcript-menu.test.ts (5 tests) 8ms
+ ✓ tests/editor.test.ts (10 tests) 18ms
+ ✓ tests/minimap.test.ts (6 tests) 9ms
+ ✓ tests/completions.test.ts (4 tests) 6ms
+ ✓ tests/scroll.test.ts (5 tests) 5ms
+ ✓ tests/sidebar-origins.test.ts (2 tests) 3ms
+ ✓ tests/transcript-window.test.ts (6 tests) 5ms
+ ✓ tests/composer-send.test.ts (3 tests) 3ms
+ ✓ tests/pronunciation.test.tsx (17 tests) 4318ms
+   ✓ submits selected sounds and AI options through the real tutor namespace  469ms
+   ✓ shows empty IPA inline and does not submit; selects Japanese rules and disables threshold  369ms
+   ✓ requires all multiple candidates to be chosen and applied, preserving manually entered IPA until explicit application  441ms
+   ✓ invalidates applied results on transcript changes and preserves old IPA for explicit manual conversion  307ms
+   ✓ allows generation without acoustic resources, but blocks analysis and keeps host failures actionable  300ms
+   ✓ saved resource changes invalidate generated identity; imported resources alone do not overwrite IPA  317ms
+
+ Test Files  29 passed (29)
+      Tests  174 passed (174)
+   Start at  14:53:00
+   Duration  6.57s (transform 1.84s, setup 0ms, collect 10.84s, tests 19.04s, environment 26.80s, prepare 4.39s)
+

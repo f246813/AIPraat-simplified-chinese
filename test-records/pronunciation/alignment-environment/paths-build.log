@@ -1,0 +1,15 @@
+
+error CS0016: δ��д������ļ���<WORKSPACE>\�ȶ����ڰ�\AIPraat-paths.exe��--����һ����������ʹ�ô��ļ��������޷����ʡ� ��
+powershell : Path dialog compilation failed: 1
+所在位置 行:1 字符: 129
++ ... ew($false); powershell -NoProfile -ExecutionPolicy Bypass -File insta ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Path dialog compilation failed: 1:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+At <WORKSPACE>\installer\build.ps1:29 char:28
++ ... CODE -ne 0) { throw "Path dialog compilation failed: $LASTEXITCODE" }
++                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Path dialog compilation failed: 1:String) [], RuntimeException
+    + FullyQualifiedErrorId : Path dialog compilation failed: 1
+ 

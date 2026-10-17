@@ -12,6 +12,7 @@ const mount=async(search?:(query:string)=>Promise<{sessionIds:string[]}>)=>{
   const rpc=vi.fn(async(method:string,params:any)=>method==='sessions.search'&&search?search(params.searchTerm):demo(method as keyof Methods,params)) as unknown as Rpc;
   const store=new ChatStore(rpc);await store.initialize();
   render(<SessionSidebar store={store} expanded width={272} maxWidth={520} onToggle={()=>{}} onPreviewWidth={()=>{}} onCommitWidth={()=>{}} onTasks={()=>{}} onSettings={()=>{}} onRename={()=>{}} onDelete={()=>{}}/>);
+  fireEvent.click(screen.getByRole('button',{name:'搜索会话与消息'}));
   return {store,rpc:rpc as unknown as ReturnType<typeof vi.fn>,input:screen.getByRole('textbox',{name:'搜索会话与消息'})};
 };
 
@@ -76,6 +77,42 @@ it('loads a matching row preview without clearing results or searching again',as
     await act(async()=>{await vi.advanceTimersByTimeAsync(1000);});
     expect(rpc.mock.calls.filter(([method])=>method==='sessions.search')).toHaveLength(1);
     expect(store.getSnapshot().selected).toBe('demo-1');
+  } finally {store.stop();}
+});
+
+it('closes search with Escape, restores its trigger focus and cancels late results',async()=>{
+  vi.useFakeTimers();let resolve!:(value:{sessionIds:string[]})=>void;
+  const {store,input}=await mount(()=>new Promise(done=>{resolve=done;}));
+  try {
+    fireEvent.change(input,{target:{value:'未返回的查询'}});
+    await act(async()=>{await vi.advanceTimersByTimeAsync(110);});
+    fireEvent.keyDown(input,{key:'Escape'});
+    const trigger=screen.getByRole('button',{name:'搜索会话与消息'});
+    expect(screen.queryByRole('textbox',{name:'搜索会话与消息'})).toBeNull();
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(document.activeElement).toBe(trigger);
+    await act(async()=>{resolve({sessionIds:['demo-history']});});
+    expect(document.querySelectorAll('.session-row')).toHaveLength(3);
+    fireEvent.click(trigger);
+    const reopened=screen.getByRole('textbox',{name:'搜索会话与消息'}) as HTMLInputElement;
+    expect(reopened.value).toBe('');expect(document.activeElement).toBe(reopened);
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    expect(document.getElementById(trigger.getAttribute('aria-controls')!)?.contains(reopened)).toBe(true);
+  } finally {store.stop();}
+});
+
+it('leaves composing Escape alone and clears search without losing input focus',async()=>{
+  const {store,input}=await mount();
+  try {
+    fireEvent.change(input,{target:{value:'输入法'}});
+    fireEvent.keyDown(input,{key:'Escape',isComposing:true});
+    fireEvent.keyDown(input,{key:'Escape',keyCode:229});
+    expect(screen.getByRole('textbox',{name:'搜索会话与消息'})).toBe(input);
+    fireEvent.click(screen.getByRole('button',{name:'清除搜索'}));
+    expect((input as HTMLInputElement).value).toBe('');
+    expect(document.activeElement).toBe(input);
+    fireEvent.click(screen.getByRole('button',{name:'搜索会话与消息'}));
+    expect(screen.queryByRole('textbox',{name:'搜索会话与消息'})).toBeNull();
   } finally {store.stop();}
 });
 

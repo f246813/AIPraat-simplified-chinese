@@ -1,0 +1,43 @@
+{
+  "executed_at_utc": "2026-10-16T03:53:10.997534+00:00",
+  "scope": "Synthetic numeric equivalence only; not real speech accuracy.",
+  "sources": {
+    "phonR.R": {
+      "commit": "c6d419f187f25d2be315cc4cdc35b7ad2b8ce6ee",
+      "sha256": "016755a7823f8ce8e59d621ea1962b73d62d0449621b52e4980c618053b7cc29"
+    },
+    "vowspace-normalization.py": {
+      "commit": "3143f636c56cb34e26cc83da0f425494bb3f9c94",
+      "sha256": "9581297226017f1878ac79f1d876f3513970eecf24893e5831c46e300603a576"
+    }
+  },
+  "vowspace": {
+    "status": "passed",
+    "commit": "3143f636c56cb34e26cc83da0f425494bb3f9c94",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "max_absolute_error": 0.0
+  },
+  "phonR": {
+    "status": "failed",
+    "commit": "c6d419f187f25d2be315cc4cdc35b7ad2b8ce6ee",
+    "command": [
+      "<WORKSPACE>\\scratch\\normalization-acceptance\\R-portable\\app\\bin\\x64\\Rscript.exe",
+      "--vanilla",
+      "<WORKSPACE>\\test-records\\pronunciation\\normalization-actual-r\\check.R"
+    ],
+    "executable_sha256": "3ad097e10d867e09eb7e54d8ed1f8ef933779b82be56482a04a27d65536d15f9",
+    "version": "Rscript (R) version 4.6.1 (2026-06-24)",
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "Fatal error: cannot create 'R_TempDir'\r\n\r\n",
+    "r_dll_sha256": "01a74425b34c3db9bfe0eda380c9ebcbe6dc664ccbf16d4f95a63218f30dff94",
+    "artifacts": {
+      "input.csv": "1989ca8fe0d9866c6cab2fef0d366b8e10d9ad52cb1a9dfca253738e4d524aac",
+      "python-output.csv": "bac06a5b612587f91768a8490a3dba52b454a56ba4d574d28fc9c3cef08f14e3",
+      "check.R": "5d4633743129d61a62c58f37427072fb967bece5aaffde2b77ff00fc79503c88",
+      "r-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "r-stderr.txt": "64aff41bc6778711d750c104364c5886d88bcd11b96a7f5a097686ca6edd4806"
+    }
+  }
+}

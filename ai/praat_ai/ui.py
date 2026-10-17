@@ -1,12 +1,27 @@
 from __future__ import annotations
 
+import json
+import math
+import os
 import re
+import threading
 from dataclasses import dataclass
+from copy import deepcopy
+from uuid import uuid4
+from pathlib import Path
 
+from . import capabilities
 from .audio import read_wav
 from .bridge import SelectedObject
+from .config import default_config_path, load_config
 from .models import AnalysisRequest, PhoneSpec
-from . import ui_theme, ui_widgets, ui_windows
+from .pronunciation_rules import PROFILES, resolve_profile
+from .mfa_task import file_state
+from .mfa_resources import MfaResourceService, validate_launcher
+from .mfa_g2p import generate, choose_readings, check_launcher
+from .normalization import VERSION, INVENTORIES, import_formant_calibration
+from .normalization_prosody import pitch_settings, import_pitch_baseline
+from .service_lock import service_transition_lock
 
 
 @dataclass(slots=True)
@@ -15,158 +30,359 @@ class TutorFormValues:
 
 
 def _parse_phonemes(text: str) -> list[str]:
-    return [
-        item
-        for item in re.split(r"[\s,，;；]+", text.strip())
-        if item
-    ]
+    return [item for item in re.split(r"[\s,，;；]+", text.strip()) if item]
 
 
 def _equal_segments(phonemes: list[str], duration: float) -> list[PhoneSpec]:
     if not phonemes:
         return []
     step = duration / len(phonemes)
-    return [
-        PhoneSpec(
-            ipa=phoneme,
-            reference_start=index * step,
-            reference_end=(index + 1) * step,
-            alignment_source="ui_equal_estimate",
-        )
-        for index, phoneme in enumerate(phonemes)
-    ]
+    return [PhoneSpec(ipa=phoneme, reference_start=index * step,
+                      reference_end=(index + 1) * step, alignment_source="ui_equal_estimate")
+            for index, phoneme in enumerate(phonemes)]
 
 
-def show_tutor_form(sound_objects: list[SelectedObject]) -> TutorFormValues:
-    import tkinter as tk
-    from tkinter import messagebox, ttk
+class TutorFormApplication:
+    """Collect a request; analysis still runs through the existing tutor after close."""
 
-    result = TutorFormValues(request=None)
-    if len(sound_objects) < 2:
-        raise ValueError("AI 纠音需要至少两个已选中的 Sound 对象。")
+    def __init__(self, sounds: list[SelectedObject], config_path=None):
+        if len(sounds) < 2:
+            raise ValueError("AI 纠音需要至少两个已选中的 Sound 对象。")
+        self.sounds = sounds
+        self.config_path = Path(config_path) if config_path else default_config_path()
+        self.result = TutorFormValues(request=None)
+        self.window = None
+        self._guard = threading.Lock()
+        self._closed = False
+        self.resources = MfaResourceService(self.config_path)
+        self._generation_cancel = None
+        self._generations = {}
+        self._lifetime_cancel = threading.Event()
+        self._calibrations = {}
+        self._calibration_busy = False
 
-    root = ui_windows.create_root()
-    theme = ui_theme.Theme(root)
-    root.title("Praat 本地 AI 纠音")
-    root.resizable(False, False)
-    root.configure(background=theme.color("canvas"))
-    style = ttk.Style(root)
-    if "clam" in style.theme_names() and style.theme_use() != "clam":
-        style.theme_use("clam")
-    ui_widgets.configure_ttk(style, theme)
-
-    names = [f"{item.id}: {item.name}" for item in sound_objects]
-    reference_name = tk.StringVar(value=names[0])
-    learner_name = tk.StringVar(value=names[1])
-    language = tk.StringVar(value="cmn")
-    phoneme_text = tk.StringVar(value="m a n")
-    transcript_text = tk.StringVar(value="")
-    threshold = tk.StringVar(value="1.25")
-    qwen_explain = tk.BooleanVar(value=True)
-    qwen_vision = tk.BooleanVar(value=False)
-
-    frame = tk.Frame(root, background=theme.color("canvas"))
-    frame.pack(fill="both", expand=True, padx=14, pady=14)
-    card = ui_widgets.Card(frame, theme, padding=(14, 12, 14, 12), radius=12)
-    card.pack(fill="both", expand=True)
-    body = card.body
-    body.columnconfigure(1, weight=1)
-
-    def add_label(text: str, *, row: int, muted: bool = False, column: int = 0) -> None:
-        tk.Label(
-            body,
-            text=text,
-            anchor="w",
-            background=theme.color("surface"),
-            foreground=theme.color("textMuted" if muted else "text"),
-            font=theme.font("small" if muted else "body"),
-        ).grid(
-            row=row,
-            column=column,
-            columnspan=2 if muted else 1,
-            sticky="w",
-            padx=(0, 8) if column == 0 else (0, 0),
-            pady=(0, 6) if muted else 5,
-        )
-
-    def add_combo(variable, row: int) -> None:
-        ttk.Combobox(
-            body,
-            textvariable=variable,
-            values=names,
-            state="readonly",
-            width=46,
-            font=theme.font("body"),
-        ).grid(row=row, column=1, columnspan=2, sticky="ew", pady=5)
-
-    def add_entry(variable, row: int, *, width: int = 46, columnspan: int = 2):
-        shell = ui_widgets.FieldCard(body, theme, background="surface")
-        field = ttk.Entry(shell, textvariable=variable, width=width, font=theme.font("body"))
-        shell.attach(field)
-        shell.grid(row=row, column=1, columnspan=columnspan, sticky="ew", pady=5)
-        return field
-
-    add_label("标准音范本", row=0)
-    add_combo(reference_name, 0)
-    add_label("学习者录音", row=1)
-    add_combo(learner_name, 1)
-    add_label("目标语言", row=2)
-    add_entry(language, 2)
-    add_label("目标音位", row=3)
-    add_entry(phoneme_text, 3)
-    add_label("用空格、逗号或分号分隔 IPA 音位", row=4, muted=True, column=1)
-    add_label("参考文本", row=5)
-    add_entry(transcript_text, 5)
-    add_label("使用 MFA 词典时填写，例如 hello world", row=6, muted=True, column=1)
-    add_label("错误阈值", row=7)
-    add_entry(threshold, 7, width=12, columnspan=1)
-
-    ttk.Checkbutton(
-        body,
-        text="使用 Qwen 生成解释",
-        variable=qwen_explain,
-    ).grid(row=8, column=1, sticky="w", pady=4)
-    ttk.Checkbutton(
-        body,
-        text="把对比图交给 Qwen 视觉模型解释",
-        variable=qwen_vision,
-    ).grid(row=9, column=1, sticky="w", pady=4)
-
-    def analyze() -> None:
-        by_label = {f"{item.id}: {item.name}": item for item in sound_objects}
-        reference = by_label[reference_name.get()]
-        learner = by_label[learner_name.get()]
-        phonemes = _parse_phonemes(phoneme_text.get())
-        if not phonemes:
-            messagebox.showerror("错误", "至少输入一个 IPA 音位。")
-            return
+    @staticmethod
+    def _sound_summary(sound):
+        import wave
+        duration = None
         try:
-            error_threshold = float(threshold.get())
-        except ValueError:
-            messagebox.showerror("错误", "错误阈值必须是数字。")
-            return
+            with wave.open(str(sound.file), 'rb') as handle:
+                duration = handle.getnframes() / handle.getframerate()
+        except (OSError, EOFError, wave.Error, ZeroDivisionError):
+            pass
+        return dict(id=str(sound.id), name=sound.name, duration=duration)
 
-        reference_audio = read_wav(reference.file)
-        result.request = AnalysisRequest(
-            reference_object=reference.id,
-            learner_object=learner.id,
-            language=language.get().strip(),
-            phonemes=_equal_segments(phonemes, reference_audio.duration),
-            transcript=transcript_text.get().strip(),
-            error_threshold=error_threshold,
-            qwen_explain=qwen_explain.get(),
-            qwen_vision=qwen_vision.get(),
+    def bootstrap(self):
+        config = load_config(self.config_path)
+        raw = json.loads(self.config_path.read_text(encoding="utf-8")) if self.config_path.is_file() else {}
+        theme = raw.get("modern", {}).get("preferences", {}).get("theme", "system")
+        return dict(
+            sounds=[self._sound_summary(sound) for sound in self.sounds],
+            profiles=[dict(id=profile.id, language=profile.language, name=profile.name) for profile in PROFILES],
+            model=dict(source="云端 API" if config.qwen.provider == "api" else "本地模型",
+                       name=config.qwen.model), theme=theme, mfa=self.resources.list(),
+            normalization=dict(version=VERSION,
+                **{key: raw.get('pronunciation', {}).get('normalization', {}).get(key, False) for key in ('formants', 'pitch', 'loudness')},
+                inventories={key: list(value) for key, value in INVENTORIES.items()}),
         )
-        root.destroy()
 
-    button_row = tk.Frame(body, background=theme.color("surface"))
-    button_row.grid(row=10, column=0, columnspan=3, pady=(16, 0), sticky="e")
-    ui_widgets.RoundedButton(
-        button_row, theme, "取消", root.destroy, kind="text", background="surface"
-    ).pack(side="right", padx=(8, 0))
-    ui_widgets.RoundedButton(
-        button_row, theme, "开始分析", analyze, kind="filled", background="surface"
-    ).pack(side="right")
+    def build_request(self, params) -> AnalysisRequest:
+        by_id = {str(sound.id): sound for sound in self.sounds}
+        try:
+            reference = by_id[str(params.get("reference", ""))]
+            learner = by_id[str(params.get("learner", ""))]
+        except KeyError:
+            raise ValueError("请选择当前列表中的标准音范本和学习者录音。") from None
+        phonemes = _parse_phonemes(str(params.get("phonemes", "")))
+        if not phonemes:
+            raise ValueError("请输入至少一个 IPA 音位。")
+        language = str(params.get("language", "")).strip()
+        profile_id = params.get("profile_id") or None
+        resolve_profile(profile_id, language)
+        snapshot, readings, raw_phones = None, [], []
+        preset_id = str(params.get('preset_id') or '')
+        generation_id = str(params.get('generation_id') or '')
+        if preset_id:
+            stored = self._generations.get(generation_id)
+            if not stored:
+                raise ValueError('请先自动生成并应用目标音位，或切换为手动 IPA。')
+            generated, frozen = stored
+            snapshot = self.resources.resolve(preset_id)
+            if (generated['preset_id'] != preset_id
+                    or generated['transcript'] != str(params.get('transcript', '')).strip()
+                    or frozen['fingerprint'] != snapshot['fingerprint']):
+                raise ValueError('文本或配套资源已改变，请重新生成音位。')
+            preset = snapshot['preset']
+            if language != preset['language'] or (profile_id and profile_id != preset['rule_id']):
+                raise ValueError('目标语言或音位判据与所选读音不一致。')
+            for kind in ('g2p', 'dictionary', 'acoustic'):
+                if not snapshot['paths'].get(kind) or not Path(snapshot['paths'][kind]).is_file():
+                    raise ValueError('MFA 分析缺少配套资源：' + kind + '；请配置配套资源。')
+            readings, expected, raw_phones = choose_readings(generated, params.get('choices', {}))
+            if phonemes != expected:
+                raise ValueError('目标音位与已选读音不一致；修改 IPA 后请明确切换为手动模式。')
+            snapshot['file_state'] = file_state(snapshot['paths'])
+        try:
+            threshold = 1.25 if profile_id else float(params.get("threshold", 1.25))
+        except (ValueError, TypeError):
+            raise ValueError("声学对比阈值必须是有效数字。") from None
+        if not math.isfinite(threshold):
+            raise ValueError("声学对比阈值必须是有效数字。")
+        audio = read_wav(reference.file)
+        phones = _equal_segments(phonemes, audio.duration)
+        if snapshot:
+            for phone, raw in zip(phones, raw_phones):
+                phone.label = raw
+        normalization = None
+        if 'normalization' in params and params['normalization'] is not None:
+            selected = params['normalization']
+            if not isinstance(selected, dict) or selected.get('version') != VERSION:
+                raise ValueError('归一化设置版本不匹配，请重新打开纠音窗口。')
+            enabled = selected.get('formants') is True and profile_id is not None
+            normalization = dict(version=VERSION, formants=enabled, confirmed=selected.get('confirmed') is True,
+                pitch=selected.get('pitch') is True and profile_id is not None,
+                loudness=selected.get('loudness') is True and profile_id is not None,
+                pitch_confirmed=selected.get('pitch_confirmed') is True,
+                pitch_baseline_mode=selected.get('pitch_baseline_mode', 'utterance'))
+            if normalization['pitch']:
+                normalization['pitch_settings'] = pitch_settings(selected)
+                if normalization['pitch_baseline_mode'] not in {'utterance', 'independent'}:
+                    raise ValueError('未知音高基线方式。')
+            for role, sound in (('reference', reference), ('learner', learner)):
+                identity = selected.get(role + '_calibration_id')
+                if not enabled or not identity:
+                    continue
+                record = self._calibrations.get(identity)
+                binding = (role, str(sound.id), language, profile_id, preset_id or profile_id)
+                if not record or record[0] != binding:
+                    raise ValueError('校准与当前说话人或语言/读音不匹配，请重新导入并确认。')
+                normalization[role + '_calibration'] = deepcopy(record[1])
+            if normalization['pitch'] and normalization['pitch_baseline_mode'] == 'independent':
+                for role, sound in (('reference', reference), ('learner', learner)):
+                    identity = selected.get(role + '_pitch_baseline_id')
+                    if not identity:
+                        continue
+                    record = self._calibrations.get(identity)
+                    binding = ('pitch_' + role, str(sound.id), language, profile_id, preset_id or profile_id,
+                               json.dumps(normalization['pitch_settings'], sort_keys=True))
+                    if not record or record[0] != binding:
+                        raise ValueError('独立音高基线与当前说话人/读音/测量范围不匹配，请重新导入。')
+                    normalization[role + '_pitch_baseline'] = deepcopy(record[1])
+        return AnalysisRequest(
+            reference_object=reference.id, learner_object=learner.id, language=language,
+            phonemes=phones,
+            transcript=str(params.get("transcript", "")).strip(), error_threshold=threshold,
+            qwen_explain=bool(params.get("explain", True)), qwen_vision=bool(params.get("vision", False)),
+            profile_id=profile_id, mfa_snapshot=deepcopy(snapshot), selected_readings=deepcopy(readings),
+            generation_source=generated['source'] if snapshot else '', normalization=normalization,
+        )
 
-    root.mainloop()
-    return result
+    def close(self, *args):
+        with self._guard:
+            self._closed = True
+            self._lifetime_cancel.set()
+            if self._generation_cancel:
+                self._generation_cancel.set()
+            self._generations.clear()
+            self._calibrations.clear()
+
+    def _import_calibration(self, params):
+        role = params.get('role')
+        sound = next((s for s in self.sounds if str(s.id) == str(params.get('sound_id'))), None)
+        language, profile_id = str(params.get('language', '')), str(params.get('profile_id', ''))
+        profile = resolve_profile(profile_id, language)
+        if role not in {'reference', 'learner'} or sound is None or not profile or profile_id not in INVENTORIES:
+            raise ValueError('请先选择说话人和受支持的音位判据。')
+        reading_id = str(params.get('reading_id') or profile_id)
+        with self._guard:
+            if self._closed or self._calibration_busy or self._generation_cancel:
+                raise ValueError('当前无法导入校准，请等待其他任务结束。')
+            self._calibration_busy = True
+        try:
+            import webview
+            paths = []
+            for pattern in ('校准 WAV (*.wav)', 'IPA TextGrid (*.TextGrid)'):
+                chosen = self.window.create_file_dialog(webview.FileDialog.OPEN, allow_multiple=False,
+                                                       file_types=(pattern,)) or []
+                if not chosen:
+                    return None
+                paths.append(chosen[0])
+            calibration = import_formant_calibration(*paths, speaker_label=sound.name,
+                language=profile.language, profile_id=profile_id, reading_id=reading_id)
+            identity = uuid4().hex
+            with self._guard:
+                if self._closed:
+                    raise ValueError('纠音窗口已关闭，未保存校准。')
+                # Only the current import for a role is retained in this window.
+                self._calibrations = {key: value for key, value in self._calibrations.items() if value[0][0] != role}
+                self._calibrations[identity] = ((role, str(sound.id), language, profile_id, reading_id), deepcopy(calibration))
+            return dict(id=identity, speaker_label=calibration['speaker_label'], status=calibration['status'],
+                        formants=calibration['formants'], material=calibration['material'])
+        finally:
+            with self._guard:
+                self._calibration_busy = False
+
+    def _import_pitch_baseline(self, params):
+        role = params.get('role')
+        sound = next((s for s in self.sounds if str(s.id) == str(params.get('sound_id'))), None)
+        language, profile_id = str(params.get('language', '')), str(params.get('profile_id', ''))
+        profile = resolve_profile(profile_id, language)
+        settings = pitch_settings(params)
+        if role not in {'reference', 'learner'} or sound is None or not profile:
+            raise ValueError('请先选择说话人和音位判据。')
+        reading_id = str(params.get('reading_id') or profile_id)
+        with self._guard:
+            if self._closed or self._calibration_busy or self._generation_cancel:
+                raise ValueError('当前无法导入基线，请等待其他任务结束。')
+            self._calibration_busy = True
+        try:
+            import webview
+            paths = self.window.create_file_dialog(webview.FileDialog.OPEN, allow_multiple=False,
+                                                   file_types=('中性语句 WAV (*.wav)',)) or []
+            if not paths:
+                return None
+            baseline = import_pitch_baseline(paths[0], settings=settings, language=profile.language,
+                reading_id=reading_id, speaker_label=sound.name)
+            identity = uuid4().hex
+            binding = ('pitch_' + role, str(sound.id), language, profile_id, reading_id, json.dumps(settings, sort_keys=True))
+            with self._guard:
+                if self._closed:
+                    raise ValueError('纠音窗口已关闭，未保存基线。')
+                self._calibrations = {key: value for key, value in self._calibrations.items() if value[0][0] != binding[0]}
+                self._calibrations[identity] = (binding, deepcopy(baseline))
+            return dict(id=identity, baseline=baseline)
+        finally:
+            with self._guard:
+                self._calibration_busy = False
+
+    def _configure_runtime(self):
+        import subprocess
+        import sys
+        executable = Path(__file__).resolve().parents[2] / 'AIPraat-paths.exe'
+        if os.name != 'nt' or not executable.is_file():
+            raise ValueError('未找到路径配置程序，请从 Praat 的“路径配置 → 配置运行库…”进入。')
+        environment = os.environ.copy()
+        environment.update(PRAAT_AI_CONFIG_PATH=str(self.config_path.resolve()),
+                           PRAAT_AI_PATHS_AI_DIR=str(Path(__file__).resolve().parents[1]),
+                           PRAAT_AI_PATHS_PYTHON=sys.executable)
+        subprocess.Popen([str(executable)], env=environment, cwd=str(executable.parent))
+        return dict(opened=True, message='已打开路径配置，请点击“配置运行库…”。若安装或修复了运行库，请关闭并重新打开纠音窗口后再提交。')
+
+    def _remember_normalization(self, selection):
+        import tempfile
+        self.config_path.parent.mkdir(parents=True, exist_ok=True)
+        with service_transition_lock(Path(str(self.config_path) + '.lock')):
+            raw = json.loads(self.config_path.read_text(encoding='utf-8')) if self.config_path.is_file() else {}
+            raw.setdefault('pronunciation', {})['normalization'] = dict(version=VERSION,
+                **{key: selection.get(key) is True for key in ('formants', 'pitch', 'loudness')})
+            temporary = None
+            try:
+                with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', dir=self.config_path.parent,
+                                                 prefix=self.config_path.name + '.', suffix='.tmp', delete=False) as handle:
+                    temporary = Path(handle.name)
+                    handle.write(json.dumps(raw, ensure_ascii=False, indent=2) + '\n')
+                    handle.flush()
+                    os.fsync(handle.fileno())
+                os.replace(temporary, self.config_path)
+            finally:
+                if temporary:
+                    temporary.unlink(missing_ok=True)
+
+    def _generate(self, params):
+        with self._guard:
+            if self._closed:
+                raise ValueError('纠音窗口已关闭。')
+            if self._generation_cancel is not None or self._calibration_busy:
+                raise ValueError('已有音位生成或校准导入正在运行，请等待或取消。')
+            cancel = threading.Event()
+            self._generation_cancel = cancel
+        try:
+            snapshot = self.resources.resolve(str(params.get('preset_id') or ''))
+            result = generate(snapshot, str(params.get('transcript') or ''), cancel)
+            if snapshot['fingerprint'] != self.resources.resolve(result['preset_id'])['fingerprint']:
+                raise ValueError('生成期间配套资源已改变，请重新生成。')
+            result['id'] = uuid4().hex
+            with self._guard:
+                if self._closed or cancel.is_set():
+                    raise ValueError('已取消音位生成。')
+                self._generations = {result['id']: (deepcopy(result), deepcopy(snapshot))}
+            return result
+        finally:
+            with self._guard:
+                if self._generation_cancel is cancel:
+                    self._generation_cancel = None
+
+    def rpc(self, method, params):
+        with self._guard:
+            if self._closed:
+                raise ValueError("纠音窗口已关闭。")
+        if method == 'mfa.check_launcher':
+            return check_launcher(validate_launcher(params.get('launcher', {})), self._lifetime_cancel)
+        if method.startswith('mfa.'):
+            return self.resources.rpc(method, params, self.window)
+        if method == 'tutor.bootstrap':
+            return self.bootstrap()
+        if method == 'tutor.generate_phonemes':
+            return self._generate(params)
+        if method == 'tutor.import_calibration':
+            return self._import_calibration(params)
+        if method == 'tutor.import_pitch_baseline':
+            return self._import_pitch_baseline(params)
+        if method == 'tutor.configure_runtime':
+            return self._configure_runtime()
+        if method == 'tutor.capabilities':
+            # 提交之前就告诉前端「这一步现在能不能跑」：缺依赖时禁用开关并给出可执行提示，
+            # 而不是等分析跑完才在报告里说少了什么。
+            return capabilities.analysis_capabilities()
+        with self._guard:
+            if self._closed:
+                raise ValueError("纠音窗口已关闭。")
+            if method == 'tutor.cancel_generation':
+                if self._generation_cancel:
+                    self._generation_cancel.set()
+                self._generations.clear()
+                return dict(cancelled=True)
+            if method == "tutor.submit":
+                if self._generation_cancel or self._calibration_busy:
+                    raise ValueError('请等待音位生成或校准导入完成后再提交。')
+                request = self.build_request(params)
+                if request.normalization is not None:
+                    self._remember_normalization(request.normalization)
+                self.result.request = request
+            elif method != "tutor.cancel":
+                raise ValueError("未知的纠音窗口操作。")
+            self._closed = True
+            self._lifetime_cancel.set()
+            if self._generation_cancel:
+                self._generation_cancel.set()
+            self._generations.clear()
+        self.window.destroy()
+        return dict(accepted=True)
+
+
+def show_tutor_form(sound_objects: list[SelectedObject], config_path=None) -> TutorFormValues:
+    app = TutorFormApplication(sound_objects, config_path)
+    import webview
+    from .modern_app import HostAPI
+    from .modern_host import AssetServer, watch_native_parent
+    assets = Path(__file__).resolve().parents[1] / "frontend" / "dist"
+    if not (assets / "index.html").is_file():
+        raise RuntimeError("纠音界面资产缺失，请重新构建 ai/frontend。")
+    server = AssetServer(assets)
+    try:
+        api = HostAPI(app)
+        app.window = webview.create_window(
+            "AI 纠音 · AIPraat", server.url + "?window=pronunciation", js_api=api,
+            width=1040, height=760, min_size=(600, 540), text_select=True,
+        )
+        api._origin = server.url.rsplit("/", 1)[0]
+        try:
+            app.window.events.closed += app.close
+        except (AttributeError, TypeError):
+            pass  # Simple test hosts may not implement WebView events.
+        webview.start(lambda: watch_native_parent(app.window),
+                      gui="edgechromium" if os.name == "nt" else None, private_mode=True)
+    finally:
+        app.close()
+        server.close()
+    return app.result

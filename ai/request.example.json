@@ -21,7 +21,6 @@
     }
   ],
   "error_threshold": 1.25,
-  "minimum_error_duration_sec": 0.04,
   "maximum_errors_per_phone": 3,
   "qwen_explain": true,
   "qwen_vision": false,

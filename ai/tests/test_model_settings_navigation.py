@@ -54,6 +54,31 @@ class ModelSettingsNavigationTests(unittest.TestCase):
             launch.request_model_settings(self.root, os.getpid())
             self.assertNotEqual(app.poll(0)['navigation']['id'], first['navigation']['id'])
 
+    def test_venv_shim_reuse_focuses_verified_desktop_pid(self):
+        identity = dict(executable='python.exe', started='desktop')
+        (self.root/'chat.pid').write_text('123')  # venv launcher shim
+        (self.root/'frontend-ready.json').write_text(json.dumps(dict(pid=456, identity=identity)))
+        with patch.object(launch, 'check_desktop_dependencies'), \
+             patch.object(process, 'process_identity', return_value=identity), \
+             patch.object(start_ai_chat, 'focus_existing_window', return_value=True) as focus, \
+             patch.object(start_ai_chat, 'start_new_chat_window') as spawn:
+            self.assertEqual(start_ai_chat.main(self.root, model_settings=True), 0)
+        focus.assert_called_once_with(456)
+        spawn.assert_not_called()
+        record = json.loads((self.root/'frontend-navigation.json').read_text(encoding='utf8'))
+        self.assertEqual(record['pid'], 456)
+
+    def test_stale_ready_record_does_not_target_reused_pid(self):
+        identity = dict(executable='python.exe', started='old')
+        (self.root/'frontend-ready.json').write_text(json.dumps(dict(pid=456, identity=identity)))
+        def spawn(directory, path): path.write_text('789'); return 0
+        with patch.object(launch, 'check_desktop_dependencies'), \
+             patch.object(process, 'process_identity', return_value=dict(executable='python.exe', started='new')), \
+             patch.object(start_ai_chat, 'focus_existing_window') as focus, \
+             patch.object(start_ai_chat, 'start_new_chat_window', side_effect=spawn):
+            self.assertEqual(start_ai_chat.main(self.root), 0)
+        focus.assert_not_called()
+
     def test_other_pid_and_bad_record_are_ignored(self):
         launch.request_model_settings(self.root, os.getpid()+1)
         self.assertIsNone(launch.model_settings_request(runtime=self.root))

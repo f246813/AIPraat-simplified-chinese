@@ -1,0 +1,5 @@
+PASS repair_available_only_for_runnable_supported_python_missing_dependencies
+PASS path_dialog_runtime_field_available_for_missing_and_ready_environment
+PASS installer_uses_same_runtime_field_and_removes_skip
+PASS powershell_launch_preserves_unicode_spaces_apostrophes_and_metacharacters
+Screenshots: <USER_HOME>\AppData\Local\Temp\AIPraat setup 中文 f34e43d9f6df452a8365245bd99c3c4a

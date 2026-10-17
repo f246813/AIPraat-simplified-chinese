@@ -31,8 +31,10 @@ from .escape_policy import AnalysisState, BranchExit, Evidence, note_guard
 from .dialogue_policy import dialogue_kind, effective_thinking_level, direct_measurement, reasoning_reserve
 from .cloud_runtime import CloudRuntime
 from .tool_guards import ToolGuards
-from .report_guards import (mask_rejected_numbers, rejected_values, report_context_data,
+from .report_guards import (UNVERIFIED_NUMBER, mask_rejected_numbers,
+                            rejected_values, report_context_data,
                             report_guard_instructions, validate_report)
+from . import report_guards
 from .session_context import PhaseContext, native_history, evidence_projection
 from . import cloud_metrics, skill_registry
 from .workflow_policy import (finish_locally, measurement_complete, publish_results, wants_explanation,
@@ -53,12 +55,13 @@ class AnalysisReport(BaseModel):
 
 #: 注意：这段指令处在 2048 token 那条窄上下文路径的临界点上——多一句「测量不需要音频输入」
 #: 就会把报告请求挤掉（test_cloud_escape.test_low_context_reserves_report 钉的边界）。
-#: 因此「已有证据却声称没有音频所以测不了」由 report_guards 的 report.input_claim_conflict 拦。
+#: 因此「已有证据却声称没有音频所以测不了」由 report_guards 的 report.input_claim_conflict 拦，
+#: 这里不给模型任何可以照抄的「没有音频」句式：听感只以 audio_observations 为准。
 REPORT_INSTRUCTIONS = (
     '\n独立报告，无执行工具。逐项解释 original_goal，给出依据、限制、下一步，不能仅有统计表。'
     'coverage.item 原样对应 deliveries；缺口列 audio/measurement/reference。'
     'audio_observations 是此前模型定性观察，注明原模型和材料来源，不是专业测量。'
-    'audio_input=false 未听本轮录音；无原音频或此前观察不判断具体录音缺陷。')
+    '听感结论只来自 audio_observations；没有观察就不判断录音缺陷。')
 
 #: 报告定位选段时使用覆盖比例与音素序列，缺少对齐或标注时说明缺口。
 #: 相关任务才追加定位指导，避免占用一般对话预算。
@@ -195,7 +198,7 @@ def report_context(state, *, audio=False, preserve=False):
     context = {
         'original_goal':state.goal, 'deliveries':state.deliveries, 'direction':state.direction,
         'target_material':target, 'evidence':[asdict(e) for e in state.evidence],
-        'missing_reason':state.reason, 'paused_branches':dict(state.failures), 'audio_input':audio,
+        'missing_reason':state.reason, 'paused_branches':dict(state.failures),
         'blocked_attempts':blocked_attempts(state),
         'previous_report':state.previous_report[:4000],
         'previous_coverage':[{**item, 'explanation':item['explanation'][:400]} for item in state.previous_coverage],
@@ -203,6 +206,10 @@ def report_context(state, *, audio=False, preserve=False):
         'visible_dialogue':[dict(item) for item in state.dialogue_context] if state.mode == 'L4' else [],
     }
     context.update(report_context_data(state))
+    if audio:
+        # 只有本轮真的把音频发给模型时才声明。没发送时不写 false：报告指令不再教模型
+        # 复述这个字段，模型也就没有「没有音频输入」这句现成话可抄。
+        context['audio_input'] = True
     if state.evidence:
         from .workflow_policy import measurement_scope
         from .tool_guards import StrictContext
@@ -285,8 +292,8 @@ def minimum_continuation_tokens(config, state, *, mode='', direction=''):
 def entry_mode(goal: str, context_text: str, *, audio_requested: bool = False) -> str:
     if audio_requested:
         return 'L3'
-    # Explicit concept-only requests may mention the recording to exclude it.
-    if dialogue_kind(goal) == 'concept':
+    # 已经判成对话的目标不该再进工具阶梯：无请求输入和概念问句都在这里收口。
+    if dialogue_kind(goal) in ('concept', 'conversation'):
         return 'L4'
     # Pure concept discussion must not require a running Praat or its snapshot.
     concept = re.search(r'(什么是|如何理解|原理|解释一下|练习方法|一般来说|理论|科普|你好|hello|谢谢)', goal, re.I)
@@ -297,16 +304,15 @@ def entry_mode(goal: str, context_text: str, *, audio_requested: bool = False) -
 
 
 def wants_audio(goal: str) -> bool:
-    # 「直接」和音频词必须在同一小段里（≤6 字）。以前写的是 ``直接.*(?:听|音频|录音)``，
-    # 其中 ``.*`` 能跨句跨段匹配：一段既说「请直接问我」又说「这次录音」的长指令会被判成
-    # 「要直接听录音」，整轮跳到 L3/报告阶段，一次工具都不执行（2026-10-07 实测 L15：
-     # 只有 1 次报告请求、0 次规划请求、0 次工具调用）。
+    # 「直接」和音频词必须在同一小段里（≤6 字）：不加窗口时 ``.*`` 可以跨句匹配，
+    # 同时提到「请直接问我」和「这次录音」的指令会被误判成要直接听录音，
+    # 从而跳过工具执行，直接进入音频或报告阶段。
     return bool(re.search(r'直接(?:听|用|分析原始)|直接.{0,6}(?:听|音频|录音)|'
                           r'听(?:一下|一听|这)|原始(?:音频|录音)|听感', goal))
 
 
-#: 守卫没核上的数值，在保留的草稿里换成这个占位符：正文能留，没测过的数字不能当实测。
-UNVERIFIED_NUMBER = '[未通过核对的数值]'
+#: 守卫没核上的数值占位符定义在 ``report_guards.UNVERIFIED_NUMBER``：本机最终交付
+#: 与云端恢复稿用的是同一个标记（这里只做导入，不再重复字面量）。
 #: 没核上的内部推导占位式（``{{calc:…}}``）也不能原样漏给用户。
 _CALC_PLACEHOLDER = re.compile(r'\{\{calc:[^{}]*\}\}')
 
@@ -317,11 +323,11 @@ def rescued_report(draft: str, detail: str, values=(), *, state=None) -> str:
     text = str(draft or '').strip()
     if not text:
         return ''
-    text = mask_rejected_numbers(text, values, UNVERIFIED_NUMBER, state=state)
+    text, _masked_status = report_guards.guard_delivered_text(state, text, values=values, verify=False)
     reason = mask_rejected_numbers(' '.join(str(detail or '').split())[:400], values, UNVERIFIED_NUMBER).rstrip('。；; ')
     text += ('\n\n（这份回答没有通过自动数值核对：' + reason
              + '。上面保留的是模型已经写好的内容，其中没通过核对的数值已标成 '
-             + UNVERIFIED_NUMBER + '；请按这条提示核对引用的数值和范围。）')
+             + UNVERIFIED_NUMBER + '。）')
     return _CALC_PLACEHOLDER.sub('[未通过核对的推导式]', text)
 
 
@@ -891,10 +897,10 @@ class CloudSession:
             finally:
                 self.state.metrics['tool_seconds'] = self.state.metrics.get('tool_seconds', 0) + time.monotonic()-tool_started
             status = 'success' if step.ok else ('not_executed' if not step.script else 'failed')
-            # 投递事实优先：'unknown' 只给「交出去但没等到完成」的那一种，
-            # 'not_delivered'（根本没送出去）和 'blocked'（本轮已停止投递）都不是
-            # 状态不明，不能把它们升级成永久停掉整轮。execution 为空（外部替身执行器、
-            # 本地工具）时才退回按说明文字判断。
+            # 投递事实优先：'unknown' 只表示交出去但没等到完成标记；
+            # 'not_delivered'（没有送出）和 'blocked'（本轮已停止投递）都不是状态不明，
+            # 不能把它们升级成永久停掉整轮。execution 为空（替身执行器或本地工具）时
+            # 才退回按说明文字判断。
             declared = getattr(step, 'execution', '')
             if not step.ok and declared == delivery.EXECUTION_BLOCKED:
                 status = 'not_executed'
@@ -912,9 +918,8 @@ class CloudSession:
                                         'script':step.script, 'rows':step.results})
             self.progress(step.observation)
             if blocked:
-                # 本轮已经不可能再投递（上一条指令结果不明）：停止执行分支，
-                # 用已有证据收尾，而不是把它记成又一次「状态不明」。收尾原因要
-                # 带上真正失败的那一条，否则报告只剩「已停止投递」，说不清为什么。
+                # 本轮已无法继续投递：停止执行分支并用已有证据收尾，不记为新的状态不明。
+                # 收尾原因带上真正失败的那一条，避免报告只剩「已停止投递」而说不清原因。
                 self.tool_running = False
                 reason = step.observation
                 earlier = next((str(item.get('reason')) for item in reversed(self.state.attempts[:-1])
@@ -1151,7 +1156,8 @@ class CloudSession:
                                             '只引用回答所必需的实测值，保留结果中的量名、单位和精度；不扩写典型频率范围等无关数值。'
                                             '工具已直接给出 VOT 等结果时，引用该结果并解释不确定性即可，不重复代入数字计算或换算公式。'
                                             '缺证据则简述缺口，不猜测音素、音调或选区身份。')
-        prompt = json.dumps(phase_context.delta(context), ensure_ascii=False)
+        delta = phase_context.delta(context)
+        prompt = json.dumps(delta, ensure_ascii=False)
         guard_state = copy.copy(state)
         guard_state.evidence = [Evidence(**item) for item in context['evidence']]
 
@@ -1175,9 +1181,8 @@ class CloudSession:
                 state.metrics.setdefault('rejected_values', []).extend(rejected_values(str(error)))
                 report_rejections += 1
                 if report_rejections > 1:
-                    # 第二次仍不过：保留正文、遮掉没核上的数值，不再丢掉整份回答
-                    # （2026-10-07：实测 22 次提问里有 12 次因为这里抛异常而只剩
-                    # 测量表 + 一句英文内部错误）。真的没有正文可留时才回退。
+                    # 第二次仍未通过：保留正文、把未核对的数值换成标注，不丢弃整份回答；
+                    # 确实没有正文可保留时才回退到阶段记录。
                     repaired = repaired_report(output, str(error), state, guard_state)
                     if repaired is not None:
                         return repaired
@@ -1236,7 +1241,8 @@ class CloudSession:
                 phase_context.messages = report_baseline
                 phase_context.complete = False
                 phase_context.epoch += 1
-                phase_context.projected['audio_input'] = False
+                # 重定向后的请求不再声明收到过音频；projected 按实际投递内容记账。
+                phase_context.projected.pop('audio_input', None)
                 if 'extra_body' in self.settings:
                     self.settings['extra_body'].pop('modalities', None)
                 self.event('L2', '当前 API 路径不接受音频，已关闭本轮直接音频能力，改用已有证据分析')
@@ -1254,7 +1260,9 @@ class CloudSession:
                     await self.report(allow_escalation=False)
                     return
                 try:
-                    result = await self.drive(agent, prompt.replace('"audio_input": true', '"audio_input": false'))
+                    result = await self.drive(agent, json.dumps(
+                        {key: value for key, value in delta.items() if key != 'audio_input'},
+                        ensure_ascii=False))
                     state.report, state.coverage = result.analysis, [item.model_dump() for item in result.coverage]
                     state.metrics['report_verified'] = True
                     state.status = 'partial'
@@ -1278,9 +1286,7 @@ class CloudSession:
                 state.report, state.coverage = state.previous_report, state.previous_coverage
                 state.report += '\n\n补充音频分析未完成：' + detail
             elif state.workflow is not None and rescued:
-                # 已经写好的正文要交给用户：遮掉没核上的数值并说明原因，状态记为
-                # partial。以前这里只留测量表、把草稿塞进没人读的
-                # metrics['unverified_draft']（2026-10-07 实测：22 次提问里 12 次如此）。
+                # 已有正文交给用户：遮掉未核对数值并说明原因，状态记为 partial。
                 state.report = rescued
                 state.metrics['report_repaired'] = len(values) or 1
                 state.metrics['route_reason'] = 'report_repaired'
@@ -1293,8 +1299,8 @@ class CloudSession:
             elif state.workflow is not None:
                 finish_locally(state)
             elif rescued:
-                # 守卫拒的是核不上来源的数字，不是整份回答：保留草稿并说明原因，
-                # 不再用「本轮仅交付阶段记录」把用户已经拿到的结论换掉。
+                # 守卫拒绝的是无法核对的数字，不是整份回答：保留草稿并说明原因，
+                # 不用阶段记录替换用户已经拿到的结论。
                 state.report = rescued
                 if rejected_coverage:
                     state.coverage = rejected_coverage

@@ -96,8 +96,8 @@ CLOUD_EVIDENCE_INSTRUCTIONS = """
   计算方法、单位和适用条件，明确这是推导而非新增实测。输入缺失时不要补造数字。
 - 一般知识：能否用于解释与比较由下面的知识模式决定；它不能充当本次录音的证据。
 - 假设：把可能原因和待验证判断写成假设，说明不确定性及怎样验证，不作确定结论。
-未收到音频时，不得宣称直接听过录音或获得听感；对象列表、测量表、波形图片均不等于
-音频输入。即使收到图像，也只能把图中可见内容当作图像证据。保留工具报告的未定义值、
+听感只能来自本轮真的收到的音频；对象列表、测量表、波形图片都不是听感证据。即使收到
+图像，也只能把图中可见内容当作图像证据。保留工具报告的未定义值、
 错误和限制，不得修改既有分数或冒充已完成尚未执行的操作。
 """.strip()
 
@@ -1074,6 +1074,7 @@ tool 只能是工具清单中的名称或 custom_script；自定义脚本放 arg
                 "content": (
                     f"请求：{json.dumps(request, ensure_ascii=False)}\n"
                     f"分析结果：{json.dumps(result, ensure_ascii=False)}"
+                    + ("\n音位判据说明：观察不等于发音错误；保持实验性、未评估及证据不足状态，不得推断未执行的音素识别或给出总分。" if result.get("profile_snapshot") else "")
                 ),
             },
         ]
@@ -1117,7 +1118,8 @@ tool 只能是工具清单中的名称或 custom_script；自定义脚本放 arg
                         "type": "text",
                         "text": (
                             f"请求：{json.dumps(request, ensure_ascii=False)}\n"
-                            f"错误摘要：{json.dumps(result.get('errors', []), ensure_ascii=False)}"
+                            f"分析结果：{json.dumps(result, ensure_ascii=False)}"
+                            + ("\n音位判据说明：图表仅为实验性声学观察，不能判定发音对错；保留未评估与证据不足状态。" if result.get("profile_snapshot") else "")
                         ),
                     },
                 ],

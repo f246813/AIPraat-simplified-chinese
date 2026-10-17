@@ -59,20 +59,24 @@ React、assistant-ui、Tiptap、Markdown 等作为锁定版本的包依赖使用
 
 ## 当前集成范围
 
-前端菜单使用 picojson（BSD-2-Clause，完整单头文件）、gpustat 的显存非负处理（MIT，适配片段）和 pywebview 关闭事件绑定示例（BSD-3-Clause，适配片段）。来源版本、实际复用范围与许可证位置见 [前端菜单状态修复验收](docs/2026-10-05-前端菜单状态修复验收.md)。
+前端菜单使用 picojson（BSD-2-Clause，完整单头文件）、gpustat 的显存非负处理（MIT，适配片段）和 pywebview 关闭事件绑定示例（BSD-3-Clause，适配片段）。固定来源、实际复用范围与许可证见 `external/picojson/`、`ai/third_party/gpustat/`、`ai/third_party/pywebview/`；前端集成范围见[来源说明](docs/ai-frontend/FRONTEND-SOURCES.md)。
 
 在基座 `modern` 分支之上加的是**本地 AI 前端**（对话窗口、规划循环、表驱动声学测量、
 Praat 原生插件、社区脚本包装、token 预算与可取消的等待）。当前后端契约看 [`ai/docs/adr/`](ai/docs/adr/README.md)，维护方式看 [`guide.md`](guide.md) §8。
 
-## AI 与纠音新增依赖补充
+## AI 与纠音依赖
 
-下表补齐当前发布版的运行框架、前端组件和音位资源。包依赖、直接源码移植与仅作参考分别注明；不会把模型能力或本项目规则归功于特征表。
+下表说明运行框架、前端组件和音位资源。包依赖、直接源码适配与仅作参考分别注明；模型能力及本项目声学规则不由特征表提供。
 
 | 项目 | 实际用途 / 复用范围 | 许可与出处 |
 | --- | --- | --- |
 | [Pydantic AI / Pydantic Graph](https://github.com/pydantic/pydantic-ai) | 云端工具调用、类型化输入输出与阶段工作流；运行依赖锁定为 2.52.0 | MIT；[依赖声明](https://github.com/f246813/praat-simplified-chinese-ai/blob/v8.0.3/ai/requirements.txt) |
 | [PanPhon](https://github.com/dmort27/panphon/tree/a49c242d3307864312a2701055faefa4e548501c) | 直接复用 IPA 特征表、Unicode 归一化、trie 与最长音段匹配，适配标准库 CSV 读取；英语／日语声学规则为本项目新增 | MIT，Carnegie Mellon University；[固定来源与修改范围](https://github.com/f246813/praat-simplified-chinese-ai/blob/v8.0.3/ai/praat_ai/_vendor/panphon/NOTICE.md) |
-| [OpenPronounce](https://github.com/Halleck45/OpenPronounce/tree/74bc17ea406e6f057f15eea0e70951e1931af868) | 音素识别与序列比较的调研参考；本次音位规则增量没有复制其识别模型、总分或阈值 | 参考范围见上述 PanPhon NOTICE 与[音位判据实施说明](https://github.com/f246813/praat-simplified-chinese-ai/blob/v8.0.3/docs/2026-10-13-%E9%9F%B3%E4%BD%8D%E5%88%A4%E6%8D%AE%E5%AE%9E%E6%96%BD%E8%AF%B4%E6%98%8E.md) |
+| [VowSpace](https://github.com/alicagank/VowSpace/tree/3143f636c56cb34e26cc83da0f425494bb3f9c94) | 将 Lobanov 小函数适配为 NumPy 独立拟合与冻结变换（样本标准差 ddof=1）；独立校准采样、界面和近音实验扩展为本项目新增，不引入整包 GUI | GPL-3.0；[源码、完整许可与修改说明](ai/praat_ai/_vendor/vowspace/NOTICE.md) |
+| [librosa](https://github.com/librosa/librosa/tree/08e2c0a20d650fe00f10aaf3a1eaa9698ac19641) | 仅适配 Hz → MIDI 浮点半音转换小函数，不安装完整 librosa；基线、缺口与独立观察为本项目新增 | ISC；[许可及修改说明](ai/praat_ai/_vendor/librosa/NOTICE.md) |
+| [pyloudnorm](https://github.com/csteinmetz1/pyloudnorm) / [SciPy](https://github.com/scipy/scipy) | pyloudnorm 正式发行包提供整段 integrated LUFS 测量；SciPy 提供滤波。只派生恒定增益曲线，不覆盖 WAV/Sound | MIT / BSD-3-Clause；[版本、wheel 哈希、功能验证与许可](ai/third_party/pyloudnorm/NOTICE.md) |
+| [phonR](https://github.com/drammock/phonR/tree/c6d419f187f25d2be315cc4cdc35b7ad2b8ce6ee) | 仅用于开发期 Lobanov 数值对照，不要求用户安装 R | GPL-3；[固定来源及运行边界](ai/third_party/normalization-reference/NOTICE.md) |
+| [OpenPronounce](https://github.com/Halleck45/OpenPronounce/tree/74bc17ea406e6f057f15eea0e70951e1931af868) | 音素识别与序列比较的调研参考；当前规则未复制其识别模型、总分或阈值 | 参考范围见上述 PanPhon NOTICE 与[音位判据](docs/PRONUNCIATION.zh-CN.md) |
 | [NumPy](https://github.com/numpy/numpy)、[Pillow](https://github.com/python-pillow/Pillow) | 数值数组与声学计算；生成声学叠加图和报告图像 | NumPy BSD-3-Clause；Pillow HPND；运行依赖见 requirements.txt |
 | [PyTorch](https://github.com/pytorch/pytorch)、[Transformers](https://github.com/huggingface/transformers)、[Safetensors](https://github.com/huggingface/safetensors) | 可选 Wav2Vec2 对齐后端的推理、模型加载和权重读取 | PyTorch BSD-3-Clause；其余 Apache-2.0；[对齐依赖声明](ai/requirements-wav2vec2.txt) |
 | [React](https://github.com/facebook/react)、[assistant-ui](https://github.com/assistant-ui/assistant-ui)、[Tiptap](https://github.com/ueberdosis/tiptap)、[ProseMirror](https://github.com/ProseMirror) | 前端组件、聊天运行时与富文本输入；作为 npm 包使用 | MIT；版本与适配边界见[前端源码清单](docs/ai-frontend/FRONTEND-SOURCES.md) |
@@ -88,7 +92,7 @@ Praat 原生插件、社区脚本包装、token 预算与可取消的等待）�
 
 | 来源 | 使用范围 | 许可 / 版本记录 |
 | --- | --- | --- |
-| [MontrealCorpusTools/mfa-models](https://github.com/MontrealCorpusTools/mfa-models) | 英语、美式 ARPA，普通话 MFA 与日语 MFA 的词典和声学模型；原始资源用于可选强制对齐 | 所收录资源为 3.0.0、CC BY 4.0；具体发布标签、原始下载、SHA-256 和许可见[资源来源表](发音词典与模型参考/来源及网址.md) |
+| [MontrealCorpusTools/mfa-models](https://github.com/MontrealCorpusTools/mfa-models) | 英语、美式 ARPA、普通话 MFA 与日语 MFA 的词典和声学模型；原始资源用于可选强制对齐 | 所收录资源为 3.0.0、CC BY 4.0；发布标签、原始下载、SHA-256 与许可记录在安装包外的资源目录 `声学模型与语音词典\\来源及网址.md`，该目录不随代码仓库发布 |
 | [facebook/wav2vec2-lv-60-espeak-cv-ft](https://huggingface.co/facebook/wav2vec2-lv-60-espeak-cv-ft) | 可选 CTC 音素对齐模型与配套文件；资源原始内容未重新训练或修改 | Apache-2.0；固定版本和资源清单见上述来源表 |
 | [En-us-hello.ogg](https://commons.wikimedia.org/wiki/File:En-us-hello.ogg)，Dvortygirl | 音频读取验证与纠音表单示例的美音 hello | 公有领域 |
 | [En-uk-hello.ogg](https://commons.wikimedia.org/wiki/File:En-uk-hello.ogg)，Judith Franck / Association Shtooka | 音频读取验证与纠音表单示例的英音 hello；没有将说话人当作发音错误样本 | CC BY 3.0 US |

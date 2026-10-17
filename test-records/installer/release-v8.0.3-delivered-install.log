@@ -1,0 +1,7 @@
+PASS delivered installer has editable language model, wav2vec2 directory selection and real 13/13 readiness
+PASS real embedded payload installation reaches completion
+PASS delivered installer has editable language model, wav2vec2 directory selection and real 13/13 readiness
+PASS real directory write rejection exposes readable error and recovery actions
+PASS real embedded payload installation reaches completion
+PASS retry after restoring fixture permissions completes real installation
+RESULT production installer workflow passed; fixture=<WORKSPACE>\scratch\delivered-install-506254ce77a5468884756b262060e44e

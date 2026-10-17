@@ -48,6 +48,7 @@ test('Pi session sidebar: grouping, sorting, preview and keyboard navigation', a
   await page.locator('.chat-header h1').click(); await page.keyboard.press('Control+b');
   await expect(page.getByRole('button',{name:'展开会话侧栏'})).toBeVisible();
   await page.keyboard.press('Control+b');
+  await page.getByRole('button',{name:'搜索会话与消息',exact:true}).click();
   await page.getByRole('textbox',{name:'搜索会话与消息'}).focus(); await page.keyboard.press('Control+b');
   await expect(page.getByRole('button',{name:'折叠会话侧栏'})).toBeVisible();
 });
@@ -87,7 +88,10 @@ test('Pi multiple selection: modifier clicks preserve active chat and allow read
 test('native sidebar scrollbar has a wide pointer lane and drags independently of sidebar resizing', async ({page}) => {
   await page.goto('/?demo=1');
   await page.getByRole('button',{name:'展开会话侧栏'}).click();
+  const draft=page.getByRole('textbox',{name:'消息输入'});
   for (let count=5;count<=45;count++) {
+    // A draft makes the current session non-blank, so the blank-session guard creates the next one.
+    await draft.fill(`草稿 ${count}`);
     await page.getByRole('button',{name:'新建会话',exact:true}).click();
     await expect(page.locator('.session-row')).toHaveCount(count);
   }
@@ -102,6 +106,7 @@ test('native sidebar scrollbar has a wide pointer lane and drags independently o
   expect(await page.locator('.sidebar').evaluate(el=>el.getBoundingClientRect().width)).toBe(sample.side);
   const edge=await list.evaluate(el=>el.closest('.sidebar')!.getBoundingClientRect().right-el.getBoundingClientRect().right);
   expect(edge).toBe(1);
+  await page.getByRole('button',{name:'搜索会话与消息',exact:true}).click();
   await page.getByRole('textbox',{name:'搜索会话与消息'}).fill('新的分析');
   await expect(page.locator('.session-row')).toHaveCount(1);
   expect(await list.evaluate(el=>el.scrollHeight)).toBe(await list.evaluate(el=>el.clientHeight));

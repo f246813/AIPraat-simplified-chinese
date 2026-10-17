@@ -1,0 +1,12 @@
+PASS repair_available_only_for_runnable_supported_python_missing_dependencies
+PASS path_dialog_runtime_field_available_for_missing_and_ready_environment
+PASS installer_uses_same_runtime_field_and_removes_skip
+
+
+   由于 Exception.ToString() 失败，因此无法打印异常字符串。
+
+
+   由于 Exception.ToString() 失败，因此无法打印异常字符串。
+PASS restored_button_opens_original_detection_installation_and_repair_window
+PASS powershell_launch_preserves_unicode_spaces_apostrophes_and_metacharacters
+Screenshots: <USER_HOME>\AppData\Local\Temp\AIPraat setup 中文 6e3cf868ccf74e9a817b61d0e08cfc78

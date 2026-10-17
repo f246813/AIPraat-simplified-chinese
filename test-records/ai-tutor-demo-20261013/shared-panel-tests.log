@@ -1,0 +1,4 @@
+PASS executable + real Ogg decode
+PASS real dependency checks + shared decoder path save
+PASS asynchronous real probes enable saving
+PASS shared config + field position + detection/install controls

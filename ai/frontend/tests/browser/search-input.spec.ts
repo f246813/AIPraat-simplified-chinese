@@ -2,6 +2,7 @@ import {expect,test} from '@playwright/test';
 
 test('search focus has no displaced outline; native composition preserves the same focused input',async({page})=>{
   await page.goto('/?demo=1');await page.getByRole('button',{name:'展开会话侧栏'}).click();
+  await page.getByRole('button',{name:'搜索会话与消息',exact:true}).click();
   const input=page.getByRole('textbox',{name:'搜索会话与消息',exact:true});await input.click();
   expect(await input.evaluate(el=>getComputedStyle(el).outlineStyle)).toBe('none');
   const protocol=await page.context().newCDPSession(page);
@@ -20,6 +21,7 @@ test('search focus has no displaced outline; native composition preserves the sa
 
 test('search leaves IME keys to the input method and still handles settled Enter/Escape',async({page})=>{
   await page.goto('/?demo=1');await page.getByRole('button',{name:'展开会话侧栏'}).click();
+  await page.getByRole('button',{name:'搜索会话与消息',exact:true}).click();
   const sidebar=page.getByRole('textbox',{name:'搜索会话与消息',exact:true});await sidebar.click();
   const dispatch=async(key:string,options:Record<string,unknown>={})=>page.evaluate(({key,options})=>{
     const event=new KeyboardEvent('keydown',{key,bubbles:true,cancelable:true,...options});

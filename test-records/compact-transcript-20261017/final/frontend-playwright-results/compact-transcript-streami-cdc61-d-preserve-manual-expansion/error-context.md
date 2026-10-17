@@ -1,0 +1,107 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - status [ref=e4]: 浏览器测试适配器 · 全部内容为明确的演示夹具 · 没有模型、Praat 或网络验证
+  - complementary "会话侧栏" [ref=e5]:
+    - button "展开会话侧栏" [ref=e8] [cursor=pointer]:
+      - img [ref=e9]
+    - button "新建会话" [ref=e12] [cursor=pointer]:
+      - img [ref=e13]
+    - generic [ref=e17]:
+      - button "后台任务" [ref=e18] [cursor=pointer]:
+        - img [ref=e19]
+        - generic [ref=e21]: "0"
+      - button "打开设置" [ref=e22] [cursor=pointer]:
+        - img [ref=e23]
+  - main [ref=e26]:
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - heading "新会话" [level=1] [ref=e30]:
+          - img [ref=e31]
+          - generic "新会话" [ref=e33]
+        - generic [ref=e34]:
+          - button "在会话中查找（Ctrl / Cmd + K）" [ref=e35] [cursor=pointer]:
+            - img [ref=e36]
+          - button "刷新当前会话" [ref=e39] [cursor=pointer]:
+            - img [ref=e40]
+      - generic [ref=e45]:
+        - generic "会话消息" [ref=e46]:
+          - generic [ref=e47]:
+            - generic "用户消息" [ref=e48]:
+              - generic [ref=e49]:
+                - paragraph [ref=e51]: 测试紧凑对话
+                - button "复制消息" [ref=e53] [cursor=pointer]:
+                  - img [ref=e54]
+            - generic "助手回复" [ref=e57]:
+              - generic [ref=e58]:
+                - group [ref=e59]:
+                  - generic "执行过程 25 个步骤 ›" [active] [ref=e60] [cursor=pointer]:
+                    - generic [ref=e61]: 执行过程
+                    - generic [ref=e62]: 25 个步骤
+                    - text: ›
+                  - text: › › › › › › › › › › › › › › › › › › › › › › › › ›
+                - generic [ref=e63]:
+                  - paragraph [ref=e64]:
+                    - text: 这是一条
+                    - strong [ref=e65]: 浏览器测试响应
+                    - text: ，没有调用模型、云端或 Praat。
+                  - paragraph [ref=e66]: 可以切换会话观察事件隔离，使用停止按钮取消当前夹具任务。
+                  - list [ref=e67]:
+                    - listitem [ref=e68]:
+                      - text: Markdown 与公式
+                      - generic [ref=e69]:
+                        - math [ref=e71]:
+                          - generic [ref=e73]:
+                            - generic [ref=e74]:
+                              - generic [ref=e75]: f
+                              - generic [ref=e76]: "0"
+                            - generic [ref=e77]: =
+                            - generic [ref=e78]: "1"
+                            - generic [ref=e79]: /
+                            - generic [ref=e80]: T
+                        - generic [ref=e81]:
+                          - generic [ref=e82]:
+                            - generic [ref=e83]:
+                              - text: f
+                              - generic [ref=e88]: "0"
+                            - text: =
+                          - generic [ref=e92]: 1/T
+                    - listitem [ref=e93]: 附件只有演示元数据
+                    - listitem [ref=e94]: 所有数字都不是专业测量结果
+                - button "复制消息" [ref=e96] [cursor=pointer]:
+                  - img [ref=e97]
+        - generic:
+          - generic:
+            - separator "调整对话区宽度" [ref=e100]
+            - separator "调整对话区宽度" [ref=e101]
+      - generic [ref=e104]:
+        - toolbar "文本格式" [ref=e105]:
+          - button "加粗（Ctrl+B）" [ref=e106] [cursor=pointer]:
+            - img [ref=e107]
+          - button "斜体（Ctrl+I）" [ref=e109] [cursor=pointer]:
+            - img [ref=e110]
+          - button "行内代码" [ref=e112] [cursor=pointer]:
+            - img [ref=e113]
+          - button "项目列表" [ref=e116] [cursor=pointer]:
+            - img [ref=e117]
+        - textbox "消息输入" [ref=e120]:
+          - text: 描述你的分析目标，或附上音频与材料…
+          - paragraph [ref=e121]
+        - generic [ref=e122]:
+          - button "添加附件" [ref=e123] [cursor=pointer]:
+            - img [ref=e124]
+            - text: 添加附件
+          - generic [ref=e127]:
+            - button "上下文用量" [ref=e128] [cursor=pointer]:
+              - img [ref=e129]
+              - generic [ref=e132]: 4%
+            - button "切换模型与推理强度" [ref=e133] [cursor=pointer]:
+              - img [ref=e134]
+              - generic [ref=e137]:
+                - text: browser-fixture
+                - generic [ref=e138]: · auto
+              - img [ref=e139]
+          - button "发送消息" [disabled] [ref=e141]:
+            - img [ref=e142]
+```

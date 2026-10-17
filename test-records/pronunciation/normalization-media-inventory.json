@@ -1,0 +1,684 @@
+{
+  "scope": "Repository media inventory only; filenames/TextGrids do not establish real speech correctness.",
+  "status": "awaiting_user_materials",
+  "counts": {
+    ".ogg": 5,
+    ".textgrid": 24,
+    ".wav": 24,
+    ".flac": 2,
+    ".aac": 1
+  },
+  "files": [
+    {
+      "path": "ai/ffmpeg-probe.ogg",
+      "bytes": 9036,
+      "sha256": "ade8485f1cfd454e27ec1bb93cc0234d3187b2507230f72e96f46ac686e82972",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "dwtest/Example_opus_audio.ogg",
+      "bytes": 34335,
+      "sha256": "0064a8fb134a29b3916a3ba6816d760e3ceda3a236ab7104ba4935f1cedffa10",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "dwtest/Example_vorbis_audio.ogg",
+      "bytes": 105243,
+      "sha256": "379071af4fa77bc7dacf892ad81d3f92040a628367d34a451a2cdcc997ef27b0",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "dwtest/TIMIT_train_dr1_fcjf0_sa1_extended.TextGrid",
+      "bytes": 2187,
+      "sha256": "a4f6db48c9833dad53025e9c2254261dbaced320799378a9106b32c7177280df",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "dwtest/s_egg_test.wav",
+      "bytes": 94192,
+      "sha256": "b63346f75ebfc682958bee7d53f46829e941ead241ddc33ced608bd27138d269",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 1.067437641723356,
+        "channels": 2,
+        "sample_rate": 22050,
+        "sample_width": 2,
+        "frames": 23537,
+        "pcm_sha256": "409039b87bdf59fba987f8bcd29c168e39296c0ddb050a9919388de7d09ecacb"
+      }
+    },
+    {
+      "path": "dwtest/sa1.wav",
+      "bytes": 92160,
+      "sha256": "a9ad735fbc6259ff77562c4a7d7343367c7294634e75242302e3bf73e5b6b0e4",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio_unavailable": "file does not start with RIFF id"
+    },
+    {
+      "path": "scratch/python-bridge-fix/uk.wav",
+      "bytes": 97064,
+      "sha256": "30cb88cce41afd2160dd784175d3bdc80313d32f48dc383547a311c6a11f151b",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 1.1,
+        "channels": 1,
+        "sample_rate": 44100,
+        "sample_width": 2,
+        "frames": 48510,
+        "pcm_sha256": "f9a874623c49c326790e4a1ccba8cb1a8551806921091e930c4612428733ba4f"
+      }
+    },
+    {
+      "path": "test/fon/test.flac",
+      "bytes": 52157,
+      "sha256": "4dce92614a7c01066893520bd45ead9217838735e42e6e93ec010d1a59bf97dc",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/test.wav",
+      "bytes": 88506,
+      "sha256": "387e365971b31d1c97f95f328dd20301658cb8dc39fd414412bbb0006a0a80a3",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 1.0029705215419502,
+        "channels": 1,
+        "sample_rate": 44100,
+        "sample_width": 2,
+        "frames": 44231,
+        "pcm_sha256": "9268f27700031d17522a6316bdd89cf983c87849bde6b1892f3e1e54b87cb153"
+      }
+    },
+    {
+      "path": "test/fon/wordBoundaries.TextGrid",
+      "bytes": 367,
+      "sha256": "31b235dd665e7c0f7fdcf6d7d42bbc2a156345bdb3d7acd71a1705f1bd435365",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/examples/example.wav",
+      "bytes": 40958,
+      "sha256": "1d56a837596b696ab05d28f8b900968f0a35aaad53d46020cbd336b691ee694d",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 0.4638775510204082,
+        "channels": 1,
+        "sample_rate": 44100,
+        "sample_width": 2,
+        "frames": 20457,
+        "pcm_sha256": "19e1602d0b4e8e9d509f945a9845d4c7cffe887dcd668c57c4226cb5ae24350e"
+      }
+    },
+    {
+      "path": "test/fon/examples/sineWithNoise.TextGrid",
+      "bytes": 176,
+      "sha256": "b26c03916c7fc59eba970ec1ae14c7622dfaa9091871bdfd5df693d956a5921c",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/examples/あ　あ.wav",
+      "bytes": 40958,
+      "sha256": "1d56a837596b696ab05d28f8b900968f0a35aaad53d46020cbd336b691ee694d",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 0.4638775510204082,
+        "channels": 1,
+        "sample_rate": 44100,
+        "sample_width": 2,
+        "frames": 20457,
+        "pcm_sha256": "19e1602d0b4e8e9d509f945a9845d4c7cffe887dcd668c57c4226cb5ae24350e"
+      }
+    },
+    {
+      "path": "test/fon/examples/にほん.flac",
+      "bytes": 52157,
+      "sha256": "4dce92614a7c01066893520bd45ead9217838735e42e6e93ec010d1a59bf97dc",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/examples/sounds/a.wav",
+      "bytes": 145068,
+      "sha256": "ec7aaf72d1826a4a4559d1f07b1b91e6935bd9993d22d5157c1154c4a1cc2fd7",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 1.6442630385487529,
+        "channels": 1,
+        "sample_rate": 44100,
+        "sample_width": 2,
+        "frames": 72512,
+        "pcm_sha256": "30bb1503976916e237a1fa138da0b4c8c2ceff4a310f21841f874e47127f06e4"
+      }
+    },
+    {
+      "path": "test/fon/examples/sounds/aaaa02.wav",
+      "bytes": 1520044,
+      "sha256": "f47d25c198f840ca28ebe1035ef6cdcc96c76849cac79de9e64928b20ee80dbf",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 7.6,
+        "channels": 2,
+        "sample_rate": 50000,
+        "sample_width": 2,
+        "frames": 380000,
+        "pcm_sha256": "d3a577d7b59b8a3374e24232cbd2cc4f90891fcff0e61403ace03fa7b52e9c49"
+      }
+    },
+    {
+      "path": "test/fon/examples/sounds/cl_F1_2b_egg.wav",
+      "bytes": 312142,
+      "sha256": "2bd5b945f4e214dd962b6b5c06d85b3771e02aabeb871684637dcd384336d103",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio_unavailable": "fmt chunk and/or data chunk missing"
+    },
+    {
+      "path": "test/fon/examples/sounds/elephant calls/27_Ella.wav",
+      "bytes": 1254122,
+      "sha256": "f8c66287439af65be259b3d3ecb1cb86bb726c133b83fd9d71a804e09cce50bf",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 13.0633125,
+        "channels": 1,
+        "sample_rate": 48000,
+        "sample_width": 2,
+        "frames": 627039,
+        "pcm_sha256": "708efcf13f20611eba7a470ee3653a9f594c34dff85d2172371a499bb38b3d4e"
+      }
+    },
+    {
+      "path": "test/fon/texio/texio1.TextGrid",
+      "bytes": 466,
+      "sha256": "74621de3627b16cfbe92648a6a9ee4ea07de1ebd3046792f6b5c3913ffb63c40",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio10.TextGrid",
+      "bytes": 694,
+      "sha256": "1bbf98e95446aa4061c7a9e4ab00f1217538dff794d425793056902a1b4bc21d",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio11.TextGrid",
+      "bytes": 702,
+      "sha256": "8fd4f4403998e42261cb90ff55e8c29fca8b89f42d915a6a24a0d951539884be",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio12.TextGrid",
+      "bytes": 940,
+      "sha256": "454811d4722c654ac7c0c1c1fa5b22b8c2b5bb96fa588aa897fbe19100050561",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio13.TextGrid",
+      "bytes": 940,
+      "sha256": "e9452340353a06683baaffcf00013b0d4115a8a5be5f966ec93cb7c2f8177e0b",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio14.TextGrid",
+      "bytes": 940,
+      "sha256": "3336ac71efdffeaee6fa356968d529c89e6396dc2b64374added65fac737d982",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio15.TextGrid",
+      "bytes": 920,
+      "sha256": "b9cf66e860cabad758ab8c0a7cc13f25aecbb5f68bf3c8cb10fdccb7db1bc5ef",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio16.TextGrid",
+      "bytes": 700,
+      "sha256": "248b037b639ef90998fb020ec699627f131135f6a4dcfc780684636926bf7398",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio17.TextGrid",
+      "bytes": 168,
+      "sha256": "656a3031bd5748023c270944ac8b8e005fb1322ec1e7d8da348f1902fe574f8d",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio18.TextGrid",
+      "bytes": 922,
+      "sha256": "a633578dbe2b563bc6d0efc8ee0416b7a988e91013661e181f5d819542e44aa8",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio19.TextGrid",
+      "bytes": 1022,
+      "sha256": "3c6976512055bc6b6a557116c83e96a07b675e839106bdeffb59762211366f19",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio2.TextGrid",
+      "bytes": 932,
+      "sha256": "c21ee5149dd57bdce3703eb8fe61987f1ba16c21502a7ff64b73e9f25f2819ff",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio20.TextGrid",
+      "bytes": 914,
+      "sha256": "34f3203dab52337168f7b84b19ff65fd60c22e18abdc53ab035602c5bdd7ee18",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio3.TextGrid",
+      "bytes": 948,
+      "sha256": "846dac90ffc49ea7b4bbbdd17d296d0729774c112b2e5f12261f7c6c4b5af879",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio4.TextGrid",
+      "bytes": 936,
+      "sha256": "9aaed8fcc18241ca942c06d8b7b8d399445cb496d77280261fa2336ce2de9dca",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio5.TextGrid",
+      "bytes": 940,
+      "sha256": "8f247fbea5b279a32649def091dcbb57e6062b54ec65ae1cd8ed40b293fc84a3",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio6.TextGrid",
+      "bytes": 940,
+      "sha256": "fa8ba7a9b4bcd660c5fea389b492f72c3d7e2eae1e051192d6d01e0acf4053cc",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio7.TextGrid",
+      "bytes": 830,
+      "sha256": "e9f511f1290056c88cc04bbb497307f6575cec26205d5bd69f396b51ac1b42fc",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio8.TextGrid",
+      "bytes": 146,
+      "sha256": "98af146e38eb5194b89254796d07b5bc9cc222ef24a627b7ff475d9842624aba",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon/texio/texio9.TextGrid",
+      "bytes": 430,
+      "sha256": "643ded0ceaa2eb5979ae14e65c46adfdc7e48176e39551e61af21cfc05b29311",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test/fon ExperimentMFC/Sounds/M1F1-float32-AFsp.wav",
+      "bytes": 188168,
+      "sha256": "97b727164757c1f6ee556b331cd648fbbde113a2921313c8831907475ccc0477",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio_unavailable": "unknown format: 3"
+    },
+    {
+      "path": "test/fon ExperimentMFC/Sounds/again.wav",
+      "bytes": 27688,
+      "sha256": "3ee5e08b00cc68746ae0ec0cf329b7c81769b57bd414762fa1fe35229c8a2be4",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 1.2536961451247166,
+        "channels": 1,
+        "sample_rate": 11025,
+        "sample_width": 2,
+        "frames": 13822,
+        "pcm_sha256": "ac47f05a92df3e366d2c5cb326433fb34d27b19f4b1c33181c9d5bd025247624"
+      }
+    },
+    {
+      "path": "test/fon ExperimentMFC/Sounds/heed.wav",
+      "bytes": 16016,
+      "sha256": "12c663bf829bc824c7661f2084008688553fb31f7f9423d5a99ffb37ec5da022",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 0.7243537414965986,
+        "channels": 1,
+        "sample_rate": 11025,
+        "sample_width": 2,
+        "frames": 7986,
+        "pcm_sha256": "79b15463b4ed4135174d1f7a09bd37e04a386dccad088a2c1fcae56582430801"
+      }
+    },
+    {
+      "path": "test/fon ExperimentMFC/Sounds/hid.wav",
+      "bytes": 14866,
+      "sha256": "5f88801f0ee195bd94f617f486ecc8382761d902fd522966b69a055d5fdef955",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 0.6721995464852608,
+        "channels": 1,
+        "sample_rate": 11025,
+        "sample_width": 2,
+        "frames": 7411,
+        "pcm_sha256": "1993a8111385e8997b22453fbabf7d74b01ebb2f092db63493b276a8dc47b437"
+      }
+    },
+    {
+      "path": "test/fon ExperimentMFC/Sounds/hood.wav",
+      "bytes": 23258,
+      "sha256": "fdf8dbcfed99d20102e09c6b9bb8a464723e1e69aa74139bfc4a724d2d6424a9",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 1.0527891156462585,
+        "channels": 1,
+        "sample_rate": 11025,
+        "sample_width": 2,
+        "frames": 11607,
+        "pcm_sha256": "acacb41c74de36c272b8eb1b7bb925c49fbc48d94d7428ab399f416e58f033e0"
+      }
+    },
+    {
+      "path": "test/fon ExperimentMFC/Sounds/hud.wav",
+      "bytes": 21716,
+      "sha256": "0879687b15cc630aa5a6eb26d8d8957473c51fde7c44bf5d933f3df4846bfcf8",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 0.9828571428571429,
+        "channels": 1,
+        "sample_rate": 11025,
+        "sample_width": 2,
+        "frames": 10836,
+        "pcm_sha256": "9502278cfed2de9a2e1280139080f206ab248daf94e209ea9daf70264072d3c8"
+      }
+    },
+    {
+      "path": "test/fon ExperimentMFC/Sounds/weSayTheWord.wav",
+      "bytes": 25926,
+      "sha256": "511b4b322dd1f0aa99491c95c9d7503d69dea89a2f68f97ca69d86e320662702",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 1.1737868480725624,
+        "channels": 1,
+        "sample_rate": 11025,
+        "sample_width": 2,
+        "frames": 12941,
+        "pcm_sha256": "eaa332e2c87e0ac44c52c180179d6b57c04b1550bc984a3e5681c2fca5f1c613"
+      }
+    },
+    {
+      "path": "test/kar/åbçéü.wav",
+      "bytes": 88244,
+      "sha256": "86447321e4c2232a3d28135a8bad5d93827b1a690065998a19569ff8bf147e65",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 1.0,
+        "channels": 1,
+        "sample_rate": 44100,
+        "sample_width": 2,
+        "frames": 44100,
+        "pcm_sha256": "f68a0494963217ea1196066bc7b26ccf8a1c88a566409f4de21c970902b067b2"
+      }
+    },
+    {
+      "path": "test/kar/éééürtüéŋəü.wav",
+      "bytes": 88244,
+      "sha256": "86447321e4c2232a3d28135a8bad5d93827b1a690065998a19569ff8bf147e65",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 1.0,
+        "channels": 1,
+        "sample_rate": 44100,
+        "sample_width": 2,
+        "frames": 44100,
+        "pcm_sha256": "f68a0494963217ea1196066bc7b26ccf8a1c88a566409f4de21c970902b067b2"
+      }
+    },
+    {
+      "path": "test/manually/commandLine/e x a m p l e.wav",
+      "bytes": 40958,
+      "sha256": "1d56a837596b696ab05d28f8b900968f0a35aaad53d46020cbd336b691ee694d",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 0.4638775510204082,
+        "channels": 1,
+        "sample_rate": 44100,
+        "sample_width": 2,
+        "frames": 20457,
+        "pcm_sha256": "19e1602d0b4e8e9d509f945a9845d4c7cffe887dcd668c57c4226cb5ae24350e"
+      }
+    },
+    {
+      "path": "test/speed/chain.wav",
+      "bytes": 60114988,
+      "sha256": "2b9f0e4d2552883c81e6052c175ffcd7aadb4fa59f39362ddfb6e20d637e6b01",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 626.1973333333333,
+        "channels": 1,
+        "sample_rate": 48000,
+        "sample_width": 2,
+        "frames": 30057472,
+        "pcm_sha256": "ca52ceee65826b0c80c0bacd79ad45b5570e3c7a1465a2405bae02f08eb0d71a"
+      }
+    },
+    {
+      "path": "test/speed/chaintje.wav",
+      "bytes": 1314370,
+      "sha256": "76de0d7db07fb575d9ddc7bd0ef3624f41b8870ba603b6943a7c7776364dcc8e",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 41.0726875,
+        "channels": 1,
+        "sample_rate": 16000,
+        "sample_width": 2,
+        "frames": 657163,
+        "pcm_sha256": "23991d9b3d44dcad8bc16eadda01da2b340d8bff45b8776021071a3cd458e064"
+      }
+    },
+    {
+      "path": "test/speed/trn09.wav",
+      "bytes": 1920062,
+      "sha256": "8e18bc410e6d54a166bbba2ff0b46a222626706788fa222add4f97bca842f822",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio_unavailable": "unknown format: 3"
+    },
+    {
+      "path": "test-records/En-uk-hello.ogg",
+      "bytes": 14145,
+      "sha256": "66b7f2dc3fbafad92d49d365946b0c98da22d88bb2541d3b9ead25aa2ccfcf15",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test-records/En-us-hello.ogg",
+      "bytes": 9036,
+      "sha256": "ade8485f1cfd454e27ec1bb93cc0234d3187b2507230f72e96f46ac686e82972",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test-records/ai-tutor-demo-20261013/hello-fallback.aac",
+      "bytes": 4615,
+      "sha256": "abf7d5bf474293f6fefc9b2885cd2fac6a5e4cc6276701cf7a92db2d13719f2d",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    },
+    {
+      "path": "test-records/ai-tutor-demo-20261013/native-write-probe.wav",
+      "bytes": 8864,
+      "sha256": "f971a9aaa8626894132d1d3d7139e0f06b01f3beb894f680f5033eccfbbcd969",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ],
+      "audio": {
+        "duration": 0.1,
+        "channels": 1,
+        "sample_rate": 44100,
+        "sample_width": 2,
+        "frames": 4410,
+        "pcm_sha256": "63f376544bf63d3d5e199519fcb78bbf88201419f389d186f24510868f6aa033"
+      }
+    },
+    {
+      "path": "test-records/pronunciation/synthetic-rule-observations.TextGrid",
+      "bytes": 2625,
+      "sha256": "34e8666dfcee7ba38e9e42ddf35f0f4b84ce8e0be8e7d99033c24dc658bb2b82",
+      "acceptance_status": "unverified",
+      "gaps": [
+        "No acceptance manifest binding this file to source, speaker, language, configuration and human judgments."
+      ]
+    }
+  ],
+  "accuracy": {
+    "status": "not_measured"
+  }
+}

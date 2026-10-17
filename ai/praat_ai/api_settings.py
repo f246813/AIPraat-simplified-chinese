@@ -7,6 +7,7 @@ Credentials and settings continue to use the shared ai_config.json configuration
 
 from __future__ import annotations
 
+import json
 import threading
 from pathlib import Path
 from typing import Any, Callable, Mapping
@@ -146,6 +147,7 @@ def settings_from_config(config: AppConfig) -> dict[str, Any]:
             "audio_input_path": api.audio_input_path,
             "audio_verified_at": api.audio_verified_at,
             "audio_test_result": api_diagnostics.matching_record(api.audio_test_result, api.base_url, api.model, api.api_key),
+            api_diagnostics.SEQUENCE_KEY: int(getattr(api, 'audio_setting_sequence', 0) or 0),
         }
     )
     return values
@@ -216,6 +218,9 @@ def normalize_settings(values: Mapping[str, Any]) -> tuple[dict[str, Any], list[
         "audio_input_path": str(values.get("audio_input_path", "")),
         "audio_verified_at": str(values.get("audio_verified_at", "")),
         "audio_test_result": api_diagnostics.matching_record(values.get('audio_test_result'), base_url, model, str(values.get('api_key', '') or '').strip()),
+        # 音频设置的写序号：这次保存要严格大于配置里与界面上已经出现的（时间并列时定先后）。
+        api_diagnostics.SEQUENCE_KEY: max(api_diagnostics.next_sequence(values),
+                                          api_diagnostics.next_sequence({'audio_test_result': values.get('audio_test_result')})),
     }
     return clean, errors
 
@@ -226,6 +231,7 @@ def save_settings(
     *,
     verified: bool = False,
     audio_setting_edited_at: str | None = None,
+    audio_setting_edited_sequence: int | None = None,
 ) -> dict[str, Any]:
     """写入 ``api`` 配置节（校验不过就抛 ``ValueError``）。
 
@@ -244,14 +250,21 @@ def save_settings(
         previous_test = api_diagnostics.matching_record(existing['audio_test_result'], str(updated['base_url']), str(updated['model']), str(updated['api_key']))
         incoming_test = updated['audio_test_result']
         edited_at = audio_setting_edited_at if audio_setting_edited_at is not None else values.get('audio_setting_edited_at')
+        edited_sequence = (audio_setting_edited_sequence if audio_setting_edited_sequence is not None
+                           else values.get('audio_setting_edited_sequence'))
+        # 本次保存自己的写序号：严格大于配置里与界面上已经出现的序号。
+        updated[api_diagnostics.SEQUENCE_KEY] = max(
+            api_diagnostics.next_sequence(existing), api_diagnostics.next_sequence(values))
         # Clearing a stale dialog's result must not erase a later runtime rejection.
         # An explicit manual edit made after that observation still takes effect.
+        # 时间戳并列时（Windows 时钟粒度约 15 ms）由写序号决定先后，见 api_diagnostics。
         if (previous_test
-                and api_diagnostics.observation_time(previous_test['tested_at']) > api_diagnostics.observation_time(incoming_test.get('tested_at'))
-                and api_diagnostics.observation_time(edited_at) <= api_diagnostics.observation_time(previous_test['tested_at'])):
+                and api_diagnostics.observed_later(previous_test, incoming_test)
+                and not api_diagnostics.edited_after(edited_at, edited_sequence, previous_test)):
             updated['audio_test_result'] = previous_test
             for key in ('audio_input_enabled','audio_input_source','audio_input_reason','audio_input_path','audio_verified_at'):
                 updated[key] = existing[key]
+            updated[api_diagnostics.SEQUENCE_KEY] = existing[api_diagnostics.SEQUENCE_KEY]
         if updated.get('api_key') != existing.get('api_key'):
             updated['audio_verified_at'] = ''
         if (str(updated.get('base_url', '')).rstrip('/'), updated.get('model')) != (existing['base_url'].rstrip('/'), existing['model']):
@@ -452,6 +465,8 @@ class ApiSettingsDialog:
         self._audio_dirty = False
         self._audio_result_dirty = False
         self._audio_setting_edited_at = ''
+        #: 手动修改发生时配置里已经写下的音频写序号（时间并列时判先后的依据）。
+        self._audio_setting_edited_sequence = 0
         self._audio_edit_revision = 0
         self._audio_probe_cancel = threading.Event()
         ttk.Checkbutton(connect_body,
@@ -674,6 +689,7 @@ class ApiSettingsDialog:
             'audio_verified_at':self.values.get('audio_verified_at', ''),
             'audio_test_result':self.audio_test_result,
             'audio_setting_edited_at':self._audio_setting_edited_at,
+            'audio_setting_edited_sequence':self._audio_setting_edited_sequence,
         }
 
     def _audio_hint_text(self):
@@ -696,6 +712,7 @@ class ApiSettingsDialog:
         dialog = tk.Toplevel(self.window)
         dialog.title('API 测试详情')
         dialog.geometry('680x360')
+        dialog.geometry('680x360')
         frame = ttk.Frame(dialog, padding=10); frame.pack(fill='both', expand=True)
         body = tk.Text(frame, wrap='word', font=self.theme.font('small'))
         scroll = ttk.Scrollbar(frame, orient='vertical', command=body.yview)
@@ -706,9 +723,19 @@ class ApiSettingsDialog:
         body.insert('1.0', header+'\n\n完整错误详情：\n'+detail)
         body.configure(state='disabled')
 
+
+    def _stored_config_payload(self) -> dict:
+        """配置文件里当前写下的原始内容（读不到就当空的：宁可保守，也不要凭猜测定序）。"""
+
+        try:
+            return json.loads(Path(self.config_path).read_text(encoding='utf-8'))
+        except (OSError, ValueError, TypeError):
+            return {}
     def _on_audio_manual(self):
         from datetime import datetime, timezone
         self._audio_setting_edited_at = datetime.now(timezone.utc).isoformat()
+        # 记下「这次修改看到了几次音频写入」：与运行时纠正的时间戳并列时用它分先后。
+        self._audio_setting_edited_sequence = api_diagnostics.observation_sequence(self._stored_config_payload())
         self._audio_edit_revision += 1
         self._audio_dirty = True
         self.audio_source, self.audio_reason = 'manual', '用户声明；尚未实测'
@@ -776,6 +803,8 @@ class ApiSettingsDialog:
         apply_api_to_qwen(config)
         original = (values['base_url'].rstrip('/'),values['model'],values['api_key'])
         original_revision = self._audio_edit_revision
+        # 这次验证「看到」的音频写序号：纠正发生在验证期间时，靠它判谁更晚。
+        observed_sequence = api_diagnostics.observation_sequence(self._stored_config_payload())
         saved_identity = model_capabilities.config_identity(load_config(self.config_path).api)
         self.audio_test_button.configure(state='disabled')
         self._audio_probe_cancel.clear()
@@ -787,7 +816,7 @@ class ApiSettingsDialog:
             try:
                 result = probe_audio(config, Path(self.config_path).parent / 'runtime' / 'tasks' if self.config_path else
                                      Path(__file__).resolve().parents[1] / 'runtime' / 'tasks', cancel=self._audio_probe_cancel)
-                observed = api_diagnostics.test_record(*original, result)
+                observed = api_diagnostics.test_record(*original, result, sequence=observed_sequence)
                 if result['status'] == 'unsupported' and not self._audio_probe_cancel.is_set():
                     # Only update a saved matching path. Unsaved new choices are
                     # reflected in this dialog and persisted when Save is clicked.
@@ -798,7 +827,7 @@ class ApiSettingsDialog:
                             default_config_path(), saved_identity, result['reason'])
             except (OSError, ValueError) as error:
                 result = {'status':'unverified', 'reason':model_capabilities.safe_error(error, values['api_key'])}
-                observed = api_diagnostics.test_record(*original, result)
+                observed = api_diagnostics.test_record(*original, result, sequence=observed_sequence)
             def finish():
                 self.audio_test_button.configure(state='normal')
                 if (self._audio_edit_revision != original_revision or
@@ -885,7 +914,8 @@ class ApiSettingsDialog:
                 values = {key:value for key,value in values.items() if not key.startswith("audio_")
                           or (key == 'audio_test_result' and getattr(self, '_audio_result_dirty', False))}
             save_settings(values, self.config_path, verified=self.verified,
-                          audio_setting_edited_at=getattr(self, '_audio_setting_edited_at', ''))
+                audio_setting_edited_at=getattr(self, '_audio_setting_edited_at', ''),
+                audio_setting_edited_sequence=getattr(self, '_audio_setting_edited_sequence', 0))
         except (ValueError, OSError) as error:
             self._messagebox.showerror("API 配置", f"保存失败：{error}", parent=self.window)
             return

@@ -1,0 +1,22 @@
+D:\Praat-work\ÎÈ¶¨ÔçÆÚ°æ\installer\tests\verify_loudness_release.py:54: WavFileWarning: Chunk (non-data) not understood, skipping it.
+  rate, data = wavfile.read(io.BytesIO(upstream.read(f"pyloudnorm-{COMMIT}/tests/data/"+name)))
+SHA256 OK pyloudnorm-0.2.0-py3-none-any.whl 9bb69afb904f59d007a7f9ba3d75d16fb8aeef35c44d6df822a9f192d69cf13f
+SHA256 OK pyloudnorm-0.2.0.tar.gz 8bf597658ea4e1975c275adf490f6deb5369ea409f2901f939915efa4b681b16
+SHA256 OK scipy-1.14.1-cp310-cp310-win_amd64.whl a49f6ed96f83966f576b33a44257d869756df6cf1ef4934f59dd58b25e0327e5
+SCIPY wheel metadata and bundled license OK scipy-1.14.1-cp310-cp310-win_amd64.whl
+SHA256 OK scipy-1.14.1-cp311-cp311-win_amd64.whl 716e389b694c4bb564b4fc0c51bc84d381735e0d39d3f26ec1af2556ec6aad94
+SCIPY wheel metadata and bundled license OK scipy-1.14.1-cp311-cp311-win_amd64.whl
+SHA256 OK scipy-1.14.1-cp312-cp312-win_amd64.whl 2ff38e22128e6c03ff73b6bb0f85f897d2362f8c052e3b8ad00532198fbdae3f
+SCIPY wheel metadata and bundled license OK scipy-1.14.1-cp312-cp312-win_amd64.whl
+SHA256 OK numpy-2.2.6-cp311-cp311-win_amd64.whl e8213002e427c69c45a52bbd94163084025f533a55a59d6f9c5b820774ef3303
+SOURCE IDENTICAL wheel/sdist/commit pyloudnorm/__init__.py
+SOURCE IDENTICAL wheel/sdist/commit pyloudnorm/iirfilter.py
+SOURCE IDENTICAL wheel/sdist/commit pyloudnorm/meter.py
+SOURCE IDENTICAL wheel/sdist/commit pyloudnorm/normalize.py
+SOURCE IDENTICAL wheel/sdist/commit pyloudnorm/util.py
+UPSTREAM NORMALIZE reference -6 LUFS passed
+UPSTREAM REFERENCE sine_1000.wav -3.0523438444331137
+UPSTREAM REFERENCE 1770-2_Comp_RelGateTest.wav -10.070213867167258
+UPSTREAM REFERENCE 1770-2_Comp_AbsGateTest.wav -69.49297050885087
+UPSTREAM REFERENCE 1770-2_Comp_24LKFS_1000Hz_2ch.wav -24.03518303093543
+PASS release provenance, MIT license, upstream reference WAVs

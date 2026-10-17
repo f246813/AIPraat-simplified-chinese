@@ -1,0 +1,4 @@
+Parent PID: 31796
+Process.HasExited: False
+PASS dialog stays open across six parent checks
+PASS dialog closes when its parent actually exits

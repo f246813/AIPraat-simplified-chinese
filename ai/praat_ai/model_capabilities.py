@@ -118,12 +118,16 @@ def correct_audio_setting(path: Path, expected_identity: str, reason: str) -> bo
         if config_identity(config.api) != expected_identity:
             return False
         payload = json.loads(path.read_text(encoding='utf-8')) if path.exists() else config.to_dict()
+        from . import api_diagnostics
+        # 序号在写入时递增：并列的时间戳也能分出「谁更晚」（见 ApiConfig.audio_setting_sequence）。
+        sequence = api_diagnostics.next_sequence(payload)
+        payload[api_diagnostics.SEQUENCE_KEY] = sequence
         payload.setdefault('api', {}).update({
             'audio_input_enabled': False, 'audio_input_source': 'corrected',
             'audio_input_reason': reason, 'audio_input_path': path_identity(config.api),
             'audio_verified_at': '', 'audio_corrected_at': datetime.now(timezone.utc).isoformat(),
             'audio_test_result': api_diagnostics.test_record(config.api.base_url, config.api.model, config.api.api_key,
-                {'status':'unsupported','reason':reason}),
+                {'status':'unsupported','reason':reason}, sequence=sequence),
         })
         temporary = None
         try:

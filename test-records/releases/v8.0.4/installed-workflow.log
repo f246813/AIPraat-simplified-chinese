@@ -1,0 +1,9 @@
+Test Python: <WORKSPACE>\venv-ai-modern\Scripts\python.exe (Python 3.12.14, runtime ready)
+Test FFmpeg: <USER_HOME>\AppData\Local\AIPraat\ffmpeg\ffmpeg.exe
+PASS delivered installer has editable language model, wav2vec2 directory selection and real 15/15 readiness
+PASS real embedded payload installation reaches completion
+PASS delivered installer has editable language model, wav2vec2 directory selection and real 15/15 readiness
+PASS real directory write rejection exposes readable error and recovery actions
+PASS real embedded payload installation reaches completion
+PASS retry after restoring fixture permissions completes real installation
+RESULT production installer workflow passed; fixture=<WORKSPACE>\scratch\delivered-install-fab5ee6c16a5415699359238b7dd5537

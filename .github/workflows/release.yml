@@ -53,9 +53,92 @@ permissions:
   contents: write
 
 jobs:
+  # 阶段 5 门槛①：AI 后端离线回归。发布前先证明「不联网、不下载模型、不装东西」也能跑通，
+  # 并且分析路径的运行库（NumPy / SciPy / pyloudnorm / praat-parselmouth）真的可用——
+  # 这一步用的就是 ai/praat_ai/capabilities.py 这份进程内检测。
+  ai-offline-regression:
+    name: AI backend offline regression
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: ai/requirements.txt
+
+      - name: Install the analysis runtime (no models, no GPU, no downloads at test time)
+        working-directory: ai
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "numpy>=2.0,<2.3" "scipy>=1.14.1,<1.15" "pyloudnorm==0.2.0" \
+            "Pillow>=10.0" "praat-parselmouth>=0.4.7; python_version < '3.13'" \
+            "pydantic-ai-slim[openai]==2.52.0" "pydantic-graph==2.52.0" "jsonschema==4.26.0"
+
+      - name: Compile check
+        working-directory: ai
+        run: python -m compileall -q praat_ai
+
+      - name: Runtime capability gate (analysis path)
+        working-directory: ai
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python - <<'PY'
+          import json
+          from praat_ai import capabilities
+          report = capabilities.analysis_capabilities()
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+          assert report["ready"], "分析依赖未就绪：" + report["message"]
+          PY
+
+      - name: Offline regression suite
+        working-directory: ai
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONDONTWRITEBYTECODE: "1"
+          PYTHONPATH: ".:tests"
+        run: python -m unittest discover -s tests -t tests -q
+
+  # 阶段 5 门槛②：前端类型 + 单元测试（vitest；浏览器级 playwright 需要真实窗口，见 docs）。
+  frontend-tests:
+    name: Frontend unit tests and types
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ai/frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: ai/frontend
+        run: npm ci
+
+      - name: Type check
+        working-directory: ai/frontend
+        run: npx tsc -b
+
+      - name: Unit tests
+        working-directory: ai/frontend
+        run: npm test
+
+  # 两档测试门槛是硬前置：测试没过就不构建、不发布。
   build-windows-x64:
     name: Build Windows x64
     runs-on: windows-latest
+    needs:
+      - ai-offline-regression
+      - frontend-tests
 
     defaults:
       run:
@@ -98,6 +181,9 @@ jobs:
   build-macos:
     name: Build macOS universal
     runs-on: macos-14
+    needs:
+      - ai-offline-regression
+      - frontend-tests
     if: ${{ inputs.build_macos }}
 
     steps:

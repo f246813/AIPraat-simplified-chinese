@@ -1,0 +1,16 @@
+﻿Collecting numpy<2.3,>=2.0
+  Using cached numpy-2.2.6-cp312-cp312-win_amd64.whl.metadata (60 kB)
+Collecting scipy<1.15,>=1.14.1
+  Using cached scipy-1.14.1-cp312-cp312-win_amd64.whl.metadata (60 kB)
+Collecting pyloudnorm==0.2.0
+  Using cached pyloudnorm-0.2.0-py3-none-any.whl.metadata (6.6 kB)
+Using cached pyloudnorm-0.2.0-py3-none-any.whl (10 kB)
+Using cached numpy-2.2.6-cp312-cp312-win_amd64.whl (12.6 MB)
+Using cached scipy-1.14.1-cp312-cp312-win_amd64.whl (44.5 MB)
+Installing collected packages: numpy, scipy, pyloudnorm
+  Attempting uninstall: numpy
+    Found existing installation: numpy 2.5.3
+    Uninstalling numpy-2.5.3:
+      Successfully uninstalled numpy-2.5.3
+Successfully installed numpy-2.2.6 pyloudnorm-0.2.0 scipy-1.14.1
+

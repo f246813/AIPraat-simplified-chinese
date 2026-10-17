@@ -1,0 +1,56 @@
+test_complete_environment_generates_empty_repair_list (test_runtime_dependencies.RuntimeTests.test_complete_environment_generates_empty_repair_list) ... ok
+test_dependency_folder_resolves_missing_indirect_package_offline (test_runtime_dependencies.RuntimeTests.test_dependency_folder_resolves_missing_indirect_package_offline) ... ok
+test_filename_cannot_masquerade_as_other_package (test_runtime_dependencies.RuntimeTests.test_filename_cannot_masquerade_as_other_package) ... ok
+test_function_failure_reinstalls_only_failed_version_satisfied_distributions (test_runtime_dependencies.RuntimeTests.test_function_failure_reinstalls_only_failed_version_satisfied_distributions) ... ok
+test_import_dll_and_webview_failure_prevents_readiness (test_runtime_dependencies.RuntimeTests.test_import_dll_and_webview_failure_prevents_readiness) ... 正在检测 NumPy
+NumPy: 版本不满足 numpy>=2.0,<2.3
+正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 版本不满足 scipy>=1.14.1,<1.15
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 版本不满足 pyloudnorm==0.2.0
+正在检测 Pillow
+Pillow: 版本不满足 pillow>=10.0
+正在检测 praat-parselmouth
+praat-parselmouth: 加载/功能检测失败：DLL load failed / WebView2 missing
+正在检测 pydantic-ai-slim
+pydantic-ai-slim: 加载/功能检测失败：DLL load failed / WebView2 missing
+正在检测 pydantic-graph
+pydantic-graph: 加载/功能检测失败：DLL load failed / WebView2 missing
+正在检测 jsonschema
+jsonschema: 版本不满足 jsonschema==4.26.0
+正在检测 pywebview
+pywebview: 版本不满足 pywebview==6.2.1
+正在检测 pythonnet
+pythonnet: 版本不满足 pythonnet==3.2.0
+正在检测 PyTorch
+PyTorch: 加载/功能检测失败：DLL load failed / WebView2 missing
+正在检测 Transformers
+Transformers: 版本不满足 transformers>=4.57
+正在检测 Safetensors
+Safetensors: 加载/功能检测失败：DLL load failed / WebView2 missing
+正在检测 WebView2 Runtime
+WebView2 Runtime: 加载/功能检测失败：DLL load failed / WebView2 missing
+正在检测 Tcl/Tk
+Tcl/Tk: 加载/功能检测失败：DLL load failed / WebView2 missing
+ok
+test_labels_checks_manifest_and_child_whitelist_are_one_contract (test_runtime_dependencies.RuntimeTests.test_labels_checks_manifest_and_child_whitelist_are_one_contract) ... ok
+test_offline_preflight_and_reinstall_are_scoped_and_never_use_index (test_runtime_dependencies.RuntimeTests.test_offline_preflight_and_reinstall_are_scoped_and_never_use_index) ... 定向重装功能失败项（不重装其健康依赖）：scipy @ file:///D:/Praat-work/%E7%A8%B3%E5%AE%9A%E6%97%A9%E6%9C%9F%E7%89%88/AIPraat%20wheel%20%E4%B8%AD%E6%96%87%20ks817m3_/scipy-1.14.1-py3-none-any.whl
+定向重装功能失败项（不重装其健康依赖）：scipy @ file:///D:/Praat-work/%E7%A8%B3%E5%AE%9A%E6%97%A9%E6%9C%9F%E7%89%88/AIPraat%20wheel%20%E4%B8%AD%E6%96%87%20ks817m3_/scipy-1.14.1-py3-none-any.whl
+ok
+test_offline_url_dependency_is_rejected_before_pip (test_runtime_dependencies.RuntimeTests.test_offline_url_dependency_is_rejected_before_pip) ... ok
+test_old_duplicate_or_changed_manifest_is_redetected (test_runtime_dependencies.RuntimeTests.test_old_duplicate_or_changed_manifest_is_redetected) ... ok
+test_other_python_device_or_incomplete_report_is_redetected (test_runtime_dependencies.RuntimeTests.test_other_python_device_or_incomplete_report_is_redetected) ... ok
+test_probe_isolated_process_and_function_failure_even_with_valid_metadata (test_runtime_dependencies.RuntimeTests.test_probe_isolated_process_and_function_failure_even_with_valid_metadata) ... 正在检测 SciPy（响度滤波）
+SciPy（响度滤波）: 加载/功能检测失败：ABI / known reference failed
+正在检测 pyloudnorm（响度归一化）
+pyloudnorm（响度归一化）: 加载/功能检测失败：ABI / known reference failed
+ok
+test_reject_wrong_package_version_architecture_and_python (test_runtime_dependencies.RuntimeTests.test_reject_wrong_package_version_architecture_and_python) ... ok
+test_repair_plan_targets_only_failed_items_preserving_extras_and_constraints (test_runtime_dependencies.RuntimeTests.test_repair_plan_targets_only_failed_items_preserving_extras_and_constraints) ... ok
+test_requirements_include_all_required_and_openai_extra (test_runtime_dependencies.RuntimeTests.test_requirements_include_all_required_and_openai_extra) ... ok
+test_supported_python_is_310_to_312_x64 (test_runtime_dependencies.RuntimeTests.test_supported_python_is_310_to_312_x64) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 8.301s
+
+OK

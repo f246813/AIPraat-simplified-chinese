@@ -1,0 +1,57 @@
+{
+  "marker": "SMOKE-NOT-ACCEPTANCE",
+  "alignment_source": "proportional",
+  "alignment_confidence": 0.25,
+  "warnings": [
+    "Reference alignment: No forced aligner was available; timing is approximate.",
+    "Reference alignment: wav2vec2: wav2vec2 对齐退化：5 个音素中位 1 帧/音素，覆盖 0.101/1.053 秒（9.6%）；该结果没有可用时长信息，已拒绝",
+    "No forced aligner was available; timing is approximate.",
+    "wav2vec2: wav2vec2 对齐退化：5 个音素中位 1 帧/音素，覆盖 0.101/0.892 秒（11.4%）；该结果没有可用时长信息，已拒绝",
+    "音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。"
+  ],
+  "check_statuses": {
+    "relative_duration": "not_evaluated",
+    "phone_acoustics": "not_evaluated",
+    "independent_phone_recognition": "not_evaluated",
+    "stress_or_pitch_accent": "not_evaluated",
+    "mora_structure": "not_evaluated"
+  },
+  "learner_spans": [
+    [
+      "a",
+      0.0,
+      0.1783,
+      "proportional",
+      0.25
+    ],
+    [
+      "n",
+      0.1783,
+      0.3567,
+      "proportional",
+      0.25
+    ],
+    [
+      "a",
+      0.3567,
+      0.535,
+      "proportional",
+      0.25
+    ],
+    [
+      "t",
+      0.535,
+      0.7133,
+      "proportional",
+      0.25
+    ],
+    [
+      "a",
+      0.7133,
+      0.8917,
+      "proportional",
+      0.25
+    ]
+  ],
+  "observations": 0
+}

@@ -1,0 +1,11 @@
+test_actual_r_executes_pinned_source (test_normalization_upstream_evidence.UpstreamEvidenceTests.test_actual_r_executes_pinned_source) ... ok
+test_explicit_missing_r_never_falls_back (test_normalization_upstream_evidence.UpstreamEvidenceTests.test_explicit_missing_r_never_falls_back) ... ok
+test_missing_r_is_not_python_substitution (test_normalization_upstream_evidence.UpstreamEvidenceTests.test_missing_r_is_not_python_substitution) ... ok
+test_pinned_sources_match_frozen_hashes (test_normalization_upstream_evidence.UpstreamEvidenceTests.test_pinned_sources_match_frozen_hashes) ... ok
+test_r_process_failure_cannot_reuse_old_output (test_normalization_upstream_evidence.UpstreamEvidenceTests.test_r_process_failure_cannot_reuse_old_output) ... ok
+test_require_r_fails_and_preserves_structured_output (test_normalization_upstream_evidence.UpstreamEvidenceTests.test_require_r_fails_and_preserves_structured_output) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.331s
+
+OK

@@ -1,7 +1,6 @@
 """本机临时办法：把 Praat 放到工作区之外启动（绕开 Low 完整性标签）。
 
-背景（2026-10-02 排查）：这个仓库所在的目录（``C:\\Users\\f2468\\Desktop\\Praat``，
-含 ``稳定早期版``）被打了 **Low 完整性标签**。Windows 会按**映像文件**的标签决定新进程
+适用情形：仓库所在的目录被打了 **Low 完整性标签**。Windows 会按**映像文件**的标签决定新进程
 的完整性级别，所以从 ``稳定早期版\\Praat.exe`` 启动的 Praat 一定是 Low；Low 进程写不了
 Medium 的 ``%APPDATA%\\Praat\\Message.txt``，于是对话前端**一条指令都送不出去**
 （`[Errno 13] Permission denied`，表现为「VOT 没完成」）。

@@ -1,0 +1,51 @@
+{
+  "pointer": {
+    "x": 137,
+    "y": 21,
+    "target": "<span class=\"chat-title-text\" title=\"\u65b0\u4f1a\u8bdd\">\u65b0\u4f1a\u8bdd</span>"
+  },
+  "title": {
+    "x": 137,
+    "y": 21
+  },
+  "nativeCalls": [
+    {
+      "ok": true
+    }
+  ],
+  "drag": {
+    "dx": 100,
+    "dy": 50
+  },
+  "alignment": [
+    {
+      "width": 900,
+      "expanded": false,
+      "main": 476,
+      "composer": 476,
+      "welcome": 476
+    },
+    {
+      "width": 900,
+      "expanded": true,
+      "main": 578,
+      "composer": 578,
+      "welcome": 578
+    },
+    {
+      "width": 1200,
+      "expanded": false,
+      "main": 626,
+      "composer": 626,
+      "welcome": 626
+    },
+    {
+      "width": 1200,
+      "expanded": true,
+      "main": 728,
+      "composer": 728,
+      "welcome": 728
+    }
+  ],
+  "ok": true
+}

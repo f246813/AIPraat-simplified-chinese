@@ -2,129 +2,129 @@ OS detected as Windows
 ARCHITECTURE: given as "x64v3", resolved as "-march=x86-64-v3"
 make -C external/clapack
 make -C kar
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/clapack'
+make[1]: Entering directory '<WORKSPACE>/external/clapack'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/clapack'
+make[1]: Leaving directory '<WORKSPACE>/external/clapack'
 make -C external/gsl
-make[1]: Entering directory '/d/Praat-work/稳定早期版/kar'
+make[1]: Entering directory '<WORKSPACE>/kar'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/kar'
+make[1]: Leaving directory '<WORKSPACE>/kar'
 make -C melder
-make[1]: Entering directory '/d/Praat-work/稳定早期版/melder'
+make[1]: Entering directory '<WORKSPACE>/melder'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/melder'
+make[1]: Leaving directory '<WORKSPACE>/melder'
 make -C sys
-make[1]: Entering directory '/d/Praat-work/稳定早期版/sys'
+make[1]: Entering directory '<WORKSPACE>/sys'
 clang -std=gnu++17 -municode -D_FILE_OFFSET_BITS=64 -march=x86-64-v3 -O3 -Wshadow -I ../kar -I ../melder -I ../sys -I ../dwsys -I ../stat -I ../fon  -c -o motifEmulator.o motifEmulator.cpp
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/gsl'
+make[1]: Entering directory '<WORKSPACE>/external/gsl'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/gsl'
+make[1]: Leaving directory '<WORKSPACE>/external/gsl'
 make -C external/glpk
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/glpk'
+make[1]: Entering directory '<WORKSPACE>/external/glpk'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/glpk'
+make[1]: Leaving directory '<WORKSPACE>/external/glpk'
 make -C external/lame
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/lame'
+make[1]: Entering directory '<WORKSPACE>/external/lame'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/lame'
+make[1]: Leaving directory '<WORKSPACE>/external/lame'
 make -C external/mp3
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/mp3'
+make[1]: Entering directory '<WORKSPACE>/external/mp3'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/mp3'
+make[1]: Leaving directory '<WORKSPACE>/external/mp3'
 make -C external/num
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/num'
+make[1]: Entering directory '<WORKSPACE>/external/num'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/num'
+make[1]: Leaving directory '<WORKSPACE>/external/num'
 make -C external/flac
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/flac'
+make[1]: Entering directory '<WORKSPACE>/external/flac'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/flac'
+make[1]: Leaving directory '<WORKSPACE>/external/flac'
 make -C external/portaudio
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/portaudio'
+make[1]: Entering directory '<WORKSPACE>/external/portaudio'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/portaudio'
+make[1]: Leaving directory '<WORKSPACE>/external/portaudio'
 make -C external/espeak
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/espeak'
+make[1]: Entering directory '<WORKSPACE>/external/espeak'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/espeak'
+make[1]: Leaving directory '<WORKSPACE>/external/espeak'
 make -C external/vorbis
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/vorbis'
+make[1]: Entering directory '<WORKSPACE>/external/vorbis'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/vorbis'
+make[1]: Leaving directory '<WORKSPACE>/external/vorbis'
 make -C external/opusfile
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/opusfile'
+make[1]: Entering directory '<WORKSPACE>/external/opusfile'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/opusfile'
+make[1]: Leaving directory '<WORKSPACE>/external/opusfile'
 make -C external/whispercpp
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/whispercpp'
+make[1]: Entering directory '<WORKSPACE>/external/whispercpp'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/whispercpp'
+make[1]: Leaving directory '<WORKSPACE>/external/whispercpp'
 make -C external/blake3
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/blake3'
+make[1]: Entering directory '<WORKSPACE>/external/blake3'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/blake3'
+make[1]: Leaving directory '<WORKSPACE>/external/blake3'
 make -C external/zlib
-make[1]: Entering directory '/d/Praat-work/稳定早期版/external/zlib'
+make[1]: Entering directory '<WORKSPACE>/external/zlib'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/external/zlib'
-motifEmulator.cpp:1787:65: warning: '/*' within block comment [-Wcomment]
- 1787 |         /*if (my widgetClass == xmScrolledWindowWidgetClass) return;   /* Ignore. */
-      |                                                                        ^
-1 warning generated.
+make[1]: Leaving directory '<WORKSPACE>/external/zlib'
+motifEmulator.cpp:1787:65: warning: '/*' within block comment [-Wcomment]
+ 1787 |         /*if (my widgetClass == xmScrolledWindowWidgetClass) return;   /* Ignore. */
+      |                                                                        ^
+1 warning generated.
 touch libsys.a
 rm libsys.a
 ar cq libsys.a Thing.o Data.o Simple.o Collection.o Strings.o Graphics.o Graphics_linesAndAreas.o Graphics_text.o Graphics_colour.o Graphics_image.o Graphics_record.o Graphics_utils.o Graphics_grey.o Graphics_altitude.o GraphicsPostscript.o Graphics_surface.o ManPage.o ManPages.o ManPages_toHtml.o Script.o Notebook.o machine.o GraphicsScreen.o Printer.o Preferences.o site.o Picture.o Ui.o UiFile.o UiPause.o DataGui.o Editor.o DataEditor.o HyperPage.o Manual.o TextEditor.o praat.o praat_actions.o praat_menuCommands.o praat_picture.o praat_script.o praat_statistics.o praat_logo.o praat_library.o praat_objectMenus.o InfoEditor.o ScriptEditor.o NotebookEditor.o ButtonEditor.o Interpreter.o Formula.o StringsEditor.o DemoEditor.o motifEmulator.o GuiText.o GuiWindow.o Gui.o GuiObject.o GuiDrawingArea.o GuiMenu.o GuiMenuItem.o GuiButton.o GuiLabel.o GuiCheckButton.o GuiRadioButton.o GuiDialog.o GuiList.o GuiTrust.o GuiFileSelect.o GuiScale.o GuiScrollBar.o GuiScrolledWindow.o GuiControl.o GuiForm.o GuiOptionMenu.o GuiProgressBar.o GuiShell.o GuiThing.o Gui_messages.o praat_translate.o praat_python.o PraatAiControl.o PythonScriptEditor.o PreferencesDialog.o
 ranlib libsys.a
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/sys'
+make[1]: Leaving directory '<WORKSPACE>/sys'
 make -C dwsys
-make[1]: Entering directory '/d/Praat-work/稳定早期版/dwsys'
+make[1]: Entering directory '<WORKSPACE>/dwsys'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/dwsys'
+make[1]: Leaving directory '<WORKSPACE>/dwsys'
 make -C stat
-make[1]: Entering directory '/d/Praat-work/稳定早期版/stat'
+make[1]: Entering directory '<WORKSPACE>/stat'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/stat'
+make[1]: Leaving directory '<WORKSPACE>/stat'
 make -C fon
-make[1]: Entering directory '/d/Praat-work/稳定早期版/fon'
+make[1]: Entering directory '<WORKSPACE>/fon'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/fon'
+make[1]: Leaving directory '<WORKSPACE>/fon'
 make -C foned
-make[1]: Entering directory '/d/Praat-work/稳定早期版/foned'
+make[1]: Entering directory '<WORKSPACE>/foned'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/foned'
+make[1]: Leaving directory '<WORKSPACE>/foned'
 make -C dwtools
-make[1]: Entering directory '/d/Praat-work/稳定早期版/dwtools'
+make[1]: Entering directory '<WORKSPACE>/dwtools'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/dwtools'
+make[1]: Leaving directory '<WORKSPACE>/dwtools'
 make -C LPC
-make[1]: Entering directory '/d/Praat-work/稳定早期版/LPC'
+make[1]: Entering directory '<WORKSPACE>/LPC'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/LPC'
+make[1]: Leaving directory '<WORKSPACE>/LPC'
 make -C EEG
-make[1]: Entering directory '/d/Praat-work/稳定早期版/EEG'
+make[1]: Entering directory '<WORKSPACE>/EEG'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/EEG'
+make[1]: Leaving directory '<WORKSPACE>/EEG'
 make -C sensors
-make[1]: Entering directory '/d/Praat-work/稳定早期版/sensors'
+make[1]: Entering directory '<WORKSPACE>/sensors'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/sensors'
+make[1]: Leaving directory '<WORKSPACE>/sensors'
 make -C gram
-make[1]: Entering directory '/d/Praat-work/稳定早期版/gram'
+make[1]: Entering directory '<WORKSPACE>/gram'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/gram'
+make[1]: Leaving directory '<WORKSPACE>/gram'
 make -C FFNet
-make[1]: Entering directory '/d/Praat-work/稳定早期版/FFNet'
+make[1]: Entering directory '<WORKSPACE>/FFNet'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/FFNet'
+make[1]: Leaving directory '<WORKSPACE>/FFNet'
 make -C artsynth
-make[1]: Entering directory '/d/Praat-work/稳定早期版/artsynth'
+make[1]: Entering directory '<WORKSPACE>/artsynth'
 make[1]: Nothing to be done for 'all'.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/artsynth'
+make[1]: Leaving directory '<WORKSPACE>/artsynth'
 make -C main main_Praat.o praat_win.o
-make[1]: Entering directory '/d/Praat-work/稳定早期版/main'
+make[1]: Entering directory '<WORKSPACE>/main'
 make[1]: 'main_Praat.o' is up to date.
 make[1]: 'praat_win.o' is up to date.
-make[1]: Leaving directory '/d/Praat-work/稳定早期版/main'
+make[1]: Leaving directory '<WORKSPACE>/main'
 clang -o Praat.exe main/main_Praat.o main/praat_win.o fon/libfon.a \
 	artsynth/libartsynth.a FFNet/libFFNet.a \
 	gram/libgram.a EEG/libEEG.a \

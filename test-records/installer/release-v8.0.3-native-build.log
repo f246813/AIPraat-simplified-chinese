@@ -1,0 +1,138 @@
+OS given as Windows
+ARCHITECTURE: given as "x64v3", resolved as "-march=x86-64-v3"
+make -C external/clapack
+make -C kar
+make[1]: Entering directory '<WORKSPACE>/external/clapack'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/clapack'
+make -C external/gsl
+make[1]: Entering directory '<WORKSPACE>/kar'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/kar'
+make -C melder
+make[1]: Entering directory '<WORKSPACE>/melder'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/melder'
+make -C sys
+make[1]: Entering directory '<WORKSPACE>/sys'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/sys'
+make -C dwsys
+make[1]: Entering directory '<WORKSPACE>/external/gsl'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/gsl'
+make -C external/glpk
+make[1]: Entering directory '<WORKSPACE>/dwsys'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/dwsys'
+make[1]: Entering directory '<WORKSPACE>/external/glpk'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/glpk'
+make -C stat
+make -C external/lame
+make[1]: Entering directory '<WORKSPACE>/external/lame'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/lame'
+make -C external/mp3
+make[1]: Entering directory '<WORKSPACE>/external/mp3'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/mp3'
+make[1]: Entering directory '<WORKSPACE>/stat'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/stat'
+make -C fon
+make -C external/num
+make[1]: Entering directory '<WORKSPACE>/external/num'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/num'
+make -C external/flac
+make[1]: Entering directory '<WORKSPACE>/external/flac'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/flac'
+make -C external/portaudio
+make[1]: Entering directory '<WORKSPACE>/external/portaudio'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/portaudio'
+make -C external/espeak
+make[1]: Entering directory '<WORKSPACE>/fon'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/fon'
+make -C foned
+make[1]: Entering directory '<WORKSPACE>/external/espeak'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/espeak'
+make -C external/vorbis
+make[1]: Entering directory '<WORKSPACE>/external/vorbis'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/vorbis'
+make -C external/opusfile
+make[1]: Entering directory '<WORKSPACE>/foned'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/foned'
+make -C dwtools
+make[1]: Entering directory '<WORKSPACE>/external/opusfile'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/opusfile'
+make -C external/whispercpp
+make[1]: Entering directory '<WORKSPACE>/external/whispercpp'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/whispercpp'
+make -C external/blake3
+make[1]: Entering directory '<WORKSPACE>/external/blake3'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/blake3'
+make -C external/zlib
+make[1]: Entering directory '<WORKSPACE>/dwtools'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/dwtools'
+make -C LPC
+make[1]: Entering directory '<WORKSPACE>/external/zlib'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/external/zlib'
+make[1]: Entering directory '<WORKSPACE>/LPC'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/LPC'
+make -C EEG
+make[1]: Entering directory '<WORKSPACE>/EEG'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/EEG'
+make -C sensors
+make[1]: Entering directory '<WORKSPACE>/sensors'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/sensors'
+make -C gram
+make[1]: Entering directory '<WORKSPACE>/gram'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/gram'
+make -C FFNet
+make[1]: Entering directory '<WORKSPACE>/FFNet'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/FFNet'
+make -C artsynth
+make[1]: Entering directory '<WORKSPACE>/artsynth'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '<WORKSPACE>/artsynth'
+make -C main main_Praat.o praat_win.o
+make[1]: Entering directory '<WORKSPACE>/main'
+make[1]: 'main_Praat.o' is up to date.
+make[1]: 'praat_win.o' is up to date.
+make[1]: Leaving directory '<WORKSPACE>/main'
+clang -o scratch/Praat-release-v8.0.3.exe main/main_Praat.o main/praat_win.o fon/libfon.a \
+	artsynth/libartsynth.a FFNet/libFFNet.a \
+	gram/libgram.a EEG/libEEG.a \
+	LPC/libLPC.a dwtools/libdwtools.a sensors/libsensors.a \
+	foned/libfoned.a fon/libfon.a stat/libstat.a \
+	dwsys/libdwsys.a sys/libsys.a melder/libmelder.a kar/libkar.a \
+	external/espeak/libespeak.a \
+	external/portaudio/libportaudio.a \
+	external/flac/libflac.a external/lame/liblame.a external/mp3/libmp3.a \
+	external/glpk/libglpk.a \
+	external/clapack/libclapack.a \
+	external/gsl/libgsl.a \
+	external/num/libnum.a \
+	external/vorbis/libvorbis.a \
+	external/opusfile/libopusfile.a \
+	external/whispercpp/libwhisper.a \
+	external/blake3/libblake3.a \
+	external/zlib/libzlib.a \
+               -lmfuuid -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -lwinspool -lshell32 -luxtheme -ldwmapi -ladvapi32 -luuid -static -lc++ -lc++abi -mwindows 

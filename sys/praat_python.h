@@ -14,6 +14,8 @@ void praat_python_setExecutablePath (conststring32 path);
 
 // Run a Python script file (.py)
 void praat_runPythonScriptFile (conststring32 filePath, conststring32 optionalWorkingDir = nullptr);
+// Bound menu control helpers without imposing a time limit on analysis scripts.
+void praat_runPythonScriptFile (conststring32 filePath, conststring32 optionalWorkingDir, unsigned int maximumWaitMilliseconds);
 
 // Run Python code text directly
 void praat_runPythonScriptText (conststring32 scriptText, conststring32 optionalScriptDirectory = nullptr);

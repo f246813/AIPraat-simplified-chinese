@@ -1,0 +1,77 @@
+
+ RUN  v3.2.4 <WORKSPACE>/ai/frontend
+
+node.exe :  DEPRECATED  'basic' reporter is deprecated and will be removed in Vitest v3.
+所在位置 行:1 字符: 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( DEPRECATED  'b...d in Vitest v3.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Remove 'basic' from 'reporters' option. To match 'basic' reporter 100%, use configuration:
+{
+  "test": {
+    "reporters": [
+      [
+        "default",
+        {
+          "summary": false
+        }
+      ]
+    ]
+  }
+}
+ ✓ tests/archived-settings.test.tsx (2 tests) 517ms
+   ✓ failed restore keeps history visible, reports the error and permits a successful retry  399ms
+ ✓ tests/model-settings-navigation.test.tsx (2 tests) 532ms
+   ✓ repeated menu requests select Model/API and keep unsaved settings  520ms
+ ✓ tests/local-model-path-settings.test.tsx (2 tests) 713ms
+   ✓ local connection settings offer a model picker and save its path  499ms
+ ✓ tests/composer-status.test.tsx (8 tests) 1005ms
+   ✓ debounces real host estimates and ignores stale session replies  389ms
+ ✓ tests/sidebar-layout.test.tsx (3 tests) 966ms
+   ✓ renders the real brand dropdown and explicit panel icons, with search initially hidden  314ms
+   ✓ keeps default, pinned and custom sections as independently collapsible siblings  417ms
+ ✓ tests/mfa-preset-editor.test.tsx (7 tests) 1472ms
+   ✓ keeps names immutable and imports persistent resources separately from unsaved bindings  362ms
+ ✓ tests/normalization.test.tsx (5 tests) 1703ms
+   ✓ defaults to raw and excludes normalization entirely from legacy submissions  446ms
+   ✓ imports both slots, previews F1/F2 only after confirmation and submits host receipts, not client fitted parameters  486ms
+   ✓ clears imported identities and confirmation when changing speakers or reading presets  395ms
+ ✓ tests/sidebar-search.test.tsx (7 tests) 1433ms
+   ✓ searches unopened messages with one compact host request and no full history hydration  390ms
+ ✓ tests/prosody-settings.test.tsx (7 tests) 2107ms
+   ✓ keeps both independent switches off by default and submits explicit utterance pitch confirmation  598ms
+   ✓ imports neutral baselines via receipts, clears them and confirmation after range/speaker changes  582ms
+ ✓ tests/bridge-store.test.ts (17 tests) 55ms
+ ✓ tests/speech-dictionaries.test.tsx (13 tests) 2350ms
+   ✓ opens the Wav2Vec2 folder picker and selects a model through its own namespace  500ms
+   ✓ models share deletion confirmation and return to dictionaries through the sidebar  352ms
+ ✓ tests/organization-store.test.ts (9 tests) 336ms
+ ✓ tests/search.test.ts (8 tests) 37ms
+ ✓ tests/session-menu.test.ts (7 tests) 37ms
+ ✓ tests/webview-form-semantics.test.tsx (1 test) 329ms
+   ✓ square lock is an explicit styling exception, not a different business control  328ms
+ ✓ tests/workflow-settings.test.tsx (2 tests) 350ms
+   ✓ workflow presets, custom edit, host save and reopen never start model tests  348ms
+ ✓ tests/startup-session.test.ts (5 tests) 30ms
+ ✓ tests/layout.test.ts (7 tests) 23ms
+ ✓ tests/archived-groups.test.ts (2 tests) 20ms
+ ✓ tests/modern-boundaries.test.ts (2 tests) 8ms
+ ✓ tests/transcript-menu.test.ts (5 tests) 9ms
+ ✓ tests/minimap.test.ts (6 tests) 7ms
+ ✓ tests/editor.test.ts (10 tests) 14ms
+ ✓ tests/completions.test.ts (4 tests) 5ms
+ ✓ tests/sidebar-origins.test.ts (2 tests) 4ms
+ ✓ tests/transcript-window.test.ts (6 tests) 4ms
+ ✓ tests/scroll.test.ts (5 tests) 4ms
+ ✓ tests/pronunciation.test.tsx (17 tests) 3986ms
+   ✓ submits selected sounds and AI options through the real tutor namespace  542ms
+   ✓ requires all multiple candidates to be chosen and applied, preserving manually entered IPA until explicit application  455ms
+
+
+ Test Files  28 passed (28)
+      Tests  171 passed (171)
+   Start at  02:24:19
+   Duration  5.86s (transform 2.78s, setup 0ms, collect 10.32s, tests 18.05s, environment 21.51s, prepare 4.08s)
+

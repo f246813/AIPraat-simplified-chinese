@@ -1,0 +1,135 @@
+<style>
+#focused-webview { --fw-paper:#fff; --fw-ink:#242424; --fw-muted:#666; --fw-line:#dedede; --fw-soft:#f2f2f2; --fw-blue:#2563eb; --fw-onblue:#fff; --fw-blue-soft:#eff5ff; --fw-shell:rgba(246,246,246,.88); --fw-tint:255,255,255; --fw-opacity:.72; --fw-wall:linear-gradient(125deg,#c5cedd 0%,#d7d5df 46%,#d6c7c7 100%); color:var(--fw-ink); font:14px/1.65 'Segoe UI','Microsoft YaHei',sans-serif; color-scheme:light; }
+#focused-webview[data-theme=dark] { --fw-paper:#222; --fw-ink:#ececec; --fw-muted:#aaa; --fw-line:#424242; --fw-soft:#303030; --fw-blue:#83b0ff; --fw-onblue:#142643; --fw-blue-soft:#263145; --fw-shell:rgba(27,27,27,.91); --fw-tint:26,26,26; color-scheme:dark; }
+#focused-webview * { box-sizing:border-box; }
+#focused-webview [hidden] { display:none!important; }
+#focused-webview button,#focused-webview input,#focused-webview textarea { font:inherit; color:inherit; }
+#focused-webview button { display:inline-flex; justify-content:center; align-items:center; gap:6px; border:1px solid var(--fw-line); border-radius:6px; padding:5px 9px; background:var(--fw-paper); font-size:12px; transition:background .15s; }
+#focused-webview button:hover { background:var(--fw-soft); }
+#focused-webview button:focus-visible,#focused-webview input:focus-visible,#focused-webview textarea:focus-visible { outline:2px solid var(--fw-blue); outline-offset:3px; }
+#focused-webview h2,#focused-webview h3,#focused-webview p { margin:0; }
+#focused-webview .fw-stage { padding:12px; background:var(--fw-wall); border-radius:13px; }
+#focused-webview .fw-window { min-height:654px; display:grid; grid-template-columns:194px minmax(0,1fr); border:1px solid rgba(var(--fw-tint),.5); border-radius:10px; box-shadow:0 10px 36px #00000016; position:relative; isolation:isolate; }
+#focused-webview .fw-nav { background:rgba(var(--fw-tint),var(--fw-opacity)); backdrop-filter:blur(28px) saturate(.65); border-radius:10px 0 0 10px; padding:18px 11px 13px; display:flex; flex-direction:column; gap:13px; border-right:1px solid rgba(var(--fw-tint),.4); min-width:0; }
+#focused-webview .fw-brand { display:flex; align-items:center; gap:9px; padding:0 6px; font-size:15px; font-weight:600; }
+#focused-webview .fw-brand svg { width:18px; height:18px; }
+#focused-webview .fw-brand small { display:block; font-size:10px; font-weight:400; letter-spacing:1px; color:var(--fw-muted); }
+#focused-webview .fw-nav-actions { display:flex; align-items:center; gap:6px; padding:0 2px; }
+#focused-webview .fw-new { height:29px; background:rgba(var(--fw-tint),.5); border-color:rgba(var(--fw-tint),.6); font-weight:500; }
+#focused-webview .fw-icon { width:28px; height:28px; padding:5px; background:transparent; border:0; }
+#focused-webview .fw-icon svg { width:15px; height:15px; }
+#focused-webview .fw-search { display:flex; align-items:center; gap:7px; background:rgba(var(--fw-tint),.48); padding:5px 7px; border-radius:6px; border:1px solid rgba(var(--fw-tint),.45); }
+#focused-webview .fw-search input { width:100%; min-width:0; background:transparent; border:0; font-size:11px; }
+#focused-webview .fw-caption { color:var(--fw-muted); font-size:10px; padding:0 8px; margin-top:5px; }
+#focused-webview .fw-history { display:flex; flex-direction:column; gap:3px; }
+#focused-webview .fw-history button { justify-content:flex-start; text-align:left; border:0; padding:8px; background:transparent; font-size:11px; }
+#focused-webview .fw-history .fw-selected { background:rgba(var(--fw-tint),.83); box-shadow:0 1px 4px #00000007; font-weight:500; border-left:2px solid var(--fw-ink); border-radius:2px 5px 5px 2px; padding-left:6px; }
+#focused-webview .fw-nav-bottom { margin-top:auto; display:flex; flex-direction:column; gap:5px; border-top:1px solid var(--fw-line); padding-top:9px; }
+#focused-webview .fw-nav-bottom span { display:flex; align-items:center; gap:8px; padding:5px 8px; font-size:11px; color:var(--fw-muted); }
+#focused-webview .fw-workspace { min-width:0; background:var(--fw-shell); border-radius:0 10px 10px 0; display:flex; flex-direction:column; backdrop-filter:blur(24px) saturate(.6); }
+#focused-webview .fw-top { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 22px; min-height:62px; }
+#focused-webview .fw-top h2 { font-size:13px; font-weight:600; }
+#focused-webview .fw-top small { font-size:10px; color:var(--fw-muted); }
+#focused-webview .fw-top-tools { display:flex; gap:4px; margin-right:76px; }
+#focused-webview .fw-reading { background:var(--fw-paper); margin:0 14px 14px; border:1px solid var(--fw-line); border-radius:9px; flex:1; min-width:0; display:flex; flex-direction:column; box-shadow:0 2px 9px #00000003; }
+#focused-webview .fw-thread { width:100%; max-width:724px; margin:0 auto; padding:24px 28px 14px; flex:1; }
+#focused-webview .fw-user { max-width:86%; margin-left:auto; background:var(--fw-soft); border-radius:8px; padding:10px 13px; font-size:12px; }
+#focused-webview .fw-answer { margin-top:23px; }
+#focused-webview .fw-author { display:flex; align-items:center; gap:7px; margin-bottom:12px; font-size:11px; font-weight:600; }
+#focused-webview .fw-author svg { width:15px; height:15px; }
+#focused-webview .fw-author small { color:var(--fw-muted); font-size:10px; font-weight:400; margin-left:3px; }
+#focused-webview .fw-body { font-size:14px; line-height:1.85; }
+#focused-webview .fw-body h3 { font-size:16px; font-weight:600; margin:17px 0 9px; }
+#focused-webview .fw-body p { margin-bottom:12px; }
+#focused-webview .fw-emphasis { border-left:2px solid var(--fw-ink); background:var(--fw-soft); border-radius:0 5px 5px 0; padding:10px 13px; font-size:12px; margin:13px 0; }
+#focused-webview .fw-hint { display:flex; gap:8px; align-items:flex-start; color:var(--fw-blue); background:var(--fw-blue-soft); border-radius:5px; padding:8px 11px; font-size:12px; margin-top:12px; }
+#focused-webview .fw-hint svg { width:14px; height:14px; flex-shrink:0; margin-top:3px; }
+#focused-webview .fw-file { display:inline-flex; align-items:center; gap:7px; background:var(--fw-paper); border:1px solid var(--fw-line); border-radius:5px; padding:4px 7px; font-size:10px; color:var(--fw-muted); margin-top:9px; }
+#focused-webview .fw-response-actions { display:flex; gap:4px; color:var(--fw-muted); margin-top:10px; }
+#focused-webview .fw-response-actions button { width:27px; height:26px; padding:5px; background:transparent; border:0; }
+#focused-webview .fw-compose-wrap { width:100%; max-width:724px; padding:0 24px 14px; margin:0 auto; }
+#focused-webview .fw-composer { border:1px solid var(--fw-line); border-radius:9px; background:var(--fw-paper); box-shadow:0 2px 7px #00000005; }
+#focused-webview .fw-composer:focus-within { border-color:var(--fw-blue); box-shadow:0 0 0 2px var(--fw-blue-soft); }
+#focused-webview textarea { display:block; width:100%; height:53px; resize:none; border:0; background:transparent; padding:12px 13px 5px; font-size:12px; }
+#focused-webview textarea::placeholder { color:var(--fw-muted); }
+#focused-webview .fw-compose-tools { display:flex; align-items:center; gap:5px; padding:4px 8px 8px; }
+#focused-webview .fw-model { margin-left:auto; font-size:10px; border:0; background:transparent; padding:4px; color:var(--fw-muted); }
+#focused-webview .fw-send { width:26px; height:26px; padding:5px; color:var(--fw-onblue); background:var(--fw-blue); border-color:var(--fw-blue); }
+#focused-webview .fw-send:hover { background:var(--fw-blue); opacity:.85; }
+#focused-webview .fw-send svg { width:14px; height:14px; }
+#focused-webview .fw-status { text-align:center; font-size:10px; color:var(--fw-muted); min-height:16px; margin-top:7px; }
+#focused-webview .fw-pop { position:absolute; bottom:92px; right:34px; z-index:5; background:rgba(var(--fw-tint),.91); backdrop-filter:blur(24px); border:1px solid var(--fw-line); border-radius:8px; padding:9px; width:218px; box-shadow:0 8px 26px #00000015; }
+#focused-webview .fw-pop small { font-size:10px; color:var(--fw-muted); padding:4px 8px; display:block; }
+#focused-webview .fw-pop button { width:100%; background:transparent; border:0; justify-content:flex-start; font-size:11px; }
+#focused-webview .fw-focus .fw-window { grid-template-columns:54px minmax(0,1fr); }
+#focused-webview .fw-focus .fw-nav { align-items:center; padding:19px 6px; }
+#focused-webview .fw-focus .fw-brand { padding:0; }
+#focused-webview .fw-focus .fw-brand>div,#focused-webview .fw-focus .fw-new>span,#focused-webview .fw-focus .fw-search,#focused-webview .fw-focus .fw-caption,#focused-webview .fw-focus .fw-history,#focused-webview .fw-focus .fw-nav-bottom b { display:none; }
+#focused-webview .fw-focus .fw-nav-actions { flex-direction:column; }
+#focused-webview .fw-focus .fw-new { width:29px; padding:5px; }
+#focused-webview .fw-focus .fw-nav-bottom span { padding:7px 2px; }
+#focused-webview .fw-focus .fw-reading { max-width:830px; width:calc(100% - 40px); margin:0 auto 18px; }
+#focused-webview .fw-focus .fw-thread { padding-top:26px; }
+@media(max-width:760px) { #focused-webview .fw-window { grid-template-columns:158px minmax(0,1fr); } #focused-webview .fw-thread { padding:20px 20px 12px; } #focused-webview .fw-nav { padding:17px 8px; } #focused-webview .fw-top { padding:12px 16px; } #focused-webview .fw-top-tools { margin-right:56px; } #focused-webview .fw-compose-wrap { padding:0 16px 14px; } }
+@media(max-width:560px) { #focused-webview .fw-stage { padding:7px; } #focused-webview .fw-window,#focused-webview .fw-focus .fw-window { grid-template-columns:minmax(0,1fr); min-height:820px; } #focused-webview .fw-nav,#focused-webview .fw-focus .fw-nav { flex-direction:row; align-items:center; flex-wrap:wrap; padding:12px; border-right:0; border-radius:9px 9px 0 0; gap:10px; } #focused-webview .fw-brand { margin-right:auto; } #focused-webview .fw-brand small,#focused-webview .fw-nav .fw-history,#focused-webview .fw-nav .fw-search,#focused-webview .fw-nav .fw-caption,#focused-webview .fw-nav .fw-nav-bottom { display:none; } #focused-webview .fw-focus .fw-nav-actions { flex-direction:row; } #focused-webview .fw-focus .fw-brand>div,#focused-webview .fw-focus .fw-new>span { display:block; } #focused-webview .fw-focus .fw-new { width:auto; padding:5px 8px; } #focused-webview .fw-workspace { border-radius:0 0 9px 9px; } #focused-webview .fw-top { min-height:61px; } #focused-webview .fw-top-tools { display:none; } #focused-webview .fw-reading,#focused-webview .fw-focus .fw-reading { width:auto; margin:0 8px 8px; } #focused-webview .fw-thread { padding:18px 16px 10px; } #focused-webview .fw-body { font-size:13px; } #focused-webview .fw-user { max-width:96%; } #focused-webview textarea { font-size:16px; } #focused-webview .fw-pop { right:20px; bottom:100px; } }
+@media(pointer:coarse) { #focused-webview button { min-height:40px; } #focused-webview .fw-send,#focused-webview .fw-icon { min-width:40px; } }
+@media(prefers-reduced-motion:reduce) { #focused-webview button { transition:none; } }
+</style>
+<div id="focused-webview" data-theme="light" aria-label="聚焦对话与桌面透色概念">
+<div class="viz-carousel" aria-label="对话布局方案" data-previous-label="上一方案" data-next-label="下一方案">
+<section data-variant="聚焦对话" aria-label="聚焦对话布局">
+<div class="fw-stage"><div class="fw-window">
+<aside class="fw-nav">
+  <div class="fw-brand"><i data-lucide="audio-lines" aria-hidden="true"></i><div>Praat<small>声学助手</small></div></div>
+  <div class="fw-nav-actions"><button type="button" class="fw-new cursor-interaction" data-new aria-label="新建会话预览"><i data-lucide="plus" aria-hidden="true"></i><span>新建会话</span></button><button type="button" class="fw-icon cursor-interaction" aria-label="收起侧栏预览" data-collapse><i data-lucide="panel-left-close" aria-hidden="true"></i></button></div>
+  <label class="fw-search"><i data-lucide="search" aria-hidden="true"></i><input placeholder="搜索会话" aria-label="搜索会话预览"></label>
+  <div class="fw-caption">今天</div>
+  <div class="fw-history"><button type="button" class="fw-selected cursor-interaction">英语送气音分析</button><button type="button" class="cursor-interaction">元音音高与时长</button><button type="button" class="cursor-interaction">发音练习记录</button></div>
+  <div class="fw-caption">昨天</div><div class="fw-history"><button type="button" class="cursor-interaction">标注与音频整理</button><button type="button" class="cursor-interaction">VOT 测量方法</button></div>
+  <div class="fw-nav-bottom"><span><i data-lucide="list-checks" aria-hidden="true"></i><b>后台任务</b></span><span><i data-lucide="settings-2" aria-hidden="true"></i><b>设置</b></span></div>
+</aside>
+<main class="fw-workspace">
+  <header class="fw-top"><div><h2>英语送气音分析</h2><small>local-model · 示例会话</small></div><div class="fw-top-tools"><button type="button" class="fw-icon cursor-interaction" aria-label="对话选项预览" data-options><i data-lucide="ellipsis" aria-hidden="true"></i></button></div></header>
+  <div class="fw-reading">
+    <div class="fw-thread">
+      <div class="fw-user">帮我测量这段录音中 /p/ 的 VOT，并说明应该如何确定起止位置。<div><span class="fw-file"><i data-lucide="file-audio" aria-hidden="true"></i>recording.wav</span></div></div>
+      <article class="fw-answer"><div class="fw-author"><i data-lucide="audio-lines" aria-hidden="true"></i>Praat 助手<small>示例回复</small></div><div class="fw-body"><p>可以先定位爆破释放，再寻找后续元音开始稳定振动的位置。</p><h3>先确定两个时间点</h3><p><strong>起点</strong>放在爆破释放的瞬间；<strong>终点</strong>放在周期性声带振动开始的位置。结合波形和频谱一起判断，边界会更清楚。</p><div class="fw-emphasis"><strong>VOT = 起声时间 − 爆破释放时间</strong><br>放大到毫秒尺度，再核对两个边界。</div><div class="fw-hint"><i data-lucide="info" aria-hidden="true"></i><span>请先在 Praat 中选中这段声音，再继续检查。</span></div></div><div class="fw-response-actions"><button type="button" class="cursor-interaction" aria-label="复制反馈预览" data-copy><i data-lucide="copy" aria-hidden="true"></i></button><button type="button" class="cursor-interaction" aria-label="回复操作预览" data-options><i data-lucide="ellipsis" aria-hidden="true"></i></button></div></article>
+    </div>
+    <div class="fw-compose-wrap"><div class="fw-composer"><textarea aria-label="继续对话预览" placeholder="继续讨论这段录音…"></textarea><div class="fw-compose-tools"><button type="button" class="fw-icon cursor-interaction" aria-label="附件入口预览" data-options><i data-lucide="paperclip" aria-hidden="true"></i></button><button type="button" class="fw-model cursor-interaction" data-model-trigger aria-expanded="false">local-model · auto<i data-lucide="chevron-down" aria-hidden="true"></i></button><button type="button" class="fw-send cursor-interaction" data-send aria-label="发送预览"><i data-lucide="arrow-up" aria-hidden="true"></i></button></div></div><div class="fw-status" aria-live="polite">概念预览 · 桌面底色为模拟</div></div>
+  </div>
+</main>
+<div class="fw-pop" hidden><small>模型浮层 · 示例</small><button type="button" class="cursor-interaction" data-model="local-model · auto">local-model · auto　✓</button><button type="button" class="cursor-interaction" data-model="cloud-model · auto">cloud-model · auto</button></div>
+</div></div>
+</section>
+<section data-variant="专注模式" aria-label="收起侧栏的专注布局" class="fw-focus" hidden></section>
+</div>
+</div>
+<script>
+(()=>{
+const root=document.getElementById('focused-webview');
+const variants=root.querySelectorAll('[data-variant]');
+variants[1].append(variants[0].querySelector('.fw-stage').cloneNode(true));
+const state={theme:'light',wallpaper:'cool',opacity:72};
+function render(){
+ root.dataset.theme=state.theme;
+ root.style.setProperty('--fw-opacity',String(state.opacity/100));
+ const walls={cool:'linear-gradient(125deg,#c5cedd 0%,#d7d5df 46%,#d6c7c7 100%)',warm:'linear-gradient(125deg,#d8c5b9 0%,#ded3c5 48%,#c8ccd5 100%)',neutral:'linear-gradient(125deg,#bfc1c4,#dedede)'};
+ root.style.setProperty('--fw-wall',walls[state.wallpaper]);
+}
+render();
+if(globalThis.Tweak){const t=new Tweak({container:root,onChange:render});t.addSelect(state,'theme',{label:'外观',options:[{label:'纸白',value:'light'},{label:'石墨',value:'dark'}]});t.addSelect(state,'wallpaper',{label:'桌面底色模拟',options:[{label:'蓝灰',value:'cool'},{label:'暖灰',value:'warm'},{label:'中性灰',value:'neutral'}]});t.addSlider(state,'opacity',{label:'侧栏不透明度',min:58,max:95,step:1,unit:'%'});}
+variants.forEach(variant=>{
+ const status=variant.querySelector('.fw-status');const field=variant.querySelector('textarea');const pop=variant.querySelector('.fw-pop');const trigger=variant.querySelector('[data-model-trigger]');
+ const close=()=>{pop.hidden=true;trigger.setAttribute('aria-expanded','false');};
+ variant.querySelector('[data-collapse]').addEventListener('click',()=>variant.classList.toggle('fw-focus'));
+ variant.querySelector('[data-new]').addEventListener('click',()=>{field.value='';status.textContent='新会话入口反馈 · 此处保留示例对话';});
+ variant.querySelector('[data-send]').addEventListener('click',()=>status.textContent=field.value.trim()?'发送反馈示意 · 未发送真实请求':'请先填写内容');
+ variant.querySelector('[data-copy]').addEventListener('click',()=>status.textContent='复制反馈示意');
+ variant.querySelectorAll('[data-options]').forEach(b=>b.addEventListener('click',()=>status.textContent='控件尺寸与状态预览'));
+ trigger.addEventListener('click',()=>{pop.hidden=!pop.hidden;trigger.setAttribute('aria-expanded',String(!pop.hidden));});
+ variant.querySelectorAll('[data-model]').forEach(b=>b.addEventListener('click',()=>{trigger.firstChild.textContent=b.dataset.model;close();}));
+ variant.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+ variant.querySelectorAll('.fw-history button').forEach(b=>b.addEventListener('click',()=>{variant.querySelectorAll('.fw-history button').forEach(x=>x.classList.toggle('fw-selected',x===b));status.textContent='侧栏选择样式预览 · 当前正文为示例';}));
+});
+})();
+</script>

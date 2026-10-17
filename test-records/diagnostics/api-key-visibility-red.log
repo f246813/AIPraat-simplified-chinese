@@ -1,0 +1,80 @@
+[WebServer] (node:10172) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:48764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\browser\api-key-visibility.spec.ts:10:3 › API key has one persistent inner toggle and aligned fields at 900px (891ms)
+(node:49736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 tests\browser\api-key-visibility.spec.ts:10:3 › API key has one persistent inner toggle and aligned fields at 390px (875ms)
+
+
+  1) tests\browser\api-key-visibility.spec.ts:10:3 › API key has one persistent inner toggle and aligned fields at 900px 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: < [32m1[39m
+    Received:   [31m16.09375[39m
+
+      14 |
+      15 |     const field=await input.boundingBox(),model=await page.getByLabel('模型名',{exact:true}).boundingBox();
+    > 16 |     expect(Math.abs(field!.x-model!.x)).toBeLessThan(1);
+         |                                         ^
+      17 |     expect(Math.abs(field!.width-model!.width)).toBeLessThan(1);
+      18 |     const button=await toggle.boundingBox();
+      19 |     expect(button!.x).toBeGreaterThanOrEqual(field!.x);
+        at <WORKSPACE>\ai\frontend\tests\browser\api-key-visibility.spec.ts:16:41
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-records\diagnostics\frontend-playwright-results\api-key-visibility-API-key-85e3b-and-aligned-fields-at-900px\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-records\diagnostics\frontend-playwright-results\api-key-visibility-API-key-85e3b-and-aligned-fields-at-900px\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\test-records\diagnostics\frontend-playwright-results\api-key-visibility-API-key-85e3b-and-aligned-fields-at-900px\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\test-records\diagnostics\frontend-playwright-results\api-key-visibility-API-key-85e3b-and-aligned-fields-at-900px\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\browser\api-key-visibility.spec.ts:10:3 › API key has one persistent inner toggle and aligned fields at 390px 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: < [32m1[39m
+    Received:   [31m37[39m
+
+      15 |     const field=await input.boundingBox(),model=await page.getByLabel('模型名',{exact:true}).boundingBox();
+      16 |     expect(Math.abs(field!.x-model!.x)).toBeLessThan(1);
+    > 17 |     expect(Math.abs(field!.width-model!.width)).toBeLessThan(1);
+         |                                                 ^
+      18 |     const button=await toggle.boundingBox();
+      19 |     expect(button!.x).toBeGreaterThanOrEqual(field!.x);
+      20 |     expect(button!.x+button!.width).toBeLessThanOrEqual(field!.x+field!.width);
+        at <WORKSPACE>\ai\frontend\tests\browser\api-key-visibility.spec.ts:17:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-records\diagnostics\frontend-playwright-results\api-key-visibility-API-key-67305-and-aligned-fields-at-390px\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-records\diagnostics\frontend-playwright-results\api-key-visibility-API-key-67305-and-aligned-fields-at-390px\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\test-records\diagnostics\frontend-playwright-results\api-key-visibility-API-key-67305-and-aligned-fields-at-390px\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\test-records\diagnostics\frontend-playwright-results\api-key-visibility-API-key-67305-and-aligned-fields-at-390px\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests\browser\api-key-visibility.spec.ts:10:3 › API key has one persistent inner toggle and aligned fields at 900px 
+    tests\browser\api-key-visibility.spec.ts:10:3 › API key has one persistent inner toggle and aligned fields at 390px 

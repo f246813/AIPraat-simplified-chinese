@@ -1,0 +1,62 @@
+File type = "ooTextFile"
+Object class = "TextGrid"
+
+xmin = 0
+xmax = 0.400000
+tiers? <exists>
+size = 4
+item []:
+    item [1]:
+        class = "IntervalTier"
+        name = "Target_Phones"
+        xmin = 0
+        xmax = 0.400000
+        intervals: size = 2
+        intervals [1]:
+            xmin = 0.000000
+            xmax = 0.200000
+            text = "aː"
+        intervals [2]:
+            xmin = 0.200000
+            xmax = 0.400000
+            text = "s"
+    item [2]:
+        class = "IntervalTier"
+        name = "AI_ProblemCandidates"
+        xmin = 0
+        xmax = 0.400000
+        intervals: size = 2
+        intervals [1]:
+            xmin = 0.000000
+            xmax = 0.200000
+            text = "未评估：未执行独立音素识别"
+        intervals [2]:
+            xmin = 0.200000
+            xmax = 0.400000
+            text = "未评估：未执行独立音素识别"
+    item [3]:
+        class = "IntervalTier"
+        name = "AI_EvidenceStatus"
+        xmin = 0
+        xmax = 0.400000
+        intervals: size = 2
+        intervals [1]:
+            xmin = 0.000000
+            xmax = 0.200000
+            text = "已生成声学观察（实验性）"
+        intervals [2]:
+            xmin = 0.200000
+            xmax = 0.400000
+            text = "已生成声学观察（实验性）"
+    item [4]:
+        class = "TextTier"
+        name = "AI_Observations"
+        xmin = 0
+        xmax = 0.400000
+        points: size = 2
+        points [1]:
+            number = 0.100000
+            mark = "/aː/ 的 f1 声学观察：参考 705.000Hz，学习者 905.000Hz（偏高；实验性，未判定发音对错）。；/aː/ 的 f2 声学观察：参考 1205.000Hz，学习者 1205.000Hz（无明显差异；实验性，未判定发音对错）。；/aː/ 的 relative_duration 声学观察：参考 1.000ratio，学习者 1.000ratio（相对时长相近；实验性，未判定发音对错）。"
+        points [2]:
+            number = 0.300000
+            mark = "/s/ 的 spectral_centroid 声学观察：参考 3050.000Hz，学习者 3050.000Hz（无明显差异；实验性，未判定发音对错）。；/s/ 的 high_frequency_ratio 声学观察：参考 0.450ratio，学习者 0.450ratio（无明显差异；实验性，未判定发音对错）。；/s/ 的 zcr 声学观察：参考 0.250ratio，学习者 0.250ratio（无明显差异；实验性，未判定发音对错）。；/s/ 的 relative_duration 声学观察：参考 1.000ratio，学习者 1.000ratio（相对时长相近；实验性，未判定发音对错）。"

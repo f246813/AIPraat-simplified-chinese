@@ -70,7 +70,7 @@ class CloudPromptTests(unittest.TestCase):
             self.assertIn(rule, prompt)
         self.assertIn("configured-cloud-model", prompt)
         self.assertIn("不得伪造", prompt)
-        self.assertIn("未收到音频", prompt)
+        self.assertIn("听感只能来自", prompt)
         self.assertIn("旧选区", prompt)
         self.assertIn("不同", prompt)
         self.assertIn("Praat 英文脚本", prompt)
@@ -168,7 +168,7 @@ class CloudPromptTests(unittest.TestCase):
             reply = self.client().explain_errors({"language": "cmn"}, {"score": 80, "errors": []})
         self.assertIn("分段练习", reply)
         prompt = self.system(network.payloads[0])
-        for rule in ("观测", "透明推导", "一般知识", "假设", "未收到音频", "不得伪造", "configured-cloud-model"):
+        for rule in ("观测", "透明推导", "一般知识", "假设", "听感只能来自", "不得伪造", "configured-cloud-model"):
             self.assertIn(rule, prompt)
         self.assertNotIn("300 字以内", prompt)
 
@@ -181,7 +181,7 @@ class CloudPromptTests(unittest.TestCase):
                 reply = self.client("strict").vision_explain(image, {}, {"errors": []})
         self.assertIn("没有音频", reply)
         prompt = self.system(network.payloads[0])
-        for rule in ("观测", "透明推导", "假设", "未收到音频", "禁止无依据", "图中"):
+        for rule in ("观测", "透明推导", "假设", "听感只能来自", "禁止无依据", "图中"):
             self.assertIn(rule, prompt)
         self.assertTrue(network.payloads[0]["messages"][1]["content"][0]["image_url"]["url"].startswith("data:image/png;base64,"))
 

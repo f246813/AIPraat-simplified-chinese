@@ -3,7 +3,7 @@
 // Sub/Portal/RadioGroup composition, and existing Pi context-menu styles.
 // Public openai/codex supplies sorting types, not desktop React menu source.
 import * as Menu from '@radix-ui/react-dropdown-menu';
-import {Check,ChevronRight,MoreHorizontal} from 'lucide-react';
+import {Check,ChevronDown,ChevronRight} from 'lucide-react';
 import type {ChatStore} from './store';
 import type {ThreadSortKey} from './codex/protocol/ThreadSortKey';
 import type {SortDirection} from './codex/protocol/SortDirection';
@@ -19,7 +19,7 @@ const surface='context-menu is-open sidebar-options-menu';
 export function SidebarOptions({store,sort,grouping,open,onOpenChange}:{store:ChatStore;sort:SidebarSort;grouping:SidebarGrouping;open:boolean;onOpenChange:(open:boolean)=>void}){
   const save=(preference:string,value:string)=>{void store.save({preferences:{[preference]:value}}).catch(store.report);};
   return <Menu.Root modal={false} open={open} onOpenChange={onOpenChange}>
-    <Menu.Trigger asChild><button type="button" className="sidebar-toolbar-button" aria-label="会话历史选项" title="会话历史选项"><MoreHorizontal size={15}/></button></Menu.Trigger>
+    <Menu.Trigger asChild><button type="button" className="sidebar-toolbar-button sidebar-options-trigger" aria-label="会话历史选项" title="会话历史选项"><ChevronDown aria-hidden size={12}/></button></Menu.Trigger>
     <Menu.Portal><Menu.Content className={surface} aria-label="会话历史选项" align="start" sideOffset={5} collisionPadding={8}>
       <Menu.Sub>
         <Menu.SubTrigger className="context-menu-item">整理侧边栏<ChevronRight size={14} className="sidebar-options-chevron" aria-hidden/></Menu.SubTrigger>

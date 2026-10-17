@@ -1,0 +1,79 @@
+{
+  "schema": "mfa-alignment-probe-v1",
+  "ready": false,
+  "summary": "对齐环境不完整（3 项）：MFA 启动方式 — OSError: cannot load library 'libsndfile.dll': error 0x7e",
+  "launcher": "<USER_HOME>\\miniforge3\\envs\\aligner\\Scripts\\mfa.exe",
+  "environment": "aligner",
+  "version": "",
+  "python": "<USER_HOME>\\miniforge3\\envs\\aligner\\python.exe",
+  "checks": [
+    {
+      "id": "launcher",
+      "label": "MFA 启动方式",
+      "status": "error",
+      "detail": "OSError: cannot load library 'libsndfile.dll': error 0x7e",
+      "repair": "直接调用 Scripts\\mfa.exe 不会激活该环境：Library\\bin 不在 PATH，libsndfile 与 fstcompile 都会缺失。请填写 conda 可执行文件与环境名（conda run），或先激活环境再启动。"
+    },
+    {
+      "id": "soundfile",
+      "label": "libsndfile 音频读写",
+      "status": "error",
+      "detail": "OSError: cannot load library 'libsndfile.dll': error 0x7e",
+      "repair": "该环境缺少 libsndfile 载荷：conda install -n aligner -c conda-forge libsndfile，或 pip install --force-reinstall soundfile。"
+    },
+    {
+      "id": "openfst",
+      "label": "openfst（fstcompile）",
+      "status": "error",
+      "detail": "RuntimeError: fstcompile 不在 PATH",
+      "repair": "openfst 不在 PATH：改用 conda run -n aligner mfa（激活环境后 Library\\bin 才可用），或在对话中直接选择 Scripts\\mfa.exe 时补上该环境的 Library\\bin。"
+    },
+    {
+      "id": "kalpy",
+      "label": "kalpy/kaldi 绑定",
+      "status": "ok",
+      "detail": "installed",
+      "repair": ""
+    },
+    {
+      "id": "librosa",
+      "label": "librosa + numba 缓存",
+      "status": "ok",
+      "detail": "1.0.0",
+      "repair": ""
+    },
+    {
+      "id": "mfa",
+      "label": "Montreal Forced Aligner",
+      "status": "ok",
+      "detail": "3.4.2",
+      "repair": ""
+    },
+    {
+      "id": "temp",
+      "label": "临时目录可写",
+      "status": "ok",
+      "detail": "X:\\scratch\\tmp-mfa",
+      "repair": ""
+    },
+    {
+      "id": "dictionary",
+      "label": "MFA 词典",
+      "status": "ok",
+      "detail": ".dict，21264022 字节，约 100000 条",
+      "repair": ""
+    },
+    {
+      "id": "acoustic",
+      "label": "声学模型",
+      "status": "ok",
+      "detail": ".zip，92191596 字节",
+      "repair": ""
+    }
+  ],
+  "blocking": [
+    "launcher",
+    "soundfile",
+    "openfst"
+  ]
+}

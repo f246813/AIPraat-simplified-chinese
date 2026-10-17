@@ -1,0 +1,186 @@
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.1000	API 模式：设置里取消了「顺手停掉本机模型服务」，本机服务保持不动。
+PRAAT_PROGRESS	1.0000	API 模式仍在运行；本机模型服务按设置保留。
+python.exe : ..........................................................................................................
+...........................................can't invoke "event" command: application has been destroyed
+所在位置 行:1 字符: 543
++ ... nsistency"; & $py -m unittest discover -s ai/tests -t ai/tests 2>&1 | ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (.................. been destroyed:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+PRAAT_PROGRESS	0.0200	切回本地模型（关闭 API 模式）…
+.....................................................invalid command name "1902918910208flush_messages"
+    while executing
+"1902918910208flush_messages"
+    ("after" script)
+invalid command name "1902914880640focus_set"
+    while executing
+"1902914880640focus_set"
+    ("after" script)
+invalid command name "1904804941312flush_messages"
+    while executing
+"1904804941312flush_messages"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+invalid command name "1902915212480flush_messages"
+    while executing
+"1902915212480flush_messages"
+    ("after" script)
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+invalid command name "1904804942272focus_set"
+    while executing
+"1904804942272focus_set"
+    ("after" script)
+.invalid command name "1902915219136focus_set"
+    while executing
+"1902915219136focus_set"
+    ("after" script)
+...invalid command name "1902918916672_restore_status_text"
+    while executing
+"1902918916672_restore_status_text"
+    ("after" script)
+....................................................................................................................F..
+.......................................................................................................................
+..新前端未启动：[REDACTED] [REDACTED]
+
+Python：<WORKSPACE>\venv-ai-modern\Scripts\python.exe
+请在 Praat 的路径配置中选择已安装 pywebview/pythonnet 的 Python。
+不会自动改用旧界面或发送模型请求。
+PRAAT_PROGRESS	0.1000	正在停止模型服务…
+PRAAT_PROGRESS	1.0000	已停止。
+PRAAT_PROGRESS	0.0500	停止旧的模型服务…
+PRAAT_PROGRESS	0.1500	等待端口释放…
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	停止旧的模型服务…
+PRAAT_PROGRESS	0.1500	等待端口释放…
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+.......................................................................................................................
+.......................................................................................................................
+....usage: python.exe -m unittest [-h] [--child] [--mfa-executable MFA_EXECUTABLE]
+                              [--conda-executable CONDA_EXECUTABLE]
+                              [--conda-environment CONDA_ENVIRONMENT]
+                              [--dictionary DICTIONARY]
+                              [--acoustic-model ACOUSTIC_MODEL]
+                              [--timeout TIMEOUT] [--output OUTPUT]
+python.exe -m unittest: error: output exists; refusing to overwrite evidence
+PRAAT_PROGRESS	0.1000	当前是 API 模式，不需要本机模型服务。
+PRAAT_PROGRESS	1.0000	已就绪：deepseek-chat（云端）
+PRAAT_PROGRESS	0.1000	当前是 API 模式，不需要本机模型服务。
+PRAAT_PROGRESS	1.0000	已就绪：deepseek-chat（云端）
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.1000	API 模式：设置里取消了「顺手停掉本机模型服务」，本机服务保持不动。
+PRAAT_PROGRESS	1.0000	API 模式仍在运行；本机模型服务按设置保留。
+PRAAT_PROGRESS	0.1000	API 模式：按设置停掉本机模型服务（省显存）…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	本机模型服务已停。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	1.0000	模型服务已就绪。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+PRAAT_PROGRESS	0.1000	正在停止模型服务…
+PRAAT_PROGRESS	0.6000	等待端口释放…
+PRAAT_PROGRESS	1.0000	已停止。
+PRAAT_PROGRESS	0.0500	检查显卡与运行参数…
+PRAAT_PROGRESS	0.0800	准备启动本地模型服务…
+.......................................................................................................................
+.......................................................................................................................
+......................usage: python.exe -m unittest [-h] [--template TEMPLATE]
+                              [--inventory INVENTORY] [--analyze]
+                              [--output OUTPUT]
+                              [manifests ...]
+python.exe -m unittest: error: output exists; refusing to overwrite evidence or user material (choose a new path)
+....................usage: python.exe -m unittest [-h] [--template TEMPLATE]
+                              [--inventory INVENTORY] [--analyze]
+                              [--output OUTPUT]
+                              [manifests ...]
+python.exe -m unittest: error: template exists; refusing to overwrite user material
+PRAAT_PROGRESS	0.0200	切回本地模型（关闭 API 模式）…
+.................................ssssss................................................................................
+.......................................................................................................................
+.......................................................................................................................
+......................................................................can't invoke "event" command: application has bee
+n destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+can't invoke "event" command: application has been destroyed
+    while executing
+"event generate $w <<ThemeChanged>>"
+    (procedure "ttk::ThemeChanged" line 6)
+    invoked from within
+"ttk::ThemeChanged"
+.....invalid command name "1902922200128flush_messages"
+    while executing
+"1902922200128flush_messages"
+    ("after" script)
+invalid command name "1902922198016focus_set"
+    while executing
+"1902922198016focus_set"
+    ("after" script)
+invalid command name "1902923902848flush_messages"
+    while executing
+"1902923902848flush_messages"
+    ("after" script)
+invalid command name "1902923902400focus_set"
+    while executing
+"1902923902400focus_set"
+    ("after" script)
+invalid command name "1904805416704flush_messages"
+    while executing
+"1904805416704flush_messages"
+    ("after" script)
+invalid command name "1904805418944focus_set"
+    while executing
+"1904805418944focus_set"
+    ("after" script)
+...........................................................................
+======================================================================
+FAIL: test_missing_or_bad_times_are_rejected (test_chat_tools.VotToolTests.test_missing_or_bad_times_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<WORKSPACE>\ai\tests\test_chat_tools.py", line 1050, in test_missing_or_bad_times_are_rejected
+    with self.assertRaises(tools.ToolError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ToolError not raised
+
+----------------------------------------------------------------------
+Ran 1475 tests in 143.549s
+
+FAILED (failures=1, skipped=6)

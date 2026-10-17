@@ -1,10 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react';
 import { AssistantRuntimeProvider, useExternalStoreRuntime, useAuiState, ThreadPrimitive, MessagePrimitive, type AssistantRuntime, type AttachmentAdapter, type ThreadMessageLike } from '@assistant-ui/react';
-import { ArrowDown, AudioLines, Brain, CircleAlert, Copy, FileText, LoaderCircle, RefreshCw, Search, Shield, Wrench } from 'lucide-react';
+import { ArrowDown, Brain, CircleAlert, Copy, FileText, Folder, LoaderCircle, RefreshCw, Search, Shield, Wrench } from 'lucide-react';
 import praatIcon from '../../../icon.png';
 import { Markdown } from './Markdown';
 import { Composer, AttachmentPreview, attachmentDescriptor } from './Composer';
 import { importFile } from './bridge';
+import { draftFollowup, followupContinuation, type FollowupDraft } from './composer-send';
 import { ChatStore, useChatState } from './store';
 import { knownModel, readOnly, type Activity, type Message, type Preview, type Session } from './types';
 import { IconButton, Json, statusLabel } from './ui';
@@ -18,9 +19,10 @@ import { anchorFor, growTranscriptWindow, HISTORY_REVEAL_THRESHOLD_PX, prepended
 import { ConversationMinimap } from './MinimapRail';
 import { conversationMarkers } from './minimap';
 import { ChatSearch } from './SearchBar';
+import { activityState } from './codex/activity-state';
 /** A menu row publishes only the data it owns; the transcript owns the single floating layer. */
 type TranscriptMenuRequest = {kind: 'message'; text: string; evidence: EvidenceEntry[]} | {kind: 'conversation'};
-const Context = createContext<{store: ChatStore; sessionId:string; smooth: boolean; disclosure: (element: HTMLElement) => void; menu: (event: ReactMouseEvent<HTMLElement>, request: TranscriptMenuRequest) => void}>(null!);
+const Context = createContext<{store: ChatStore; sessionId:string; smooth: boolean; disclosure: (element: HTMLElement) => void; menu: (event: ReactMouseEvent<HTMLElement>, request: TranscriptMenuRequest) => void; draft: (mode: 'L2' | 'L3' | 'L4', taskId: string) => void}>(null!);
 export function convertMessage(message: Message): ThreadMessageLike {
   const status = message.status === 'running' ? {type: 'running' as const} : message.status === 'failed' ? {type: 'incomplete' as const, reason: 'error' as const} : ['partial','cancelled','interrupted'].includes(message.status || '') ? {type: 'incomplete' as const, reason: 'cancelled' as const} : {type: 'complete' as const, reason: 'stop' as const};
   return {id: message.id, role: message.role, content: message.content, ...(message.role === 'assistant' ? {status} : {}), metadata: {custom: {host: message}}, ...(message.role === 'user' ? {attachments: message.attachments?.map(a => ({...attachmentDescriptor(a), status: {type: 'complete' as const}}))} : {})};
@@ -33,16 +35,58 @@ function ActivityCard({activity}: {activity: Activity}) {
   // Anchor before `<details>` flips, so expanding a card above the viewport does not move the reading position.
   return <details className={`activity ${tool ? 'tool-card' : ''}`} data-activity-id={activity.id}><summary onClick={event => disclosure(event.currentTarget)}><Icon size={15}/><span>{tool ? activity.name || '工具执行' : thinking ? '模型思考' : activity.type === 'compression' ? '上下文压缩' : '执行进度'}</span><span className={`badge ${activity.status === 'failed' ? 'bad' : ''}`}>{statusLabel(activity.status)}</span></summary><div className="activity-body">{activity.execution && <p className="execution-fact"><Shield size={14}/>投递 / 执行事实：<strong>{activity.execution}</strong></p>}{activity.text && <Markdown text={activity.text} rpc={store.rpc} onError={store.report}/>} {activity.args !== undefined && <><h5>参数</h5><Json value={activity.args}/></>}{activity.result !== undefined && <><h5>结果 / 结构化证据</h5><Json value={activity.result}/></>}{tool && !activity.execution && <p className="muted">宿主未提供投递事实。成功或取消状态不等于已执行或撤销。</p>}</div></details>;
 }
+/** One disclosure per reply; streaming updates never force it open. */
+function ProcessDetails({message}: {message: Message}) {
+  const {disclosure} = useContext(Context);
+  const activities = (message.activities || []).filter(a => a.type !== 'thinking' || a.text);
+  const results = message.results || [];
+  if (!activities.length && !results.length) return null;
+  const running = message.status === 'running';
+  const failed = activities.some(a => a.status === 'failed' || a.status === 'error') || results.some(r => r.result_valid === false || r.status === 'failed' || r.status === 'error');
+  const state = activityState(failed, running);
+  const status = running ? '执行中' : message.status && message.status !== 'complete' ? statusLabel(message.status) : '执行过程';
+  return <details className="process-details" data-process-state={state}>
+    <summary onClick={event => disclosure(event.currentTarget)}>
+      {running && <LoaderCircle size={13} aria-hidden="true"/>}
+      <span>{status}</span>
+      <span className="process-count">{activities.length ? `${activities.length} 个步骤` : `${results.length} 项工具记录`}</span>
+      {failed && <span className="process-failure">含失败步骤</span>}
+    </summary>
+    <div className="process-body">
+      {activities.length > 0 && <div className="activities">{activities.map(a => <ActivityCard key={a.id} activity={a}/>)}</div>}
+      {results.length > 0 && <section className="process-results" aria-label="工具执行记录">{results.map(fact => <details key={fact.id}><summary onClick={event => disclosure(event.currentTarget)}>{fact.tool} · {fact.result_valid === false ? '结果不可用' : statusLabel(fact.status)} · {fact.execution || '宿主未报告投递状态'}</summary><Json value={fact}/></details>)}</section>}
+    </div>
+  </details>;
+}
 function MessageCard() {
-  const {store, sessionId, smooth, menu} = useContext(Context); const m = useAuiState(s => s.message);
+  const {store, sessionId, smooth, menu, draft} = useContext(Context); const m = useAuiState(s => s.message);
   const host = m.metadata.custom.host as Message | undefined;
   const text = host?.content ?? m.content.filter(p => p.type === 'text').map(p => p.text).join('');
   const [preview, setPreview] = useState<Preview>();
   const user = m.role === 'user';
-  return <MessagePrimitive.Root className={`message ${user ? 'user' : 'assistant'}`} data-message-id={m.id} onContextMenu={event => menu(event, {kind: 'message', text, evidence: collectEvidence(host?.activities)})}><div className={`avatar ${user ? 'user-avatar' : ''}`}>{user ? '你' : <AudioLines size={20}/>}</div><div className="message-content"><div className="message-label"><strong>{user ? '你' : '声学助手'}</strong>{host?.status && host.status !== 'complete' && <span className={`badge ${host.status === 'failed' ? 'bad' : ''}`}>{statusLabel(host.status)}</span>}</div>{host?.activities?.length ? <div className="activities">{host.activities.map(a => <ActivityCard key={a.id} activity={a}/>)}</div> : null}{host?.results?.length ? <section className="published-results" aria-label="已保存的工具结果"><h3>工具结果</h3><Markdown text={host.result_content || ''} rpc={store.rpc} onError={store.report}/>{host.results.map(fact=><details key={fact.id}><summary>{fact.tool} · {fact.result_valid === false ? '结果不可用' : fact.status} · {fact.execution || '宿主未报告投递状态'}</summary><Json value={fact}/></details>)}{host.status === 'running' && <p role="status">结果已保存，正在完成后续分析…</p>}</section> : null}<Markdown text={host?.results?.length && host.result_content ? text.replace(host.result_content,'').trim() : text} rpc={store.rpc} onError={store.report} smooth={smooth && host?.status === 'running'}/>{host?.status === 'running' && !text && <div className="actual-running"><LoaderCircle size={15}/>任务运行中，等待后端内容…</div>}{host?.attachments?.length ? <div className="attachment-list">{host.attachments.map(a => <button className="attachment-chip" key={a.id} onClick={() => void store.rpc('attachments.preview', {attachmentId: a.id}).then(setPreview).catch(store.report)}><FileText size={14}/>{a.name}<small>{(a.size / 1024).toFixed(1)} KB</small></button>)}</div> : null}{host?.followup_actions?.length && host.taskId && host.status !== 'running' ? <div className="actions">{host.followup_actions.map(mode=><button key={mode} disabled={Boolean(store.running(sessionId))} onClick={()=>void store.rpc('tasks.followup',{sessionId,sourceTaskId:host.taskId!,mode}).then(()=>store.pollOnce()).catch(store.report)}>{{L2:'解释结果',L3:'分析原材料',L4:'通用讨论'}[mode]}</button>)}</div> : null}{text && <div className="message-actions"><IconButton label="复制消息" onClick={() => void navigator.clipboard.writeText(text).catch(store.report)}><Copy size={14}/></IconButton>{host?.taskId && <small>任务 {host.taskId}</small>}</div>}</div>{preview && <AttachmentPreview preview={preview} onClose={() => setPreview(undefined)}/>}</MessagePrimitive.Root>;
+  return <MessagePrimitive.Root className={`message ${user ? 'user' : 'assistant'}`} aria-label={user ? '用户消息' : '助手回复'} data-message-id={m.id} onContextMenu={event => menu(event, {kind: 'message', text, evidence: collectEvidence(host?.activities)})}>
+    <div className="message-content">
+      {host && <ProcessDetails message={host}/>}
+      {host?.status && !['complete', 'running'].includes(host.status) && !host.activities?.length && !host.results?.length && <div className="message-status"><span className={`badge ${host.status === 'failed' ? 'bad' : ''}`}>{statusLabel(host.status)}</span></div>}
+      {host?.results?.length && host.result_content ? <section className="published-results" aria-label="已保存的工具结果"><Markdown text={host.result_content} rpc={store.rpc} onError={store.report}/>{host.status === 'running' && <p role="status">结果已保存，正在完成后续分析…</p>}</section> : null}
+      <Markdown text={host?.results?.length && host.result_content ? text.replace(host.result_content,'').trim() : text} rpc={store.rpc} onError={store.report} smooth={smooth && host?.status === 'running'}/>
+      {host?.status === 'running' && !text && !host.activities?.length && <div className="actual-running"><LoaderCircle size={15}/>任务运行中，等待后端内容…</div>}
+      {host?.attachments?.length ? <div className="attachment-list">{host.attachments.map(a => <button className="attachment-chip" key={a.id} onClick={() => void store.rpc('attachments.preview', {attachmentId: a.id}).then(setPreview).catch(store.report)}><FileText size={14}/>{a.name}<small>{(a.size / 1024).toFixed(1)} KB</small></button>)}</div> : null}
+      {host?.followup_actions?.length && host.taskId && host.status !== 'running' ? <div className="actions">{host.followup_actions.map(mode=><button key={mode} disabled={Boolean(store.running(sessionId))} title="把一句可修改的请求填进输入框，发不发由你决定" onClick={()=>{draft(mode,host.taskId!)}}>{{L2:'解释结果',L3:'分析原材料',L4:'通用讨论'}[mode]}</button>)}</div> : null}
+      {text && <div className="message-actions"><IconButton label="复制消息" onClick={() => void navigator.clipboard.writeText(text).catch(store.report)}><Copy size={14}/></IconButton></div>}
+    </div>
+    {preview && <AttachmentPreview preview={preview} onClose={() => setPreview(undefined)}/>}
+  </MessagePrimitive.Root>;
 }
 export function Chat({store, session, onSettings}: {store: ChatStore; session: Session; onSettings: () => void}) {
   const state = useChatState(store); const runtimeRef = useRef<AssistantRuntime>(null); const viewport = useRef<HTMLDivElement>(null); const content = useRef<HTMLDivElement>(null);
+  // 续接按钮只草拟一句可改的请求，不替用户发送；文字改过或加了附件就按新任务提交。
+  const pendingFollowup = useRef<FollowupDraft | null>(null);
+  const draft = (mode: 'L2' | 'L3' | 'L4', taskId: string) => {
+    const next = draftFollowup(session.id, taskId, mode);
+    pendingFollowup.current = next;
+    runtimeRef.current?.thread.composer.setText(next.text);
+  };
   const conversation = useStoredWidth(store, 'conversation_width', resolveConversationWidth);
   const disclosure = useDisclosureAnchor(viewport, content);
   const initialScroll = useRef(session.scroll); const initialAnchor = useRef(session.anchor || null); const [restored, setRestored] = useState(false);
@@ -97,11 +141,22 @@ export function Chat({store, session, onSettings}: {store: ChatStore; session: S
     adapters: {attachments: attachmentsAdapter},
     onNew: async message => {
       const text = message.content.filter(p => p.type === 'text').map(p => p.text).join('');
-      try { await store.submit(session.id, text, (message.attachments || []).map(a => a.id)); }
+      const attachments = message.attachments || [];
+      const next = followupContinuation(pendingFollowup.current, session.id, text, attachments.length);
+      pendingFollowup.current = null;
+      try {
+        // 草稿原样发回才算续接；改了文字或加了附件就是新任务（与 Tk 版 pending_analysis 同一语义）。
+        if (next) {
+          await store.rpc('tasks.followup', {sessionId: session.id, sourceTaskId: next.taskId, mode: next.mode});
+          await store.pollOnce();
+          return;
+        }
+        await store.submit(session.id, text, attachments.map(a => a.id));
+      }
       catch (e) {
         const composer = runtimeRef.current?.thread.composer;
         composer?.setText(text);
-        for (const a of message.attachments || []) if (!composer?.getState().attachments.some(current => current.id === a.id)) await composer?.addAttachment({id: a.id, type: a.type, name: a.name, contentType: a.contentType, content: []});
+        for (const a of attachments) if (!composer?.getState().attachments.some(current => current.id === a.id)) await composer?.addAttachment({id: a.id, type: a.type, name: a.name, contentType: a.contentType, content: []});
         throw e;
       }
     },
@@ -194,8 +249,7 @@ export function Chat({store, session, onSettings}: {store: ChatStore; session: S
     const frame = requestAnimationFrame(() => { node.scrollTop = start; own.current = {top: start, at: performance.now()}; setRestored(true); });
     return () => cancelAnimationFrame(frame);
   }, [measureRows, state.loading[session.id], restored]);
-  const running = store.running(session.id);
-  return <Context.Provider value={{store, sessionId:session.id, smooth: Boolean(boot.settings.preferences.smooth_stream), disclosure, menu: openMenu}}><AssistantRuntimeProvider runtime={runtime}><ThreadPrimitive.Root className="thread" style={{'--conversation-width': `${conversation.width}px`} as CSSProperties}><header className="chat-header"><div><h1>{session.title || '新会话'}{readOnly(session) && <span className="badge">旧记录 · 只读</span>}</h1><p><span className={`connection-dot ${state.connected ? '' : 'offline'}`}/>{running ? `${statusLabel(running.status)} · ${running.model}` : String(modelConfig.model || '尚未配置模型')}{running && <span className="muted"> · 切换会话不会中断</span>}</p></div><div className="actions"><IconButton label={searchOpen ? '关闭会话内查找' : '在会话中查找（Ctrl / Cmd + K）'} aria-pressed={searchOpen} onClick={() => setSearchOpen(open => !open)}><Search size={17}/></IconButton><IconButton label="刷新当前会话" onClick={() => void store.load(session.id).catch(store.report)}><RefreshCw size={17}/></IconButton><button className="model-button" onClick={onSettings}>模型设置</button></div></header>{session.archived && <div className="archived-conversation"><span>此会话已归档</span><button disabled={state.organizationBusy} onClick={() => void store.archive(session.id,false).catch(store.report)}>恢复会话</button></div>}{session.forkedFrom && <div className="fork-origin">分叉自 {session.forkedFromTitle || session.forkedFrom}</div>}{searchOpen && <ChatSearch content={content} viewport={viewport} hidden={messages.slice(0, Math.max(0, messages.length - windowState.mounted))} hiddenCount={windowState.hiddenAbove} onRevealEarlier={revealEarlier} onAlign={top => { own.current = {top, at: performance.now()}; }} onClose={() => setSearchOpen(false)}/>}{unknownAuto && <div className="capability-banner"><CircleAlert size={16}/><span>模型窗口未知，自动预算不能猜测。</span><button onClick={onSettings}>配置真实窗口 / 手动预算</button></div>}<div className="transcript-shell" onContextMenu={event => { if (!event.defaultPrevented) openMenu(event, {kind: 'conversation'}); }}><ThreadPrimitive.Viewport ref={viewport} className="transcript" autoScroll={restored} scrollToBottomOnInitialize={false} scrollToBottomOnThreadSwitch={false} scrollToBottomOnRunStart={false} onScroll={e => { const node = e.currentTarget; if (!restored) return; const mine = Math.abs(node.scrollTop - own.current.top) < 2 && performance.now() - own.current.at < 600; if (!mine && rows.current.length) store.view(session.id, {scroll: node.scrollTop, anchor: anchorFor(rows.current, node.scrollTop) ?? undefined}); if (!mine && node.scrollTop < HISTORY_REVEAL_THRESHOLD_PX && windowState.hiddenAbove > 0) revealEarlier(); }} aria-label="会话消息">
+  return <Context.Provider value={{store, sessionId:session.id, smooth: Boolean(boot.settings.preferences.smooth_stream), disclosure, menu: openMenu, draft}}><AssistantRuntimeProvider runtime={runtime}><ThreadPrimitive.Root className="thread" style={{'--conversation-width': `${conversation.width}px`} as CSSProperties}><header className="chat-header" onPointerDown={event => { if (event.button !== 0) return; const target = event.target as HTMLElement; if (target.closest('button, a, input, select, textarea, [contenteditable]')) return; void store.rpc('window.drag', {}).catch(() => {}); }}><div><h1><Folder size={14} aria-hidden="true"/><span className="chat-title-text" title={session.title || '新会话'}>{session.title || '新会话'}</span>{readOnly(session) && <span className="badge">旧记录 · 只读</span>}</h1></div><div className="actions"><IconButton label={searchOpen ? '关闭会话内查找' : '在会话中查找（Ctrl / Cmd + K）'} aria-pressed={searchOpen} onClick={() => setSearchOpen(open => !open)}><Search size={17}/></IconButton><IconButton label="刷新当前会话" onClick={() => void store.load(session.id).catch(store.report)}><RefreshCw size={17}/></IconButton></div></header>{session.archived && <div className="archived-conversation"><span>此会话已归档</span><button disabled={state.organizationBusy} onClick={() => void store.archive(session.id,false).catch(store.report)}>恢复会话</button></div>}{session.forkedFrom && <div className="fork-origin">分叉自 {session.forkedFromTitle || session.forkedFrom}</div>}{searchOpen && <ChatSearch content={content} viewport={viewport} hidden={messages.slice(0, Math.max(0, messages.length - windowState.mounted))} hiddenCount={windowState.hiddenAbove} onRevealEarlier={revealEarlier} onAlign={top => { own.current = {top, at: performance.now()}; }} onClose={() => setSearchOpen(false)}/>}{unknownAuto && <div className="capability-banner"><CircleAlert size={16}/><span>模型窗口未知，自动预算不能猜测。</span><button onClick={onSettings}>配置真实窗口 / 手动预算</button></div>}<div className="transcript-shell" onContextMenu={event => { if (!event.defaultPrevented) openMenu(event, {kind: 'conversation'}); }}><ThreadPrimitive.Viewport ref={viewport} className="transcript" autoScroll={restored} scrollToBottomOnInitialize={false} scrollToBottomOnThreadSwitch={false} scrollToBottomOnRunStart={false} onScroll={e => { const node = e.currentTarget; if (!restored) return; const mine = Math.abs(node.scrollTop - own.current.top) < 2 && performance.now() - own.current.at < 600; if (!mine && rows.current.length) store.view(session.id, {scroll: node.scrollTop, anchor: anchorFor(rows.current, node.scrollTop) ?? undefined}); if (!mine && node.scrollTop < HISTORY_REVEAL_THRESHOLD_PX && windowState.hiddenAbove > 0) revealEarlier(); }} aria-label="会话消息">
     {windowState.hiddenAbove > 0 && <div className="history-reveal"><button type="button" onClick={revealEarlier}>显示更早的 {windowState.hiddenAbove} 条消息</button></div>}<div className="transcript-content" ref={content}><ThreadPrimitive.Messages components={{Message: MessageCard}}/></div>
   </ThreadPrimitive.Viewport><ThreadPrimitive.Empty><div className="welcome"><div className="welcome-mark"><img src={praatIcon} alt=""/></div><h2>我们应该做些什么</h2><p>调动原生Praat工具测量计算或使用LLM获得纠音建议</p><div className="welcome-cards">{['分析音高与时长','计算VOT','获得纠音建议'].map(text => <button key={text} onClick={() => { runtime.thread.composer.setText(text === '获得纠音建议' ? '与标准音对比，指出发音不足之处与待改进点' : text); }}>{text}</button>)}</div></div></ThreadPrimitive.Empty><ConversationMinimap markers={markers} rows={rows} viewport={viewport} hiddenAbove={windowState.hiddenAbove} onRevealEarlier={revealEarlier}/><ConversationWidthHandles viewport={viewport} width={conversation.width} onPreview={conversation.preview} onCommit={conversation.commit}/></div><div className="jump-wrap"><ThreadPrimitive.ScrollToBottom className="jump-button" aria-label="回到最新消息"><ArrowDown size={16}/>回到最新</ThreadPrimitive.ScrollToBottom></div><Composer store={store} session={session} composer={runtime.thread.composer} onSettings={onSettings}/><ContextMenu state={menu} onClose={closeMenu}/></ThreadPrimitive.Root></AssistantRuntimeProvider></Context.Provider>;
 }

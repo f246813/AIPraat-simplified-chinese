@@ -1,0 +1,3 @@
+PASS conflicting user/system registrations stop Tk automatic repair
+PASS selected registration preserves system scope and exact target
+PASS selected registration preserves user scope

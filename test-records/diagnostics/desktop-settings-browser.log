@@ -1,0 +1,55 @@
+[WebServer] (node:50456) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:3120) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3120) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\browser\settings-entry.spec.ts:2:1 › collapsed gear opens Model; expanded gear keeps Session and Storage (45.1s)
+(node:25636) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25636) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 tests\browser\ui.spec.ts:4:1 › normal browser is fail-closed, never a demo (9.6s)
+  ok 3 tests\browser\ui.spec.ts:18:1 › rich composer IME, newline, drafts, native attachment tags, session CRUD (2.4s)
+  ok 4 tests\browser\ui.spec.ts:115:1 › settings categories, key preservation, separate fixture tests and unknown capability (1.2s)
+  ok 5 tests\browser\ui.spec.ts:182:1 › long history math/highlight/diagram, reading position, background stream isolation and cancel (4.8s)
+
+
+  1) tests\browser\settings-entry.spec.ts:2:1 › collapsed gear opens Model; expanded gear keeps Session and Storage 
+
+    [31mTest timeout of 45000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 45000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: '收起会话侧栏', exact: true })[22m
+
+
+      14 |   await expect(page.getByRole('heading',{name:'模型',exact:true})).toHaveCount(0);
+      15 |   await page.getByRole('button',{name:'返回聊天',exact:true}).click();
+    > 16 |   await page.getByRole('button',{name:'收起会话侧栏',exact:true}).click();
+         |                                                             ^
+      17 |   await page.getByRole('button',{name:'打开设置',exact:true}).click();
+      18 |   await expect(page.getByRole('heading',{name:'模型',exact:true})).toBeVisible();
+      19 | });
+        at <WORKSPACE>\ai\frontend\tests\browser\settings-entry.spec.ts:16:61
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-records\diagnostics\frontend-playwright-results\settings-entry-collapsed-g-d2f35-r-keeps-Session-and-Storage\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-records\diagnostics\frontend-playwright-results\settings-entry-collapsed-g-d2f35-r-keeps-Session-and-Storage\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\test-records\diagnostics\frontend-playwright-results\settings-entry-collapsed-g-d2f35-r-keeps-Session-and-Storage\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\test-records\diagnostics\frontend-playwright-results\settings-entry-collapsed-g-d2f35-r-keeps-Session-and-Storage\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\browser\settings-entry.spec.ts:2:1 › collapsed gear opens Model; expanded gear keeps Session and Storage 
+  4 passed (1.1m)
