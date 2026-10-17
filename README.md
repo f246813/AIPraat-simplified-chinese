@@ -48,12 +48,11 @@
 
 纠音表单选择标准音与学习者录音，填写目标音位；Anki 连接页提供卡片入口与插件导出。
 
-<p align="center">
-  <img src="docs/pictures/aipraat/pronunciation-form.png" width="39%" alt="实际纠音表单：标准音、学习者录音、音位与判据选择" />
-  <img src="docs/pictures/aipraat/anki-connection.png" width="59%" alt="实际 Anki 连接页：卡片入口、插件导出和音频定位字段" />
-</p>
+![新版纠音表单：录音对象、发音目标与分析摘要](docs/pictures/aipraat/pronunciation-form.png)
 
-截图取自 2026-10-14 打开的 Windows 软件界面。纠音图展示输入表单；截图来源与捕获方式见[图像说明](docs/pictures/aipraat/README.md)。
+![新版 Anki 连接页：卡片入口、插件导出和音频定位字段](docs/pictures/aipraat/anki-connection.png)
+
+截图更新于 2026-10-17，取自新版生产前端与真实 WebView2 宿主，使用独立配置和示例输入，未发送模型请求或提交纠音分析。截图来源与捕获方式见[图像说明](docs/pictures/aipraat/README.md)。
 
 ## AI 对话后端流程总览
 

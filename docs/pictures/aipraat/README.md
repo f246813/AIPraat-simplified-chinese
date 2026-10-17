@@ -1,13 +1,13 @@
 # 仓库介绍页图像
 
-截图日期：2026-10-14，Windows x64。使用当前工作区软件与生产构建资产，没有伪造对话、测量数字或纠音结果。
+截图日期：2026-10-17，Windows x64。四张 UI 图均重新使用 v8.0.4 的生产构建资产与真实 WebView2 宿主截图；使用独立的空白配置、会话库和公开示例音频，没有读取私人会话或密钥，也没有发送模型请求、提交分析或生成测量结果。
 
 | 文件 | 来源与捕获方式 |
 | --- | --- |
-| `ai-workbench.png` | 启动 `ai/run_ai_chat.py`，使用无 API Key 的示例配置与单独的现代会话目录；展开真实会话侧栏。通过实际桌面 WebView2 的 CDP 截取页面。软件按正常行为只读展示旧会话。 |
-| `ai-settings.png` | 同一工作台中打开“设置 → 模型”，通过实际 WebView2 的 CDP 截取页面。 |
-| `anki-connection.png` | 启动 `ai/run_anki_integration.py`，通过实际 WebView2 的 CDP 截取连接页面；没有保存设置或发送音频。 |
-| `pronunciation-form.png` | 调用生产代码 `show_tutor_form` 打开真实 Tk 表单，以现有 hello 样本作为两个输入对象，通过仓库既有 `capture_png` / PrintWindow 捕获窗口。显示默认旧式比较选项，尚未提交分析。 |
+| `ai-workbench.png` | 生产 `ModernApplication`、`HostAPI` 与会话库，展开新版侧栏；输入框内是尚未发送的示例问题，未伪造历史或回答。通过实际 WebView2 的 CDP 截取页面。 |
+| `ai-settings.png` | 同一工作台中打开“设置 → 模型 → 云端 API”；连接字段与密钥为空，没有执行连接验证或保存设置。 |
+| `anki-connection.png` | 生产 `AnkiApplication` 和新版 React 连接页，采用默认空白连接配置；没有保存设置、导出插件或发送音频。 |
+| `pronunciation-form.png` | 生产 `TutorFormApplication` 和新版 React 纠音表单，使用公开英音／美音 hello 作为两个示例对象，填写手动 IPA；未提交分析。已替换旧 Tk 表单截图。 |
 | `frontend-workflow.svg` | 根据现代宿主、执行器、工具与 AI 使用说明绘制，可直接编辑的 SVG。 |
 | `pronunciation-workflow.svg` | 根据 `tutor.py`、`pronunciation.py`、音位判据与报告实现绘制，可直接编辑的 SVG。 |
 | `backend-workflow.svg` | 与 `backend-steps.svg` 内容一致，替换原来的后端总览，兼容之前的图像链接。 |
@@ -18,9 +18,9 @@
 | `pronunciation-details.svg` | D 图：依据 `tutor.py`、`pronunciation.py`、`audio.py`、音位规则及原生 Python 桥，展开对比纠音完整调用链。 |
 | `measurement-workflow.svg` | E 图：依据 `tools.py`、`measures.tsv`、`chat.py` 展开表驱动测量与 AI VOT 的显式计算／自动估计支路。 |
 
-Computer Use 打开了 Praat，但实时窗口捕获两次超时；最终截图使用上表方法。WebView2 截图为实际桌面窗口中的页面内容，不含原生标题栏。
+WebView2 截图为真实宿主中的生产页面内容，不含原生标题栏；未使用浏览器 demo 适配器、设计原型或图片合成。页面中不包含开发机路径、私人历史或实际 API key。
 
-纠音表单中的“学习者录音”是字段名称，示例实际使用美音／英音 hello 两个样本，不能据此认为其中某个说话人的发音错误。样本出处见工作区 `test-records/ai-tutor-demo-20261013/README.md`；本目录仅分发界面截图，不分发音频。
+纠音表单中的“学习者录音”是字段名称，示例实际使用英音／美音 hello 两个样本，不能据此认为其中某个说话人的发音错误。样本出处与许可见 [AUDIO-SOURCES.md](../../../test-records/AUDIO-SOURCES.md)；本目录仅分发界面截图。
 
 2026-10-14 修订流程图：为前端回传线与执行线分配独立接口，纠音图的分流与合流分别使用明确节点或独立入口，新增后端阶梯图。所有连线贴合节点边界；渲染检查文字溢出及连线穿字。
 
