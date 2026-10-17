@@ -26,8 +26,8 @@ from .cloud_workflow import (explicit_range, explicit_wav, object_context_text,
                              renamed_context, target_context)
 from .config import AppConfig, api_is_active
 from .dialogue_policy import dialogue_kind, direct_measurement
+from . import execution_core, router
 from .workflow_policy import WorkflowPolicy, explicit_action, finish_locally, publish_results, valid_measurement_rows
-from . import router
 from .escape_policy import AnalysisState, BranchExit, Budget, Evidence, note_guard
 from .materials import TaskMaterials
 from .process import identities_match, process_identity
@@ -64,9 +64,7 @@ def _send(executable: str, pid: int, script: str, cancel: threading.Event):
         note = str(error)
         ok = False
         # An exception after handoff (or without a declared fact) is ambiguous.
-    fact = delivery.DELIVERED if ok else (
-        delivery.NOT_DELIVERED if facts and facts[-1] == delivery.NOT_DELIVERED
-        else delivery.EXECUTION_UNKNOWN)
+    fact = execution_core.delivery_fact(ok=ok, facts=facts, note=note)
     if fact == delivery.EXECUTION_UNKNOWN:
         _POISON = note or 'completion not confirmed'
     if not ok:
@@ -215,22 +213,18 @@ class _Dispatcher:
                 step = chat.AgentStep(index, name, dict(args) if isinstance(args, dict) else {},
                                       False, str(error), execution=getattr(error, 'execution',
                                       delivery.EXECUTION_BLOCKED if _POISON else delivery.NOT_DELIVERED))
-            status = 'success' if step.ok else (
-                'unknown' if step.execution == delivery.EXECUTION_UNKNOWN else
-                'not_executed' if step.execution in {delivery.NOT_DELIVERED, delivery.EXECUTION_BLOCKED}
-                or not step.script else 'failed')
-            record = {'tool':step.tool, 'arguments':step.arguments, 'status':status,
-                      'execution':step.execution, 'reason':step.observation,
-                      'script':step.script, 'rows':list(step.results), 'deliveries':list(self.segment_facts)}
+            # 账本形状由 execution_core 统一产出：Tk 路径与前端路径写同一种记录。
+            record = execution_core.attempt_record(step, execution=step.execution)
+            record['deliveries'] = list(self.segment_facts)
             record['refresh_deliveries'] = list(self.refresh_facts)
             if step.note:
                 record['note'] = step.note
             self.attempts.append(record)
-            if step.ok and step.results:
-                self.evidence.append(Evidence(step.tool, step.arguments, list(step.results), self.target,
-                    'operation' if tools.is_mutating(step.tool) else 'measurement'))
+            if execution_core.valid_evidence(step, mutating=tools.is_mutating(step.tool)):
+                self.evidence.append(execution_core.evidence_row(
+                    step, self.target, mutating=tools.is_mutating(step.tool)))
             self.activity('tool', name=step.tool, args=step.arguments, result=list(step.results),
-                          text=step.observation, status=status, execution=step.execution)
+                          text=step.observation, status=record['status'], execution=step.execution)
             return step
 
     def cloud_action(self, name, arguments, index):

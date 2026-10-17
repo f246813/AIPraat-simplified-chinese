@@ -1206,30 +1206,29 @@ class _TextDraft:
     coverage: list[Any] = field(default_factory=list)
 
 def _guard_note(text: str, detail: str, values=()) -> str:
-    """被守卫拒绝、又只能靠遮蔽修复时，把原因附在正文末尾（云端 rescued_report 同一做法）。
+    """被守卫拒绝、又只能靠遮蔽修复时，在末尾补一句**人话**（不带规则名与内部语法）。
 
-    原因里回显的正是那个没核上的数值，所以原因本身也要遮蔽同样的值——否则用户还是
-    会从那句话里看到没测过的数字。
+    旧文案会把守卫的原始理由整段贴给用户（「数值“96 Hz”未匹配同对象/范围/量名的测量。
+    逐行引证；推导用calc占位式…」），既不解决问题也读不懂。原因只留一句说明。
     """
 
-    reason = ' '.join(str(detail or '').split())[:300].rstrip('。；; ')
-    reason = mask_rejected_numbers(reason or '见守卫记录', values, UNVERIFIED_NUMBER)
-    return (text.rstrip() + '\n\n（这份回答没有通过自动数值核对：' + reason
-            + '。没通过核对的数值已标成 ' + UNVERIFIED_NUMBER + '。）')
+    note = ('（标成 ' + UNVERIFIED_NUMBER + ' 的位置没能在测量结果里找到对应值，已就地标出；'
+            '其余结论仍基于本次实测数据。）')
+    if note in text:
+        return text
+    return text.rstrip() + '\n\n' + note
 
 
 def guard_delivered_text(state: Any, text: str, *, values=(), verify: bool = True,
                          fill_citations: bool = False) -> tuple[str, str]:
     """两条交付路径共用的守卫入口：云端恢复稿与本机最终交付都经这一个函数。
 
-    ``verify=True``：先走 :func:`validate_report`（同一套确定性核对）。被拒时取出没
-    核上的数值，用 :func:`mask_rejected_numbers` 遮蔽，再核对一遍——一次只能报出一处
-    没对上的数值，所以要循环到核对干净（最多 4 轮）或确认无法靠遮蔽修复；无法修复的
-    规则只标注原因，不假装通过。任何情况下都不把没测过的数字当实测交付。
+    ``verify=True`` 时委托 :func:`report_audit.audit_report`——遮蔽循环只有一份实现：
+    数值没对上就就地遮蔽并继续核对，只有结构性错误才放弃（标注，不假装通过）。
 
-    返回 ``(可交付文本, 状态)``：``verified``（核对通过）、``rejected_masked``
-    （被拒并已遮蔽/标注）、``masked_only``（调用方已经知道被拒的数值，只要求遮蔽）。
-    状态要如实往上带：被遮蔽不等于通过核对。
+    返回 ``(可交付文本, 状态)``：``verified``（全部对上）、``rejected_masked``
+    （有数值被遮蔽/标注）、``masked_only``（调用方已知道要遮哪些值）。
+    被遮蔽不等于通过核对，状态必须如实往上带。
     """
 
     text = str(text or '')
@@ -1238,28 +1237,41 @@ def guard_delivered_text(state: Any, text: str, *, values=(), verify: bool = Tru
         if not pending:
             return text, 'masked_only'
         return mask_rejected_numbers(text, pending, UNVERIFIED_NUMBER, state=state), 'rejected_masked'
-    detail = ''
-    for _ in range(4):
-        try:
-            validated = validate_report(state, _TextDraft(analysis=text),
-                                        fill_citations=fill_citations)
-        except ModelRetry as error:
-            detail = str(error)
-            found = rejected_values(detail)
-            if not found:
-                # 与数值无关的规则（对象、声称等）遮蔽不了：留原因，不伪装成通过。
-                return _guard_note(text, detail, pending), 'rejected_masked'
-            pending = list(dict.fromkeys([*pending, *found]))
-            masked = mask_rejected_numbers(text, pending, UNVERIFIED_NUMBER, state=state)
-            if masked == text:
-                # 值取不出来（例如写成中文数字）：同样只能标注。
-                return _guard_note(text, detail, pending), 'rejected_masked'
-            text = masked
-            continue
-        if detail:
-            return _guard_note(text, detail, pending), 'rejected_masked'
-        return str(getattr(validated, 'analysis', text) or ''), 'verified'
-    return _guard_note(text, detail, pending), 'rejected_masked'
+    from .report_audit import audit_report
+
+    probe = copy.copy(state)
+    probe.metrics = {}
+    try:
+        audited = audit_report(probe, _TextDraft(analysis=text), fill_citations=fill_citations)
+    except ModelRetry as error:
+        # 与数值无关的规则（对象、声称等）遮蔽不了：留一句人话，不伪装成通过。
+        _merge_counters(state, probe.metrics)
+        return _guard_note(text, str(error), pending), 'rejected_masked'
+    _merge_counters(state, probe.metrics)
+    verified = bool((probe.metrics.get('audit') or {}).get('verified', True))
+    body = str(getattr(audited, 'analysis', text) or '')
+    if verified:
+        return body, 'verified'
+    if UNVERIFIED_NUMBER not in body:
+        body = _guard_note(body, '', pending)
+    return body, 'rejected_masked'
+
+
+def _merge_counters(state: Any, metrics: dict) -> None:
+    """把探测副本里的守卫计数并回主 state（本机交付也要进遥测）。"""
+
+    target = getattr(state, 'metrics', None)
+    if not isinstance(target, dict) or not isinstance(metrics, dict):
+        return
+    for bucket in ('guard_blocks', 'guard_repairs'):
+        for rule, count in (metrics.get(bucket) or {}).items():
+            slot = target.setdefault(bucket, {})
+            slot[rule] = slot.get(rule, 0) + count
+    for rule in ('report_derived_accepted', 'report_general_value_assumed'):
+        if metrics.get(rule):
+            target[rule] = target.get(rule, 0) + metrics[rule]
+    if metrics.get('audit'):
+        target['audit'] = dict(metrics['audit'])
 
 
 def _general_claim(clause: str) -> bool:

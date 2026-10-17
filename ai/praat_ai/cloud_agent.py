@@ -324,17 +324,23 @@ _CALC_PLACEHOLDER = re.compile(r'\{\{calc:[^{}]*\}\}')
 
 
 def rescued_report(draft: str, detail: str, values=(), *, state=None) -> str:
-    """保留被守卫拒绝的草稿，遮蔽未通过核对的数值和内部推导占位式，并附核对原因。没有草稿时返回空串，由调用方生成阶段记录。"""
+    """保留被守卫拒绝的草稿，遮蔽未通过核对的数值和内部推导占位式，末尾只留一句人话。
+
+    旧文案把守卫的原始理由整段贴给用户；现在原因只进 metrics，正文只说明「哪些位置
+    没能核对上」。没有草稿时返回空串，由调用方生成阶段记录。
+    """
 
     text = str(draft or '').strip()
     if not text:
         return ''
     text, _masked_status = report_guards.guard_delivered_text(state, text, values=values, verify=False)
-    reason = mask_rejected_numbers(' '.join(str(detail or '').split())[:400], values, UNVERIFIED_NUMBER).rstrip('。；; ')
-    text += ('\n\n（这份回答没有通过自动数值核对：' + reason
-             + '。上面保留的是模型已经写好的内容，其中没通过核对的数值已标成 '
-             + UNVERIFIED_NUMBER + '。）')
-    return _CALC_PLACEHOLDER.sub('[未通过核对的推导式]', text)
+    note = ('（标成 ' + UNVERIFIED_NUMBER + ' 的位置没能在测量结果里找到对应值，已就地标出；'
+            '其余结论仍基于本次实测数据。）')
+    if note not in text:
+        text += '\n\n' + note
+    if isinstance(state, dict):
+        state.setdefault('guard_detail', detail)
+    return _CALC_PLACEHOLDER.sub('[推导未核对]', text)
 
 
 def repaired_report(report, detail: str, state, guard_state):

@@ -223,6 +223,15 @@ classify(goal, context) -> RouterIntent(intent, needs_audio, whole_object, targe
 - 删除 `chat.py` 中 `local_evidence_state`、`_guard_local_delivery`、`_run_agent_turn` 三份平行逻辑，去掉 `modern_execution.py:305` 的 `_rebind`；
 - `tools.py`（173 KB）拆包为 `tools/measurements|operations|scripts|schema.py`，只搬运不改行为。
 
+### 7.1 S5 实施结果（2026-10-18）
+
+- 新增 `ai/praat_ai/execution_core.py`：**投递四态判定**（`delivery_fact`）、**账本记录**（`attempt_record` / `attempt_status`）、**证据折法**（`evidence_row` / `evidence_from_steps` / `valid_evidence`）。这两套判定以前在 `modern_execution._send`/`_Dispatcher.action` 与 `chat.local_evidence_state` 里各写一份，口径已经分叉（操作类在 Tk 路径被当成测量证据）。
+- `_Dispatcher.action` 与 `chat` 路径都改成调用它；`gate`/`_send`/`_refresh` 这些深度依赖 Praat 进程、锁与结果文件的 I/O 仍留在 `modern_execution`（搬走会让现有 40+ 个补丁点全部失效）。
+- `report_guards.guard_delivered_text` 不再自带遮蔽循环，改为委托 `report_audit.audit_report`：**遮蔽循环只剩一份实现**；探测副本的守卫计数会并回主 state，本机交付同样进遥测。
+- 尚未合并的部分（明确留给后续）：`chat._run_agent_turn`（本地规划器）与 `cloud_agent` 的规划循环仍是两套；`tools.py` 拆包未做。这两项都属于"改结构不改行为"，风险收益比不如前几项，建议单独一轮做。
+
+测试：新增 `ai/tests/test_execution_core.py`（10 例）、`ai/tests/test_delivery_text.py`（5 例）；全仓 discover 1528 例，除 5 个缺 `Praat.exe`/外部启动器的环境错误外全绿。
+
 ## 8. P4：错误分类收敛
 
 ```python

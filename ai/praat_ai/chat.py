@@ -38,6 +38,8 @@ from . import (
     api_settings,
     delivery,
     escape_policy,
+    execution_core,
+    escape_policy,
     parent_watch,
     praat_app,
     progress_popup,
@@ -569,22 +571,13 @@ class TurnOutcome:
 def local_evidence_state(context_text: str, outcome: TurnOutcome, user_text: str) -> escape_policy.AnalysisState:
     """本机循环里用来核对最终正文的证据视图。
 
-    形状与云端 ``state.evidence`` 一致：一条工具结果一行证据，取工具名、参数和
-    真实结果行。报告守卫按这份证据核对数值，所以两条路径核对的是同一种东西。
+    证据的折法现在与云端共用 ``execution_core``（同一个 kind 口径：操作类不是测量），
+    两条路径核对的是同一种东西，不再各写一份。
     """
 
-    state = escape_policy.AnalysisState(goal=str(user_text or ""), context_text=str(context_text or ""))
-    for step in outcome.steps:
-        if not step.ok or not step.results:
-            continue
-        state.add_evidence(
-            escape_policy.Evidence(
-                step.tool,
-                dict(step.arguments),
-                list(step.results),
-                state.context_text,
-            )
-        )
+    state = execution_core.evidence_from_steps(context_text, outcome.steps,
+                                               is_mutating=tools.is_mutating)
+    state.goal = str(user_text or "")
     return state
 
 

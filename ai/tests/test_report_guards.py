@@ -1,4 +1,4 @@
-import unittest
+﻿import unittest
 
 from pydantic_ai import ModelRetry
 
@@ -396,7 +396,7 @@ class RepairedDeliveryTests(unittest.TestCase):
         self.assertNotIn('0.215386', repaired.analysis)
         self.assertIn(UNVERIFIED_NUMBER, repaired.analysis)
         self.assertIn('说明节奏稳定', repaired.analysis)   # 正文和结论留着
-        self.assertIn('没有通过自动数值核对', repaired.analysis)
+        self.assertIn('没能在测量结果里找到对应值', repaired.analysis)
         self.assertTrue(self.state.metrics['report_repaired'])
         self.assertEqual(self.state.metrics['guard_repairs']['report.delivered_with_masks'], 1)
 
@@ -405,7 +405,7 @@ class RepairedDeliveryTests(unittest.TestCase):
         draft = report('本段平均基频为 300 Hz，最低 200 Hz，说明节奏稳定。')
         repaired = repaired_report(draft, '数值“300 Hz”未匹配同对象/范围/量名的测量。',
                                    self.state, self.state)
-        body, _, note = repaired.analysis.partition('（这份回答没有通过自动数值核对')
+        body, _, note = repaired.analysis.partition('（标成 ')
         self.assertNotIn('300 Hz', repaired.analysis)
         self.assertIn('最低 200 Hz', body)              # 核对通过的实测值原样保留
         self.assertEqual(body.count(UNVERIFIED_NUMBER), 1)
@@ -433,7 +433,7 @@ class RepairedDeliveryTests(unittest.TestCase):
         state = AnalysisState('分析录音语调', CONTEXT, evidence=[pitch()])
         draft = report('本段平均基频为 300 Hz，比基线高 80 Hz，说明节奏稳定。')
         repaired = repaired_report(draft, '数值“300 Hz”未匹配同对象/范围/量名的测量。', state, state)
-        body, _, note = repaired.analysis.partition('（这份回答没有通过自动数值核对')
+        body, _, note = repaired.analysis.partition('（标成 ')
         self.assertNotIn('300 Hz', repaired.analysis)
         self.assertNotIn('80 Hz', repaired.analysis)
         self.assertEqual(body.count(UNVERIFIED_NUMBER), 2)
@@ -488,7 +488,7 @@ class ReportVoiceTests(unittest.TestCase):
         self.assertIsNotNone(repaired)
         rescued = rescued_report(draft.analysis, detail, ['300 Hz'], state=state)
         for text in (repaired.analysis, rescued):
-            self.assertIn('没有通过自动数值核对', text)
+            self.assertIn('没能在测量结果里找到对应值', text)
             for order in ('请执行测量并引用结果', '请按这条提示核对引用的数值和范围',
                           '请按这条提示核对', '为什么失败'):
                 self.assertNotIn(order, text)

@@ -6,7 +6,7 @@ import re
 from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 
-from . import tools
+from . import delivery_text, tools
 
 
 @dataclass(frozen=True)
@@ -235,8 +235,12 @@ def finish_locally(state):
     needs_explanation = wants_explanation(state.goal) or state.continuation_mode == 'L2'
     body = str(state.report or '').strip()
     measurement = state.measurement_content or ''
-    gap = state.reason or ('目标解释尚未执行' if complete or state.continuation
-                           else '现有工具结果尚未证明目标所需的量、对象与范围均已完成')
+    raw_reason = state.reason or ('目标解释尚未执行' if complete or state.continuation
+                                  else '现有工具结果尚未证明目标所需的量、对象与范围均已完成')
+    # 正文只写一句人话；内部原文（阶段代号、守卫规则名）留在 metrics 里备查。
+    gap = delivery_text.user_reason(state.reason)
+    state.metrics['reason_detail'] = raw_reason
+    state.metrics['reason_class'] = delivery_text.classify(state.reason)
     if body and (not measurement or not body.startswith(measurement.strip())):
         # 已经有解释正文：保留它（含遮蔽标注），只追加缺口说明。
         state.status = 'complete' if complete and not needs_explanation and not state.reason else 'partial'
@@ -251,8 +255,7 @@ def finish_locally(state):
         state.metrics['finish_state'] = 'complete' if state.status == 'complete' else (
             'partial_with_text' if state.report.strip() else 'incomplete')
     state.coverage = [dict(item=item, status=state.status,
-                           explanation='已保存工具结果' if complete else state.reason or '仍缺目标依据或解释')
+                           explanation='已保存工具结果' if complete else gap)
                       for item in state.deliveries]
     state.metrics['route_reason'] = 'measurement_complete' if complete else 'workflow_stage_disabled'
-    state.can_continue = bool(state.evidence)
     state.can_continue = bool(state.evidence)
