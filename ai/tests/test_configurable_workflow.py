@@ -54,7 +54,7 @@ class WorkflowSettingsTests(unittest.TestCase):
             self.assertEqual(snapshot.workflow.preset, 'balanced')
             service.save(dict(preferences=dict(theme='dark')))
             raw = json.loads(path.read_text(encoding='utf8'))
-            self.assertEqual(raw['modern']['workflow']['l2_deadline_sec'],60)
+            self.assertEqual(raw['modern']['workflow']['l2_soft_deadline_sec'],120)
             self.assertEqual(raw['modern']['extra'], 'keep')
             self.assertEqual(raw['unknown'], dict(old=1))
             self.assertEqual(raw['api']['api_key'],'fixture-secret')
@@ -64,8 +64,8 @@ class WorkflowSettingsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             path = Path(root)/'config.json'; path.write_text('{}')
             for key, value in [('l0_enabled',1),('l4_enabled','false'),('l1_repair_limit',True),
-                               ('l2_deadline_sec','15'),('l2_deadline_sec',0),('l2_request_limit',3),
-                               ('l3_mode','unlimited'),('schema_version',2)]:
+                               ('l2_soft_deadline_sec','60'),('l2_soft_deadline_sec',0),
+                               ('router_mode','always'),('l3_mode','unlimited'),('schema_version',2)]:
                 with self.subTest(key=key,value=value), self.assertRaises(ValueError):
                     SettingsService(path).save(dict(workflow={key:value}))
                 self.assertEqual(path.read_text(),'{}')
@@ -350,33 +350,35 @@ class L2BudgetTests(unittest.TestCase):
         self.assertTrue(all(settings['extra_body']['enable_thinking'] for planner,settings in observed if planner))
         self.assertFalse(next(settings for planner,settings in observed if not planner)['extra_body']['enable_thinking'])
 
-    def test_bad_number_does_not_consume_l2_request_budget(self):
-        """P0-B：数值没对上不再重写，L2 请求预算也不会再被守卫吃掉。"""
+    def test_bad_number_does_not_consume_request_budget(self):
+        """P0-B：数值没对上不再重写，所以不会为它多花一个请求。"""
 
-        for limit in (1,2):
-            state=self.state(replace(WorkflowPolicy(),l2_request_limit=limit))
-            calls=[]
-            def response(messages,info):
-                calls.append(copy.deepcopy(messages))
-                return ModelResponse([TextPart(report(state.goal, '99' if len(calls)==1 else '1.25'))])
-            run_cloud_turn(config(),state,execute_action=lambda *_:self.fail('No remeasurement'),
-                cancel=threading.Event(),model=FunctionModel(response))
-            self.assertEqual(state.requests,1,state.reason)
-            self.assertEqual(state.metrics['l2_requests'],1)
-            self.assertEqual(len(calls),1,state.reason)
-            self.assertIn('1.25',state.measurement_content)
-            self.assertFalse(state.metrics.get('report_verified'),state.reason)
-            self.assertEqual(state.metrics['audit']['masked_count'],1)
-            self.assertNotIn('99',state.report)
+        state=self.state(WorkflowPolicy())
+        calls=[]
+        def response(messages,info):
+            calls.append(copy.deepcopy(messages))
+            return ModelResponse([TextPart(report(state.goal, '99' if len(calls)==1 else '1.25'))])
+        run_cloud_turn(config(),state,execute_action=lambda *_:self.fail('No remeasurement'),
+            cancel=threading.Event(),model=FunctionModel(response))
+        self.assertEqual(state.requests,1,state.reason)
+        self.assertEqual(state.metrics['l2_requests'],1)
+        self.assertEqual(len(calls),1,state.reason)
+        self.assertIn('1.25',state.measurement_content)
+        self.assertFalse(state.metrics.get('report_verified'),state.reason)
+        self.assertEqual(state.metrics['audit']['masked_count'],1)
+        self.assertNotIn('99',state.report)
 
-    def test_preparation_timeout_stops_stage_without_another_route(self):
-        state=self.state(replace(WorkflowPolicy(),l2_deadline_sec=1))
+    def test_preparation_overrun_keeps_results_and_sends_no_report_request(self):
+        """软时限不再中断进行中的准备（旧实现会取消它），只阻止后续请求。"""
+
+        state=self.state(replace(WorkflowPolicy(),l2_soft_deadline_sec=1))
         async def delayed(*args,**kwargs):await asyncio.sleep(2)
         with patch.object(CloudSession,'compact_phase',side_effect=delayed):
             started=time.monotonic()
             run_cloud_turn(config(),state,execute_action=lambda *_:self.fail('No remeasurement'),cancel=threading.Event(),
                 model=FunctionModel(lambda *_:self.fail('No request after preparation deadline')))
-        self.assertLess(time.monotonic()-started,1.6)
+        # 准备阶段跑完（约 2 秒），没有被取消
+        self.assertGreaterEqual(time.monotonic()-started,1.9)
         self.assertEqual(state.requests,0)
         self.assertIn('1.25',state.report)
         self.assertEqual(state.status,'partial')
@@ -426,7 +428,7 @@ class L2BudgetTests(unittest.TestCase):
                 cfg.api.token_mode='manual'
                 contexts={}
                 for turn in range(3):
-                    state=self.state(replace(WorkflowPolicy(),l2_request_limit=2))
+                    state=self.state(WorkflowPolicy())
                     state.phase_contexts=contexts
                     run_cloud_turn(cfg,state,execute_action=lambda *_:self.fail('No remeasurement'),cancel=threading.Event())
                     # P0-B：一次回合一次请求；坏数字就地遮蔽（report_verified=False）。

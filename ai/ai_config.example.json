@@ -1,18 +1,98 @@
 {
-  "qwen": {"base_url": "http://127.0.0.1:8000/v1", "model": "local-model", "api_key": "EMPTY", "enable_thinking": false, "limit_tokens": true, "max_context_tokens": 32768, "plan_max_tokens": 4096},
-  "api": {"enabled": false, "locked": false, "limit_tokens": false, "api_key": ""},
-  "server": {"llama_server": "", "model_path": "", "mmproj_path": "", "host": "127.0.0.1", "port": 8000, "n_gpu_layers": -1, "threads": 8, "parallel": 1, "auto_start": false, "presets": [], "active_preset": "", "mmproj_by_model": {}},
-  "audio": {"ffmpeg": ""},
-  "alignment": {"backend": "auto", "mfa": {"enabled": false}, "wav2vec2": {"enabled": false}},
+  "qwen": {
+    "base_url": "http://127.0.0.1:8000/v1",
+    "model": "local-model",
+    "api_key": "EMPTY",
+    "enable_thinking": false,
+    "limit_tokens": true,
+    "max_context_tokens": 32768,
+    "plan_max_tokens": 4096
+  },
+  "api": {
+    "enabled": false,
+    "locked": false,
+    "limit_tokens": false,
+    "api_key": ""
+  },
+  "server": {
+    "llama_server": "",
+    "model_path": "",
+    "mmproj_path": "",
+    "host": "127.0.0.1",
+    "port": 8000,
+    "n_gpu_layers": -1,
+    "threads": 8,
+    "parallel": 1,
+    "auto_start": false,
+    "presets": [],
+    "active_preset": "",
+    "mmproj_by_model": {}
+  },
+  "audio": {
+    "ffmpeg": ""
+  },
+  "alignment": {
+    "backend": "auto",
+    "mfa": {
+      "enabled": false
+    },
+    "wav2vec2": {
+      "enabled": false
+    }
+  },
   "pronunciation": {
-    "normalization": {"version": "normalization-v1", "formants": false, "pitch": false, "loudness": false},
-    "resources": {"g2p": [], "dictionary": [], "acoustic": []},
+    "normalization": {
+      "version": "normalization-v1",
+      "formants": false,
+      "pitch": false,
+      "loudness": false
+    },
+    "resources": {
+      "g2p": [],
+      "dictionary": [],
+      "acoustic": []
+    },
     "presets": [
-      {"id": "en-GB", "name": "英语（英式）", "language": "en", "variant": "en-GB", "rule_id": null, "g2p": "", "dictionary": "", "acoustic": "", "phone_set": "custom", "phone_map": {}, "confirmed": false},
-      {"id": "en-US", "name": "英语（美式）", "language": "en", "variant": "en-US", "rule_id": "en-US-general-v1", "g2p": "", "dictionary": "", "acoustic": "", "phone_set": "custom", "phone_map": {}, "confirmed": false}
+      {
+        "id": "en-GB",
+        "name": "英语（英式）",
+        "language": "en",
+        "variant": "en-GB",
+        "rule_id": null,
+        "g2p": "",
+        "dictionary": "",
+        "acoustic": "",
+        "phone_set": "custom",
+        "phone_map": {},
+        "confirmed": false
+      },
+      {
+        "id": "en-US",
+        "name": "英语（美式）",
+        "language": "en",
+        "variant": "en-US",
+        "rule_id": "en-US-general-v1",
+        "g2p": "",
+        "dictionary": "",
+        "acoustic": "",
+        "phone_set": "custom",
+        "phone_map": {},
+        "confirmed": false
+      }
     ],
     "default_preset": "",
-    "launcher": {"executable": "mfa", "conda_executable": "", "conda_environment": ""},
+    "launcher": {
+      "executable": "mfa",
+      "conda_executable": "",
+      "conda_environment": ""
+    },
     "removed_resource_ids": []
+  },
+  "modern": {
+    "workflow": {
+      "l2_soft_deadline_sec": 60,
+      "router_mode": "auto",
+      "preset": "balanced"
+    }
   }
 }

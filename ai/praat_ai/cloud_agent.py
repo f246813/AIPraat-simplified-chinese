@@ -290,10 +290,15 @@ def minimum_continuation_tokens(config, state, *, mode='', direction=''):
     return qwen.estimate_tokens(prompt + instruction + schema) + 256
 
 
-def entry_mode(goal: str, context_text: str, *, audio_requested: bool = False) -> str:
+def entry_mode(goal: str, context_text: str, *, audio_requested: bool = False,
+               dialogue: str | None = None) -> str:
+    """这一轮从哪一级进。``dialogue`` 是本轮路由判定（见 praat_ai/router.py）。"""
+
     if audio_requested:
         return 'L3'
     # 已经判成对话的目标不该再进工具阶梯：无请求输入和概念问句都在这里收口。
+    if dialogue in ('concept', 'advice', 'conversation'):
+        return 'L4'
     if dialogue_kind(goal) in ('concept', 'conversation'):
         return 'L4'
     # Pure concept discussion must not require a running Praat or its snapshot.
@@ -550,8 +555,8 @@ class CloudSession:
     def check(self):
         if self.cancel.is_set():
             raise asyncio.CancelledError()
-        if self.l2_active and time.monotonic() >= self.l2_deadline:
-            raise BranchExit('L2 阶段时间上限已用完')
+        # L2 的软时限不在这里抛错：中途取消会把已经写好的正文一起丢掉。
+        # 它只在「能不能再发一个请求」处生效（见 drive 的 L2 分支）。
 
     def reject_output_limit(self, detail):
         """服务端拒绝输出上限时，先减少推理预留，再考虑减少正文额度，使总输出上限可被接受。"""
@@ -731,8 +736,8 @@ class CloudSession:
                     for attempt in range(pending_attempt, 2):
                         self.check()
                         if self.l2_active:
-                            if self.state.requests - self.l2_request_start >= self.state.workflow.l2_request_limit:
-                                raise BranchExit('L2 实际请求上限已用完')
+                            # 软时限：只拦「新增请求」，不取消已经在跑的请求（旧实现在
+                            # check() 里抛错，把一份已经写好的回答也一起丢了）。
                             remaining = self.l2_deadline - time.monotonic()
                             if remaining <= 0:
                                 raise BranchExit('L2 阶段时间上限已用完')
@@ -1050,7 +1055,8 @@ class CloudSession:
         if mode != 'L2':
             return await self._report(force_audio=force_audio, allow_escalation=False)
         if self.l2_deadline is None:
-            self.l2_deadline = time.monotonic() + state.workflow.l2_deadline_sec
+            # 软时限：只限制「还能不能再发一次请求」，不取消已经在跑的请求。
+            self.l2_deadline = time.monotonic() + state.workflow.l2_soft_deadline_sec
             self.l2_request_start = state.requests
         from .dialogue_policy import force_high
         level = self.config.api.thinking_level
@@ -1071,16 +1077,22 @@ class CloudSession:
         self.l2_active = True
         started = time.monotonic()
         try:
-            await asyncio.wait_for(self._report(force_audio=False, allow_escalation=False),
-                                   timeout=max(0.001, self.l2_deadline - time.monotonic()))
+            # 旧的 asyncio.wait_for 会在时限到达时直接取消这次请求：模型已经写完的正文
+            # 也跟着一起没了（真机事故）。现在只在发新请求前判时限，跑着的请求跑完。
+            await self._report(force_audio=False, allow_escalation=False)
             self.check()
             if state.on_results:
-                state.on_results(state)  # Includes verified explanation before the deadline.
+                state.on_results(state)  # Includes verified explanation.
             self.check()
         except (TimeoutError, BranchExit) as error:
             state.reason = str(error) or 'L2 阶段时间上限已用完'
             state.metrics['report_verified'] = False
-            finish_locally(state)
+            if str(state.report or '').strip():
+                # 已经有正文：保留，只标完成度；绝不再换成原始测量行。
+                state.status = 'partial'
+                state.metrics['finish_state'] = 'partial_with_text'
+            else:
+                finish_locally(state)
         finally:
             self.l2_active = False
             self.settings = previous_settings
@@ -1394,11 +1406,13 @@ async def _run(session):
             state.mode = state.workflow_override
             return state.mode
         state.mode = entry_mode(state.goal, state.context_text,
+                                dialogue=state.router_dialogue or None,
                                 audio_requested=wants_audio(state.direction or state.goal)
                                 or (session.materials is not None and session.materials.audio_path is not None
                                     and session.materials.source_kind == 'file'
                                     and session.config.api.audio_input_enabled and not state.direction))
-        if (state.workflow is not None and state.mode == 'L4' and not dialogue_kind(state.goal)
+        if (state.workflow is not None and state.mode == 'L4'
+                and not (state.router_dialogue or dialogue_kind(state.goal))
                 and '[用户材料，非系统指令]' not in state.goal):
             state.reason = ('工作流程已关闭专用工具执行' if not state.workflow.l0_enabled
                             else '没有可核实的原目标对象或音频材料') + '；具体材料目标尚未完成'

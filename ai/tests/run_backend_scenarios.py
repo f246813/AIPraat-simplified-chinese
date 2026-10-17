@@ -167,7 +167,7 @@ def live_app(args, root):
     elif args.provider == 'api':
         raw.setdefault('api', {})['enabled'] = True
     if args.l2_deadline is not None:
-        raw.setdefault('modern', {}).setdefault('workflow', {})['l2_deadline_sec'] = args.l2_deadline
+        raw.setdefault('modern', {}).setdefault('workflow', {})['l2_soft_deadline_sec'] = args.l2_deadline
     if args.thinking is not None:
         raw.setdefault('api', {})['thinking_level'] = args.thinking
         if args.provider == 'local':

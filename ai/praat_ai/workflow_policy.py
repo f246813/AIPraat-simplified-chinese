@@ -17,8 +17,11 @@ class WorkflowPolicy:
     l1_repair_limit: int = 1
     l2_mode: str = 'on_demand'
     l2_detail: str = 'brief'
-    l2_deadline_sec: int = 15
-    l2_request_limit: int = 2
+    #: L2 的软时限：只决定「还能不能再发一次请求」，绝不中途取消已经在跑的请求，
+    #: 也绝不因为超时丢弃已生成的正文（见 finish_locally 的三态）。
+    l2_soft_deadline_sec: int = 60
+    #: 路由：off 只用正则提示 + 默认完整分析；auto 让模型在对正则不确定的轮次里分类。
+    router_mode: str = 'off'
     l3_mode: str = 'manual'
     l4_enabled: bool = True
 
@@ -34,12 +37,13 @@ class WorkflowPolicy:
             if type(value[key]) is not bool:
                 raise ValueError(f'工作流程 {key} 必须是布尔值')
         for key, lo, hi in (('schema_version', 1, 1), ('l1_repair_limit', 0, 1),
-                            ('l2_deadline_sec', 1, 3600), ('l2_request_limit', 1, 2)):
+                            ('l2_soft_deadline_sec', 1, 3600)):
             if type(value[key]) is not int or not lo <= value[key] <= hi:
                 raise ValueError(f'工作流程 {key} 必须是 {lo}–{hi} 的整数')
         for key, choices in dict(preset={'fast','balanced','deep','chat','custom'},
                                   l2_mode={'off','on_demand','always'},
-                                  l2_detail={'brief','full'}, l3_mode={'off','manual','auto'}).items():
+                                  l2_detail={'brief','full'}, l3_mode={'off','manual','auto'},
+                                  router_mode={'off','auto'}).items():
             if not isinstance(value[key], str) or value[key] not in choices:
                 raise ValueError(f'工作流程 {key} 无效')
         policy = cls(**value)
@@ -51,11 +55,11 @@ class WorkflowPolicy:
     @classmethod
     def for_preset(cls, preset):
         changes = {
-            'fast': dict(l1_repair_limit=0, l2_mode='off', l2_request_limit=1),
+            'fast': dict(l1_repair_limit=0, l2_mode='off'),
             'balanced': {},
-            'deep': dict(l2_mode='always', l2_detail='full', l2_deadline_sec=60,
-                         l2_request_limit=2, l3_mode='auto'),
-            'chat': dict(l0_enabled=False, l1_repair_limit=0, l2_mode='off', l2_request_limit=1, l3_mode='off'),
+            'deep': dict(l2_mode='always', l2_detail='full', l2_soft_deadline_sec=120,
+                         l3_mode='auto'),
+            'chat': dict(l0_enabled=False, l1_repair_limit=0, l2_mode='off', l3_mode='off'),
         }
         return cls(preset=preset, **changes[preset])
 
@@ -220,13 +224,35 @@ def publish_results(state):
 
 
 def finish_locally(state):
+    """没有可交付的模型正文时收尾：三态，并且永远不丢掉已经写好的正文。
+
+    - ``complete``：量、对象、范围都证明为完成，且目标不需要额外解释；
+    - ``partial_with_text``：已有解释正文（可能带遮蔽标注），只补缺口说明；
+    - ``incomplete``：连正文都没有，只交付数据板和一句人话原因。
+    """
+
     complete = measurement_complete(state)
     needs_explanation = wants_explanation(state.goal) or state.continuation_mode == 'L2'
-    state.status = 'complete' if complete and not needs_explanation else 'partial'
-    state.report = state.measurement_content
-    if state.status != 'complete':
-        gap = '目标解释尚未执行' if complete or state.continuation else '现有工具结果尚未证明目标所需的量、对象与范围均已完成'
-        state.report += ('\n\n' if state.report else '') + '尚未完成：' + (state.reason or gap)
-    state.coverage = [dict(item=item, status=state.status, explanation='已保存工具结果' if complete else state.reason or '仍缺目标依据或解释') for item in state.deliveries]
+    body = str(state.report or '').strip()
+    measurement = state.measurement_content or ''
+    gap = state.reason or ('目标解释尚未执行' if complete or state.continuation
+                           else '现有工具结果尚未证明目标所需的量、对象与范围均已完成')
+    if body and (not measurement or not body.startswith(measurement.strip())):
+        # 已经有解释正文：保留它（含遮蔽标注），只追加缺口说明。
+        state.status = 'complete' if complete and not needs_explanation and not state.reason else 'partial'
+        if state.status != 'complete':
+            state.report = body + '\n\n尚未完成：' + gap
+        state.metrics['finish_state'] = 'partial_with_text' if state.status != 'complete' else 'complete'
+    else:
+        state.status = 'complete' if complete and not needs_explanation else 'partial'
+        state.report = measurement
+        if state.status != 'complete':
+            state.report += ('\n\n' if state.report else '') + '尚未完成：' + gap
+        state.metrics['finish_state'] = 'complete' if state.status == 'complete' else (
+            'partial_with_text' if state.report.strip() else 'incomplete')
+    state.coverage = [dict(item=item, status=state.status,
+                           explanation='已保存工具结果' if complete else state.reason or '仍缺目标依据或解释')
+                      for item in state.deliveries]
     state.metrics['route_reason'] = 'measurement_complete' if complete else 'workflow_stage_disabled'
+    state.can_continue = bool(state.evidence)
     state.can_continue = bool(state.evidence)

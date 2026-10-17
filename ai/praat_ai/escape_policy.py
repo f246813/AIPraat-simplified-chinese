@@ -102,6 +102,9 @@ class AnalysisState:
     context_epoch: int = 0
     workflow: Any = None  # None keeps the archived Tk workflow compatible.
     workflow_override: str = ''
+    #: 本轮路由判定（router.classify 的对话分派值：'' / concept / advice / conversation）；
+    #: 一轮只判一次，供对话分派与 entry_mode 共用。
+    router_dialogue: str = ''
     results: list[dict] = field(default_factory=list)
     measurement_content: str = ''
     on_results: Any = field(default=None, repr=False)

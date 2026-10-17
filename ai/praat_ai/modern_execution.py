@@ -27,6 +27,7 @@ from .cloud_workflow import (explicit_range, explicit_wav, object_context_text,
 from .config import AppConfig, api_is_active
 from .dialogue_policy import dialogue_kind, direct_measurement
 from .workflow_policy import WorkflowPolicy, explicit_action, finish_locally, publish_results, valid_measurement_rows
+from . import router
 from .escape_policy import AnalysisState, BranchExit, Budget, Evidence, note_guard
 from .materials import TaskMaterials
 from .process import identities_match, process_identity
@@ -453,8 +454,14 @@ class ModernExecutor:
             if cancel.is_set():
                 state.status, state.report = 'cancelled', '已取消本次操作。'
             else:
+                # 一轮只判一次：正则给不出答案时才问模型；结果同时供对话分派与
+                # entry_mode 使用（见 praat_ai/router.py）。这里不预先建 runtime：
+                # 纯测量回合不该为路由开一个模型连接池。
+                route = router.classify(config, text, context_text=target,
+                                        cancel=cancel, state=state)
+                state.router_dialogue = route.dialogue or ''
                 direct_route = direct_measurement(text, statistics=True) if not attachments and not continuation and (state.workflow is None or state.workflow.l0_enabled) else None
-                kind = dialogue_kind(text) if not attachments and not continuation else None
+                kind = (route.dialogue or None) if not attachments and not continuation else None
                 if state.workflow is not None and state.workflow.preset == 'chat' and not attachments and not continuation:
                     kind = kind or 'conversation'
                 materials = TaskMaterials(self.runtime_directory / 'tasks') if attachments or (not direct_route and not kind) else None
@@ -627,13 +634,15 @@ class ModernExecutor:
                         publish_results(state)
                         finish_locally(state)
                         if step.ok and state.workflow.l2_mode == 'always':
-                            runtime = self.session_runtime(session_id) if session_id else CloudRuntime()
+                            if runtime is None:
+                                runtime = self.session_runtime(session_id) if session_id else CloudRuntime()
                             state.continuation, state.continuation_mode = True, 'L2'
                             run_cloud_turn(config, state, execute_action=cloud_action, cancel=cancel,
                                 progress=progress, runtime=runtime, materials=materials,
                                 prepare_audio=prepare_audio, correct_audio=correct_audio)
                     else:
-                        runtime = self.session_runtime(session_id) if session_id else CloudRuntime()
+                        if runtime is None:
+                            runtime = self.session_runtime(session_id) if session_id else CloudRuntime()
                         if kind and state.workflow is not None and not state.workflow.l4_enabled:
                             state.reason = '工作流程已关闭通用讨论'
                             finish_locally(state)
@@ -711,9 +720,10 @@ class ModernExecutor:
         if formal and state.phase_contexts.get('dialogue'):
             state.phase_contexts['dialogue'].mark_formal([*history, dict(role='user', content=text),
                                                         dict(role='assistant', content=formal_content)])
+        # 交付项状态不再拼进正文（读起来像系统日志）：改为结构化字段随结果返回，
+        # 由前端渲染成看板；正文只留模型自己写的结论。
         if state.coverage and state.metrics.get('route_reason') != 'measurement_complete':
-            state.report += '\n\n交付项状态：\n' + '\n'.join(
-                '- ' + item['item'] + '：' + item['status'] + '。' + item['explanation'] for item in state.coverage)
+            state.metrics['coverage'] = [dict(item) for item in state.coverage]
         # 为满足「只看这一段」而创建的对象在测量后清理，避免留在对象列表里
         # 被下一轮当作测量对象；用户明确要求创建的对象不清理。
         if dispatcher and not cancel.is_set():
@@ -755,6 +765,7 @@ class ModernExecutor:
                 'material_metadata':state.material_metadata, 'results':state.results,
                 'result_content':state.measurement_content, 'analysis_content':analysis_content,
                 'goal':state.goal, 'deliveries':state.deliveries,
+                'coverage':[dict(item) for item in state.coverage],
                 'evidence':[asdict(item) for item in state.evidence], 'attempts':attempts,
                 'target':dispatcher.target if dispatcher else target, 'metrics':state.metrics,
                 'audio_observations':copy.deepcopy(state.audio_observations)}
