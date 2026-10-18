@@ -20,6 +20,7 @@ import tempfile
 import unittest
 import wave
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import numpy as np
@@ -262,7 +263,7 @@ class AcousticExtractionStatusTests(unittest.TestCase):
                 def __init__(self, *_args, **_kwargs):
                     raise RuntimeError("boom")
 
-            with patch.object(parselmouth, "Sound", Broken):
+            with patch.dict("sys.modules", {"parselmouth": SimpleNamespace(Sound=Broken)}):
                 failed = {}
                 extract_phone_tracks(path, phones, learner=True, diagnostics=failed)
 

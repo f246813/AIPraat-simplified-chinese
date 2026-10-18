@@ -83,6 +83,11 @@ jobs:
         working-directory: ai
         run: python -m compileall -q praat_ai
 
+      - name: Install Praat for the runtime environment gate
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y praat
+
       - name: Runtime capability gate (analysis path)
         working-directory: ai
         env:
