@@ -136,4 +136,9 @@ python ai/tests/verify_plugin.py
 
 本机放好 `Praat.exe` 后的实测：`Ran 1566 tests ... OK (skipped=6)`（此前是 5 errors + 13 skipped）。
 
+应用里看同一份判据：纠音窗口右侧「运行环境」列出 `Praat 可执行文件 / ffmpeg / wav2vec2 模型`，
+每行三态（必需缺失=红，挡住「开始分析」；可选缺失=黄，只提示会降级），点「重新检测」走后端
+`tutor.refresh_environment`（先清 Praat 探测缓存再体检）。判据只有一处：`praat_ai/environment.py`，
+前端面板与测试的 skip 条件都读它。
+
 许可与依赖出处见仓库的 credits 和 third-party 许可文件。

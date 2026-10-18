@@ -19,6 +19,7 @@ from .modern_store import ModernStore, identity, now
 from .modern_settings import SettingsService, assert_endpoint
 from . import modern_budget as budget
 from .model_capabilities import safe_error
+from . import telemetry
 
 ACTIVE = {'running', 'queued', 'cancelling'}
 #: 一次 events.poll 最多返回多少条事件（见 ModernApplication.poll）。
@@ -419,7 +420,14 @@ class ModernApplication:
             if cancel.is_set():
                 message['status'] = 'cancelled'
                 message['formal'] = False
-            self.store.save_evidence(sid, task['id'], {k: result[k] for k in ('evidence', 'attempts', 'target', 'metrics', 'material_metadata', 'goal', 'deliveries', 'results') if k in result})
+            # 遥测单独一行（可聚合）；落盘的 metrics 走 slim：整份被拒报告不进库。
+            task_metrics = dict(result.get('metrics') or {})
+            self.store.save_telemetry(sid, task['id'],
+                                      telemetry.payload(task_metrics, status=message['status']))
+            self.store.save_evidence(sid, task['id'], {
+                **{k: result[k] for k in ('evidence', 'attempts', 'target', 'material_metadata',
+                                          'goal', 'deliveries', 'results') if k in result},
+                'metrics': telemetry.slim(task_metrics)})
             for phase, context in result.get('model_contexts', {}).items():
                 status = 'complete' if context.complete and message['formal'] and not cancel.is_set() else 'incomplete'
                 self.store.save_model_context(sid, task['id'], phase, context, status=status)

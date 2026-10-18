@@ -10,7 +10,7 @@ from copy import deepcopy
 from uuid import uuid4
 from pathlib import Path
 
-from . import capabilities
+from . import capabilities, environment
 from .audio import read_wav
 from .bridge import SelectedObject
 from .config import default_config_path, load_config
@@ -84,6 +84,9 @@ class TutorFormApplication:
             normalization=dict(version=VERSION,
                 **{key: raw.get('pronunciation', {}).get('normalization', {}).get(key, False) for key in ('formants', 'pitch', 'loudness')},
                 inventories={key: list(value) for key, value in INVENTORIES.items()}),
+            # 运行环境缺件（Praat / ffmpeg / wav2vec2）随 bootstrap 一起给：前端不用为此多发一次 RPC，
+            # 「重新检测」按钮才走 tutor.refresh_environment。
+            environment=environment.report(config),
         )
 
     def build_request(self, params) -> AnalysisRequest:
@@ -334,6 +337,13 @@ class TutorFormApplication:
             # 提交之前就告诉前端「这一步现在能不能跑」：缺依赖时禁用开关并给出可执行提示，
             # 而不是等分析跑完才在报告里说少了什么。
             return capabilities.analysis_capabilities()
+        if method == 'tutor.environment':
+            # 运行环境缺件（Praat / ffmpeg / wav2vec2）：「路径依赖」那一页直接渲染这几行。
+            return environment.report()
+        if method == 'tutor.refresh_environment':
+            # 用户改完路径再点「重新检测」：先清 Praat 的探测缓存，再重新体检一次。
+            environment.refresh()
+            return environment.report()
         with self._guard:
             if self._closed:
                 raise ValueError("纠音窗口已关闭。")

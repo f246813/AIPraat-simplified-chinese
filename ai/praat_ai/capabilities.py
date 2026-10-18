@@ -163,21 +163,40 @@ def blocker(feature_id: str, *, specs: dict[str, str] | None = None) -> str:
     return f"缺少分析依赖：{detail}。{status['hint']}"
 
 
+def _environment_report() -> dict:
+    """运行环境缺件（Praat / ffmpeg / wav2vec2）的只读体检。
+
+    Praat 缺了整条分析链就跑不起来，所以在 ``ready`` 里一并算；ffmpeg 之类缺了只是降级。
+    体检本身失败不能把纠音窗口带崩，按「不阻塞」处理并留下原因。
+    """
+
+    try:
+        from . import environment
+
+        return environment.report()
+    except Exception as error:  # noqa: BLE001 - 面板坏掉不该挡住使用
+        return dict(ready=True, degraded=False, items=[], missing=[],
+                    message=f"运行环境体检未完成：{type(error).__name__}")
+
+
 def analysis_capabilities() -> dict:
     """前端 ``tutor.capabilities`` 的负载：纠音提交相关能力的完整状态。"""
 
     specs = _specs()
     features = {feature["id"]: check(feature["id"], specs=specs) for feature in FEATURES}
     missing = [item["label"] for item in features.values() if not item["ready"]]
+    environment = _environment_report()
+    reasons = []
+    if missing:
+        reasons.append("当前解释器缺少部分分析依赖：" + "、".join(missing) + "。" + FIX_HINT)
+    if environment.get("missing"):
+        reasons.append("运行环境缺少必需件：" + "、".join(environment["missing"]) + "。")
     return dict(
         python=sys.executable,
         version=platform.python_version(),
         requirements=str(REQUIREMENTS_PATH) if specs is not None else "",
-        ready=not missing,
+        ready=not missing and bool(environment.get("ready", True)),
         features=features,
-        message=(
-            "当前解释器缺少部分分析依赖：" + "、".join(missing) + "。" + FIX_HINT
-            if missing
-            else ""
-        ),
+        environment=environment,
+        message="".join(reasons),
     )

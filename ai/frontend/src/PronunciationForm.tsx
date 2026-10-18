@@ -5,8 +5,9 @@ import { MfaPresetEditor, MfaStatusView, mfaStatusLabel, type MfaData } from './
 import './pronunciation.css';
 import {NormalizationSettings, type NormalizationSelection} from './NormalizationSettings';
 import {ProsodySettings} from './ProsodySettings';
+import {EnvironmentStatus, type EnvironmentReport} from './EnvironmentStatus';
 
-type Bootstrap = {sounds: {id: string; name: string; duration?: number | null}[]; profiles: {id: string; name: string; language: string}[]; model: {source: string; name: string}; theme: string; mfa?: MfaData; normalization?: {version: string; formants: boolean; pitch?: boolean; loudness?: boolean; inventories: Record<string, string[]>}};
+type Bootstrap = {sounds: {id: string; name: string; duration?: number | null}[]; profiles: {id: string; name: string; language: string}[]; model: {source: string; name: string}; theme: string; mfa?: MfaData; environment?: EnvironmentReport; normalization?: {version: string; formants: boolean; pitch?: boolean; loudness?: boolean; inventories: Record<string, string[]>}};
 export type Generation = {id: string; preset_id: string; transcript: string; words: {word: string; candidates: {raw: string[]; ipa: string[]; source: string}[]}[]; sequence: string[]; source: string};
 export type TutorRpc = (method: string, params: Record<string, unknown>) => Promise<unknown>;
 const hostRpc: TutorRpc = async (method, params) => {
@@ -31,6 +32,7 @@ export function PronunciationForm({rpc=hostRpc}: {rpc?: TutorRpc}) {
   const [generation, setGeneration] = useState<Generation>(); const [choices, setChoices] = useState<Record<string, number>>({});
   const [generationValid, setGenerationValid] = useState(false); const [applied, setApplied] = useState(false);
   const [generating, setGenerating] = useState(false); const [notice, setNotice] = useState('');
+  const [environment, setEnvironment] = useState<EnvironmentReport>();
   const epoch = useRef(0); const alive = useRef(true); const generationPending = useRef(false);
   const invalidate = () => {epoch.current++; setGenerationValid(false); setApplied(false);};
   useEffect(() => {
@@ -44,7 +46,7 @@ export function PronunciationForm({rpc=hostRpc}: {rpc?: TutorRpc}) {
       setProfileId(value.profiles[0]?.id || ''); preference = ['light','dark'].includes(value.theme) ? value.theme : 'system'; theme();
       setNormalization({version: 'normalization-v1', formants: value.normalization?.formants === true, confirmed: false,
         ...(value.normalization?.pitch ? {pitch: true} : {}), ...(value.normalization?.loudness ? {loudness: true} : {})});
-      setMfa(value.mfa); const initial = value.mfa?.presets.find(p => p.id === value.mfa?.default_preset); if (initial) {setPresetId(initial.id); setLanguage(initial.language);}
+      setMfa(value.mfa); if (value.environment) setEnvironment(value.environment); const initial = value.mfa?.presets.find(p => p.id === value.mfa?.default_preset); if (initial) {setPresetId(initial.id); setLanguage(initial.language);}
     }).catch(e => {if (mounted) setError(e instanceof Error ? e.message : String(e));});
     return () => {mounted = false; alive.current = false; epoch.current++; if (generationPending.current) void rpc('tutor.cancel_generation', {}).catch(() => {}); media.removeEventListener('change', theme);};
   }, [rpc]);
@@ -89,6 +91,8 @@ export function PronunciationForm({rpc=hostRpc}: {rpc?: TutorRpc}) {
     if (!phonemes.split(/[\s,，;；]+/).filter(Boolean).length) {setFieldError('phones'); phoneRef.current?.focus(); return;}
     if (!rules && (threshold.trim() === '' || !Number.isFinite(Number(threshold)))) {setFieldError('threshold'); setAdvanced(true); setTimeout(() => thresholdRef.current?.focus(), 0); return;}
     if (rules && (!profile || !preset && language.trim() !== profile.language)) {setError('目标语言与所选音位判据不一致。'); return;}
+    // 必需运行件缺失（Praat 找不到）时不给提交：这一跑必然在工具阶段整批失败，不如当场说清。
+    if (environment && !environment.ready) {setError(environment.message || '运行环境缺少必需组件。'); return;}
     submitting.current = true; setBusy(true);
     try {await rpc('tutor.submit', {reference, learner, language: preset?.language || language, phonemes, transcript, threshold: Number(threshold), profile_id: rules ? effectiveProfileId : null, explain, vision, ...(rules ? {normalization} : {}), ...(preset && generation ? {preset_id: preset.id, generation_id: generation.id, choices} : {})});}
     catch(e) {setError(e instanceof Error ? e.message : String(e)); submitting.current = false; setBusy(false);}
@@ -133,8 +137,8 @@ export function PronunciationForm({rpc=hostRpc}: {rpc?: TutorRpc}) {
             <label className="pron-field"><span>声学对比阈值</span><input ref={thresholdRef} type="number" step="any" disabled={rules || busy} value={threshold} onChange={e => {setThreshold(e.target.value); if (fieldError === 'threshold') setFieldError('');}} aria-invalid={fieldError === 'threshold'} aria-describedby={rules ? 'pron-threshold-help' : fieldError === 'threshold' ? 'pron-threshold-error' : undefined}/>{rules && <small id="pron-threshold-help">音位判据不使用此阈值。</small>}{fieldError === 'threshold' && <small className="pron-field-error" id="pron-threshold-error" role="alert">请输入有效数字。</small>}</label>
             <label className="pron-switchrow"><span><strong>AI 视觉解释</strong><small>将对比图交给当前模型解释</small></span><input className="pron-switch" type="checkbox" checked={vision} onChange={e => setVision(e.target.checked)}/></label>
           </div></details></section>
-        </fieldset></div><aside className="pron-sidebar"><div className="pron-aside"><h2><List aria-hidden="true" size={20}/>本次分析</h2><dl><dt>标准音 → 学习者</dt><dd>{name(reference)} → {name(learner)}</dd><dt>目标语言与读音</dt><dd>{preset?.name || `手动 IPA · ${language || '未填写'}`}</dd><dt>目标音位</dt><dd className="pron-ipa">{phonemes.split(/[\s,，;；]+/).filter(Boolean).join(' · ') || '未填写'}</dd><dt>音位来源</dt><dd>{preset ? generationValid && applied ? generation?.source : '等待生成 / 应用（旧结果无效）' : '手动 IPA'}</dd>{preset && <><dt>本次资源</dt><dd>G2P：{mfaStatusLabel(preset.status.g2p)}<br/>词典：{mfaStatusLabel(preset.status.dictionary)}<br/>声学模型：{mfaStatusLabel(preset.status.acoustic)}</dd></>}<dt>分析方式</dt><dd>{rules ? `${profile?.name}音位判据` : '声学对比'}</dd><dt>结果解释</dt><dd>{[explain ? 'AI 文字解释' : '', vision ? 'AI 视觉解释' : ''].filter(Boolean).join(' + ') || '不使用 AI 解释'}</dd>{(explain || vision) && <><dt>解释模型</dt><dd>{source}</dd></>}</dl><p>分析会比较两段录音的声学特征，输出发音差异与参考解释。</p></div><div className="pron-info"><Info aria-hidden="true" size={16}/><p>音位判据用于观察声学特征，实验性结果不作为已校准的发音评分。</p></div></aside></div>
-        <footer className="pron-footer"><p>{preset && !acousticReady ? '请配置声学模型以完成 MFA 对齐。' : '检查录音顺序与目标音位后，开始本次分析。'}</p><div><button type="button" disabled={busy} onClick={() => void cancel()}>取消</button><button className="primary" type="submit" disabled={busy || generating || calibrationBusy || !!preset && (!generationValid || !applied || !completeChoices || !acousticReady)}>{busy ? '正在提交…' : '开始分析'}<ArrowRight aria-hidden="true" size={16}/></button></div></footer>
+        </fieldset></div><aside className="pron-sidebar"><div className="pron-aside"><h2><List aria-hidden="true" size={20}/>本次分析</h2><dl><dt>标准音 → 学习者</dt><dd>{name(reference)} → {name(learner)}</dd><dt>目标语言与读音</dt><dd>{preset?.name || `手动 IPA · ${language || '未填写'}`}</dd><dt>目标音位</dt><dd className="pron-ipa">{phonemes.split(/[\s,，;；]+/).filter(Boolean).join(' · ') || '未填写'}</dd><dt>音位来源</dt><dd>{preset ? generationValid && applied ? generation?.source : '等待生成 / 应用（旧结果无效）' : '手动 IPA'}</dd>{preset && <><dt>本次资源</dt><dd>G2P：{mfaStatusLabel(preset.status.g2p)}<br/>词典：{mfaStatusLabel(preset.status.dictionary)}<br/>声学模型：{mfaStatusLabel(preset.status.acoustic)}</dd></>}<dt>分析方式</dt><dd>{rules ? `${profile?.name}音位判据` : '声学对比'}</dd><dt>结果解释</dt><dd>{[explain ? 'AI 文字解释' : '', vision ? 'AI 视觉解释' : ''].filter(Boolean).join(' + ') || '不使用 AI 解释'}</dd>{(explain || vision) && <><dt>解释模型</dt><dd>{source}</dd></>}</dl><p>分析会比较两段录音的声学特征，输出发音差异与参考解释。</p><EnvironmentStatus rpc={rpc} report={environment} onChange={setEnvironment}/></div><div className="pron-info"><Info aria-hidden="true" size={16}/><p>音位判据用于观察声学特征，实验性结果不作为已校准的发音评分。</p></div></aside></div>
+        <footer className="pron-footer"><p>{environment && !environment.ready ? environment.message : preset && !acousticReady ? '请配置声学模型以完成 MFA 对齐。' : '检查录音顺序与目标音位后，开始本次分析。'}</p><div><button type="button" disabled={busy} onClick={() => void cancel()}>取消</button><button className="primary" type="submit" disabled={busy || generating || calibrationBusy || !!environment && !environment.ready || !!preset && (!generationValid || !applied || !completeChoices || !acousticReady)}>{busy ? '正在提交…' : '开始分析'}<ArrowRight aria-hidden="true" size={16}/></button></div></footer>
       </form>}
     </main>
     {mfa && editorId && <MfaPresetEditor key={editorId} data={mfa} presetId={editorId} rpc={rpc} onData={updateMfa} onClose={() => setEditorId('')}/>}

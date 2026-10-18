@@ -50,6 +50,11 @@ class ModernStore:
                   session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
                   task TEXT NOT NULL,phase TEXT NOT NULL,epoch INTEGER NOT NULL,
                   status TEXT NOT NULL,payload TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS telemetry(
+                  seq INTEGER PRIMARY KEY AUTOINCREMENT,
+                  session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+                  task TEXT NOT NULL,payload TEXT NOT NULL);
+                CREATE INDEX IF NOT EXISTS telemetry_session ON telemetry(session,seq);
             ''')
             # An existing database predates the reading anchor; adding it is additive.
             if 'anchor' not in {column[1] for column in db.execute('PRAGMA table_info(sessions)')}:
@@ -284,6 +289,45 @@ class ModernStore:
                        (message['id'], sid, self.encode(message)))
             db.execute('UPDATE sessions SET updated=? WHERE id=?', (now(), sid))
 
+    def save_telemetry(self, sid, task_id, payload):
+        """一行任务遥测：同一任务重复写就覆盖，避免重试把统计放大。"""
+
+        self.writable(sid)
+        with self.connect() as db:
+            row = db.execute('SELECT seq FROM telemetry WHERE session=? AND task=? '
+                             'ORDER BY seq DESC LIMIT 1', (sid, task_id)).fetchone()
+            if row:
+                db.execute('UPDATE telemetry SET payload=? WHERE seq=?',
+                           (self.encode(payload), row[0]))
+            else:
+                db.execute('INSERT INTO telemetry(session,task,payload) VALUES (?,?,?)',
+                           (sid, task_id, self.encode(payload)))
+
+    def telemetry(self, *, session=None, limit=500):
+        """按时间倒序取遥测行（解析后的 dict），用于聚合与排查。"""
+
+        sql = 'SELECT session,task,payload FROM telemetry'
+        args: tuple = ()
+        if session:
+            sql += ' WHERE session=?'
+            args = (session,)
+        sql += ' ORDER BY seq DESC LIMIT ?'
+        with self.connect() as db:
+            rows = db.execute(sql, (*args, int(limit))).fetchall()
+        out = []
+        for row in rows:
+            try:
+                payload = json.loads(row['payload'])
+            except (TypeError, ValueError):
+                continue
+            payload.setdefault('session', row['session'])
+            payload.setdefault('task', row['task'])
+            out.append(payload)
+        return out
+
+    def telemetry_summary(self, *, session=None, limit=500):
+        from . import telemetry
+        return telemetry.summarize(self.telemetry(session=session, limit=limit))
     def save_evidence(self, sid, task_id, payload):
         self.writable(sid)
         payload = self.bounded_evidence(payload)
