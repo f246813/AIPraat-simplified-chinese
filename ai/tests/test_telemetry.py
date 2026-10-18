@@ -102,7 +102,7 @@ class GoldenGateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             code = golden_backend.main([
                 '--model', 'mock', '--runs', '1', '--min-verified', '0',
-                '--max-blocks', '5', '--max-requests', '30',
+                '--max-report-blocks', '0', '--max-tool-blocks', '5', '--max-requests', '30',
                 '--out', str(Path(root) / 'golden.json'),
                 '--ai-root', str(Path(__file__).resolve().parents[1])])
         self.assertEqual(code, 0)

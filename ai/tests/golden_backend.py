@@ -31,11 +31,26 @@ from praat_ai import delivery_text                                    # noqa: E4
 import bench_guard_rate as bench                                      # noqa: E402
 
 #: 默认阈值。基线（S1 前）是 verified 0/10、阻断 26、请求 8.1/轮、术语 10/10。
-DEFAULTS = dict(runs=10, min_verified=0.5, max_blocks=0, max_requests=12.0)
+#: 阻断分两类：报告侧（守卫假阳性，必须为 0）与工具侧（参数真错，允许少量）。
+DEFAULTS = dict(runs=10, min_verified=0.5, max_report_blocks=0, max_tool_blocks=2,
+                max_requests=12.0)
+
+
+def _blocks(rows) -> tuple[dict[str, int], dict[str, int]]:
+    """按规则前缀把阻断拆成「报告侧」与「工具侧」。"""
+
+    report: dict[str, int] = {}
+    tool: dict[str, int] = {}
+    for row in rows:
+        for rule, count in (row.get('guard_blocks') or {}).items():
+            target = tool if not str(rule).startswith('report.') else report
+            target[rule] = target.get(rule, 0) + int(count)
+    return report, tool
 
 
 def evaluate(rows, *, min_verified=DEFAULTS['min_verified'],
-             max_blocks=DEFAULTS['max_blocks'],
+             max_report_blocks=DEFAULTS['max_report_blocks'],
+             max_tool_blocks=DEFAULTS['max_tool_blocks'],
              max_requests=DEFAULTS['max_requests']) -> list[str]:
     """返回未达标原因列表；空列表表示通过。"""
 
@@ -49,18 +64,19 @@ def evaluate(rows, *, min_verified=DEFAULTS['min_verified'],
              if delivery_text.has_internal_terms(row.get('content') or '')]
     if dirty:
         failures.append(f'交付正文含内部术语：第 {dirty} 轮')
-    blocks = sum(sum((row.get('guard_blocks') or {}).values()) for row in rows)
-    if blocks > max_blocks:
-        detail = {}
-        for row in rows:
-            for rule, count in (row.get('guard_blocks') or {}).items():
-                detail[rule] = detail.get(rule, 0) + count
-        failures.append(f'阻断 {blocks} 次 > {max_blocks}：{detail}')
+    report_blocks, tool_blocks = _blocks(rows)
+    if sum(report_blocks.values()) > max_report_blocks:
+        failures.append(f'报告侧阻断 {sum(report_blocks.values())} 次 > {max_report_blocks}：{report_blocks}')
+    if sum(tool_blocks.values()) > max_tool_blocks:
+        failures.append(f'工具侧阻断 {sum(tool_blocks.values())} 次 > {max_tool_blocks}：{tool_blocks}')
     verified = sum(1 for row in rows if row.get('report_verified'))
     rate = verified / len(rows)
     if rate < min_verified:
         failures.append(f'核对通过率 {verified}/{len(rows)} < {min_verified}')
     requests = sum(row.get('requests') or 0 for row in rows) / len(rows)
+    if requests > max_requests:
+        failures.append(f'平均请求 {requests:.1f}/轮 > {max_requests}')
+    return failures
     if requests > max_requests:
         failures.append(f'平均请求 {requests:.1f}/轮 > {max_requests}')
     return failures
@@ -90,7 +106,8 @@ def main(argv=None) -> int:
     parser.add_argument('--model', choices=('mock', 'live'), default='mock')
     parser.add_argument('--runs', type=int, default=defaults['runs'])
     parser.add_argument('--min-verified', type=float, default=defaults['min_verified'])
-    parser.add_argument('--max-blocks', type=int, default=defaults['max_blocks'])
+    parser.add_argument('--max-report-blocks', type=int, default=defaults['max_report_blocks'])
+    parser.add_argument('--max-tool-blocks', type=int, default=defaults['max_tool_blocks'])
     parser.add_argument('--max-requests', type=float, default=defaults['max_requests'])
     parser.add_argument('--out', default=str(Path(__file__).resolve().parent / 'golden_backend.json'))
     args = parser.parse_args(argv)
@@ -110,7 +127,9 @@ def main(argv=None) -> int:
                               out=args.out, model=args.model))
     rows = json.loads(Path(args.out).read_text(encoding='utf-8'))
     print('\n' + report(rows))
-    failures = evaluate(rows, min_verified=args.min_verified, max_blocks=args.max_blocks,
+    failures = evaluate(rows, min_verified=args.min_verified,
+                        max_report_blocks=args.max_report_blocks,
+                        max_tool_blocks=args.max_tool_blocks,
                         max_requests=args.max_requests)
     if failures:
         print('\n门禁未通过：')
@@ -118,8 +137,9 @@ def main(argv=None) -> int:
             print('  - ' + item)
         return 1
     verified = sum(1 for row in rows if row.get('report_verified'))
+    report_blocks, tool_blocks = _blocks(rows)
     print(f'\n门禁通过：{verified}/{len(rows)} 核对通过，'
-          f'{sum(sum((row.get("guard_blocks") or {}).values()) for row in rows)} 次阻断')
+          f'报告侧阻断 {sum(report_blocks.values())} 次，工具侧 {sum(tool_blocks.values())} 次')
     return 0
 
 
