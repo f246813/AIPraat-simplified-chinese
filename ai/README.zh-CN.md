@@ -124,4 +124,16 @@ python ai/tests/verify_chat_planning.py
 python ai/tests/verify_plugin.py
 ```
 
+### 跑测试需要哪些「环境件」
+
+`unittest discover` 里有几类用例需要真实环境；缺件时应当**跳过而不是报错**，定位如下：
+
+| 需要什么 | 怎么给 | 缺了会怎样 |
+|---|---|---|
+| `Praat.exe`（`test_analysis_object_types`、`test_vot_object_cleanup` 这类真跑脚本的回归） | 放到仓库根（`.gitignore` 已忽略 `/*.exe`），或设 `PRAAT_AI_PRAAT` 指向已安装的那份，或在 `PATH` 里 | 6+1 个用例 skip，不再 error |
+| Anki 桥的安装布局 | 不需要：`test_anki_bridge` 的共享读取器用例会自建假的 `ai/`+`Praat.exe` 再打桩，任何机器都能跑 | — |
+| MFA/Conda 启动器 | 相对路径用例已改为「以可执行文件所在盘的根为基准」取相对路径，跨盘（Python 在 C:、仓库在 D:）也能跑 | — |
+
+本机放好 `Praat.exe` 后的实测：`Ran 1566 tests ... OK (skipped=6)`（此前是 5 errors + 13 skipped）。
+
 许可与依赖出处见仓库的 credits 和 third-party 许可文件。

@@ -1,3 +1,4 @@
+import contextlib
 import copy
 import os
 import sys
@@ -201,8 +202,19 @@ class G2pTests(unittest.TestCase):
         self.assertEqual(map_phone('CH', 'arpabet'), 'tʃ')
 
     def test_relative_launcher_is_absolute_inside_temporary_working_directory(self):
-        relative = os.path.relpath(sys.executable, Path.cwd())
-        command = launcher_command({'executable': relative})
+        """相对路径的 launcher 必须被解析成绝对路径，才能从别的工作目录启动。
+
+        相对路径只在同一个盘上有意义（本机 Python 在 C:、仓库在 D:，跨盘 relpath 直接 ValueError），
+        所以这里以「可执行文件所在盘的根」为基准取相对路径、并在该基准下解析——要验的语义没变：
+        传相对路径进来，``launcher_command`` 必须还一个绝对路径，且换到别的 cwd 也跑得起来。
+        """
+
+        executable = Path(sys.executable)
+        base = Path(executable.drive + os.sep) if executable.drive else Path.cwd()
+        relative = os.path.relpath(executable, base)
+        self.assertFalse(Path(relative).is_absolute())
+        with contextlib.chdir(base):
+            command = launcher_command({'executable': relative})
         self.assertTrue(Path(command[0]).is_absolute())
         self.assertIn('ready', run_command([*command, '-c', 'print("ready")'], cwd=self.root))
 

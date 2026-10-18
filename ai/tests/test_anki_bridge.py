@@ -12,6 +12,22 @@ from praat_ai import anki_bridge as bridge
 
 
 class BridgeTests(unittest.TestCase):
+    @contextlib.contextmanager
+    def install_layout(self):
+        """造一个假的安装布局（``ai/`` 与同级 ``Praat.exe``）。
+
+        ``open_audio`` 第一步就检查安装目录里有没有 ``Praat.exe``；这三个用例把
+        ``command_lock`` / ``_target`` / ``_open_native`` 全 mock 了，测的是共享读取器
+        的投递语义，跟真二进制无关。所以这里给一个空文件当占位，测试因此不再依赖
+        「本机装没装 Praat」，在任何机器（含 CI）上都能跑。
+        """
+
+        with tempfile.TemporaryDirectory() as raw:
+            ai = Path(raw) / 'ai'
+            ai.mkdir()
+            (Path(raw) / 'Praat.exe').write_bytes(b'')
+            with patch.object(bridge, 'AI', ai):
+                yield
     def test_media_path_and_unicode_url(self):
         with tempfile.TemporaryDirectory() as raw:
             source = Path(raw) / '接する 音声.M4A'
@@ -31,7 +47,7 @@ class BridgeTests(unittest.TestCase):
                 bridge.time_range(start, end)
 
     def test_shared_reader_reports_conversion_without_python_retry(self):
-        with tempfile.TemporaryDirectory() as raw:
+        with self.install_layout(), tempfile.TemporaryDirectory() as raw:
             source = Path(raw) / '接する.m4a'; source.touch()
             calls = []
             def native(audio, original, start, end, pid, directory):
@@ -48,14 +64,14 @@ class BridgeTests(unittest.TestCase):
             self.assertTrue(source.exists())
 
     def test_unconfirmed_delivery_does_not_retry(self):
-        with tempfile.TemporaryDirectory() as raw:
+        with self.install_layout(), tempfile.TemporaryDirectory() as raw:
             source = Path(raw) / 'clip.m4a'; source.touch()
             with patch.object(bridge, 'command_lock', contextlib.nullcontext), patch.object(bridge, '_target', return_value=1), patch.object(bridge, '_open_native', side_effect=TimeoutError('no acknowledgement')) as native, patch.object(bridge, 'decode_wav') as decode:
                 with self.assertRaises(TimeoutError): bridge.open_audio(str(source))
                 native.assert_called_once(); decode.assert_not_called()
 
     def test_shared_reader_failure_is_not_retried_in_python(self):
-        with tempfile.TemporaryDirectory() as raw:
+        with self.install_layout(), tempfile.TemporaryDirectory() as raw:
             source = Path(raw) / 'clip.m4a'; source.touch()
             with patch.object(bridge, 'command_lock', contextlib.nullcontext), patch.object(bridge, '_target', return_value=1), patch.object(bridge, '_open_native', return_value='bad codec'), patch.object(bridge, 'settings', return_value={**bridge.DEFAULTS, 'fallback': False}), patch.object(bridge, 'decode_wav') as decode:
                 with self.assertRaisesRegex(ValueError, 'bad codec'): bridge.open_audio(str(source))
