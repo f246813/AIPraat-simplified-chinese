@@ -193,5 +193,20 @@ class NumericRetryTests(unittest.TestCase):
         self.assertIn(UNVERIFIED_NUMBER, result.analysis)
         self.assertNotIn('audit_numeric_retry', current.metrics)
 
+    def test_exhausted_audit_counts_masking_not_a_delivered_block(self):
+        """审计放弃时把「拦截」转成「遮蔽」记账：门禁才好区分误伤与模型写错。"""
+
+        current = state(INFO, MEASURE)
+        # 轮数用尽（改不动）时正文保留、数值已遮蔽：这一轮不该再记一条「拦截」。
+        result = audit_report(current, report('平均基频为 233.700 Hz。[E2]'), max_rounds=1)
+        self.assertIn(UNVERIFIED_NUMBER, result.analysis)
+        audit = current.metrics['audit']
+        self.assertTrue(audit['exhausted'])
+        self.assertFalse(audit['verified'])
+        # 遮蔽照旧记账
+        self.assertGreaterEqual(current.metrics['guard_repairs'].get('report.number_masked'), 1)
+        # 但不再同时记成一条「拦在交付之外」的阻断
+        self.assertNotIn('report.number_unmatched', current.metrics.get('guard_blocks') or {})
+
 if __name__ == '__main__':
     unittest.main()

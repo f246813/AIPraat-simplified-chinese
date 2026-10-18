@@ -514,3 +514,47 @@ class NumericDisciplinePromptTests(unittest.TestCase):
         for needle in self.NEEDLES:
             with self.subTest(needle=needle):
                 self.assertIn(needle, text)
+
+
+class StructuredValueAndClauseTests(unittest.TestCase):
+    """结构化出口 ``{{q:E1.q2}}`` 与「分句判定」两条：让程序渲染数字、让归属按分句算。"""
+
+    def state(self, *items):
+        return AnalysisState('分析录音语调', CONTEXT, evidence=list(items))
+
+    def test_quantity_placeholder_renders_the_evidence_value(self):
+        state = self.state(pitch(220))
+        # E1.q3 = pitch.mean，E1.q6 = max_time（quantity_refs 里能看到编号与量名的对应）
+        result = validate_report(state, report('平均基频 {{q:E1.q3}}，最高点出现在 {{q:E1.q6}}。[E1]'))
+        # 渲染结果就是证据里的写法：值与单位都不经模型的手。
+        self.assertIn('220.000 Hz', result.analysis)
+        self.assertIn('0.600 秒', result.analysis)
+        self.assertNotIn('{{q:', result.analysis)
+        self.assertEqual(state.metrics['guard_repairs'].get('report.quantity_rendered'), 2)
+        self.assertNotIn(UNVERIFIED_NUMBER, result.analysis)
+
+    def test_unknown_quantity_placeholder_is_marked_not_fabricated(self):
+        state = self.state(pitch(220))
+        result = validate_report(state, report('平均基频 {{q:E1.q9}}。[E1]'))
+        self.assertIn(UNVERIFIED_NUMBER, result.analysis)
+        self.assertEqual(state.metrics['guard_repairs'].get('report.quantity_unverified'), 1)
+
+    def test_comparison_of_two_selections_is_judged_per_clause(self):
+        """一句里比较两个选区：按分句各自核对，两个数都能落到自己的证据上。"""
+
+        state = self.state(pitch(220, 0, .3), pitch(240, .6, .9))
+        validate_report(state, report('前段（0.000–0.300 秒）平均 220.000 Hz [E1]，'
+                                     '后段（0.600–0.900 秒）平均 240.000 Hz [E2]。'))
+        self.assertNotIn('audit', state.metrics)  # 没有触发遮蔽标注
+
+    def test_wrong_value_for_the_named_selection_is_still_blocked(self):
+        """分句只是换了判定单元：把某个选区的数写错，照样拦。"""
+
+        state = self.state(pitch(220, 0, .3), pitch(240, .6, .9))
+        with self.assertRaises(ModelRetry):
+            validate_report(state, report('前段（0.000–0.300 秒）平均 240.000 Hz [E2]。'))
+
+        """``220,000 Hz`` 里的半角逗号是数值的一部分，不能被当成分句符。"""
+
+        state = self.state(pitch(220000))
+        validate_report(state, report('平均基频 220,000 Hz。[E1]'))

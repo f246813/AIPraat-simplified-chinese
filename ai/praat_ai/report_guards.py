@@ -101,6 +101,12 @@ _OBJECT_IDENTIFIER = re.compile(
     r'(?:(?:对象|编号)\s*[:：]?\s*|(?<![A-Za-z0-9_])(?:object|id)\s*[:：]?\s*|#\s*)(\d+)(?![\d.])', re.I)
 _CALC = re.compile(r"\{\{calc:([^{}|]+)\|([^{}|]+)\}\}")
 _REF = re.compile(r"\b(E\d+)\.q([1-9]\d*)\b")
+#: 结构化出口：``{{q:E2.q3}}`` 由程序按证据第 N 个量原样渲染（值与单位都来自证据）。
+#: 模型不必再自己抄数字——抄错、换小数位、换算单位这些失分点从源头消失。
+_QUANTITY = re.compile(r"\{\{q:(E\d+)\.q([1-9]\d*)\}\}")
+#: 分句：句号/分号/全角逗号/半角逗号（**数字之间的逗号不算分隔**：``220,000``、``[0.446, 0.66158]``
+#: 里的逗号属于数值本身，切开会把千分位读成两个数）。偏移保持绝对，遮蔽仍按原文定位。
+_CLAUSE_SPLIT = re.compile(r'(?:[^；;。，\n]|,\s*(?=[-+]?\d))+')
 _GENERAL = re.compile(r"一般知识|一般原理|概念说明|概念解释|通用知识|示例[（(]非本录音[）)]|general knowledge", re.I)
 _SPECIFIC = re.compile(r"本(?:段|次|录音|对象|材料)|这(?:段|个|次|份)|该(?:段|录音|对象)|你(?:的|这)|当前|实测|测得|测量结果")
 _ADVICE = re.compile(r'^\s*(?:[-*]\s*)?(?:建议|下一步|请|可以尝试|可尝试|练习时|参数设置)')
@@ -404,7 +410,8 @@ def report_guard_instructions(state: Any) -> str:
         return ('\n没有测量时不填录音数值或下音调结论；一般知识明确标注，缺证据就说明。'
                 + _NUMERIC_DISCIPLINE_COMPACT)
     return ('\n量化陈述逐行引[E编号]，须同对象、范围、量名、单位；一般知识明确标注。'
-            'quantity_refs第N项即E编号.qN。推导用{{calc:E1.q1/E2.q1*100|%}}，仅真实输入和四则，程序写算式结果。'
+            'quantity_refs第N项即E编号.qN。实测值直接写{{q:E1.q2}}，由程序按证据原样渲染（值和单位都来自证据，不用自己抄）。'
+            '推导用{{calc:E1.q1/E2.q1*100|%}}，仅真实输入和四则，程序写算式结果。'
             '具体录音音调结论须同目标且有定义值的走向证据，平均值不足。'
             '逐字引用、选区范围、一般知识的写法与例子见 skill=notation。'
             + _NUMERIC_DISCIPLINE)
@@ -571,7 +578,11 @@ def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record], *,
             return [], ('report.evidence_unknown', f'不存在证据[{eid}]；请引用现有证据或说明缺测量。')
     targets = _line_targets(state, line, records)
     sources: list[str] = []
-    for clause_match in re.finditer(r'[^；;。\n]+', line):
+    # 判定单元降到**分句**（逗号也切）：一句话里比较两个选区的写法很常见
+    # （「后半段（0.6–0.892 秒）的平均值 85.333 Hz 低于前半段 96.000 Hz」），
+    # 整句共用一个选区范围会把后半个数判成「没有归属」。切到分句后，规则一条没变：
+    # 每个分句仍按自己出现的选区、引证、量名核对，编造或错归属照样被拦。
+    for clause_match in _CLAUSE_SPLIT.finditer(line):
         clause = clause_match[0]
         if _marked_general(clause):
             continue
@@ -1100,6 +1111,21 @@ def _validate_text(state: Any, text: str, records: dict[str, Record], *, fill_ci
     text = _strip_unknown_citations(state, text, records)
     if fill_citations:
         text = _fill_citations(state, text, records)
+
+    def render_quantity(match: re.Match[str]) -> str:
+        """``{{q:E2.q3}}`` → 证据里那个量的原样写法（含单位）。"""
+
+        record = records.get(match[1])
+        index = int(match[2]) - 1
+        if record is None or index < 0 or index >= len(record.quantities):
+            note_guard(state, 'repair', 'report.quantity_unverified')
+            return UNVERIFIED_NUMBER
+        quantity = record.quantities[index]
+        note_guard(state, 'repair', 'report.quantity_rendered')
+        # 逐字渲染证据的写法：单位、小数位都不经模型的手。
+        return f'{quantity.text} {quantity.unit}'.strip()
+
+    text = _QUANTITY.sub(render_quantity, text)
 
     def calculate(match: re.Match[str]) -> str:
         line_start = text.rfind('\n', 0, match.start()) + 1

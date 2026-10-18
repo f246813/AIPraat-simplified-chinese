@@ -182,9 +182,55 @@ def audit_report(state: Any, report: Any, *, fill_citations: bool = True,
     # 轮数用完仍没核干净：正文保留，问题数值已全部遮蔽，标注在正文里。
     summary.verified = False
     summary.exhausted = True
+    # 这些值已经被遮蔽处置过了，不再算「拦在交付之外」——拦截计数只留还没处置的。
+    # 否则同一份被遮蔽的回答既记 number_masked 又记 number_unmatched，门禁会把
+    # 「模型写错但已遮掉」和「守卫误伤」混成一个数。
+    for rule in list(summary.rules):
+        if rule in NUMERIC_RULES:
+            _unblock(state, rule)
     note_guard(state, 'repair', 'report.audit_exhausted')
     summary.record(state)
     return _rebuild(report, _Draft(analysis=analysis, coverage=coverage))
 
 
-__all__ = ['AuditSummary', 'NUMERIC_RULES', 'STRUCTURAL_RULES', 'audit_report']
+#: 定点返修一次最多改几行：既是请求体积的上限，也是「只改该改的」的保证。
+REPAIR_LIMIT = 5
+
+
+def repair_targets(text: str, values) -> list:
+    """被点名的数值落在哪些行（行号从 1 起），最多 :data:`REPAIR_LIMIT` 行。
+
+    返修只把这些行和候选证据行发出去，不是整份报告：输入窄、请求小，也更容易改对。
+    """
+
+    wanted = [str(value) for value in values or () if value]
+    if not wanted:
+        return []
+    found: list = []
+    for index, line in enumerate(str(text or '').splitlines(), 1):
+        if not line.strip():
+            continue
+        if any(value in line for value in wanted):
+            found.append((index, line))
+        if len(found) >= REPAIR_LIMIT:
+            break
+    return found
+
+
+def apply_repairs(text: str, replacements: dict) -> str:
+    """把返修结果按行号贴回正文；空结果一律忽略（改不动就保持原样）。"""
+
+    lines = str(text or '').splitlines()
+    for index, line in (replacements or {}).items():
+        try:
+            position = int(index)
+        except (TypeError, ValueError):
+            continue
+        body = str(line or '').strip()
+        if body and 1 <= position <= len(lines):
+            lines[position - 1] = body
+    return '\n'.join(lines)
+
+
+__all__ = ['AuditSummary', 'NUMERIC_RULES', 'REPAIR_LIMIT', 'STRUCTURAL_RULES',
+           'apply_repairs', 'audit_report', 'repair_targets']

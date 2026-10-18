@@ -55,6 +55,19 @@ class AnalysisReport(BaseModel):
     coverage: list[Coverage]
 
 
+
+#: 定点返修的唯一职责：把「对不上证据的那几行」改对。输入只给问题句与候选证据行，
+#: 不重发整份报告，所以这次小请求便宜、也更容易照着改。
+_NUMBER_REPAIR_PROMPT = (
+    '你是数值校订器，只做一件事：把下面若干句报告改写成像样的证据陈述。\n'
+    '规则：\n'
+    '1) 一行只说一个选区的一个量；两个选区的数不要放在同一句里比较；\n'
+    '2) 数值照抄证据行（连同小数位与单位），写完在同一行用 [E编号] 引证；\n'
+    '3) 算出来的数（差值、比例、均值、跨度、时长）写成 {{calc:…}}，不要自己算好写进去，'
+    '也不要写「不到 1 秒」「约 4 秒」这类自己算的结论；\n'
+    '4) 典型值或常识范围只给定性说法，不写具体数字。\n'
+    '输出格式：每行一句「序号 => 改写后的句子」，序号用问题句前面的编号；不要输出解释、标题或别的行。')
+
 #: 注意：这段指令处在 2048 token 那条窄上下文路径的临界点上——多一句「测量不需要音频输入」
 #: 就会把报告请求挤掉（test_cloud_escape.test_low_context_reserves_report 钉的边界）。
 #: 因此「已有证据却声称没有音频所以测不了」由 report_guards 的 report.input_claim_conflict 拦，
@@ -1052,6 +1065,71 @@ class CloudSession:
             return override or policy.l3_mode == 'auto' or (policy.l3_mode == 'manual' and wants_audio(self.state.direction or self.state.goal))
         return policy.l4_enabled
 
+    async def repair_numbers(self, report, guard_state):
+        """定点返修：只把「对不上的那几行 + 候选证据行」发出去改一次。
+
+        与「重发整份报告」的区别是输入范围：这里只带问题句和可用证据行，不带原始目标、
+        材料、历史与音频，所以这次请求很小；改完还核不上就退回已经遮好的版本，
+        判定与遮蔽语义一个字没改。
+        """
+
+        from . import report_audit
+
+        state = self.state
+        audit = state.metrics.get('audit') or {}
+        masked = list(audit.get('masked') or [])
+        draft = str(state.metrics.get('rejected_report') or '')
+        if not masked or not draft or state.metrics.get('report_number_repair'):
+            return report
+        targets = report_audit.repair_targets(draft, masked)
+        if not targets:
+            return report
+        state.metrics['report_number_repair'] = 1
+        evidence_lines = [str(line) for row in (guard_state.evidence or [])
+                          for line in (getattr(row, 'rows', None) or [])][:24]
+        prompt = (_NUMBER_REPAIR_PROMPT
+                  + '\n\n问题句：\n'
+                  + '\n'.join(f'{index}. {line}' for index, line in targets)
+                  + '\n\n可用证据行（数值与单位照抄，引证按 E 编号）：\n'
+                  + '\n'.join(evidence_lines))
+        state.requests += 1
+        state.metrics['l2_requests'] = int(state.metrics.get('l2_requests') or 0) + 1
+        try:
+            fixer = Agent(self.model, output_type=str, retries={'tools': 0, 'output': 0},
+                          name='report_number_repair')
+            outcome = await fixer.run(prompt, model_settings=self.settings)
+        except Exception:                                    # noqa: BLE001 - 改不动就用遮好的版本
+            self.event('L2', '定点返修没有完成，按已遮蔽的正文交付')
+            return report
+        pairs = {}
+        for line in str(getattr(outcome, 'output', '') or '').splitlines():
+            match = re.match(r'^\s*(\d+)\s*(?:=>|->|→|：)\s*(.+?)\s*$', line)
+            if match:
+                pairs[int(match[1])] = match[2]
+        repaired = report_audit.apply_repairs(draft, pairs)
+        if repaired == draft:
+            return report
+        note_guard(state, 'repair', 'report.number_repaired')
+        candidate = report.model_copy(update={'analysis': repaired})
+        probe = copy.copy(guard_state)
+        probe.metrics = {}
+        try:
+            audited = report_audit.audit_report(probe, candidate, fill_citations=True)
+        except ModelRetry:
+            return report
+        if not (probe.metrics.get('audit') or {}).get('verified'):
+            return report
+        # 返修版核对通过：把这次审计的结论与计数换上，交付返修版。
+        guard_state.metrics['audit'] = dict(probe.metrics.get('audit') or {})
+        for bucket in ('guard_blocks', 'guard_repairs'):
+            for rule, count in (probe.metrics.get(bucket) or {}).items():
+                slot = guard_state.metrics.setdefault(bucket, {})
+                slot[rule] = slot.get(rule, 0) + count
+        for rule in ('report_derived_accepted', 'report_general_value_assumed'):
+            if probe.metrics.get(rule):
+                guard_state.metrics[rule] = guard_state.metrics.get(rule, 0) + probe.metrics[rule]
+        return audited
+
     async def report(self, *, force_audio=False, allow_escalation=True):
         state = self.state
         if state.workflow is None:
@@ -1223,6 +1301,9 @@ class CloudSession:
 
         try:
             result = await self.drive(agent, [prompt, BinaryContent(audio, media_type='audio/wav')] if audio else prompt)
+            if not (state.metrics.get('audit') or {}).get('verified', True):
+                # 还有没对上的数值：先把那几行拿去定点返修一次，改不上再按已遮蔽的版本交付。
+                result = await self.repair_numbers(result, guard_state)
             audited = state.metrics.get('audit') or {}
             repaired = bool(state.metrics.get('report_repaired', 0)) or not audited.get('verified', True)
             state.report = result.analysis

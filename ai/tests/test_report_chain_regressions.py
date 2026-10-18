@@ -214,14 +214,41 @@ class ReportChainTests(unittest.TestCase):
         state = AnalysisState('解释测量', CONTEXT, continuation=True, continuation_mode='L2',
                               evidence=[Evidence('pitch', {'object':1}, ['基频 = 220 Hz'], CONTEXT)])
         self.run_report(respond, state)
-        self.assertEqual(len(requests), 2, state.reason)
+        # 一次整份重试（output 额度）+ 一次定点返修（只发问题行）；两者都改不动才遮蔽。
+        self.assertEqual(len(requests), 3, state.reason)
         retry = str(requests[1])
         self.assertIn('999', retry)
         self.assertIn('{{calc:', retry)
+        self.assertIn('问题句', str(requests[2]))
+        self.assertEqual(state.metrics.get('report_number_repair'), 1)
         self.assertNotIn('report.number_unmatched', state.metrics.get('guard_blocks', {}))
         self.assertEqual(state.metrics['audit']['masked_count'], 1)
         self.assertFalse(state.metrics.get('report_verified', False))
         self.assertNotIn('999 Hz', state.report)
+
+    def test_targeted_repair_rewrites_only_the_offending_line(self):
+        """定点返修：只把问题行 + 候选证据行发出去，回「序号 => 新句」就贴回那一行。"""
+
+        bad = '本录音基频 999 Hz。[E1] 当前缺少可靠的参照录音，因此无法据此判断具体的发音缺陷。'
+        fixed = '本录音基频 220 Hz。[E1] 当前缺少可靠的参照录音，因此无法据此判断具体的发音缺陷。'
+        calls = []
+        def respond(messages, info):
+            calls.append(copy.deepcopy(messages))
+            if len(calls) <= 2:
+                return response(bad)
+            return ModelResponse([TextPart('1 => ' + fixed)])
+        state = AnalysisState('解释测量', CONTEXT, continuation=True, continuation_mode='L2',
+                              evidence=[Evidence('pitch', {'object':1}, ['基频 = 220 Hz'], CONTEXT)])
+        self.run_report(respond, state)
+        self.assertEqual(len(calls), 3, state.reason)
+        repair_prompt = str(calls[2])
+        # 返修请求只带问题句与可用证据行：没有原始目标，也没有整份报告。
+        self.assertIn('问题句', repair_prompt)
+        self.assertIn('基频 = 220 Hz', repair_prompt)
+        self.assertTrue(state.metrics.get('report_verified'), state.reason)
+        self.assertIn('220 Hz', state.report)
+        self.assertNotIn('999', state.report)
+        self.assertEqual(state.metrics['guard_repairs'].get('report.number_repaired'), 1)
         self.assertEqual(state.metrics['guard_repairs'].get('report.number_retried'), 1)
 
     def test_masking_is_scoped_to_the_unmatched_number(self):

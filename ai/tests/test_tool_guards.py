@@ -250,17 +250,18 @@ class NativeHookTests(unittest.TestCase):
         bad = '本录音基频是 999 Hz [E1]。这个结果能够用于评估音高，但是仍缺少可靠的参照录音材料。'
         state, actions, _, reports = self.run_case([('pitch', {'time':.5})], reports=[bad, bad])
         self.assertEqual(len(actions), 1)
-        self.assertEqual(len(reports), 2)   # 一次改写机会用完仍是错的
+        self.assertEqual(len(reports), 3)   # 整份重试一次 + 定点返修一次，都改不动
         self.assertEqual(len(state.evidence), 1)
         self.assertEqual(state.status, 'partial')
         self.assertNotIn('999 Hz', state.report)
         self.assertIn('[未通过核对的数值]', state.report)
 
+
     def test_report_rejections_keep_the_written_draft_instead_of_a_stage_record(self):
         bad = '本录音基频是 999 Hz [E1]。这个结果能够用于评估音高，但是仍缺少可靠的参照录音材料。'
         state, actions, _, reports = self.run_case([('pitch', {'time':.5})], reports=[bad, bad])
         self.assertEqual(len(actions), 1)
-        self.assertEqual(len(reports), 2)
+        self.assertEqual(len(reports), 3)
         # 2026-10-06 实测：守卫连拒两次后整份回答被换成「本轮仅交付阶段记录」，用户看不到
         # 任何结论。现在正文保留、没核上的数值遮掉；为此至多多发一次请求（改不动就不再要）。
         self.assertNotIn('本轮仅交付阶段记录', state.report)
