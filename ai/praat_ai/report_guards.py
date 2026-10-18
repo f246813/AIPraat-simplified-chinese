@@ -1193,12 +1193,21 @@ def _validate_text(state: Any, text: str, records: dict[str, Record], *, fill_ci
             if record and targets and record.target not in targets:
                 _block(state, 'report.calc_other_target',
                        'calc引用了其他对象的量；须注明实际对象，不能冒充目标录音。')
-        claim_role = _role(text[line_start:match.start()])
+        claim_prefix = text[line_start:match.start()]
+        claim_role = _role(claim_prefix)
         category = claim_role.split('.')[0]
         if category in {'pitch', 'formant', 'intensity', 'vot'}:
             quantities = {q.ref: q for record in records.values() for q in record.quantities}
+            inputs = [quantities.get(f'{eid}.q{index}') for eid, index in _REF.findall(match[1])]
+            # VOT 占录音时长的百分比需要两个不同量名的时间量；分母不是冒充 VOT。
+            # 对象检查仍在上面，四则与输出量纲仍由 _calculate 核对。
+            vot_percentage = (category == 'vot' and match[2].strip() == '%'
+                              and bool(re.search(r'占比|百分比|比例', claim_prefix))
+                              and any(q and q.role.split('.')[0] == 'vot' for q in inputs))
             for reference in _REF.findall(match[1]):
                 q = quantities.get(f'{reference[0]}.q{reference[1]}')
+                if vot_percentage and q and q.role == 'duration':
+                    continue
                 if q and not q.role.startswith('range.') and q.role.split('.')[0] != category:
                     _block(state, 'report.calc_quantity_mismatch',
                            'calc输入量名与声称的测量不相符。')

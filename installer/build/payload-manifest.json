@@ -1,7 +1,7 @@
 {
     "Praat.exe":  "08ac271d74a84a3342b1d4dbf482146ddd135429a79158098d9b5f119a34e5d5",
-    "AIPraat.exe":  "11d75f1829c8eeca0d1ee14958b9badeac5316e148e8823abc5d96a0188883ee",
-    "AIPraat-paths.exe":  "fc688e6e8100e144d86f25d17519be2a070d83e833a27d384ac8ade341e17ed7",
+    "AIPraat.exe":  "507a332289ddb7c8040ae3aa77a1ea6218b5f24ac5a717815c70449ae1a70041",
+    "AIPraat-paths.exe":  "2522ac23012938289c6068ec8a4132d0e23316e2b9cbdd7df6fe5669d3090e80",
     "LICENSE":  "bfde1fd94c3b17b89fbbfa6321660c8284f631bf126db1e0a32c897944a842db",
     "CREDITS.zh-CN.md":  "83ea050510cf5d92e698c29ccd3e6ea64d570f09ec9e07dc4c70fb6e19491bc1",
     "AIPraat-使用说明.md":  "afdaf1fa81160c2b82a299747e8a5556d8be6d1ebbc476dd9d505de52e630fdd",
@@ -93,7 +93,7 @@
     "ai/praat_ai/qwen.py":  "4c9329dad9bd1c4b3479ddb232520e7ca4b0ef08b016dd888618d4a4a022d46b",
     "ai/praat_ai/report.py":  "6f3206dada4a98c2daa4c322135e652c4de2ed704312abbce3fba94dc991195c",
     "ai/praat_ai/report_audit.py":  "e74a8666abc78871c0e94d402bbe754b707668dd755ae73b2e36f5cb7e6a18a1",
-    "ai/praat_ai/report_guards.py":  "dc6fe899467f9bc568bd1004c9e798ef34199995ecafca77a4d1c0625ec86fed",
+    "ai/praat_ai/report_guards.py":  "b98a9590be415c959f0407dba5b3609e63b365886edacbf6142f0a009be11a12",
     "ai/praat_ai/router.py":  "69d80a5ccc5517b53d249ea3ce50716f0c4a81d54886f378ed52ed7dc9977353",
     "ai/praat_ai/sendpraat.py":  "35bc2bd23f487521b6394c88691050c240d4a53e52b56980947541f0348a7042",
     "ai/praat_ai/server.py":  "3ba2c5178a13d8cd2a976b46c0ce3162dd2c687c7909226c1842ea2b517f6fc4",

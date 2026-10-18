@@ -1,8 +1,8 @@
 {
     "installer":  "AIPraat-install.exe",
-    "size":  59751424,
-    "sha256":  "9260841db72909023b21d9e5f19c3c6264d4f109721c710e831062717c734233",
+    "size":  59751936,
+    "sha256":  "7f8c4ed5d667f99d5def830d4e5fb266b4ba734a2e047d3cdd43b96f0f0e9543",
     "praat_sha256":  "08ac271d74a84a3342b1d4dbf482146ddd135429a79158098d9b5f119a34e5d5",
     "payload_files":  550,
-    "built_at":  "2026-10-18T07:56:40.7569014Z"
+    "built_at":  "2026-10-18T08:05:56.8328696Z"
 }

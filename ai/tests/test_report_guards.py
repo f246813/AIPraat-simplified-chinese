@@ -317,6 +317,20 @@ class ReportGuardsTests(unittest.TestCase):
         state = self.state(evidence('formant_frequency', ['F1 = 220.000 Hz']))
         self.rejects(state, '平均基频为 {{calc:E1.q1|Hz}}。')
 
+    def test_vot_percentage_can_use_the_same_recordings_duration(self):
+        state = self.state(evidence('vot', ['VOT = 0.0421 秒']),
+                           evidence('duration', ['target 总时长 = 1.000000 秒']))
+        result = self.accepts(state, 'VOT 占总时长的比例为 {{calc:E1.q1/E2.q1*100|%}}。')
+        self.assertIn('4.21 %', result.analysis)
+        self.rejects(state, 'VOT 为 {{calc:E2.q1|秒}}。')
+        self.rejects(state, 'VOT 占总时长的比例为 {{calc:E2.q1/E2.q1*100|%}}。')
+        other = self.state(evidence('vot', ['VOT = 0.0421 秒']),
+                           evidence('duration', ['other 总时长 = 1.000000 秒'], obj=2))
+        self.rejects(other, '本段 VOT 占总时长的比例为 {{calc:E1.q1/E2.q1*100|%}}。')
+        unrelated = self.state(evidence('vot', ['VOT = 0.0421 秒']),
+                               evidence('formant_frequency', ['F1 = 220.000 Hz']))
+        self.rejects(unrelated, 'VOT 占总时长的比例为 {{calc:E1.q1/E2.q1*100|%}}。')
+
     def test_derivation_cannot_launder_other_recording_as_original_target(self):
         state = self.state(pitch(), pitch(obj=2))
         self.rejects(state, '本段平均基频为 {{calc:E2.q3*1|Hz}}。')
