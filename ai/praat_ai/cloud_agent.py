@@ -27,6 +27,7 @@ from pydantic_graph import GraphBuilder, StepContext
 
 from . import model_capabilities as caps, qwen, tools
 from . import delivery
+from . import execution_core
 from .escape_policy import AnalysisState, BranchExit, Evidence, note_guard
 from .dialogue_policy import dialogue_kind, effective_thinking_level, direct_measurement, reasoning_reserve
 from .cloud_runtime import CloudRuntime
@@ -748,7 +749,9 @@ class CloudSession:
                             if remaining <= 0:
                                 raise BranchExit('L2 阶段时间上限已用完')
                             self.settings['timeout'] = min(self.config.api.request_timeout_sec, remaining)
-                        if self.state.requests >= self.state.budget.request_limit:
+                        # 循环判定与 Tk 路径共用一份口径（预算耗尽 / 无新证据 / 继续）。
+                        if execution_core.loop_decision(
+                                execution_core.signals_from_state(self.state)) == execution_core.BUDGET:
                             raise BranchExit('本轮模型请求总预算已用完')
                         self.state.requests += 1
                         request_started = time.monotonic()

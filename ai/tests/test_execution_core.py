@@ -87,3 +87,41 @@ class EvidenceTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class LoopDecisionTests(unittest.TestCase):
+    """循环判定只有一份口径：预算耗尽 / 无新证据 / 正常继续。"""
+
+    def test_budget_exhaustion(self):
+        self.assertEqual(execution_core.loop_decision(
+            execution_core.LoopSignals(tool_attempts=5, tool_limit=5)), execution_core.BUDGET)
+        self.assertEqual(execution_core.loop_decision(
+            execution_core.LoopSignals(requests=10, request_limit=10)), execution_core.BUDGET)
+
+    def test_no_new_evidence_or_duplicate_is_stagnant(self):
+        self.assertEqual(execution_core.loop_decision(
+            execution_core.LoopSignals(produced_evidence=False)), execution_core.STAGNANT)
+        self.assertEqual(execution_core.loop_decision(
+            execution_core.LoopSignals(duplicate_action=True)), execution_core.STAGNANT)
+
+    def test_normal_continue(self):
+        self.assertEqual(execution_core.loop_decision(
+            execution_core.LoopSignals(requests=1, request_limit=10,
+                                       tool_attempts=1, tool_limit=20)), execution_core.CONTINUE)
+
+    def test_signals_from_state_read_the_budget(self):
+        from praat_ai.escape_policy import AnalysisState, Budget
+
+        state = AnalysisState('解释录音', '', budget=Budget(context_tokens=4000, response_tokens=200,
+                                                          request_limit=3, tool_limit=4))
+        state.requests = 3
+        self.assertEqual(execution_core.loop_decision(
+            execution_core.signals_from_state(state)), execution_core.BUDGET)
+
+    def test_both_paths_call_the_shared_decision(self):
+        import inspect
+
+        from praat_ai import chat, cloud_agent
+
+        self.assertIn('execution_core.loop_decision', inspect.getsource(chat))
+        self.assertIn('execution_core.loop_decision', inspect.getsource(cloud_agent))

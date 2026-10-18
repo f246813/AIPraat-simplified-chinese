@@ -492,3 +492,25 @@ class ReportVoiceTests(unittest.TestCase):
             for order in ('请执行测量并引用结果', '请按这条提示核对引用的数值和范围',
                           '请按这条提示核对', '为什么失败'):
                 self.assertNotIn(order, text)
+
+
+class NumericDisciplinePromptTests(unittest.TestCase):
+    """数值纪律必须出现在模型真正读到的报告指令里（不只是守卫代码里）。"""
+
+    NEEDLES = ('没有对应证据就不写', '不做单位换算', '一律写成{{calc:')
+
+    def test_report_prompt_states_the_numeric_discipline(self):
+        from praat_ai.cloud_agent import report_instructions
+        from praat_ai.config import AppConfig
+
+        state = AnalysisState('解释录音语调', CONTEXT, evidence=[pitch()])
+        text = report_instructions(AppConfig(), state)
+        for needle in self.NEEDLES:
+            with self.subTest(needle=needle):
+                self.assertIn(needle, text)
+
+    def test_guard_instructions_carry_it_without_evidence_too(self):
+        text = report_guard_instructions(AnalysisState('解释录音语调', CONTEXT))
+        for needle in self.NEEDLES:
+            with self.subTest(needle=needle):
+                self.assertIn(needle, text)

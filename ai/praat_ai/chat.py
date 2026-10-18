@@ -898,7 +898,9 @@ def _run_agent_turn(
                 outcome.notes.append(step.note)
                 planner.observe(action, observation)
                 continue
-            if steps_done >= max_steps:
+            # 步数上限与预算判定走 execution_core，和云端路径同一口径。
+            if execution_core.loop_decision(execution_core.LoopSignals(
+                    tool_attempts=steps_done, tool_limit=max_steps)) == execution_core.BUDGET:
                 stopped_early = True
                 for pending in actions[action_index:]:
                     planner.observe(pending, f"已达到本次操作 {max_steps} 步的上限，此调用未执行。请根据已有实测结果回答。")

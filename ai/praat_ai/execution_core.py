@@ -10,8 +10,7 @@
 """
 from __future__ import annotations
 
-from dataclasses import asdict
-from typing import Any
+from dataclasses import asdict, dataclass
 
 from . import delivery
 
@@ -83,6 +82,52 @@ def evidence_row(step: Any, context_text: str, *, mutating: bool = False) -> Any
                     'operation' if mutating else 'measurement')
 
 
+
+
+#: 循环判定的三种结果。
+CONTINUE, BUDGET, STAGNANT = 'continue', 'budget', 'stagnant'
+
+
+@dataclass(frozen=True)
+class LoopSignals:
+    """一轮之后「还能不能继续」需要的全部信号（两条路径用同一组）。"""
+
+    requests: int = 0
+    request_limit: int = 0
+    tool_attempts: int = 0
+    tool_limit: int = 0
+    produced_evidence: bool = True
+    duplicate_action: bool = False
+
+
+def loop_decision(signals: LoopSignals) -> str:
+    """预算耗尽 → ``BUDGET``；没有新证据或动作重复 → ``STAGNANT``；否则 ``CONTINUE``。
+
+    以前这套判断在 ``chat`` 的本机循环（步数上限、重复动作）与 ``cloud_agent``
+    的图里各写一份，阈值改一处忘一处；现在只有这一处口径。
+    """
+
+    if signals.request_limit and signals.requests >= signals.request_limit:
+        return BUDGET
+    if signals.tool_limit and signals.tool_attempts >= signals.tool_limit:
+        return BUDGET
+    if signals.duplicate_action or not signals.produced_evidence:
+        return STAGNANT
+    return CONTINUE
+
+
+def signals_from_state(state: Any, *, produced_evidence: bool = True,
+                       duplicate_action: bool = False) -> LoopSignals:
+    """从 ``AnalysisState`` 取预算与进度，补齐两条路径都能用的信号。"""
+
+    budget = getattr(state, 'budget', None)
+    return LoopSignals(
+        requests=int(getattr(state, 'requests', 0) or 0),
+        request_limit=int(getattr(budget, 'request_limit', 0) or 0),
+        tool_attempts=int(getattr(state, 'tool_attempts', 0) or 0),
+        tool_limit=int(getattr(budget, 'tool_limit', 0) or 0),
+        produced_evidence=produced_evidence,
+        duplicate_action=duplicate_action)
 def evidence_from_steps(context_text: str, steps, *, is_mutating=None):
     """本机（Tk）路径用：把一串成功步骤折成证据列表，去重规则与云端一致。"""
 
@@ -101,5 +146,6 @@ def evidence_dicts(state: Any) -> list[dict]:
     return [asdict(item) for item in getattr(state, 'evidence', []) or []]
 
 
-__all__ = ['UNCONFIRMED', 'attempt_record', 'attempt_status', 'delivery_fact',
-           'evidence_dicts', 'evidence_from_steps', 'evidence_row', 'valid_evidence']
+__all__ = ['BUDGET', 'CONTINUE', 'STAGNANT', 'UNCONFIRMED', 'LoopSignals', 'attempt_record',
+           'attempt_status', 'delivery_fact', 'evidence_dicts', 'evidence_from_steps',
+           'evidence_row', 'loop_decision', 'signals_from_state', 'valid_evidence']
