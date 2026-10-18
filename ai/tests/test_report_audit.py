@@ -156,5 +156,42 @@ class ReportAuditTests(unittest.TestCase):
         result = self.audit(current, '分段测得平均基频为 95.203 Hz。[E1]')
         self.assertNotIn(UNVERIFIED_NUMBER, result.analysis)
         self.assertGreaterEqual(current.metrics.get('report.sibling_citation', 0), 1)
+
+
+class NumericRetryTests(unittest.TestCase):
+    """云端报告阶段：对不上的数值先用掉一次 output 重试额度，再退回遮蔽。"""
+
+    def test_first_mismatch_asks_the_model_to_fix_those_sentences(self):
+        current = state(INFO, MEASURE)
+        with self.assertRaises(ModelRetry) as caught:
+            audit_report(current, report('平均基频为 233.700 Hz。[E2]'), allow_numeric_retry=True)
+        message = str(caught.exception)
+        self.assertIn('233.700', message)
+        self.assertIn('{{calc:', message)
+        self.assertIn('一行只说一个选区的一个量', message)
+        self.assertEqual(current.metrics['audit_numeric_retry'], 1)
+        self.assertEqual(current.metrics['guard_repairs']['report.number_retried'], 1)
+        # 还没遮蔽：这一版根本不交付，改完再判。
+        self.assertEqual(current.metrics['audit']['masked_count'], 0)
+
+    def test_the_retry_budget_is_spent_once_per_report(self):
+        current = state(INFO, MEASURE)
+        with self.assertRaises(ModelRetry):
+            audit_report(current, report('平均基频为 233.700 Hz。[E2]'), allow_numeric_retry=True)
+        # 改完还是不对：不再退回去，按老规矩遮蔽 + 标未核对。
+        result = audit_report(current, report('平均基频为 233.700 Hz。[E2]'), allow_numeric_retry=True)
+        self.assertIn(UNVERIFIED_NUMBER, result.analysis)
+        self.assertFalse(current.metrics['audit']['verified'])
+        self.assertEqual(current.metrics['audit']['masked_count'], 1)
+        self.assertEqual(current.metrics['audit_numeric_retry'], 1)
+
+    def test_callers_without_the_budget_keep_masking_immediately(self):
+        """默认不开重试：本机交付与恢复稿仍然一次遮蔽（不浪费请求）。"""
+
+        current = state(INFO, MEASURE)
+        result = audit_report(current, report('平均基频为 233.700 Hz。[E2]'))
+        self.assertIn(UNVERIFIED_NUMBER, result.analysis)
+        self.assertNotIn('audit_numeric_retry', current.metrics)
+
 if __name__ == '__main__':
     unittest.main()

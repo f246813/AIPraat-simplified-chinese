@@ -1194,8 +1194,10 @@ class CloudSession:
         def guard_report(ctx, *, output_context, output):
             # P0（B 方案）：数值没对上就地遮蔽，不再整份退回。只有结构性规则
             # （编造对象、跨对象冒充、"没有音频输入"搪塞等）才交给 SDK 重试一次。
+            # 数值问题先用掉 agent 本来就有的那一次 output 重试额度：让模型只改那几句话，
+            # 回来还不合格才遮蔽交付（门槛不变，多给一次改正机会）。
             remember(output)
-            return audit_report(guard_state, output)
+            return audit_report(guard_state, output, allow_numeric_retry=True)
 
         agent = Agent(self.model, system_prompt=instruction, output_type=PromptedOutput(AnalysisReport),
                       capabilities=[Hooks(after_output_process=guard_report, id='praat_report_guards')],

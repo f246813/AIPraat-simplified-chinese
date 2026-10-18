@@ -199,8 +199,12 @@ class ReportChainTests(unittest.TestCase):
         self.assertEqual(state.status, 'complete', state.reason)
         self.assertTrue(chunks)
 
-    def test_bad_number_is_masked_without_second_request(self):
-        """P0-B：守卫不再重写整份报告，因此没有 RetryPrompt、也没有额外请求。"""
+    def test_bad_number_gets_one_correction_then_is_masked(self):
+        """P0-B（含数值改写机会）：坏数值先用掉一次 output 重试，改不动才遮蔽交付。
+
+        语义与 P0-B 一致——正文不丢、只遮那个数、整份不算核对通过、重试有界；
+        多出来的只有「模型被明确告知哪个数对不上、该怎么改」这一次机会。
+        """
 
         requests = []
         bad = '本录音基频 999 Hz。[E1] 当前缺少可靠的参照录音，因此无法据此判断具体的发音缺陷。'
@@ -210,11 +214,15 @@ class ReportChainTests(unittest.TestCase):
         state = AnalysisState('解释测量', CONTEXT, continuation=True, continuation_mode='L2',
                               evidence=[Evidence('pitch', {'object':1}, ['基频 = 220 Hz'], CONTEXT)])
         self.run_report(respond, state)
-        self.assertEqual(len(requests), 1, state.reason)
+        self.assertEqual(len(requests), 2, state.reason)
+        retry = str(requests[1])
+        self.assertIn('999', retry)
+        self.assertIn('{{calc:', retry)
         self.assertNotIn('report.number_unmatched', state.metrics.get('guard_blocks', {}))
         self.assertEqual(state.metrics['audit']['masked_count'], 1)
         self.assertFalse(state.metrics.get('report_verified', False))
         self.assertNotIn('999 Hz', state.report)
+        self.assertEqual(state.metrics['guard_repairs'].get('report.number_retried'), 1)
 
     def test_masking_is_scoped_to_the_unmatched_number(self):
         """P0-B：只遮蔽没对上的那个数；同一段里的一般知识范围不受牵连。"""

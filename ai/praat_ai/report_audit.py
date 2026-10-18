@@ -101,9 +101,37 @@ def _unblock(state: Any, rule: str) -> None:
     else:
         blocks[rule] = count - 1
 
+def _retry_feedback(found: list[str]) -> str:
+    """把「这些数对不上证据」变成模型能照着改的一句话（只描述改法，不重发证据）。"""
+
+    listed = '、'.join(found[:6])
+    return ('以下数值在测量证据里找不到同对象、同范围、同量名的对应值：' + listed
+            + '。请只改这些句子，其余已核对通过的内容原样保留：'
+            '一行只说一个选区的一个量；数值照抄证据（含小数位与单位）并在同一行用 [E编号] 引证；'
+            '算出来的数（差值、比例、均值、跨度、时长）写成 {{calc:…}} 由程序渲染；'
+            '典型值或常识范围只给定性说法，不写具体数字。')
+
+def _retry_used(state: Any) -> bool:
+    """这份报告已经让模型改过一版了吗（标志挂在共享的 metrics 上，跨重试可见）。"""
+
+    metrics = getattr(state, 'metrics', None)
+    return bool(isinstance(metrics, dict) and metrics.get('audit_numeric_retry'))
+
+
+def _mark_retry(state: Any) -> None:
+    metrics = getattr(state, 'metrics', None)
+    if isinstance(metrics, dict):
+        metrics['audit_numeric_retry'] = int(metrics.get('audit_numeric_retry') or 0) + 1
+
+
 def audit_report(state: Any, report: Any, *, fill_citations: bool = True,
-                 max_rounds: int = 12) -> Any:
+                 max_rounds: int = 12, allow_numeric_retry: bool = False) -> Any:
     """审计一份报告：数值问题就地遮蔽，结构性问题上抛 ``ModelRetry``。
+
+    ``allow_numeric_retry=True`` 时（云端报告阶段：本来就有一次 output 重试额度），
+    第一个对不上的数值先抛 ``ModelRetry`` 让模型**只改那几句**；同一份报告只给一次机会
+    （标志写进 ``state.metrics['audit_numeric_retry']``，重试后的那一版照旧就地遮蔽）。
+    判定规则与遮蔽语义都没改，只是把 B 方案当初为了省一次大请求而砍掉的「改一次」补回来。
 
     返回值与入参同一类型（``AnalysisReport`` 或替身对象），正文可能含
     ``[未通过核对的数值]`` 占位符；调用方据 ``state.metrics['audit']`` 判断这次交付
@@ -132,6 +160,15 @@ def audit_report(state: Any, report: Any, *, fill_citations: bool = True,
                 # 同一个数遮过一遍还在被点名（写法不同/中文数字）：收尾，不再整份重写。
                 summary.exhausted = True
                 break
+            if allow_numeric_retry and not _retry_used(state):
+                # 先给模型一次只改这几句的机会（同一份报告只给一次）。这一次不算「阻断」：
+                # 报告没有因此被退回，只是被要求改那几句。
+                _mark_retry(state)
+                _unblock(state, rule)
+                summary.verified = False
+                summary.record(state)
+                note_guard(state, 'repair', 'report.number_retried')
+                raise ModelRetry(_retry_feedback(found))
             summary.masked.extend(found)
             summary.verified = False
             _unblock(state, rule)
