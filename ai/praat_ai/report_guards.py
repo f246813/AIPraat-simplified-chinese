@@ -107,6 +107,8 @@ _QUANTITY = re.compile(r"\{\{q:(E\d+)\.q([1-9]\d*)\}\}")
 #: 分句：句号/分号/全角逗号/半角逗号（**数字之间的逗号不算分隔**：``220,000``、``[0.446, 0.66158]``
 #: 里的逗号属于数值本身，切开会把千分位读成两个数）。偏移保持绝对，遮蔽仍按原文定位。
 _CLAUSE_SPLIT = re.compile(r'(?:[^；;。，\n]|,\s*(?=[-+]?\d))+')
+#: 目标里要求「与标准音/参考音对比」的说法（真机里就是「与标准音对比，指出不足」）。
+_COMPARISON_GOAL = re.compile(r'对比|对照|相比|标准音|参考音|标准发音|标准东京音|与标准', re.I)
 _GENERAL = re.compile(r"一般知识|一般原理|概念说明|概念解释|通用知识|示例[（(]非本录音[）)]|general knowledge", re.I)
 _SPECIFIC = re.compile(r"本(?:段|次|录音|对象|材料)|这(?:段|个|次|份)|该(?:段|录音|对象)|你(?:的|这)|当前|实测|测得|测量结果")
 _ADVICE = re.compile(r'^\s*(?:[-*]\s*)?(?:建议|下一步|请|可以尝试|可尝试|练习时|参数设置)')
@@ -391,7 +393,7 @@ _NUMERIC_DISCIPLINE = (
     '①正文里每个数字都必须能落到某条证据的同一对象、范围、量名，没有对应证据就不写这个数；'
     '②不做单位换算：证据写“秒”就写“秒”，写“Hz”就写“Hz”，不要自行换成毫秒或千赫兹；'
     '③凡是算出来的数（差值、比例、均值、斜率、时长差）一律写成{{calc:…}}由程序算出，'
-    '不要自己写“不到 1 秒”“约 4 秒”“高出 30%”这类自己算好的结论；'
+    '不要自己写“不到 1 秒”“约 4 秒”“高出 30%”这类自己算好的结论，正文里也不要出现算式或运算过程；'
     '④一行只说一个选区的一个量：两个选区的数不要放进同一句比较，'
     '否则按本行选区核对时另一个数没有归属，会被遮蔽；'
     '⑤照抄证据要连小数位和单位一起抄：证据是 96.000 Hz 就写 96.000 Hz，不要写成 96 或 96.0；'
@@ -405,16 +407,33 @@ _NUMERIC_DISCIPLINE_COMPACT = (
 
 
 
+def _reference_present(state: Any) -> bool:
+    """本轮有没有对照材料：够两个 Sound 对象，或本回合带了音频附件。"""
+
+    try:
+        sounds = [row for row in parse_object_context(state.context_text) if row.class_name in SOUND_CLASSES]
+    except Exception:  # noqa: BLE001 - 上下文坏了按「没有对照」处理，不影响别的指令
+        sounds = []
+    return len(sounds) >= 2 or bool(getattr(state, 'material_metadata', None))
+
+
 def report_guard_instructions(state: Any) -> str:
+    comparison = ''
+    if _COMPARISON_GOAL.search(str(state.goal or '')) and not _reference_present(state):
+        # 真机实测：目标写「与标准音对比」，可本轮只有一段录音、也没有对齐/对照——
+        # 模型只好拿一般知识把「对比」补出来，读起来像分析，其实全是常识。
+        # 与其事后遮数值，不如先让它老实说一句「没有对照音」。
+        comparison = ('\n本轮没有对照材料（没有第二段音频/标准音）：第一段先用一句话说明「没有对照音」，'
+                      '之后只给实测事实与可自查项，不要用一般知识补成「与标准音相比」的结论。')
     if not state.evidence:
         return ('\n没有测量时不填录音数值或下音调结论；一般知识明确标注，缺证据就说明。'
-                + _NUMERIC_DISCIPLINE_COMPACT)
+                + _NUMERIC_DISCIPLINE_COMPACT + comparison)
     return ('\n量化陈述逐行引[E编号]，须同对象、范围、量名、单位；一般知识明确标注。'
             'quantity_refs第N项即E编号.qN。实测值直接写{{q:E1.q2}}，由程序按证据原样渲染（值和单位都来自证据，不用自己抄）。'
             '推导用{{calc:E1.q1/E2.q1*100|%}}，仅真实输入和四则，程序写算式结果。'
             '具体录音音调结论须同目标且有定义值的走向证据，平均值不足。'
             '逐字引用、选区范围、一般知识的写法与例子见 skill=notation。'
-            + _NUMERIC_DISCIPLINE)
+            + _NUMERIC_DISCIPLINE + comparison)
 
 
 def _same_value(value: float, text: str, unit: str, quantity: Quantity) -> bool:
@@ -816,7 +835,8 @@ def _target_durations(records: dict[str, Record]) -> dict[str, float]:
     return durations
 
 
-def _check_scope_line(state: Any, line: str, records: dict[str, Record]) -> str:
+def _check_scope_line(state: Any, line: str, records: dict[str, Record],
+                      notes: set[str] | None = None) -> str:
     """「整段」话术只引用了局部分段时，追加真实范围；不再否决整份报告。
 
     这条规则拦的是措辞与引用范围不匹配，不是数值本身；凡是区间确实覆盖整对象、
@@ -855,6 +875,9 @@ def _check_scope_line(state: Any, line: str, records: dict[str, Record]) -> str:
     start = min(span[0] for span in spans)
     end = max(span[1] for span in spans)
     note_guard(state, 'repair', 'report.range_whole_partial')
+    if notes is not None:
+        notes.setdefault('scope', []).append(f'{start:g}–{end:g} 秒')
+        return line
     return line.rstrip() + f'（该句引用的是 {start:g}–{end:g} 秒的局部分段测量，不是整段值）'
 
 def mask_rejected_numbers(text: str, values, marker: str, *, state=None) -> str:
@@ -946,7 +969,8 @@ def _trajectory(records: list[Record], directional: bool, whole_ranges: dict[str
     return False
 
 
-def _check_prosody_line(state: Any, line: str, records: dict[str, Record]) -> str:
+def _check_prosody_line(state: Any, line: str, records: dict[str, Record],
+                        notes: set[str] | None = None) -> str:
     """音调/走向结论缺走向证据时**标注**这一行，不再拦下整份报告。
 
     这条规则拦的是「判断」而不是「数值」，2026-10-06 的文档就把它列为「本来该退回提示词、
@@ -982,6 +1006,9 @@ def _check_prosody_line(state: Any, line: str, records: dict[str, Record]) -> st
         return line
     state.metrics['prosody_unverified'] = state.metrics.get('prosody_unverified', 0) + 1
     note_guard(state, 'repair', 'report.prosody_unverified')
+    if notes is not None:
+        notes.setdefault('prosody', []).append('1')
+        return line
     return line.rstrip() + '（该音调/走向结论缺少同目标的走向证据，未核对）'
 
 
@@ -1094,6 +1121,45 @@ def _fill_citations(state: Any, text: str, records: dict[str, Record]) -> str:
         note_guard(state, 'repair', 'report.citation_filled')
     return '\n'.join(out)
 
+#: 标注类规则的正文末尾说明（同一轮里只说一次，不再逐行插括号）。
+_NOTE_TEXT = {
+    'prosody': '音调/走向的结论缺少同目标的走向证据，正文只按实测作保守表述。',
+    'scope': '写着「整段」的句子引用的是局部分段测量，范围以句中区间为准。',
+}
+
+#: 正文里的算式：「(a 单位)/(b 单位)*100 = 结果」。只收拾算式、不碰结果——
+#: 数值本身在核对阶段已经过一遍，这里纯粹是排版；命中数量记进 report.formula_collapsed。
+_FORMULA = re.compile(
+    r'(?:[（(]?\s*[-+]?\d+(?:\.\d+)?\s*(?:Hz|kHz|dB|Pa|%|秒|毫秒|ms|s)?\s*[)）]?\s*'
+    r'(?:[*/×÷]\s*[（(]?\s*[-+]?\d+(?:\.\d+)?\s*(?:Hz|kHz|dB|Pa|%|秒|毫秒|ms|s)?\s*[)）]?\s*){1,6})'
+    r'=\s*(?=[-+]?\d)')
+
+
+def _annotation_note(notes: dict[str, list[str]]) -> str:
+    """把本轮触发过的标注合成一句话（同类只说一次，但保留具体区间）。"""
+
+    parts = []
+    if notes.get('prosody'):
+        parts.append(_NOTE_TEXT['prosody'])
+    if notes.get('scope'):
+        spans = list(dict.fromkeys(notes['scope']))[:3]
+        parts.append('写着「整段」的句子引用的是 ' + '、'.join(spans) + ' 的局部分段测量，范围以句中区间为准。')
+    return '（' + '；'.join(parts) + '）' if parts else ''
+
+
+def _collapse_formulas(text: str, state: Any = None) -> str:
+    """去掉正文里的算式，只留结果（``(a/b)*100 = 103.042 %`` → ``103.042 %``）。
+
+    真机事故里模型把运算过程原样写进了交付正文，用户看到的是半截公式。
+    判定阶段不动（数值该怎么核对还怎么核对），这里只做排版收尾。
+    """
+
+    collapsed, count = _FORMULA.subn('', text)
+    if count and state is not None:
+        for _ in range(count):
+            note_guard(state, 'repair', 'report.formula_collapsed')
+    return collapsed
+
 
 def _validate_text(state: Any, text: str, records: dict[str, Record], *, fill_citations: bool = True) -> str:
     """核对正文里的数值/推导。
@@ -1102,6 +1168,9 @@ def _validate_text(state: Any, text: str, records: dict[str, Record], *, fill_ci
     普通聊天正文，没有引证记号，补进去会改动用户看到的答复。
     """
     replacements: list[str] = []
+    # 标注类规则（音调走向缺证据 / 「整段」引用局部区间）不再逐行插括号：真机一轮里同一句
+    # 提示重复了 3 次，正文读起来像没写完。这里只记「出现过什么」，最后在正文末尾说一句。
+    notes: dict[str, list[str]] = {}
 
     if '\ue000' in text or '\ue001' in text:
         # 模型不可能自己产出这两个内部标记；清掉继续，不拿它中断报告。
@@ -1175,9 +1244,10 @@ def _validate_text(state: Any, text: str, records: dict[str, Record], *, fill_ci
             continue
         # Suggested future parameters/counts are not claims of measurements.
         if _ADVICE.search(line) and not _SPECIFIC.search(line) and not _CITATION.search(line):
-            checked = _check_prosody_line(state, line, records)
+            checked = _check_prosody_line(state, line, records, notes)
             if checked != line:
                 masked = masked.replace(line, checked)
+            continue
             continue
         # Calculation citations remain visible to prosody validation, while its
         # deterministic numbers bypass a second check against raw measurements.
@@ -1186,14 +1256,21 @@ def _validate_text(state: Any, text: str, records: dict[str, Record], *, fill_ci
             token = '\ue000' + chr(0xE100 + index) + '\ue001'
             evidence_line = evidence_line.replace(token, ' '.join(m[0] for m in _CITATION.finditer(rendered)))
         _check_numeric_line(state, evidence_line, records, verbatim=in_fence or _verbatim_line(line))
-        checked = _check_prosody_line(state, evidence_line, records)
-        checked = _check_scope_line(state, checked, records)
+        checked = _check_prosody_line(state, evidence_line, records, notes)
+        checked = _check_scope_line(state, checked, records, notes)
         if checked != evidence_line:
             # 只把追加的标注接回被遮蔽的那一行：该行的 calc 占位式已被引证替换，
             # 整行替换会丢掉程序计算的结果。
             masked = masked.replace(line, line.rstrip() + checked[len(evidence_line):])
+    # 先收掉模型自己写的算式（此时程序渲染的 calc 结果还是占位记号，不会被误伤），
+    # 再把程序渲染的结果放回去：透明推导的 `算式 = 结果` 是有意展示的，不能一起收拾掉。
+    masked = _collapse_formulas(masked, state)
     for index, rendered in enumerate(replacements):
         masked = masked.replace('\ue000' + chr(0xE100 + index) + '\ue001', rendered)
+    if notes:
+        sentence = _annotation_note(notes)
+        if sentence not in masked:
+            masked = masked.rstrip() + '\n\n' + sentence
     return masked
 
 

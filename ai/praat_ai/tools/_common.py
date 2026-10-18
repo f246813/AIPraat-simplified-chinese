@@ -420,7 +420,8 @@ def _query_times(
     if not values:
         return [fallback]
     if len(values) > maximum:
-        raise ToolError(f"一次最多查询 {maximum} 个时刻。")
+        raise ToolError(f"一次最多查询 {maximum} 个时刻（收到 {len(values)} 个）；"
+                        "请减少时刻，或拆成多次调用。")
     return values
 
 
@@ -1018,10 +1019,15 @@ def _seconds_arg(description: str) -> dict[str, Any]:
     return {"type": "number", "description": description}
 
 
-def _times_arg(description: str) -> dict[str, Any]:
-    """可以一次给多个时刻的 ``time``：数字或 ``"0.25,0.75"`` 这样的文本。"""
+def _times_arg(description: str, maximum: int = 8) -> dict[str, Any]:
+    """可以一次给多个时刻的 ``time``：数字或 ``"0.25,0.75"`` 这样的文本。
 
-    return {"type": ["number", "string"], "description": description}
+    上限写进 schema 描述里：真机实测里模型一次点了 9 个时刻被拒，白花一个请求——
+    与其让它撞墙后重试，不如把「一次最多几个」直接摆在参数说明里。
+    """
+
+    return {"type": ["number", "string"],
+            "description": f"{description}；一次最多 {maximum} 个时刻，要更多请拆成多次调用"}
 
 
 def _number_arg(description: str) -> dict[str, Any]:
