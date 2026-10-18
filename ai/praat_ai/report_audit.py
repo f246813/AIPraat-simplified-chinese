@@ -46,6 +46,8 @@ class _Draft:
 class AuditSummary:
     rounds: int = 0
     masked: list[str] = field(default_factory=list)
+    #: 被遮蔽的数落在哪几句（遮前原文，限量）。门禁 JSON 里带上它，下次出问题不用靠猜。
+    masked_lines: list[str] = field(default_factory=list)
     rules: dict[str, int] = field(default_factory=dict)
     verified: bool = True
     exhausted: bool = False
@@ -58,6 +60,7 @@ class AuditSummary:
         audit['rounds'] = self.rounds
         audit['masked'] = list(self.masked)
         audit['masked_count'] = len(self.masked)
+        audit['masked_lines'] = [line[:240] for line in self.masked_lines[:5]]
         audit['verified'] = self.verified
         audit['exhausted'] = self.exhausted
         for rule, count in self.rules.items():
@@ -170,12 +173,17 @@ def audit_report(state: Any, report: Any, *, fill_citations: bool = True,
                 note_guard(state, 'repair', 'report.number_retried')
                 raise ModelRetry(_retry_feedback(found))
             summary.masked.extend(found)
+            # 留一份「遮前原文里是哪几句」：门禁 JSON 带上它，出事时不用靠猜上下文。
+            for _, line in repair_targets(analysis, found):
+                if line not in summary.masked_lines:
+                    summary.masked_lines.append(line)
             summary.verified = False
             _unblock(state, rule)
             analysis = report_guards.mask_rejected_numbers(
                 analysis, found, report_guards.UNVERIFIED_NUMBER, state=state)
             coverage = [_mask_entry(entry, found, state) for entry in coverage]
             note_guard(state, 'repair', 'report.number_masked')
+            continue
             continue
         summary.record(state)
         return _rebuild(report, validated)

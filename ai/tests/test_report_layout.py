@@ -11,8 +11,6 @@ from praat_ai.tools._common import ToolError, _query_times, _times_arg
 CONTEXT = ('id\tclass\tname\tselected\tsel_start\tsel_end\n'
            '1\tSound\ttarget\t1\t0.2\t0.4\n')
 
-TWO_SOUNDS = CONTEXT + '2\tSound\treference\t0\n'
-
 
 def report(text):
     return AnalysisReport(analysis=text + '\n报告依据已有记录，范围外的声音特征仍需相应测量。',
@@ -72,21 +70,19 @@ class FormulaLayoutTests(unittest.TestCase):
         self.assertNotIn('report.formula_collapsed', state.metrics.get('guard_repairs') or {})
 
 
-class ComparisonWithoutReferenceTests(unittest.TestCase):
-    def instructions(self, goal, context):
-        return report_guard_instructions(AnalysisState(goal, context, evidence=[pitch()]))
+class CitationFormatTests(unittest.TestCase):
+    def test_merged_citations_are_told_apart(self):
+        """`[E7, E8]` 我们认不出来：指令里写明连写形式，省掉一次补引证。"""
 
-    def test_goal_asking_for_a_standard_gets_an_explicit_note(self):
-        text = self.instructions('这是日语语音あなた，与标准音对比，指出发音不足', CONTEXT)
-        self.assertIn('没有对照材料', text)
-        self.assertIn('没有对照音', text)
+        text = report_guard_instructions(AnalysisState('分析录音语调', CONTEXT, evidence=[pitch()]))
+        self.assertIn('[E1][E2]（不要写成[E1, E2]）', text)
 
-    def test_reference_present_suppresses_the_note(self):
-        text = self.instructions('这是日语语音あなた，与标准音对比，指出发音不足', TWO_SOUNDS)
-        self.assertNotIn('没有对照材料', text)
+    def test_no_reference_note_in_the_chat_window(self):
+        """AI 对话窗口里的纠音就是奔着世界知识来的：不要先让模型声明「没有对照音」。"""
 
-    def test_other_goals_are_untouched(self):
-        self.assertNotIn('没有对照材料', self.instructions('解释平均基频的含义', CONTEXT))
+        text = report_guard_instructions(AnalysisState('这是日语语音あなた，与标准音对比，指出发音不足',
+                                                       CONTEXT, evidence=[pitch()]))
+        self.assertNotIn('没有对照', text)
 
 
 class PitchTimeLimitTests(unittest.TestCase):

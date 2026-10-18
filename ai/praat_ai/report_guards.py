@@ -107,8 +107,6 @@ _QUANTITY = re.compile(r"\{\{q:(E\d+)\.q([1-9]\d*)\}\}")
 #: 分句：句号/分号/全角逗号/半角逗号（**数字之间的逗号不算分隔**：``220,000``、``[0.446, 0.66158]``
 #: 里的逗号属于数值本身，切开会把千分位读成两个数）。偏移保持绝对，遮蔽仍按原文定位。
 _CLAUSE_SPLIT = re.compile(r'(?:[^；;。，\n]|,\s*(?=[-+]?\d))+')
-#: 目标里要求「与标准音/参考音对比」的说法（真机里就是「与标准音对比，指出不足」）。
-_COMPARISON_GOAL = re.compile(r'对比|对照|相比|标准音|参考音|标准发音|标准东京音|与标准', re.I)
 _GENERAL = re.compile(r"一般知识|一般原理|概念说明|概念解释|通用知识|示例[（(]非本录音[）)]|general knowledge", re.I)
 _SPECIFIC = re.compile(r"本(?:段|次|录音|对象|材料)|这(?:段|个|次|份)|该(?:段|录音|对象)|你(?:的|这)|当前|实测|测得|测量结果")
 _ADVICE = re.compile(r'^\s*(?:[-*]\s*)?(?:建议|下一步|请|可以尝试|可尝试|练习时|参数设置)')
@@ -406,34 +404,23 @@ _NUMERIC_DISCIPLINE_COMPACT = (
     '\n数值纪律：没有对应证据就不写；不做单位换算；算出来的数一律写成{{calc:…}}由程序算。')
 
 
-
-def _reference_present(state: Any) -> bool:
-    """本轮有没有对照材料：够两个 Sound 对象，或本回合带了音频附件。"""
-
-    try:
-        sounds = [row for row in parse_object_context(state.context_text) if row.class_name in SOUND_CLASSES]
-    except Exception:  # noqa: BLE001 - 上下文坏了按「没有对照」处理，不影响别的指令
-        sounds = []
-    return len(sounds) >= 2 or bool(getattr(state, 'material_metadata', None))
-
-
 def report_guard_instructions(state: Any) -> str:
-    comparison = ''
-    if _COMPARISON_GOAL.search(str(state.goal or '')) and not _reference_present(state):
-        # 真机实测：目标写「与标准音对比」，可本轮只有一段录音、也没有对齐/对照——
-        # 模型只好拿一般知识把「对比」补出来，读起来像分析，其实全是常识。
-        # 与其事后遮数值，不如先让它老实说一句「没有对照音」。
-        comparison = ('\n本轮没有对照材料（没有第二段音频/标准音）：第一段先用一句话说明「没有对照音」，'
-                      '之后只给实测事实与可自查项，不要用一般知识补成「与标准音相比」的结论。')
+    # 注意：这里**不**为「没有对照音」加提示。AI 对话窗口里用户要求纠音，本来就是奔着
+    # 模型的世界知识来的（对比纠音是另一条入口，那边自带标准音）。早先版本加过一句
+    # 「本轮没有对照材料，先用一句话说明没有对照音」，等于把用户要的东西堵掉，已撤。
     if not state.evidence:
         return ('\n没有测量时不填录音数值或下音调结论；一般知识明确标注，缺证据就说明。'
-                + _NUMERIC_DISCIPLINE_COMPACT + comparison)
+                + _NUMERIC_DISCIPLINE_COMPACT)
+    if not state.evidence:
+        return ('\n没有测量时不填录音数值或下音调结论；一般知识明确标注，缺证据就说明。'
+                + _NUMERIC_DISCIPLINE_COMPACT)
     return ('\n量化陈述逐行引[E编号]，须同对象、范围、量名、单位；一般知识明确标注。'
             'quantity_refs第N项即E编号.qN。实测值直接写{{q:E1.q2}}，由程序按证据原样渲染（值和单位都来自证据，不用自己抄）。'
             '推导用{{calc:E1.q1/E2.q1*100|%}}，仅真实输入和四则，程序写算式结果。'
+            '多个引证连写成[E1][E2]（不要写成[E1, E2]），否则引证认不出来、要多跑一次补引证。'
             '具体录音音调结论须同目标且有定义值的走向证据，平均值不足。'
             '逐字引用、选区范围、一般知识的写法与例子见 skill=notation。'
-            + _NUMERIC_DISCIPLINE + comparison)
+            + _NUMERIC_DISCIPLINE)
 
 
 def _same_value(value: float, text: str, unit: str, quantity: Quantity) -> bool:

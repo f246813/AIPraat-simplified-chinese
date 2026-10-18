@@ -208,5 +208,15 @@ class NumericRetryTests(unittest.TestCase):
         # 但不再同时记成一条「拦在交付之外」的阻断
         self.assertNotIn('report.number_unmatched', current.metrics.get('guard_blocks') or {})
 
+    def test_masked_lines_keep_the_offending_sentence_for_diagnosis(self):
+        """遮前原文里是哪几句被遮，要能事后查——门禁 JSON 直接读到它。"""
+
+        current = state(INFO, MEASURE)
+        audit_report(current, report('平均基频为 233.700 Hz。[E2]'), max_rounds=1)
+        lines = current.metrics['audit']['masked_lines']
+        self.assertEqual(len(lines), 1)
+        self.assertIn('233.700 Hz', lines[0])
+        self.assertLessEqual(len(lines[0]), 240)
+
 if __name__ == '__main__':
     unittest.main()
