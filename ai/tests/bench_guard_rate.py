@@ -181,6 +181,7 @@ def run(args):
     ai_root = Path(args.ai_root).resolve()
     sys.path.insert(0, str(ai_root))
     from praat_ai import chat, delivery, modern_execution as m, report_guards
+    from praat_ai import modern_store, telemetry as telemetry_mod
     from praat_ai.config import load_config
     from praat_ai.workflow_policy import WorkflowPolicy
 
@@ -190,6 +191,9 @@ def run(args):
     base.workflow = WorkflowPolicy.validate(raw.get('modern', {}).get('workflow'))
     runtime_directory = Path(args.out).resolve().parent / 'bench-runtime'
     runtime_directory.mkdir(parents=True, exist_ok=True)
+    # 每轮真实 metrics 折成遥测行写进 telemetry 表（与 app 用同一份 modern_store 口径），
+    # 门禁结果因此可以事后聚合，而不只是看一眼终端输出。
+    telemetry_store, telemetry_session = None, ''
 
     block_log: list[tuple[str, str]] = []
     real_block = report_guards._block
@@ -260,6 +264,12 @@ def run(args):
                                   l2_seconds=metrics.get('l2_seconds'),
                                   content=result.get('content') or '',
                                   block_log=list(block_log))
+                    if telemetry_store is None:
+                        telemetry_store = modern_store.ModernStore(runtime_directory / 'telemetry.db')
+                        telemetry_session = telemetry_store.new_session('黄金集门禁')['id']
+                    telemetry_store.save_telemetry(
+                        telemetry_session, f'bench-{index}',
+                        telemetry_mod.payload(metrics, status=result.get('status') or ''))
                 except Exception as error:                      # noqa: BLE001
                     record.update(error=f'{type(error).__name__}: {error}',
                                   traceback=traceback.format_exc()[-1500:],
@@ -295,6 +305,9 @@ def run(args):
     for key, value in repairs.most_common():
         report.write(f'  {key:<32} {value:>3} 次　出现在 {repair_runs[key]}/{len(results)} 轮\n')
     print(report.getvalue())
+    if telemetry_store is not None:
+        summary = telemetry_store.telemetry_summary()
+        print('遥测摘要：' + json.dumps(summary, ensure_ascii=False, indent=1))
 
 
 def _runtime(factory):

@@ -94,18 +94,33 @@ class GoldenGateTests(unittest.TestCase):
         self.assertEqual(golden_backend.evaluate([]), ['没有任何一轮结果'])
 
     def test_mock_gate_round_trip_is_reachable(self):
-        """离线骨架：mock 模型跑 1 轮，门禁机制本身要能用（不校验模型质量）。"""
+        """离线骨架：mock 模型跑 1 轮，门禁机制要能端到端跑通。
 
+        走子进程：整套门禁会建 CloudRuntime 并触发 Tk 进度弹窗，在同一进程里跑完再退出
+        会让 Tcl 在非主线程析构（``Tcl_AsyncDelete``，整个测试进程直接 abort）。
+        """
+
+        import os
+        import subprocess
+        import sys
         import tempfile
         from pathlib import Path
 
+        script = Path(__file__).resolve().with_name('golden_backend.py')
         with tempfile.TemporaryDirectory() as root:
-            code = golden_backend.main([
-                '--model', 'mock', '--runs', '1', '--min-verified', '0',
-                '--max-report-blocks', '0', '--max-tool-blocks', '5', '--max-requests', '30',
-                '--out', str(Path(root) / 'golden.json'),
-                '--ai-root', str(Path(__file__).resolve().parents[1])])
-        self.assertEqual(code, 0)
+            env = dict(os.environ, PYTHONIOENCODING='utf-8', PYTHONUTF8='1')
+            proc = subprocess.run(
+                [sys.executable, str(script), '--model', 'mock', '--runs', '1',
+                 '--min-verified', '0', '--max-report-blocks', '0',
+                 '--max-tool-blocks', '5', '--max-requests', '30',
+                 '--out', str(Path(root) / 'golden.json'),
+                 '--ai-root', str(Path(__file__).resolve().parents[1])],
+                capture_output=True, text=True, timeout=300, env=env,
+                encoding='utf-8', errors='replace')
+        detail = (proc.stderr or proc.stdout or '')[-2000:]
+        self.assertEqual(proc.returncode, 0, detail)
+        self.assertIn('门禁通过', proc.stdout or '')
+        self.assertIn('门禁通过', proc.stdout)
 
 
 if __name__ == '__main__':

@@ -77,9 +77,6 @@ def evaluate(rows, *, min_verified=DEFAULTS['min_verified'],
     if requests > max_requests:
         failures.append(f'平均请求 {requests:.1f}/轮 > {max_requests}')
     return failures
-    if requests > max_requests:
-        failures.append(f'平均请求 {requests:.1f}/轮 > {max_requests}')
-    return failures
 
 
 def report(rows) -> str:
