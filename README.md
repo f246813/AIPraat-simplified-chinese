@@ -5,7 +5,9 @@
   <p><a href="https://github.com/f246813/praat-simplified-chinese-ai/releases/latest">下载最新版</a> · <a href="ai/README.zh-CN.md">使用说明</a> · <a href="CREDITS.zh-CN.md">借物表</a></p>
 </div>
 
-通过AI对话窗口用调动 Praat 的原生工具进行计算测量，还可以把标准音与学习者录音放在一起比较，并附有 Anki 卡片一键打开语图的插件
+1. 通过AI对话窗口用自然语言调动 Praat 的原生工具进行计算测量
+2. 可以把标准音与学习者录音放在一起比较
+3. 制作了可以从 Anki 卡片一键打开语图的独立插件
 
 ## 基座与上游
 
