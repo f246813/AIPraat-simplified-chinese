@@ -55,7 +55,7 @@ namespace AIPraat.Setup
             var layout=new TableLayoutPanel {Dock=DockStyle.Fill,ColumnCount=1,RowCount=6,Padding=new Padding(18)};
             foreach(float size in new[]{76f,400f,94f})layout.RowStyles.Add(new RowStyle(SizeType.Absolute,size));
             layout.RowStyles.Add(new RowStyle(SizeType.Percent,100));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,54));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,52));Controls.Add(layout);
-            var header=new Label {Dock=DockStyle.Fill,Text="当前 Python："+this.python+"\n需要 Python 3.10–3.12 x64，推荐 3.12。已就绪的运行库无需提供安装包；检测不下载模型。"};layout.Controls.Add(header,0,0);
+            var header=new Label {Dock=DockStyle.Fill,Text="当前 Python："+this.python+"\n需要 Python 3.10–3.12 x64，推荐 3.12；已就绪的运行库无需提供安装包"};layout.Controls.Add(header,0,0);
             grid.Name="RuntimeItems";grid.ScrollBars=ScrollBars.Both;
             grid.Dock=DockStyle.Fill;grid.AllowUserToAddRows=grid.AllowUserToDeleteRows=false;grid.RowHeadersVisible=false;
             grid.ReadOnly=true;grid.AutoSizeColumnsMode=DataGridViewAutoSizeColumnsMode.Fill;grid.AutoSizeRowsMode=DataGridViewAutoSizeRowsMode.AllCells;
@@ -82,7 +82,7 @@ namespace AIPraat.Setup
             options.Controls.Add(new Label {Text="PyTorch / wav2vec2 设备：",Location=new Point(0,58),Size=new Size(215,26)});
             device.Location=new Point(222,54);device.Width=310;device.DropDownStyle=ComboBoxStyle.DropDownList;
             device.Items.AddRange(new object[]{"CPU（无需 CUDA）","CUDA（必须验证设备可用）"});device.SelectedIndex=selectedDevice=="cuda"?1:0;device.Name="RuntimeDevice";options.Controls.Add(device);
-            device.SelectedIndexChanged+=(s,e)=>{Probe=null;UpdateRows();status.Text="设备已切换，请重新检测。";};
+            device.SelectedIndexChanged+=(s,e)=>{Probe=null;UpdateRows();status.Text="设备已切换，请重新检测";};
             log.Multiline=true;log.ReadOnly=true;log.ScrollBars=ScrollBars.Both;log.WordWrap=false;log.Dock=DockStyle.Fill;log.Name="RuntimeLog";layout.Controls.Add(log,0,3);
             var state=new Panel{Dock=DockStyle.Fill};layout.Controls.Add(state,0,4);status.Location=new Point(0,5);status.Size=new Size(1080,27);status.Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right;state.Controls.Add(status);
             progress.Location=new Point(0,34);progress.Size=new Size(1100,8);progress.Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right;state.Controls.Add(progress);
@@ -98,7 +98,7 @@ namespace AIPraat.Setup
         void Browse(int index)
         {
             var item=RuntimeDependencies.Items()[index];
-            if(item.id=="tk") {MessageBox.Show(this,"Tcl/Tk 随 Python/Conda 提供。联网补齐沿用所选环境的官方 Python/Conda 修复流程；离线时请用该环境的 Python 安装器或 Conda 缓存补装 Tk，再重新检测。","Tcl/Tk 修复");return;}
+            if(item.id=="tk") {MessageBox.Show(this,"Tcl/Tk 随 Python/Conda 提供；联网补齐沿用所选环境的官方 Python/Conda 修复流程；离线时请用该环境的 Python 安装器或 Conda 缓存补装 Tk，再重新检测","Tcl/Tk 修复");return;}
             using(var dialog=new OpenFileDialog {Title="选择 "+item.label+" 的本地安装包",Filter=item.id=="webview2"?"微软 WebView2 x64 离线完整安装程序|*.exe":"Python wheel|*.whl",CheckFileExists=true}) {
                 if(dialog.ShowDialog(this)!=DialogResult.OK)return;
                 selected[item.id]=dialog.FileName;grid.Rows[index].Cells[5].Value=dialog.FileName;grid.Rows[index].Cells[5].ToolTipText=dialog.FileName;
@@ -114,7 +114,7 @@ namespace AIPraat.Setup
             if(IsDisposed||Disposing)return;
             try {
                 if(InvokeRequired){BeginInvoke(new Action<string>(Append),line);return;}
-                log.AppendText(line+Environment.NewLine);status.Text=line.Length>140?line.Substring(0,140):line;
+                log.AppendText(line+Environment.NewLine);status.Text=SetupTheme.Hint(line.Length>140?line.Substring(0,140):line);
             } catch(ObjectDisposedException){} catch(InvalidOperationException){}
         }
         async void Check()
@@ -123,7 +123,7 @@ namespace AIPraat.Setup
             string selectedDevice=Device;status.Text="正在逐项检测运行库并启动一次新前端窗口…";
             // A closed dialog must not make a pending detection continuation crash the
             // host process: these are async void, so an unhandled exception here is fatal.
-            try {var probe=await Task.Run(()=>RuntimeDependencies.Probe(python,selectedDevice,true,Append));if(IsDisposed)return;Probe=probe;SetLog(Probe.Report==null?null:Probe.Report.log_path);UpdateRows();status.Text=Probe.Message;}
+            try {var probe=await Task.Run(()=>RuntimeDependencies.Probe(python,selectedDevice,true,Append));if(IsDisposed)return;Probe=probe;SetLog(Probe.Report==null?null:Probe.Report.log_path);UpdateRows();status.Text=SetupTheme.Hint(Probe.Message);}
             finally {if(!IsDisposed)SetBusy(false);}
         }
         void SetLog(string path)
@@ -152,7 +152,7 @@ namespace AIPraat.Setup
                 var result=await Task.Run(()=>RuntimeDependencies.Install(python,plan,useOnline,Append));
                 if(IsDisposed)return;
                 Probe=result.Probe;SetLog(result.LogPath);
-                UpdateRows();status.Text=Probe.Message;
+                UpdateRows();status.Text=SetupTheme.Hint(Probe.Message);
             } catch(Exception error) {if(!IsDisposed)Append("配置失败："+error.Message);}
             finally {if(!IsDisposed)SetBusy(false);}
         }

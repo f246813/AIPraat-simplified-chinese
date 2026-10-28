@@ -234,7 +234,7 @@ class ScriptRenderingTests(unittest.TestCase):
 
     def test_pitch_and_intensity_templates(self) -> None:
         pitch = self.render("pitch", time=0.3)
-        self.assertIn("To Pitch: 0, 75.000000, 600.000000", pitch)
+        self.assertIn("To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000", pitch)
         self.assertIn('value = Get value at time: time, "Hertz", "linear"', pitch)
         intensity = self.render("intensity")
         self.assertIn('To Intensity: 100, 0, "yes"', intensity)
@@ -317,7 +317,7 @@ class ScriptRenderingTests(unittest.TestCase):
 
 
 class BorrowedMeasurementTests(unittest.TestCase):
-    """B3：借用 chengafni 的测量脚本（公式照抄，真机验证在 verify_chat_templates）。"""
+    """借用 chengafni 的测量脚本（公式照抄，真机验证在 verify_chat_templates）。"""
 
     def setUp(self) -> None:
         self.directory = tempfile.TemporaryDirectory()
@@ -344,7 +344,7 @@ class BorrowedMeasurementTests(unittest.TestCase):
     def test_spectral_emphasis_follows_the_source_script(self) -> None:
         script = self.render("spectral_emphasis", object=1)
         self.assertIn("intensity = Get intensity (dB)", script)
-        self.assertIn("To Pitch: 0, 75.000000, 600.000000", script)
+        self.assertIn("To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000", script)
         self.assertIn("Filter (pass Hann band): 0, cutoff, 20.000000", script)
         # 中间对象要删掉，最后回到用户原来选中的对象。
         self.assertIn("Remove", script)
@@ -657,10 +657,10 @@ class QueryRobustnessTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.directory.cleanup()
 
-    def test_pitch_clamps_time_and_explains_undefined(self) -> None:
+    def test_pitch_preserves_outside_request_and_explains_missing_value(self) -> None:
         script = tools.render("pitch", {"time": 5.0}, self.context)
-        self.assertIn("if time > duration", script)
-        self.assertIn("已按对象时长截断", script)
+        self.assertIn("queryOutside = time < domainStart or time > domainEnd", script)
+        self.assertIn("未改用其他时刻", script)
         self.assertIn("if value = undefined", script)
         self.assertIn("没有周期性声源", script)
 
@@ -824,8 +824,18 @@ class NewToolTests(unittest.TestCase):
         with self.assertRaises(tools.ToolError) as caught:
             tools.render("pitch", {"time": "abc"}, self.context)
         self.assertIn("时间只能是", str(caught.exception))
+        # 2026-10-20：上限按区间长度自适应（最少 8、最多 64），12 个时刻现在能用；
+        # 超过上限仍然拒绝，别把脚本撑成一份数据点清单。
+        script = tools.render(
+            "pitch", {"time": ",".join(str(index / 10) for index in range(12))}, self.context
+        )
+        self.assertEqual(script.count("time = 0.300000"), 1)
         with self.assertRaises(tools.ToolError):
-            tools.render("pitch", {"time": ",".join(str(i / 10) for i in range(12))}, self.context)
+            tools.render(
+                "pitch",
+                {"time": ",".join(str(index / 100) for index in range(70))},
+                self.context,
+            )
 
     def test_formant_statistics_reports_each_formant_separately(self) -> None:
         script = tools.render("formant_statistics", {"formant": "1,2"}, self.context)
@@ -990,17 +1000,10 @@ class VotToolTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.directory.cleanup()
 
-    def test_placeholder_zero_times_fall_back_to_auto(self) -> None:
-        """模型会给可选字段填两个 0（"填满"），这该按「没给」处理，走自动估计。"""
-
-        script = tools.render(
-            "vot",
-            {"burst": 0, "voicing": 0, "object": 1},
-            self.sound_context,
-        )
-        # 没有按「两个时刻相减」那条路走（那会写 t1/t2），而是进了自动估计。
-        self.assertNotIn("vot = t2 - t1", script)
-        self.assertIn("appendFileLine", script)
+    def test_explicit_zero_times_do_not_become_missing_parameters(self) -> None:
+        script=tools.render('vot',{'burst':0,'voicing':0},self.sound_context)
+        self.assertIn('vot = t2 - t1',script)
+        self.assertNotIn('Filter (pass Hann band)',script)
 
     def test_only_one_time_is_still_an_error(self) -> None:
         with self.assertRaises(tools.ToolError):
@@ -1011,24 +1014,13 @@ class VotToolTests(unittest.TestCase):
             tools.render("vot", {"burst": "爆破", "voicing": 0.4}, self.sound_context)
         self.assertIn("必须是数字", str(raised.exception))
 
-    def test_textgrid_path_adds_boundaries_and_reports_ms(self) -> None:
-        script = tools.render(
-            "vot",
-            {"burst": 0.30, "voicing": 0.42},
-            self.grid_context,
-        )
-        self.assertIn("t1 = 0.300000", script)
-        self.assertIn("t2 = 0.420000", script)
+    def test_manual_textgrid_landmarks_leave_existing_intervals_intact(self) -> None:
+        script = tools.render("vot", {"burst": 0.30, "voicing": 0.42}, self.grid_context)
         self.assertIn("vot = t2 - t1", script)
-        self.assertIn("Insert boundary: 1, t1", script)
-        self.assertIn("Insert boundary: 1, t2", script)
         self.assertIn("fixed$ (vot * 1000, 1)", script)
-        # 2026-10-04：两个时刻都带上「占目标时长百分比」，报告阶段没有工具，
-        # 只有靠这些数字才能判断选段落在词里的哪个位置。
-        self.assertIn("秒（爆破，占时长 ", script)
-        self.assertIn("秒（浊音起始，占时长 ", script)
-        self.assertIn("fixed$ (t1 / duration * 100, 0)", script)
-        self.assertIn("并在该层补上了边界", script)
+        self.assertNotIn("Insert boundary", script)
+        self.assertNotIn("Set interval text", script)
+        self.assertIn("@aipraat-acoustic-v1", script)
 
     def test_sound_path_only_subtracts(self) -> None:
         script = tools.render(
@@ -1047,9 +1039,9 @@ class VotToolTests(unittest.TestCase):
         with self.assertRaises(tools.ToolError) as caught:
             tools.render("vot", {"burst": 0.3}, self.grid_context)
         self.assertIn("voicing", str(caught.exception))
-        with self.assertRaises(tools.ToolError) as caught:
-            tools.render("vot", {"burst": 0.4, "voicing": 0.3}, self.grid_context)
-        self.assertIn("必须晚于", str(caught.exception))
+        script = tools.render("vot", {"burst": 0.4, "voicing": 0.3}, self.grid_context)
+        self.assertIn("t2 = 0.300000", script)
+        self.assertIn("预浊起始", script)
 
     def test_onset_alias_works(self) -> None:
         script = tools.render(
@@ -1071,7 +1063,7 @@ class VotToolTests(unittest.TestCase):
         self.assertIn("Filter (pass Hann band): 2000, 8000, 100", script)
         self.assertIn('To Intensity: 2000, 0.001, "yes"', script)
         self.assertIn('To Harmonicity (cc): 0.002, 75.000000', script)
-        self.assertIn('To Pitch (ac): 0.002, 75.000000', script)
+        self.assertIn('To Pitch (filtered autocorrelation): 0.002, 75.000000', script)
         self.assertIn("burstTime", script)
         self.assertIn("burstRise", script)
         self.assertIn("firstVoicedTime", script)
@@ -1189,8 +1181,8 @@ class EditorSelectionRangeTests(unittest.TestCase):
 
     def test_without_a_selection_the_whole_object_is_still_the_default(self) -> None:
         script = tools.render("pitch_statistics", {}, self.plain)
-        self.assertIn("tmin = 0", script)
-        self.assertIn("tmax = duration", script)
+        self.assertIn("tmin = domainStart", script)
+        self.assertIn("tmax = domainEnd", script)
         self.assertNotIn("按编辑器圈选", script)
         self.assertIn('rangeNote$ = ""', script)
 

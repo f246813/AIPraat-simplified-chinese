@@ -107,6 +107,7 @@ namespace AIPraat.Setup
             string root=Path.GetFullPath(PathValidation.Clean(request.InstallDirectory)).TrimEnd('\\');
             request.InstallDirectory=root;
             if(!request.ConfigurePrerequisites)throw new IOException("安装前必须配置 Python 和全部必需运行库。");
+            RuntimeDependencies.InstallRoot=root;
             var runtimeProbe=RuntimeDependencies.Probe(request.PythonPath,request.RuntimeDevice=="cuda"?"cuda":"cpu",true,
                 message=>Progress(0,message));
             if(!runtimeProbe.Valid)throw new IOException(runtimeProbe.Message);

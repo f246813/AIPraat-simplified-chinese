@@ -15,6 +15,7 @@ namespace AIPraat.Setup
         public static int Px(int value){return (int)Math.Round(value*dpi);}
         public static Font Body {get{return new Font("Microsoft YaHei UI",10.5f);}}
         public static Font Small {get{return new Font("Microsoft YaHei UI",9f);}}
+        public static string Hint(string text){return System.Text.RegularExpressions.Regex.Replace(text??"","[。.](?=\\s*(?:\\n|$))","").Replace("。","；");}
         public static void Divider(Panel panel){panel.Paint+=(s,e)=>{using(var pen=new Pen(Line))e.Graphics.DrawLine(pen,0,panel.Height-1,panel.Width,panel.Height-1);};}
         public static void FitToScreen(Form form){var area=Screen.FromControl(form).WorkingArea;form.Size=new Size(Math.Min(form.Width,area.Width),Math.Min(form.Height,area.Height));form.Location=new Point(area.Left+(area.Width-form.Width)/2,area.Top+(area.Height-form.Height)/2);}
         public static void AddRow(TableLayoutPanel stack,Control control)

@@ -21,12 +21,12 @@ os.environ.setdefault('PYDANTIC_AI_NO_BANNER', '1')
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, BinaryContent, ModelRetry, PromptedOutput, Tool
 from pydantic_ai.capabilities import Hooks
-from pydantic_ai.messages import ModelResponse, ToolCallPart, UserPromptPart, ModelRequest, SystemPromptPart, RetryPromptPart
+from pydantic_ai.messages import ModelResponse, ToolCallPart, UserPromptPart, ModelRequest, SystemPromptPart, RetryPromptPart, TextPart
 from pydantic_ai.usage import RunUsage, UsageLimits
 from pydantic_graph import GraphBuilder, StepContext
 
 from . import model_capabilities as caps, qwen, tools
-from . import delivery
+from . import delivery, delivery_text, leak_rescue
 from . import execution_core
 from .escape_policy import AnalysisState, BranchExit, Evidence, note_guard
 from .dialogue_policy import dialogue_kind, effective_thinking_level, direct_measurement, reasoning_reserve
@@ -38,7 +38,8 @@ from .report_guards import (UNVERIFIED_NUMBER, mask_rejected_numbers,
 from . import report_guards
 from .report_audit import audit_report
 from .session_context import PhaseContext, native_history, evidence_projection
-from . import cloud_metrics, skill_registry
+from . import cloud_metrics, skill_registry, answer_contract
+from . import evidence_boundaries, evidence_quality, interpretation_policy
 from .workflow_policy import (finish_locally, measurement_complete, publish_results, wants_explanation,
                               valid_measurement_rows)
 
@@ -73,10 +74,11 @@ _NUMBER_REPAIR_PROMPT = (
 #: 因此「已有证据却声称没有音频所以测不了」由 report_guards 的 report.input_claim_conflict 拦，
 #: 这里不给模型任何可以照抄的「没有音频」句式：听感只以 audio_observations 为准。
 REPORT_INSTRUCTIONS = (
-    '\n独立报告，无执行工具。逐项解释 original_goal，给出依据、限制、下一步，不能仅有统计表。'
+    '\n独立报告，无执行工具。回答 original_goal，给出结论与依据，不复述内部指令。'
     'coverage.item 原样对应 deliveries；缺口列 audio/measurement/reference。'
-    'audio_observations 是此前模型定性观察，注明原模型和材料来源，不是专业测量。'
-    '听感结论只来自 audio_observations；没有观察就不判断录音缺陷。')
+    'audio_observations 是此前模型定性观察，注明原模型与材料来源，不是专业测量；'
+    '无观察不作听感判断，不判断录音缺陷。'
+    '测量报告按需要组织Markdown标题；派生计算由程序单列。')
 
 #: 报告定位选段时使用覆盖比例与音素序列，缺少对齐或标注时说明缺口。
 #: 相关任务才追加定位指导，避免占用一般对话预算。
@@ -84,7 +86,7 @@ _PLACEMENT_TOPICS = re.compile(
     r'标准音|对比|比较|纠音|发音|练习|音素|音节|位置|语调|口音|改进|选段|第几|选中|这段|录音|vot')
 
 #: 音调结论需要音高走向证据；规划与报告按相关目标追加指导。
-_PROSODY_TOPICS = re.compile(r'语调|音调|重音|アクセント|accent|标准音|对比|比较|发音|练习', re.I)
+_PROSODY_TOPICS = re.compile(r'声调|语调|音调|重音|アクセント|accent|标准音|对比|比较|发音|练习', re.I)
 
 #: 关掉思考的寒暄/能力介绍走单次快速回复：只给正文这么多（推理另算）。
 DIALOGUE_FAST_TOKENS = 512
@@ -93,15 +95,12 @@ OUTPUT_REQUEST_FLOOR = 256
 
 
 class OutputTruncated(BranchExit):
-    """模型输出被长度上限截断（``finish_reason='length'``）。
+    """输出达到长度上限；分析保留草稿并标记未完成，对话可在预算内续写。"""
 
-    消息文本与旧行为一致（``模型输出未完整结束：length``），分析路径照旧按失败收尾；
-    流式对话路径会先尝试续写，最差也要把已经流出的正文留下来。
-    """
-
-    def __init__(self, reason: str = 'length'):
+    def __init__(self, reason: str = 'length', partial: str = ''):
         super().__init__('模型输出未完整结束：' + reason)
         self.finish_reason = reason
+        self.partial = partial
 
 
 #: 报告上下文里最多带几条失败/未执行的尝试。
@@ -168,8 +167,20 @@ def planner_system(config, goal: str = '') -> str:
     return qwen.planner_instructions(config.qwen) + skill_registry.catalog('planner')
 
 
+USER_ANSWER_INSTRUCTIONS = (
+    '\n直接对用户说明结论、依据和可行建议，不附加通用免责说明。内部规划、校验要求和写作指令不属于回答正文。'
+    '缺少数据时只说明具体未知项及其影响，不向用户复述给模型的要求，不把待填写的公式当作结论。'
+)
+
+
 def dialogue_instructions(config):
-    return qwen.analysis_instructions(config.qwen) + '\n自然回答用户，按问题需要控制长度。寒暄和能力介绍请简短。不能声称已执行测量或听过录音。'
+    knowledge = (qwen.WORLD_KNOWLEDGE_INSTRUCTIONS if qwen.knowledge_is_open(config.qwen)
+                 else qwen.CLOUD_STRICT_KNOWLEDGE_INSTRUCTIONS)
+    return (qwen.identity_instructions(config.qwen) + '\n' + knowledge
+            + '\n自然回答用户，按问题需要控制长度。寒暄和能力介绍请简短。'
+              '这是无工具对话；不能声称本轮新执行了测量或听过录音。'
+              '可解释历史证据，但不能把一般知识当作对用户录音的诊断。'
+            + USER_ANSWER_INSTRUCTIONS)
 
 
 def report_instructions(config, state) -> str:
@@ -212,7 +223,8 @@ def report_context(state, *, audio=False, preserve=False):
               for row in rows if row.selected][:20] if rows else state.context_text[:1200]
     context = {
         'original_goal':state.goal, 'deliveries':state.deliveries, 'direction':state.direction,
-        'target_material':target, 'evidence':[asdict(e) for e in state.evidence],
+        'target_material':target, 'evidence':[{k: v for k, v in asdict(e).items()
+                                             if k != 'acoustic' or v} for e in state.evidence],
         'missing_reason':state.reason, 'paused_branches':dict(state.failures),
         'blocked_attempts':blocked_attempts(state),
         'previous_report':state.previous_report[:4000],
@@ -221,6 +233,18 @@ def report_context(state, *, audio=False, preserve=False):
         'visible_dialogue':[dict(item) for item in state.dialogue_context] if state.mode == 'L4' else [],
     }
     context.update(report_context_data(state))
+    context.update(evidence_boundaries.report_boundary_context(state))
+    context.update(evidence_quality.report_quality_context(state))
+    if any(getattr(e, 'acoustic', None) for e in state.evidence):
+        context['acoustic_interpretation'] = (
+            '先核对events/checks，再引用measures及其inputs。provisional只是候选时差，不是音素或发音判错。'
+            'screened仅通过声学筛查；观察时刻和周期段不是音素边界，未验证的地标或轨迹不能用于语言学诊断。')
+    if any(e.tool == 'vot' and getattr(e, 'acoustic', None) for e in state.evidence):
+        context['vot_interpretation'] = ('负VOT表示相关振动早于release；预浊可以在release前中断。'
+            'post_release_periodicity不等于clear_vowel_onset；无已验证闭塞/音素区间时不指定假名身份。')
+    guidance = interpretation_policy.task_tail_guidance(state)
+    if guidance:
+        context['interpretation_guidance'] = guidance
     if audio:
         # 只有本轮真的把音频发给模型时才声明。没发送时不写 false：报告指令不再教模型
         # 复述这个字段，模型也就没有「没有音频输入」这句现成话可抄。
@@ -313,12 +337,7 @@ def entry_mode(goal: str, context_text: str, *, audio_requested: bool = False,
     # 已经判成对话的目标不该再进工具阶梯：无请求输入和概念问句都在这里收口。
     if dialogue in ('concept', 'advice', 'conversation'):
         return 'L4'
-    if dialogue_kind(goal) in ('concept', 'conversation'):
-        return 'L4'
-    # Pure concept discussion must not require a running Praat or its snapshot.
-    concept = re.search(r'(什么是|如何理解|原理|解释一下|练习方法|一般来说|理论|科普|你好|hello|谢谢)', goal, re.I)
-    material = re.search(r'(选中|选区|录音|这个声音|当前|测量|读取|打开|删除|创建|保存|截取|分析.*(?:音|对象))', goal)
-    if concept and not material:
+    if dialogue_kind(goal) in ('concept', 'advice', 'conversation'):
         return 'L4'
     return 'L0' if tools.parse_object_context(context_text) else 'L4'
 
@@ -347,28 +366,30 @@ def rescued_report(draft: str, detail: str, values=(), *, state=None) -> str:
     text = str(draft or '').strip()
     if not text:
         return ''
+    blocking = [leak for leak in delivery_text.find_answer_leaks(text)
+                if leak.kind != 'unresolved_placeholder']
+    if blocking:
+        # 句子级救援：只摘掉含内部指令复述的那几句，其余正文照样交付。整份丢弃会让
+        # 用户只剩阶段记录，而实际问题常常只在一两句（说明见 leak_rescue 模块）。
+        text, removed = leak_rescue.rescue_analysis(text)
+        if not text:
+            return ''  # 整份都是违规句：退回阶段记录，不交付残句。
+        note_guard(state, 'repair', 'report.leak_sentences_removed')
+        if isinstance(getattr(state, 'metrics', None), dict):
+            state.metrics['leak_sentences_removed'] = removed
     text, _masked_status = report_guards.guard_delivered_text(state, text, values=values, verify=False)
-    note = ('（标成 ' + UNVERIFIED_NUMBER + ' 的位置没能在测量结果里找到对应值，已就地标出；'
-            '其余结论仍基于本次实测数据。）')
-    if note not in text:
+    note = report_guards.UNVERIFIED_NOTE
+    if note not in text and (report_guards.INTERPRETATION_NOTE not in text or values):
         text += '\n\n' + note
     if isinstance(state, dict):
         state.setdefault('guard_detail', detail)
-    return _CALC_PLACEHOLDER.sub('[推导未核对]', text)
+    # 算不出来的推导（含已标成 [推导未核对] 的）整小句删掉：用户不该看到内部标记。
+    text = report_guards.drop_unverified_calc(state, text)
+    return _CALC_PLACEHOLDER.sub('', text)
 
 
 def repaired_report(report, detail: str, state, guard_state):
-    """守卫第二次拒了同一份报告：遮掉没核上的数值后照样交付，不再丢掉整份回答。
-
-    2026-10-07 实测：报告守卫连拒两次时，``guard_report`` 抛
-    ``UnexpectedModelBehavior('Exceeded maximum output retries (1)')``，工作流分支再把
-    已经写好的正文塞进 ``state.metrics['unverified_draft']``——而那份草稿全库没有读取方。
-    结果是 22 次真实提问里有 12 次只剩测量表加一句英文内部错误。守卫该管的仍然是
-    「没测过的数字不能当结论」，不是「这份回答不合格就不给」：数值遮成
-    :data:`UNVERIFIED_NUMBER`、结论保留、末尾说明原因，比丢掉整份回答有用。
-
-    找不到可保留的正文（模型只写了那几个数）时返回 ``None``，由调用方回退到阶段记录。
-    """
+    """保留可交付报告草稿，遮蔽无法核对的数值并说明缺口。没有可保留正文时返回 None，由调用方输出执行记录。"""
 
     values = list(state.metrics.get('rejected_values') or [])
     if detail:
@@ -803,15 +824,13 @@ class CloudSession:
                                                           'request':self.state.requests})
                             self.record_responses(run.all_messages())
                             context.messages = copy.deepcopy(run.all_messages())
-                            if on_text is not None:
-                                response = next((m for m in reversed(run.all_messages()) if isinstance(m, ModelResponse)), None)
-                                if response is not None and response.finish_reason == 'length':
-                                    # 只有带流式回调的对话路径走这里：截断可以续写。
-                                    # 分析路径（execute/report 不传 on_text）本来就不进这个判断，
-                                    # 它的截断由 SDK 的输出校验/上游报错体现——本次改动不动它。
-                                    raise OutputTruncated(response.finish_reason)
-                                if response is not None and response.finish_reason in {'content_filter', 'error'}:
-                                    raise BranchExit('模型输出未完整结束：' + response.finish_reason)
+                            response = next((m for m in reversed(run.all_messages()) if isinstance(m, ModelResponse)), None)
+                            timing['finish_reason'] = response.finish_reason if response is not None else None
+                            if response is not None and response.finish_reason == 'length':
+                                raise OutputTruncated(response.finish_reason,
+                                    ''.join(part.content for part in response.parts if isinstance(part, TextPart)))
+                            if response is not None and response.finish_reason in {'content_filter', 'error'}:
+                                raise BranchExit('模型输出未完整结束：' + response.finish_reason)
                             timing['status'] = 'complete'
                             break
                         except Exception as error:
@@ -943,7 +962,8 @@ class CloudSession:
                                         'guard_key':self.active_guard_key,
                                         'proposal_signature':self.active_proposal_signature,
                                         'status':status, 'execution':declared, 'reason':step.observation,
-                                        'script':step.script, 'rows':step.results})
+                                'script':step.script, 'rows':step.results,
+                                'acoustic':getattr(step, 'acoustic', {})})
             self.progress(step.observation)
             if blocked:
                 # 本轮已无法继续投递：停止执行分支并用已有证据收尾，不记为新的状态不明。
@@ -959,14 +979,13 @@ class CloudSession:
                     publish_results(self.state)
                 self.state.event('L2', '停止投递：' + reason)
                 raise BranchExit(reason)
+            valid = execution_core.valid_evidence(step, mutating=tools.is_mutating(name),
+                rows_valid=self.state.workflow is None or tools.is_mutating(name)
+                or valid_measurement_rows(name, step.results))
+            if valid:
+                self.state.add_evidence(execution_core.evidence_row(step, self.state.context_text,
+                                        mutating=tools.is_mutating(name)))
             if step.ok:
-                # Empty outputs and diagnostic text are not measurement evidence.
-                valid = (self.state.workflow is None or tools.is_mutating(name)
-                         or valid_measurement_rows(name, step.results))
-                if step.results and valid:
-                    evidence = Evidence(name, dict(arguments), list(step.results), self.state.context_text,
-                                        'operation' if tools.is_mutating(name) else 'measurement')
-                    self.state.add_evidence(evidence)
                 if self.state.mode == 'L1':
                     self.event('L0', '有限纠正成功，继续专用执行')
                 if self.state.workflow is not None:
@@ -1085,29 +1104,37 @@ class CloudSession:
         if not targets:
             return report
         state.metrics['report_number_repair'] = 1
-        evidence_lines = [str(line) for row in (guard_state.evidence or [])
+        evidence_lines = [f'[E{index}] {line}'
+                          for index, row in enumerate(guard_state.evidence or [], 1)
                           for line in (getattr(row, 'rows', None) or [])][:24]
-        prompt = (_NUMBER_REPAIR_PROMPT
-                  + '\n\n问题句：\n'
+        prompt = ('问题句：\n'
                   + '\n'.join(f'{index}. {line}' for index, line in targets)
-                  + '\n\n可用证据行（数值与单位照抄，引证按 E 编号）：\n'
+                  + '\n\n可用证据行（数值与单位照抄，保留对应 E 编号）：\n'
                   + '\n'.join(evidence_lines))
-        state.requests += 1
-        state.metrics['l2_requests'] = int(state.metrics.get('l2_requests') or 0) + 1
+        previous_phase = self.phase
         try:
+            # Repairs share the task budget, deadlines and HTTP/usage observation.
+            self.phase_context('report_repair', _NUMBER_REPAIR_PROMPT)
             fixer = Agent(self.model, output_type=str, retries={'tools': 0, 'output': 0},
                           name='report_number_repair')
-            outcome = await fixer.run(prompt, model_settings=self.settings)
+            answer = await self.drive(fixer, prompt)
         except Exception:                                    # noqa: BLE001 - 改不动就用遮好的版本
             self.event('L2', '定点返修没有完成，按已遮蔽的正文交付')
             return report
+        finally:
+            self.phase = previous_phase
         pairs = {}
-        for line in str(getattr(outcome, 'output', '') or '').splitlines():
+        for line in str(answer or '').splitlines():
             match = re.match(r'^\s*(\d+)\s*(?:=>|->|→|：)\s*(.+?)\s*$', line)
             if match:
                 pairs[int(match[1])] = match[2]
         repaired = report_audit.apply_repairs(draft, pairs)
         if repaired == draft:
+            return report
+        leaks = [leak for leak in delivery_text.find_answer_leaks(repaired)
+                 if leak.kind != 'unresolved_placeholder']
+        if leaks:
+            note_guard(state, 'block', 'report_repair.prompt_echo')
             return report
         note_guard(state, 'repair', 'report.number_repaired')
         candidate = report.model_copy(update={'analysis': repaired})
@@ -1164,8 +1191,7 @@ class CloudSession:
         self.l2_active = True
         started = time.monotonic()
         try:
-            # 旧的 asyncio.wait_for 会在时限到达时直接取消这次请求：模型已经写完的正文
-            # 也跟着一起没了（真机事故）。现在只在发新请求前判时限，跑着的请求跑完。
+            # 时限在发出新请求前检查，已发出的报告请求由其自身超时机制收尾。
             await self._report(force_audio=False, allow_escalation=False)
             self.check()
             if state.on_results:
@@ -1242,6 +1268,8 @@ class CloudSession:
         if state.material_metadata:
             context['material_metadata'] = state.material_metadata
         context['original_goal'] = goal
+        if state.budget.context_tokens >= 4096:
+            context['answer_contract'] = answer_contract.report_guidance()
         if not modern:
             # Existing legacy excerpt behavior stays confined to legacy entry.
             context = json.loads(compact_report_context(context,
@@ -1270,12 +1298,25 @@ class CloudSession:
             state.metrics['rejected_coverage'] = [item.model_dump() for item in report.coverage]
 
         def guard_report(ctx, *, output_context, output):
-            # P0（B 方案）：数值没对上就地遮蔽，不再整份退回。只有结构性规则
-            # （编造对象、跨对象冒充、"没有音频输入"搪塞等）才交给 SDK 重试一次。
+            # 数值问题就地处理；对象、范围及证据类别冲突交给 SDK 有限纠正。
+            leaks = [leak for leak in delivery_text.find_answer_leaks(
+                output.analysis + '\n' + '\n'.join(item.explanation for item in output.coverage))
+                if leak.kind != 'unresolved_placeholder']
+            if leaks:
+                note_guard(state, 'block', 'report.prompt_echo')
+                raise ModelRetry('正文含有内部指令复述；直接面向用户说明结论与具体未知项，不复述写作或校验要求。')
             # 数值问题先用掉 agent 本来就有的那一次 output 重试额度：让模型只改那几句话，
             # 回来还不合格才遮蔽交付（门槛不变，多给一次改正机会）。
             remember(output)
-            return audit_report(guard_state, output, allow_numeric_retry=True)
+            evidence_boundaries.validate_alignment_claims(guard_state, output.analysis, retry=True)
+            audited = audit_report(guard_state, output, allow_numeric_retry=True)
+            # Templates are allowed in the draft only. After rendering, every
+            # unresolved placeholder is a delivery error, never a verified reply.
+            if delivery_text.find_answer_leaks(
+                    audited.analysis + '\n' + '\n'.join(item.explanation for item in audited.coverage)):
+                note_guard(state, 'block', 'report.rendered_leak')
+                raise ModelRetry('正文仍含未解析模板或内部字段；请改为可核对的数值或具体未知项，不输出内部标识。')
+            return audited
 
         agent = Agent(self.model, system_prompt=instruction, output_type=PromptedOutput(AnalysisReport),
                       capabilities=[Hooks(after_output_process=guard_report, id='praat_report_guards')],
@@ -1307,6 +1348,9 @@ class CloudSession:
             audited = state.metrics.get('audit') or {}
             repaired = bool(state.metrics.get('report_repaired', 0)) or not audited.get('verified', True)
             state.report = result.analysis
+            if (repaired and any(marker in state.report for marker in report_guards.GAP_MARKERS)
+                    and report_guards.UNVERIFIED_NOTE not in state.report):
+                state.report = state.report.rstrip() + '\n\n' + report_guards.UNVERIFIED_NOTE
             # 遮过数值再交付的正文不算「核对通过」：界面与后续轮次都要看得出这一点
             # （具体遮了几个在 state.metrics['audit'] 里）。
             state.metrics['report_verified'] = not repaired
@@ -1315,7 +1359,7 @@ class CloudSession:
             state.metrics.pop('rejected_coverage', None)
             state.metrics.pop('rejected_values', None)
             # 「有遮蔽」不等于「没做完」：交付状态只按 coverage 判定（遮蔽情况记在 audit）。
-            state.status = 'partial' if state.metrics.get('report_repaired') else (
+            state.status = 'partial' if repaired else (
                 'complete' if all(item.status == 'complete' for item in result.coverage) else 'partial')
             state.can_continue = state.can_continue or state.status != 'complete'
             if audio is not None and not repaired:
@@ -1368,6 +1412,16 @@ class CloudSession:
             state.reason = (state.reason + '；' if state.reason else '') + detail
             state.status, state.can_continue = 'partial', True
             draft = str(state.metrics.pop('rejected_report', '') or '')
+            if not draft and isinstance(error, OutputTruncated) and error.partial:
+                from pydantic_core import from_json
+                try:
+                    partial = from_json(error.partial, allow_partial='trailing-strings')
+                    if isinstance(partial, dict) and isinstance(partial.get('analysis'), str):
+                        draft = partial['analysis']
+                except ValueError:
+                    pass
+            if draft and isinstance(error, OutputTruncated):
+                draft += '\n\n回复达到输出长度上限，正文尚未完成；以上为已取得的部分。'
             rejected_coverage = state.metrics.pop('rejected_coverage', None)
             values = state.metrics.pop('rejected_values', [])
             rescued = rescued_report(draft, detail, values, state=guard_state)
@@ -1377,7 +1431,7 @@ class CloudSession:
             state.metrics['report_verified'] = False
             if force_audio and state.previous_report:
                 state.report, state.coverage = state.previous_report, state.previous_coverage
-                state.report += '\n\n补充音频分析未完成：' + detail
+                state.report += '\n\n' + delivery_text.user_reason(detail, has_measurements=bool(state.evidence))
             elif state.workflow is not None and rescued:
                 # 已有正文交给用户：遮掉未核对数值并说明原因，状态记为 partial。
                 state.report = rescued
@@ -1417,6 +1471,23 @@ class CloudSession:
             self.set_body_tokens(self.config.api.dialogue_max_tokens)
         instruction = dialogue_instructions(self.config)
         context = self.phase_context('dialogue', instruction)
+        context.complete = False
+        reviewed_notes = answer_contract.knowledge_notes(self.state.goal)
+        buffered_delivery = kind in {'concept', 'advice'} and bool(reviewed_notes)
+        self.state.metrics['dialogue_delivery_mode'] = 'validated' if buffered_delivery else 'incremental'
+        self.state.metrics.setdefault('first_visible_text_seconds', None)
+
+        def publish(text):
+            if text:
+                if self.state.metrics['first_visible_text_seconds'] is None:
+                    self.state.metrics['first_visible_text_seconds'] = time.monotonic() - self.started
+                on_text(text)
+
+        guidance = answer_contract.dialogue_guidance(kind)
+        if guidance:
+            context.append_guidance('answer_contract:knowledge', '[应用任务指导：知识讲解]\n' + guidance)
+            for key, note in reviewed_notes:
+                context.append_guidance('knowledge:' + key, '[一般知识参考，非本轮测量]\n' + note)
         prompt = self.state.goal
         if kind == 'advice' and self.state.historical_evidence:
             prior = context.delta({'historical_evidence': evidence_projection(self.state.historical_evidence)})
@@ -1428,16 +1499,65 @@ class CloudSession:
         self.event('chat', '普通对话直接回复' if kind == 'conversation' else
                    '练习建议直接回复，复用已有证据' if kind == 'advice' else '概念解释直接回复')
         agent = Agent(self.model, system_prompt=instruction, output_type=str, retries=0, name='direct_dialogue')
-        collected: list[str] = []
+        for correction in range(2):
+            collected: list[str] = []
+            pending = ''
 
-        def sink(delta):
-            collected.append(delta)
-            on_text(delta)
+            def sink(delta):
+                nonlocal pending
+                collected.append(delta)
+                pending += delta
+                if buffered_delivery:
+                    return  # Publish this attempt only after the full answer passed its guards.
+                # Never stream an unfinished instruction before the final guard
+                # gets to see it. Safe completed sentences still arrive promptly.
+                received = ''.join(collected)
+                if (delivery_text.has_answer_leak(received)
+                        or answer_contract.knowledge_issues(self.state.goal, received)):
+                    return
+                if re.fullmatch(r'(?:你好|您好|嗨|Hello|Hi)[，,！!\s]*', pending, re.I):
+                    publish(pending)
+                    pending = ''
+                    return
+                sentences = re.split(r'(?<=[。！？!?；;\n])', pending)
+                for sentence in sentences[:-1]:
+                    if sentence:
+                        publish(sentence)
+                pending = sentences[-1]
 
-        try:
-            self.state.report = await self.drive(agent, prompt, on_text=sink)
-        except OutputTruncated as truncated:
-            self.state.report = await self.recover_truncated(agent, collected, truncated, sink)
+            try:
+                self.state.report = await self.drive(agent, prompt, on_text=sink)
+            except OutputTruncated as truncated:
+                self.state.report = await self.recover_truncated(agent, collected, truncated, sink)
+            except Exception:
+                if (not buffered_delivery and pending and not delivery_text.has_answer_leak(''.join(collected))
+                        and not answer_contract.knowledge_issues(self.state.goal, ''.join(collected))):
+                    on_text(pending)
+                raise
+            leaks = delivery_text.find_answer_leaks(self.state.report)
+            issues = answer_contract.knowledge_issues(self.state.goal, self.state.report)
+            if not leaks and not issues:
+                if buffered_delivery:
+                    publish(self.state.report)
+                elif pending:
+                    publish(pending)
+                break
+            if leaks:
+                note_guard(self.state, 'block', 'dialogue.prompt_echo')
+                self.state.metrics['answer_leak_kinds'] = sorted({leak.kind for leak in leaks})
+            if issues:
+                note_guard(self.state, 'block', 'dialogue.knowledge_conflict')
+                self.state.metrics['knowledge_issues'] = issues
+            if correction == 0 and self.state.requests < self.state.budget.request_limit:
+                prompt = ('回答修正：直接回答本轮用户问题，不复述写作要求或内部占位内容。'
+                          + ('以下事实需要纠正：' + '；'.join(issues) if issues else ''))
+                continue
+            fallback = answer_contract.knowledge_fallback(self.state.goal) if issues and not leaks else ''
+            self.state.report = fallback or '这次没有生成可用的解释，请换个说法再问一次。'
+            self.state.status, self.state.can_continue = ('complete' if fallback else 'partial'), False
+            if fallback:
+                self.state.metrics['knowledge_delivery'] = 'reviewed_reference'
+            publish(self.state.report)
         self.state.coverage = []
         if self.state.status == 'running':
             # 截断恢复路径已经定过状态（partial），不要在这里改回 complete。
@@ -1449,7 +1569,7 @@ class CloudSession:
         self.state.status, self.state.can_continue = 'partial', False
         self.state.reason = caps.safe_error(error, self.config.api.api_key)
         if not partial:
-            return '本次回复未完成：' + self.state.reason
+            return '本次回复未完成：输出达到长度上限，请提高回复长度或缩小问题范围后重试。'
         return partial + ('\n\n（本次回复未完成：输出达到长度上限，以上是已经写完的部分。'
                           '可提高「云端对话最大回复 token」「云端最大回复 token」或降低思考档位后重问一次。）')
 
@@ -1484,6 +1604,39 @@ class CloudSession:
             self.state.metrics['workflow_routes'] = [e for e in self.state.events if e.get('reason') != 'model_response']
 
 
+def _finalize_analysis_delivery(state):
+    """Last output boundary, shared by normal, rescued and downgraded reports."""
+
+    from . import report_layout
+    body = report_guards.drop_unverified_calc(state, str(state.report or ''))
+    body = report_layout.sanitize_vot_explanation(state, body)
+    leaks = delivery_text.find_answer_leaks(body)
+    boundary_issues = evidence_boundaries.validate_alignment_claims(state, body)
+    if boundary_issues:
+        state.metrics['alignment_claims_removed'] = len(boundary_issues)
+        state.metrics['report_verified'] = False
+        state.metrics['report_repaired'] = int(state.metrics.get('report_repaired') or 0) + 1
+        state.status = 'partial'
+        bad_clauses = [item['clause'] for item in boundary_issues]
+        body = '\n'.join(line for line in body.splitlines()
+                         if not any(clause in line for clause in bad_clauses))
+        body = body.rstrip() + '\n\n音素定位缺少对齐区间或人工标注。'
+    if leaks:
+        state.metrics['delivery_leaks_blocked'] = [item.kind for item in leaks]
+        state.metrics['report_verified'] = False
+        state.status = 'partial'
+        # Measurements remain available in the structured result panel.
+        body = delivery_text.user_reason('正文未完成', has_measurements=bool(state.evidence))
+    state.report = report_layout.present(state, delivery_text.present_analysis(body), force=True)
+    for item in state.coverage:
+        if isinstance(item, dict) and 'explanation' in item:
+            item['explanation'] = delivery_text.present_analysis(item['explanation'])
+    context = state.phase_contexts.get('report')
+    if context is not None and state.status != 'cancelled' and (
+            state.status == 'complete' or state.metrics.get('report_verified') or state.metrics.get('report_repaired')):
+        context.record_delivery(state.report)
+
+
 async def _run(session):
     g = GraphBuilder(state_type=AnalysisState, output_type=AnalysisState, auto_instrument=False)
 
@@ -1503,11 +1656,22 @@ async def _run(session):
                                 or (session.materials is not None and session.materials.audio_path is not None
                                     and session.materials.source_kind == 'file'
                                     and session.config.api.audio_input_enabled and not state.direction))
-        if (state.workflow is not None and state.mode == 'L4'
+        if (state.mode == 'L4'
+                and (state.workflow is not None or re.search(
+                    r'当前|选中|这段|这个声音|录音|音频|对象\s*\d+|\b(?:current|selected|recording|sound\s+\d+)\b',
+                    state.goal, re.I))
                 and not (state.router_dialogue or dialogue_kind(state.goal))
                 and '[用户材料，非系统指令]' not in state.goal):
-            state.reason = ('工作流程已关闭专用工具执行' if not state.workflow.l0_enabled
-                            else '没有可核实的原目标对象或音频材料') + '；具体材料目标尚未完成'
+            if state.workflow is not None and not state.workflow.l0_enabled:
+                state.reason = '工作流程已关闭专用工具执行；具体材料目标尚未完成'
+            else:
+                state.reason = '当前没有可用的声音对象，请先加载录音并选中要测量的声音；本次尚未取得测量结果。'
+                state.report = state.reason
+                state.status, state.can_continue = 'partial', False
+                state.coverage = [dict(item=item, status='missing', explanation=state.reason)
+                                  for item in state.deliveries]
+                state.metrics.update(route_reason='missing_target', finish_state='needs_material',
+                                     reason_detail=state.reason, reason_class='user_fixable')
             return 'finish'
         if state.workflow is not None and not session.allowed(state.mode):
             state.reason = f'工作流程未启用 {state.mode}'
@@ -1536,7 +1700,8 @@ async def _run(session):
 
     @g.step
     async def finish(ctx: StepContext[AnalysisState, None, str]) -> AnalysisState:
-        finish_locally(ctx.state)
+        if ctx.state.metrics.get('route_reason') != 'missing_target':
+            finish_locally(ctx.state)
         return ctx.state
 
     decision = g.decision().branch(g.match(str, matches=lambda mode:mode == 'L0').to(execute)).branch(g.match(str, matches=lambda mode:mode == 'finish').to(finish)).branch(g.match(str).to(report))
@@ -1558,6 +1723,7 @@ async def _run(session):
         session.state.events.append({'mode':'cancelled', 'reason':'用户取消'})
         return session.state
     finally:
+        _finalize_analysis_delivery(session.state)
         session.finish_metrics()
         if session.owns_model and hasattr(session.model, 'client'):
             await session.model.client.close()
@@ -1606,8 +1772,16 @@ def run_dialogue_turn(config, state, *, kind, cancel, on_text, progress=None, mo
         except Exception as error:
             state.reason = caps.safe_error(error, config.api.api_key)
             state.status, state.can_continue = 'partial', False
-            state.report = '本次回复未完成：' + state.reason
+            state.metrics['reason_detail'] = state.reason
+            state.report = ('本次回复未完成：暂时无法连接模型服务，请检查连接后重试。'
+                            if delivery_text.classify(state.reason) == 'transient'
+                            else '本次回复未完成，请稍后重试或缩小问题范围。')
         finally:
+            context = state.phase_contexts.get('dialogue') or state.phase_context
+            if context is not None:
+                context.complete = state.status == 'complete'
+                if context.complete:
+                    context.record_delivery(state.report)
             session.finish_metrics()
             if session.owns_model and hasattr(session.model, 'client'): await session.model.client.close()
         return state

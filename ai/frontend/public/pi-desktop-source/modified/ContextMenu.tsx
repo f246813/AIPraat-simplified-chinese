@@ -2,12 +2,13 @@
 // Extracted/adapted from PI-Desktop 0d47d26769ecbeca1c3ab56fa83b58a91de8190e
 // apps/desktop/src/components/ContextMenu.tsx (renderer-only menu/focus/keyboard logic).
 // Local changes: direct React portal, omit transcript/TeX selection, explicit point+trigger
-// for sidebar left-click and right-click. No app-store, IPC, or Pi runtime.
+// for sidebar left-click and right-click, scroll dismissal limited to the scroller that moves
+// the trigger. No app-store, IPC, or Pi runtime.
 // Source and license: ../../../third_party/pi-desktop/NOTICE.md
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { placeContextMenu, type ContextMenuPlacement, type ContextMenuPoint } from './context-menu';
-export type ContextMenuItem = {id: string; label: string; icon?: ReactNode; disabled?: boolean; danger?: boolean; separatorBefore?: boolean; submenu?: boolean; back?: boolean; onSelect: () => void};
+export type ContextMenuItem = {id: string; label: string; icon?: ReactNode; disabled?: boolean; danger?: boolean; separatorBefore?: boolean; submenu?: boolean; back?: boolean; keepOpen?: boolean; onSelect: () => void};
 export type ContextMenuState = {label: string; items: ContextMenuItem[]; point: ContextMenuPoint; trigger: HTMLElement | null};
 export function ContextMenu({state, onClose}: {state: ContextMenuState | null; onClose: () => void}) {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -36,10 +37,20 @@ export function ContextMenu({state, onClose}: {state: ContextMenuState | null; o
   useEffect(() => {
     if (!state) return;
     const menu = menuRef.current;
+    // The menu is placed in viewport coordinates around its trigger, so only a scroller that holds
+    // that trigger can move it. These listeners observe every scroll in the page, including the
+    // conversation adjusting its own reading position while a streamed reply arrives.
+    const anchorMoves = (event: Event): boolean => {
+      const trigger = state.trigger;
+      if (!trigger) return true;
+      const target = event.target;
+      return target === window || target === document || (target instanceof Element && target.contains(trigger));
+    };
     const onOutside = (event: Event) => {
       const target = event.target as Node | null;
       if (target && menu?.contains(target)) return;
       if (event.type === 'pointerdown' && target && state.trigger?.contains(target)) return;
+      if (event.type === 'scroll' && !anchorMoves(event)) return;
       onClose();
     };
     const onKeyDown = (event: KeyboardEvent) => {
@@ -85,7 +96,7 @@ export function ContextMenu({state, onClose}: {state: ContextMenuState | null; o
   return createPortal(<div ref={menuRef} className={`context-menu${placement ? ' is-open' : ''}`} role="menu" aria-label={state.label} onKeyDown={onMenuKeyDown} onContextMenu={event => {event.preventDefault(); event.stopPropagation();}} style={placement ? {top: `${placement.top}px`, left: `${placement.left}px`} : undefined}>
     {state.items.map((item, index) => <Fragment key={item.id}>
       {item.separatorBefore && index > 0 ? <div className="context-menu-separator" role="separator"/> : null}
-      <button type="button" role="menuitem" aria-haspopup={item.submenu?'menu':undefined} className={`context-menu-item${item.danger ? ' danger' : ''}`} data-context-menu-item={item.id} disabled={item.disabled} onClick={() => {onClose(); item.onSelect();}}>
+      <button type="button" role="menuitem" aria-haspopup={item.submenu?'menu':undefined} className={`context-menu-item${item.danger ? ' danger' : ''}`} data-context-menu-item={item.id} disabled={item.disabled} onClick={() => {if (!item.keepOpen) onClose(); item.onSelect();}}>
         {item.icon ? <span className="context-menu-icon" aria-hidden>{item.icon}</span> : null}<span className="context-menu-label">{item.label}</span>{item.submenu&&<span className="context-submenu-arrow" aria-hidden>›</span>}
       </button>
     </Fragment>)}

@@ -59,7 +59,7 @@ function Resolve-TestFFmpeg([string]$ProjectDirectory,[string]$FFmpeg='') {
     $explicit=-not [string]::IsNullOrWhiteSpace($FFmpeg)
     $candidates=@($FFmpeg)
     if(-not $explicit) {
-        $candidates=@((Join-Path $ProjectDirectory 'ffmpeg.exe'),(Join-Path $ProjectDirectory 'tools/ffmpeg.exe'),(Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'AIPraat/ffmpeg/ffmpeg.exe'))
+        $candidates=@((Join-Path $ProjectDirectory 'tools/ffmpeg/ffmpeg.exe'),(Join-Path $ProjectDirectory 'ffmpeg.exe'),(Join-Path $ProjectDirectory 'tools/ffmpeg.exe'),(Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'AIPraat/ffmpeg/ffmpeg.exe'))
         $command=Get-Command ffmpeg -ErrorAction SilentlyContinue
         if($command){$candidates+=$command.Source}
     }

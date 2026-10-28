@@ -54,6 +54,26 @@ class VotDispatchTests(unittest.TestCase):
         self.assertIn("t1 = 0.300000", execute.scripts[0])
         self.assertIn("t2 = 0.420000", execute.scripts[0])
 
+    def test_negative_and_zero_vot_are_dispatched_without_reordering(self):
+        for onset, value in ((.28, "-0.0200"), (.30, "0.0000")):
+            execute = Recorder([(True, [f"VOT = {value} 秒"], "")])
+            outcome, execute = run(f"爆破是0.3秒，浊音起始是{onset}秒，测量VOT", execute=execute)
+            self.assertFalse(outcome.failure)
+            self.assertIn(f"t2 = {onset:.6f}", execute.scripts[0])
+            self.assertIn(value, outcome.reply)
+
+    def test_post_release_interval_alone_is_not_successful_vot(self):
+        result = "爆破后稳定起声候选间隔 = 13.0 毫秒；预浊归属待确认"
+        outcome, _ = run("测量VOT", execute=Recorder([(True, [result], "")]))
+        self.assertTrue(outcome.failure)
+        self.assertIn("13.0 毫秒", outcome.reply)
+
+    def test_explicit_vowel_landmark_is_preserved(self):
+        outcome, execute = run("爆破是0.3秒，浊音起始是0.2秒，清晰元音起始是0.33秒，测量VOT")
+        self.assertFalse(outcome.failure)
+        self.assertEqual(outcome.steps[0].arguments["vowel"], .33)
+        self.assertIn("Burst-to-clear-vowel interval", execute.scripts[0])
+
     def test_failure_or_metadata_cannot_count_as_vot_measurement(self):
         for ok, results, failure in (
             (True, ["Sound：时长 1.175 秒"], ""),
@@ -97,9 +117,11 @@ class VotDispatchTests(unittest.TestCase):
         self.assertIn("范围", outcome.failure)
 
     def test_explicit_zero_landmarks_never_become_auto_detection(self):
-        outcome, execute = run("爆破是0秒，浊音起始是0秒，测量VOT")
-        self.assertEqual(execute.scripts, [])
-        self.assertIn("浊音起始", outcome.failure)
+        execute=Recorder([(True,['VOT = 0.0000 秒'],'')])
+        outcome,execute=run('爆破是0秒，浊音起始是0秒，测量VOT',execute=execute)
+        self.assertTrue(outcome.steps[0].ok)
+        self.assertIn('vot = t2 - t1',execute.scripts[0])
+        self.assertNotIn('Filter (pass Hann band)',execute.scripts[0])
 
     def test_explicit_selection_requires_a_selection(self):
         outcome, execute = run("测量选区的VOT", context_text="id\tclass\tname\tselected\n7\tSound\ttone\t1\n")

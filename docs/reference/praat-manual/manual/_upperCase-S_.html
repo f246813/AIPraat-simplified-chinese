@@ -1,0 +1,35 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>upperCase$</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Monaco,Courier" size=6 color="#999900"><b>
+upperCase$
+</b></font></table></table>
+<p>A function that can be used in <a href="Formulas.html">Formulas</a>. It turns all lower-case characters into capitals.</p>
+<h2>Syntax and semantics</h2>
+<dl>
+<dt><b><code><font size=+1>upperCase$</font></code></b> (<i><code><font size=+1>string$</font></code></i>)
+<dd>give the upper-case version of <i><code><font size=+1>string$</font></code></i>, whereby all lower-case letters have been replaced with upper-case letters.</dd>
+</dl>
+<h2>Tests</h2>
+<code>   <a href="_assert_.html">assert</a> <b>upperCase$</b> ("HOwAREYou") = "HOWAREYOU"<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>upperCase$</b> ("Maria Ressa") = "MARIA RESSA"<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>upperCase$</b> ("e.g.") = "E.G."<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>upperCase$</b> ("öav") = "ÖAV"<br></code>
+<code>   <a href="_assert_.html">assert</a> <b>upperCase$</b> ("touché") = "TOUCHÉ"<br></code>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Functions.html">Functions</a>
+</ul>
+<hr>
+<address>
+	<p>© Paul Boersma 2025</p>
+</address>
+</body>
+</html>

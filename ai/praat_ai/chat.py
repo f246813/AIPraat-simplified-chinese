@@ -1,22 +1,4 @@
-"""Praat AI 对话窗口。
-
-前端流程：
-
-1. 读取 Praat 写出的对象列表（``runtime/chat_context.tsv``）。
-2. Qwen 只负责选择工具并填参数，脚本由 :mod:`praat_ai.tools` 用固定模板生成。
-3. 脚本通过 :mod:`praat_ai.sendpraat` 送到正在运行的 Praat 里执行（自己写
-   ``Message.txt`` 再发 ``WM_APP``，不激活 Praat 的任何窗口）。
-4. 脚本把数值结果写进 ``runtime/chat_result.tsv``，执行完成写
-   ``runtime/chat_state.txt``；对话窗口轮询到完成标记后把结果读回来显示。
-
-每条指令一个脚本文件（``runtime/commands/chat_command_<编号>.praat``）并且脚本开头
-先写下自己的编号（``runtime/chat_started.txt``）：Praat 的 ``Message.txt`` 是全局
-唯一的，超时指令还可能压在消息队列里，靠这两样才能保证「投递出去的那条」和
-「真的执行了的那条」对得上（见 guide.md §8.5）。
-
-注意：``An instance of Praat that is not me is already running.`` 是
-``--send`` 转发脚本时的常规提示，不是错误，所以不显示给用户。
-"""
+"""Praat AI 对话窗口。"""
 
 from __future__ import annotations
 
@@ -79,12 +61,7 @@ COMPOSER_THINKING_CHOICES = (
 
 
 def context_ping_script() -> str:
-    """一条不需要任何对象的脚本：Praat 每执行完一条命令都会刷新对象列表文件，
-    所以用它既能确认 Praat 还在响应，又能把 ``chat_context.tsv`` 更新到最新。
-
-    只能写文件：``appendInfoLine`` 这类命令会走 ``gui_information()``，把
-    「Praat Info」窗口弹出来（这就是用户报的那个 bug，见 guide.md §8.5）。
-    """
+    """写入无对象依赖的响应标记，并触发 Praat 刷新当前对象列表。"""
 
     return f'appendFileLine: {tools.quote(state_path())}, "done"\n'
 
@@ -539,6 +516,7 @@ class AgentStep:
     results: list[str] = field(default_factory=list)
     note: str = ""
     execution: str = ""
+    acoustic: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(slots=True)
@@ -604,9 +582,12 @@ def _guard_local_delivery(outcome: TurnOutcome, *, context_text: str, user_text:
         outcome.delivery_guard = "no_evidence"
         return
     text, status = report_guards.guard_delivered_text(state, reply)
+    from . import report_layout
+    text = report_layout.present(state, report_layout.sanitize_vot_explanation(state, text))
     outcome.delivery_guard = status
     if text != reply:
         outcome.reply = text
+    if status == 'rejected_masked':
         outcome.notes.append(
             "交付前数值核对：对不上本次实测的数值已标成 "
             + report_guards.UNVERIFIED_NUMBER
@@ -715,6 +696,40 @@ def _execute_action(
         observation = f"工具 {tool_name} 没有执行：{error}"
         return AgentStep(round_index, tool_name, dict(arguments), False, observation)
     ok, results, failure = execute(script)
+    acoustic = {}
+    if ok and tool_name in {'vot', 'pitch', 'pitch_statistics', 'pitch_peak_latency', 'measure'}:
+        from .acoustic_events import consume_vot_receipt, result_rows, to_textgrid
+        try:
+            row = context.resolve_object(arguments.get('object'))
+            source = dict(object_id=row.id, class_name=row.class_name, name=row.name)
+            frames = None
+            if tool_name == 'vot':
+                analysis = consume_vot_receipt(results, dict(arguments), source)
+            elif tool_name in {'pitch', 'pitch_statistics', 'pitch_peak_latency', 'measure'}:
+                from .pitch_events import consume
+                analysed = consume(results, dict(arguments), source, tool_name)
+                analysis, frames = analysed if analysed else (None, None)
+            else:
+                analysis = None
+            if analysis is not None:
+                if tool_name == 'vot':
+                    results = result_rows(analysis)
+                else:
+                    from .pitch_events import result_rows as pitch_result_rows
+                    results = pitch_result_rows(analysis, results, tool_name)
+                acoustic = analysis.to_dict()
+                import time
+                annotation = context.result_path.with_name(f'acoustic-{time.time_ns()}.TextGrid')
+                annotation.write_text(to_textgrid(analysis), encoding='utf-8')
+                acoustic['annotation_path'] = str(annotation.resolve())
+                if frames is not None:
+                    observations = annotation.with_suffix('.json')
+                    observations.write_text(json.dumps(dict(analysis=acoustic, frames=frames), ensure_ascii=False), encoding='utf-8')
+                    acoustic['observations_path'] = str(observations.resolve())
+        except (ValueError, OSError, tools.ToolError) as error:
+            ok = False
+            results = []
+            failure = '声学候选事件验证失败：' + str(error)
     if tool_name == "vot":
         # Script completion alone is not measurement success (e.g. no burst).
         measured = any(
@@ -740,6 +755,7 @@ def _execute_action(
         script,
         results,
         note,
+        acoustic=acoustic,
     )
 
 
@@ -794,6 +810,7 @@ def _run_agent_turn(
     max_steps: int = MAX_AGENT_STEPS,
     allow_followup_mutations: bool = False,
     analysis_preparation: bool = False,
+    landmark_text: str | None = None,
     refresh_context: Callable[[], str] | None = None,
     environment: tools.LocalEnvironment | None = None,
     cancel: threading.Event | None = None,
@@ -905,13 +922,22 @@ def _run_agent_turn(
                 for pending in actions[action_index:]:
                     planner.observe(pending, f"已达到本次操作 {max_steps} 步的上限，此调用未执行。请根据已有实测结果回答。")
                 break
-            step = _execute_action(
-                action, context, execute, round_index, environment
-            )
+            landmark_error = ''
+            if tool_name == 'vot' and landmark_text is not None:
+                from .vot_request import validate_manual_landmarks
+                try:
+                    validate_manual_landmarks(action.get('arguments') or {}, landmark_text)
+                except ValueError as error:
+                    landmark_error = str(error)
+            step = (AgentStep(round_index, tool_name, dict(action.get('arguments') or {}),
+                              False, landmark_error) if landmark_error else
+                    _execute_action(action, context, execute, round_index, environment))
             steps_done += 1
             executed[signature] = step
             outcome.steps.append(step)
             outcome.used_tools = True
+            if not step.ok and execution_core.valid_evidence(step, mutating=tools.is_mutating(tool_name)):
+                outcome.results.extend(step.results)
             if step.ok:
                 outcome.results.extend(step.results)
                 unresolved.pop(tool_name, None)
@@ -1232,8 +1258,6 @@ def run_turn(
             if "burst" in vot_arguments or "voicing" in vot_arguments:
                 if not {"burst", "voicing"} <= vot_arguments.keys():
                     raise tools.ToolError("需要同时给出 burst（爆破）和 voicing（浊音起始）两个时刻。")
-                if vot_arguments["voicing"] <= vot_arguments["burst"]:
-                    raise tools.ToolError("浊音起始必须晚于爆破时刻；未改用自动检测。")
             if not {"burst", "voicing", "from", "to"} & vot_arguments.keys():
                 row = context.resolve_by_class(vot_arguments.get("object"), tools.SOUND_CLASSES, "自动检测 VOT 需要 Sound")
                 if row.selection is not None and row.selection[1] - row.selection[0] < 0.002:
@@ -1254,8 +1278,13 @@ def run_turn(
             on_progress(_progress_text(step))
         failure_detail = step.observation.partition("：")[2] or step.observation
         failure_reply = failure_detail if failure_detail.startswith("VOT 测量未完成") else "VOT 测量未完成：" + failure_detail
+        if step.acoustic:
+            from .acoustic_events import render_report
+            reply = render_report(step.acoustic)
+        else:
+            reply = "\n".join(step.results) if step.ok else failure_reply
         return TurnOutcome(
-            reply="\n".join(step.results) if step.ok else failure_reply,
+            reply=reply,
             results=step.results,
             steps=[step],
             used_tools=bool(step.script),
@@ -1324,6 +1353,7 @@ def run_turn(
         max_steps=step_limit,
         allow_followup_mutations=wants_second_step(user_text),
         analysis_preparation=api_mode,
+        landmark_text=user_text,
         refresh_context=(lambda: _request_context(refresh_context(), user_text)) if refresh_context is not None else None,
         environment=environment,
         cancel=cancel,
@@ -1356,28 +1386,7 @@ def _send_script_unlocked(
     process_id: int | None = None,
     outcome: list[str] | None = None,
 ) -> tuple[bool, str]:
-    """Hand the script to the running Praat and wait for its result files.
-
-    默认走 :mod:`praat_ai.sendpraat`：自己写 ``Message.txt`` 再发 ``WM_APP``。
-    这样 Praat 一个窗口都不会被激活——用户报的「弹出 Praat Info」和「声音窗口
-    盖住对话窗口」都是老的 ``Praat.exe --send`` 干的（见 guide.md §8.5）。
-
-    设 ``PRAAT_AI_SEND_MODE=argv`` 可以退回 ``--send`` 排障：那条路会激活一个
-    Praat 子窗口，而且 ``--send`` 在 Praat 被模态窗口挡住时会一直阻塞（实测
-    超过 60 秒，脚本其实已经排队），所以老路径仍然用「后台 Popen + 轮询」，
-    不回到 ``subprocess.run(timeout=60)``。
-
-    每条指令写一个自己的脚本文件，并在开头带上请求编号（:func:`script_preamble`）：
-    这是「投递出去的那条」和「真的执行了的那条」对得上的凭据。
-
-    ``process_id`` 指定送给哪一个 Praat（默认最新打开的那个，和 ``--send`` 一致）；
-    验证脚本用它把自己开的那个实例和用户开着的实例区分开。
-
-    ``outcome``（可选）是**结构化的投递事实**出口：本函数往里追加一格
-    ``DELIVERED`` 或 ``NOT_DELIVERED``（见 :mod:`praat_ai.delivery`）。失败时只
-    看返回值分不出「根本没送出去」和「送出去了没等到结果」，而这两件事的处理完全
-    不同（前者可以改参数重试，后者必须停下来核实）。
-    """
+    """Hand the script to the running Praat and wait for its result files."""
 
     request_id = request_id or new_request_id()
     target = script_path(request_id)
@@ -1698,11 +1707,7 @@ def _inline_segments(line: str, base: str) -> list[tuple[str, Any]]:
 
 
 def render_message(text: str) -> list[tuple[str, Any]]:
-    """把模型回答切成 ``(片段, tag)``，tag 可以直接喂给 ``Text.insert``。
-
-    只认这几样：``#``/``##``/``###`` 标题、行首 ``-``/``*``/``•`` 项目符号、
-    ``**粗体**``、`` `代码` ``。用户自己敲的字不渲染（原样显示），见 guide.md §8.16。
-    """
+    """把模型回答切成 ``(片段, tag)``，tag 可以直接喂给 ``Text.insert``。"""
 
     segments: list[tuple[str, Any]] = []
     lines = str(text or "").replace("\r\n", "\n").replace("\r", "\n").split("\n")
@@ -2034,8 +2039,6 @@ class ChatWindow:
                 on_close=self._on_praat_gone,
             )
             self.praat_watcher.start()
-        # 主题：窗口级的东西（ttk style、文本 tag、底色）也注册进去，系统深浅色一变
-        # 就整体重刷。只跟随系统，不提供手动开关（见 guide.md §8.16）。
         self.theme.add_listener(self.apply_theme)
         self.theme_watcher = ui_theme.ThemeWatcher(self.root, self.on_system_theme_changed)
         self.theme_watcher.start()

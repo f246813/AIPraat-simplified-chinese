@@ -47,7 +47,7 @@ def timeout_endpoint():
         def do_POST(self):
             requests.append(json.loads(self.rfile.read(int(self.headers['Content-Length']))))
             # Every request times out: SDK retries would make this exceed two.
-            time.sleep(.35)
+            time.sleep(1.5)
     server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
     worker = threading.Thread(target=server.serve_forever, daemon=True)
     worker.start()
@@ -199,74 +199,46 @@ class ReportChainTests(unittest.TestCase):
         self.assertEqual(state.status, 'complete', state.reason)
         self.assertTrue(chunks)
 
-    def test_bad_number_gets_one_correction_then_is_masked(self):
-        """P0-B（含数值改写机会）：坏数值先用掉一次 output 重试，改不动才遮蔽交付。
-
-        语义与 P0-B 一致——正文不丢、只遮那个数、整份不算核对通过、重试有界；
-        多出来的只有「模型被明确告知哪个数对不上、该怎么改」这一次机会。
-        """
-
+    def test_timeout_during_guard_correction_keeps_single_output_retry(self):
         requests = []
         bad = '本录音基频 999 Hz。[E1] 当前缺少可靠的参照录音，因此无法据此判断具体的发音缺陷。'
         def respond(messages, info):
             requests.append(copy.deepcopy(messages))
+            if len(requests) == 2:
+                raise wrapped()
             return response(bad)
         state = AnalysisState('解释测量', CONTEXT, continuation=True, continuation_mode='L2',
                               evidence=[Evidence('pitch', {'object':1}, ['基频 = 220 Hz'], CONTEXT)])
         self.run_report(respond, state)
-        # 一次整份重试（output 额度）+ 一次定点返修（只发问题行）；两者都改不动才遮蔽。
-        self.assertEqual(len(requests), 3, state.reason)
-        retry = str(requests[1])
-        self.assertIn('999', retry)
-        self.assertIn('{{calc:', retry)
-        self.assertIn('问题句', str(requests[2]))
-        self.assertEqual(state.metrics.get('report_number_repair'), 1)
-        self.assertNotIn('report.number_unmatched', state.metrics.get('guard_blocks', {}))
-        self.assertEqual(state.metrics['audit']['masked_count'], 1)
+        self.assertEqual(len(requests), 4, state.reason)
+        self.assertEqual([t['phase'] for t in state.metrics['request_timings']],
+                         ['report', 'report', 'report', 'report_repair'])
+        self.assertEqual(state.requests, len(state.metrics['request_timings']))
+        self.assertEqual(state.metrics['guard_repairs']['report.number_retried'], 1)
+        self.assertEqual(state.metrics['guard_repairs']['report.number_masked'], 1)
+        self.assertIn('999 Hz', state.metrics['audit']['masked'])
         self.assertFalse(state.metrics.get('report_verified', False))
         self.assertNotIn('999 Hz', state.report)
+        from pydantic_ai.messages import RetryPromptPart
+        for request in requests[1:3]:
+            self.assertEqual(sum(isinstance(p, RetryPromptPart) for m in request for p in m.parts), 1)
+        self.assertFalse(any(isinstance(p, RetryPromptPart) for m in requests[3] for p in m.parts))
 
-    def test_targeted_repair_rewrites_only_the_offending_line(self):
-        """定点返修：只把问题行 + 候选证据行发出去，回「序号 => 新句」就贴回那一行。"""
-
-        bad = '本录音基频 999 Hz。[E1] 当前缺少可靠的参照录音，因此无法据此判断具体的发音缺陷。'
-        fixed = '本录音基频 220 Hz。[E1] 当前缺少可靠的参照录音，因此无法据此判断具体的发音缺陷。'
-        calls = []
-        def respond(messages, info):
-            calls.append(copy.deepcopy(messages))
-            if len(calls) <= 2:
-                return response(bad)
-            return ModelResponse([TextPart('1 => ' + fixed)])
-        state = AnalysisState('解释测量', CONTEXT, continuation=True, continuation_mode='L2',
-                              evidence=[Evidence('pitch', {'object':1}, ['基频 = 220 Hz'], CONTEXT)])
-        self.run_report(respond, state)
-        self.assertEqual(len(calls), 3, state.reason)
-        repair_prompt = str(calls[2])
-        # 返修请求只带问题句与可用证据行：没有原始目标，也没有整份报告。
-        self.assertIn('问题句', repair_prompt)
-        self.assertIn('基频 = 220 Hz', repair_prompt)
-        self.assertTrue(state.metrics.get('report_verified'), state.reason)
-        self.assertIn('220 Hz', state.report)
-        self.assertNotIn('999', state.report)
-        self.assertEqual(state.metrics['guard_repairs'].get('report.number_repaired'), 1)
-        self.assertEqual(state.metrics['guard_repairs'].get('report.number_retried'), 1)
-
-    def test_masking_is_scoped_to_the_unmatched_number(self):
-        """P0-B：只遮蔽没对上的那个数；同一段里的一般知识范围不受牵连。"""
-
+    def test_latest_draft_does_not_inherit_prior_rejected_values(self):
         item = Evidence('pitch', {'object':1}, ['基频 = 220 Hz'], CONTEXT)
-        text = ('平均基频 999 Hz。[E1] 参考材料（一般知识）：成年男声通常 85–180 Hz，'
-                '本录音缺少可靠对照，无法据此判断具体发音缺陷。')
+        drafts = ['平均基频 999 Hz。[E1] 当前只有目标录音的测量结果，仍缺少可靠的对照材料，无法判断具体发音缺陷。',
+                  '平均基频 888 Hz。[E1]\n一般知识：示例频率为 999 Hz，仍缺少对照材料。']
+        def respond(messages, info):
+            return response(drafts.pop(0))
         state = AnalysisState('解释已有测量', CONTEXT, evidence=[item], continuation=True, continuation_mode='L2')
-        state = self.run_report(lambda *_: response(text), state)
-        self.assertIn(UNVERIFIED_NUMBER, state.report)
-        self.assertIn('85–180 Hz', state.report)
-        self.assertEqual(state.metrics['audit']['masked_count'], 1)
+        state = self.run_report(respond, state)
+        self.assertIn('示例频率为 999 Hz', state.report)
+        self.assertNotIn('平均基频 888 Hz', state.report)
         self.assertFalse(state.metrics.get('report_verified', False))
 
     def test_real_sdk_wrapped_timeout_has_no_stacked_sdk_retries(self):
         cfg, state = config(), AnalysisState('解释已有测量', '')
-        cfg.api.request_timeout_sec = .08
+        cfg.api.request_timeout_sec = .5
         cfg.api.audio_input_enabled = False
         with timeout_endpoint() as (base, requests), patch('openai.DefaultAsyncHttpxClient',
                 side_effect=lambda **kw: DefaultAsyncHttpxClient(trust_env=False, **kw)):

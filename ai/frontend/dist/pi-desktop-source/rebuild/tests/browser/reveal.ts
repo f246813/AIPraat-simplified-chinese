@@ -1,11 +1,11 @@
 import type { Page } from '@playwright/test';
 
 /**
- * Grow the mount window until every loaded message is mounted.
+ * Open the logical range until every loaded message is inside it.
  *
- * Not a test file: `tests/browser` only collects `*.spec.ts`. Fixtures that live above the
- * steady window have to be revealed the way a reader would reveal them, so the specs stay
- * honest about what the window does instead of mounting everything up front.
+ * Not a test file: `tests/browser` only collects `*.spec.ts`. Fixtures above the steady range have
+ * to be revealed the way a reader reveals them, so the specs stay honest about what the range does
+ * — expanding it never means those rows stay mounted, the viewport still decides that.
  */
 export async function revealAllHistory(page: Page) {
   const reveal = page.locator('.history-reveal button');
@@ -14,5 +14,5 @@ export async function revealAllHistory(page: Page) {
     await reveal.evaluate(el => (el as HTMLElement).click());
     await page.waitForTimeout(150);
   }
-  throw new Error('the history window never opened fully');
+  throw new Error('the logical history range never opened fully');
 }

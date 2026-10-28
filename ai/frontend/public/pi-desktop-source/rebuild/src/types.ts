@@ -14,7 +14,7 @@ export type HistoryGroupAction = 'delete' | 'detach' | 'archive';
 export interface RetainedTimeGroup {mode:'list'|'project'|'connection'; origin:{id:string;label:string;detail:string}|null; group:'today'|'yesterday'|'thisWeek'|'older14d'|'archived'}
 export interface Attachment { id: string; name: string; mime: string; size: number }
 export interface Activity { id: string; type: 'progress' | 'thinking' | 'tool' | 'compression'; text?: string; name?: string; args?: object; result?: unknown; status?: string; execution?: string }
-export interface Message { results?:ResultFact[]; result_content?:string; analysis_content?:string; followup_actions?:('L2'|'L3'|'L4')[]; id: string; role: 'user' | 'assistant'; content: string; status?: 'running' | 'complete' | 'partial' | 'cancelled' | 'failed' | 'interrupted'; taskId?: string; attachments?: Attachment[]; activities?: Activity[] }
+export interface Message { report?: {type: 'pronunciation'; source: string}; results?:ResultFact[]; result_content?:string; analysis_content?:string; id: string; role: 'user' | 'assistant'; content: string; status?: 'running' | 'complete' | 'partial' | 'cancelled' | 'failed' | 'interrupted'; taskId?: string; attachments?: Attachment[]; activities?: Activity[] }
 export interface Task { workflow?:WorkflowPolicy; id: string; sessionId: string; status: string; model: string; created: string }
 export interface HostEvent { seq: number; sessionId: string; taskId: string; type: 'task' | 'delta' | 'activity' | 'message'; payload: unknown }
 export interface PraatSnapshot { pid: number; objects: {id: number; className: string; name: string; selected: boolean}[] }
@@ -42,9 +42,8 @@ export interface Methods {
   'sessions.delete': [{sessionId: string}, {ok: true}];
   'sessions.view': [{sessionId: string; draft?: string; scroll?: number; anchor?: ReadingAnchor}, {ok: true}];
   'tasks.submit': [{sessionId: string; text: string; attachmentIds?: string[]}, Task];
-  'tasks.followup': [{sessionId:string; sourceTaskId:string; mode:'L2'|'L3'|'L4'}, Task];
   'tasks.cancel': [{taskId: string}, {ok: true}];
-  'events.poll': [{after: number}, {events: HostEvent[]; cursor: number; reset?: boolean; navigation?: {id: string; category: '模型'}}];
+  'events.poll': [{after: number}, {events: HostEvent[]; cursor: number; reset?: boolean; navigation?: {id: string; category: '模型'} | {id: string; category: '报告'; sessionId?: string; error?: string}}];
   'settings.get': [{}, Settings];
   'settings.save': [{settings: Partial<Settings>}, Settings];
   'settings.test': [{kind: 'text' | 'audio'; settings: Settings}, TestResult];

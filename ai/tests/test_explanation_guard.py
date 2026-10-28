@@ -1,15 +1,8 @@
-"""阶段 3 回归：双音频的可选 AI 解释必须走与云端同一份证据守卫。
+"""Optional tutor explanations share the evidence guard used by cloud reports.
 
-设计文档点名的缺口：纠音报告的可选 AI 解释直接调用文字接口交付，没经过云端对话已有的
-证据守卫；本机/云端两种 provider 都一样。本模块先把缺口写成测试（未修复时必须失败）：
-
-① 解释里的数值没有对上本次测量 → 必须遮蔽并标记，不得原样交付；
-② 本次对比不完整（证据不足／缺依赖）时 → 解释必须带上与 JSON 状态一致的结论等级说明，
-   不能给出无条件结论；
-③ 视觉解释失败必须留原因，不得静默丢弃；
-④ 两条解释路径（text / vision）都经 `report_guards.guard_delivered_text` 这一个入口。
-
-除端到端那一条需要真实音频与 Pillow 之外，其余都是纯逻辑。
+Unmatched values are masked, incomplete comparisons retain status, and visual
+explanation failures retain a reason. The end-to-end case uses isolated audio
+and Pillow; other cases exercise protocol logic.
 """
 
 import json
@@ -32,7 +25,7 @@ from praat_ai.models import (
     PhoneSpec,
     PronunciationError,
 )
-from praat_ai.pronunciation import conclusion_caveat, explanation_evidence
+from praat_ai.pronunciation import conclusion_caveat, conclusion_gaps, explanation_evidence
 from praat_ai.qwen import QwenError
 from praat_ai.tutor import guard_explanation, run_tutor
 
@@ -153,12 +146,36 @@ class GuardedExplanationTests(unittest.TestCase):
         caveat = conclusion_caveat(result)
         guarded, status = guard_explanation(result, "学习者 F1 均值 1100 Hz。")
 
-        self.assertIn("not_evaluated", caveat)
-        self.assertIn("dependency_missing", caveat)
-        self.assertIn("不构成独立音素识别", caveat)
+        # 用户读到的是人话：内部状态码只留在结构化字段里，不抄进结论等级说明。
+        self.assertIn("音位声学对比没有评估", caveat)
+        self.assertIn("缺少必要的组件", caveat)
+        self.assertNotIn("not_evaluated", caveat)
+        self.assertNotIn("dependency_missing", caveat)
+        self.assertIn("本次缺测", caveat)
+        self.assertNotIn("发音正确性判定", caveat)
         self.assertIn("学习者 F1 均值 1100 Hz。", guarded)
         self.assertTrue(guarded.endswith(caveat))
         self.assertEqual(status, "verified")
+
+    def test_raw_statuses_stay_structured_next_to_the_caveat(self):
+        statuses = {"phone_acoustics": "not_evaluated", "pitch_formant_measurement": "unknown"}
+        result = analysis(check_statuses=statuses)
+
+        gaps = conclusion_gaps(result)
+
+        self.assertEqual([gap["check"] for gap in gaps],
+                         ["phone_acoustics", "pitch_formant_measurement"])
+        self.assertEqual([gap["status"] for gap in gaps], ["not_evaluated", "unknown"])
+        self.assertEqual(gaps[0]["label"], "音位声学对比")
+        self.assertEqual(result.check_statuses, statuses)
+
+    def test_unknown_status_code_is_not_echoed(self):
+        result = analysis(check_statuses={"phone_acoustics": "mystery_code_v9"})
+
+        caveat = conclusion_caveat(result)
+
+        self.assertNotIn("mystery_code_v9", caveat)
+        self.assertIn("暂不可用或状态不明", caveat)
 
     def test_complete_comparison_has_no_caveat(self):
         result = analysis()

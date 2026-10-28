@@ -130,6 +130,44 @@ def write_textgrid(result: AnalysisResult, path: str | Path) -> None:
     Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def _append_acoustic_tiers(lines, result):
+    tiers = []
+    for phone in result.learner_phones:
+        measure = phone.measurements.get("vot")
+        if not measure:
+            continue
+        acoustic = measure.analysis.get("acoustic", {})
+        points = defaultdict(list)
+        for event in acoustic.get("events", []):
+            time = event.get("time")
+            if time is not None and 0 <= time <= result.duration and event.get("status") != "rejected":
+                points[time].append(f"{event['kind']} [{event['status']}]")
+        tiers.append(('TextTier', f"VOT_{phone.phone_index}_events", sorted(points.items())))
+        for interval in acoustic.get("intervals", []):
+            start, end = interval["start"], interval["end"]
+            if 0 <= start < end <= result.duration:
+                segments = [(0.0, start, ""), (start, end, f"{interval['kind']} [{interval['status']}]"),
+                            (end, result.duration, "")]
+                tiers.append(('IntervalTier', f"VOT_{phone.phone_index}_{interval['id']}",
+                              [s for s in segments if s[0] < s[1]]))
+    count_line = next(i for i, line in enumerate(lines) if line.startswith("size = "))
+    count = int(lines[count_line].split("=")[1])
+    lines[count_line] = f"size = {count + len(tiers)}"
+    for tier, (kind, name, entries) in enumerate(tiers, count+1):
+        lines.extend([f"    item [{tier}]:", f'        class = "{kind}"',
+            f"        name = {_escape_textgrid(name)}", "        xmin = 0", f"        xmax = {result.duration:.9f}",
+            f"        {'points' if kind == 'TextTier' else 'intervals'}: size = {len(entries)}"])
+        for index, entry in enumerate(entries, 1):
+            if kind == 'TextTier':
+                time, labels = entry
+                lines.extend([f"        points [{index}]:", f"            number = {time:.9f}",
+                              f"            mark = {_escape_textgrid('; '.join(labels))}"])
+            else:
+                start, end, label = entry
+                lines.extend([f"        intervals [{index}]:", f"            xmin = {start:.9f}",
+                              f"            xmax = {end:.9f}", f"            text = {_escape_textgrid(label)}"])
+
+
 def _write_rule_textgrid(result: AnalysisResult, path: str | Path) -> None:
     """Keep true learner boundaries, including unlabelled gaps, in new reports."""
     assessments = {item.get("learner_phone_index", item["phone_index"]): item
@@ -179,6 +217,7 @@ def _write_rule_textgrid(result: AnalysisResult, path: str | Path) -> None:
     for index, (time, observations) in enumerate(sorted(grouped.items()), start=1):
         text = "；".join(observation.message for observation in observations)
         lines.extend([f"        points [{index}]:", f"            number = {time:.6f}", f"            mark = {_escape_textgrid(text)}"])
+    _append_acoustic_tiers(lines, result)
     Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -191,7 +230,7 @@ def write_overlay_png(result: AnalysisResult, path: str | Path) -> bool:
     width = 1280
     row_height = 150
     header_height = 60
-    candidates = result.observations if result.profile_snapshot else result.errors
+    candidates = result.observations if result.profile_snapshot else [*result.errors, *result.observations]
     if result.normalization and result.profile_snapshot:
         # Expose each actual method, rather than hiding all prosody behind the
         # first few raw formant observations. Repeated phone/run items stay in JSON/TG.
@@ -234,6 +273,11 @@ def write_overlay_png(result: AnalysisResult, path: str | Path) -> bool:
         reference_phone = reference_by_index.get(error.phone_index)
         learner_phone = learner_by_index.get(error.phone_index)
         if not reference_phone or not learner_phone:
+            continue
+        if error.feature in reference_phone.measurements:
+            measure = reference_phone.measurements[error.feature]
+            draw.text((40, top + 48), f"landmark-derived scalar [{error.evaluation_status}]", fill="#d1d5db")
+            draw.text((40, top + 76), str(measure.analysis.get('measurement_id', '')), fill="#d1d5db")
             continue
         if error.feature == "relative_duration":
             scale = max(error.reference_value, error.learner_value, 1e-9)
@@ -294,5 +338,9 @@ def write_overlay_png(result: AnalysisResult, path: str | Path) -> bool:
         draw.rectangle((left, top + 30, right, bottom - 5), outline="#ef4444", width=3)
         draw.text((width - 260, top + 8), "reference  learner", fill="#d1d5db")
 
-    image.save(path)
+    from PIL.PngImagePlugin import PngInfo
+    info = PngInfo()
+    info.add_text("acoustic_measurements", json.dumps(dict(protocol=result.measurement_protocol,
+        ids=[item.evidence.get("measurement_id") for item in selected_errors], sources=result.sources), ensure_ascii=False))
+    image.save(path, pnginfo=info)
     return True

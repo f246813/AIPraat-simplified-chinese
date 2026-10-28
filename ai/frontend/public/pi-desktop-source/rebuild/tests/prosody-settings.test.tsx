@@ -16,7 +16,7 @@ it('keeps both independent switches off by default and submits explicit utteranc
   fireEvent.click(screen.getByRole('checkbox', {name:/整段恒定响度/}));
   expect(screen.getByText(/400 ms/)).toBeTruthy();
   fireEvent.click(screen.getByRole('checkbox', {name:/已检查 F0/}));
-  expect(screen.getByText(/预计使用本句相对半音/)).toBeTruthy();
+  expect(screen.getByText(/使用本句相对半音/)).toBeTruthy();
   fireEvent.click(screen.getByRole('button', {name:'开始分析'}));
   await waitFor(() => expect(rpc).toHaveBeenCalledWith('tutor.submit', expect.objectContaining({normalization:expect.objectContaining({pitch:true,loudness:true,pitch_confirmed:true,formants:false})})));
 });
@@ -32,7 +32,7 @@ it('imports neutral baselines via receipts, clears them and confirmation after r
   fireEvent.click(within(screen.getByText('学习者中性语句').parentElement!).getByRole('button'));
   await screen.findByText(/learner.wav/);
   fireEvent.click(screen.getByRole('checkbox', {name:/已检查 F0/}));
-  expect(screen.getByText(/预计使用双方独立中性语句/)).toBeTruthy();
+  expect(screen.getByText(/使用双方独立中性语句/)).toBeTruthy();
   fireEvent.change(screen.getByRole('spinbutton', {name:'F0 下限（Hz）'}), {target:{value:'90'}});
   expect(screen.queryByText(/reference.wav/)).toBeNull();
   expect((screen.getByRole('checkbox', {name:/已检查 F0/}) as HTMLInputElement).checked).toBe(false);
@@ -45,16 +45,16 @@ it('restores enabled preferences but never restores pitch confirmation or calibr
   render(<PronunciationForm rpc={rpc}/>); await prepare();
   expect((screen.getByRole('checkbox', {name:/相对音高（半音/}) as HTMLInputElement).checked).toBe(true);
   expect((screen.getByRole('checkbox', {name:/已检查 F0/}) as HTMLInputElement).checked).toBe(false);
-  expect(screen.getByText(/音高证据不足或未确认/)).toBeTruthy();
+  expect(screen.getByText(/请检查 F0 范围并确认音高基线/)).toBeTruthy();
 });
 
 it('previews the actual candidate method from selected WAV durations and recomputes after changing objects', async () => {
   const rpc = vi.fn(async () => ({...bootstrap, sounds:bootstrap.sounds.map((sound,index) => ({...sound,duration:index === 0 ? .2 : 1}))}));
   render(<PronunciationForm rpc={rpc}/>); await prepare();
   fireEvent.click(screen.getByRole('checkbox', {name:/整段恒定响度/}));
-  expect(screen.getByText(/本次候选：双方统一采用活动区间 RMS/)).toBeTruthy();
+  expect(screen.getByText(/任一侧短于 400 ms，双方使用可靠活动区间的 RMS/)).toBeTruthy();
   fireEvent.change(screen.getByRole('combobox', {name:'标准音范本'}), {target:{value:'9'}});
-  expect(screen.getByText(/本次候选：双方均至少 400 ms/)).toBeTruthy();
+  expect(screen.getByText(/双方均至少 400 ms/)).toBeTruthy();
 });
 
 it('uses existing runtime configuration RPC, not an automatic install call', async () => {
@@ -76,7 +76,7 @@ it('gates loudness and pitch on the reported runtime capabilities before submitt
   const pitch = screen.getByRole('checkbox', {name:/相对音高（半音/}) as HTMLInputElement;
   await waitFor(() => expect(loudness.disabled).toBe(true));
   expect(pitch.disabled).toBe(true);
-  expect(screen.getByText(/当前解释器缺少响度所需的运行库/)).toBeTruthy();
+  expect(screen.getByText(/缺少响度运行库/)).toBeTruthy();
   // 提示必须指名缺什么、去哪儿装，而不是只说「失败」。
   expect(screen.getByText(/scipy>=1\.14\.1,<1\.15/)).toBeTruthy();
   expect(screen.getByText(/praat-parselmouth/)).toBeTruthy();

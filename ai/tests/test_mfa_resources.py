@@ -12,7 +12,8 @@ from unittest.mock import Mock, patch
 
 from praat_ai.config import load_config, pronunciation_presets
 from praat_ai.mfa_resources import (MfaResourceService, alignment_probe, legacy_resource_id,
-                                   parse_dictionary, read_model_metadata)
+                                   parse_dictionary, read_model_metadata, dictionary_inventory,
+                                   dictionary_pronunciations)
 
 
 class MfaResourceTests(unittest.TestCase):
@@ -114,12 +115,11 @@ class MfaResourceTests(unittest.TestCase):
         self.assertEqual(data['default_preset'], 'en-GB')
         self.assertFalse(data['presets'][0]['status']['can_generate'])
 
-    def test_require_explicit_confirmation_and_launcher_but_not_alignment_resources(self):
+    def test_generation_requires_model_mapping_and_launcher_without_a_manual_declaration(self):
         preset = self.preset(g2p=self.g2p(), phone_set='arpabet')
-        self.assertFalse(self.service.check(preset, self.launcher)['can_generate'])
-        preset['confirmed'] = 'true'
-        self.assertFalse(self.service.check(preset, self.launcher)['can_generate'])
-        preset['confirmed'] = True
+        for legacy_value in (None, False, True, 'true'):
+            with self.subTest(legacy_value=legacy_value):
+                self.assertTrue(self.service.check(dict(preset, confirmed=legacy_value), self.launcher)['can_generate'])
         status = self.service.check(preset, self.launcher)
         self.assertTrue(status['can_generate'])
         self.assertEqual(status['dictionary'], '未配置')
@@ -174,7 +174,7 @@ class MfaResourceTests(unittest.TestCase):
             language='en-US', phones=['HH', 'AH0', 'L', 'OW1', 'sil']))
         preset = self.preset(g2p=g2p, acoustic=acoustic,
             dictionary=self.service.list()['resources']['dictionary'][0]['id'], phone_set='arpabet', confirmed=True)
-        self.assertEqual(self.service.check(preset, self.launcher)['compatibility'], '静态检查通过（用户声明）')
+        self.assertEqual(self.service.check(preset, self.launcher)['compatibility'], '静态检查通过')
         self.service.save(preset, self.launcher)
 
     def test_model_type_and_language_conflicts(self):
@@ -367,6 +367,44 @@ class MfaResourceTests(unittest.TestCase):
         self.dictionary.write_text('world W ER1 L D\n', encoding='utf-8')
         self.assertEqual(parse_dictionary(self.dictionary), {'world': [['W', 'ER1', 'L', 'D']]})
 
+    def test_page_checks_cache_only_inventory_and_invalidate_on_dictionary_changes(self):
+        preset = self.preset(dictionary=legacy_resource_id('dictionary', self.dictionary), phone_set='arpabet')
+        self.service.save(preset, self.launcher)
+        with patch('praat_ai.mfa_resources.parse_dictionary', side_effect=AssertionError('full dictionary allocated')):
+            self.assertEqual(dictionary_inventory(self.dictionary), frozenset({'HH', 'AH0', 'L', 'OW1'}))
+            self.assertIs(dictionary_inventory(self.dictionary), dictionary_inventory(self.dictionary))
+            first = self.service.list()['presets'][0]['status']
+            self.assertEqual(first['dictionary'], '静态检查通过')
+            self.dictionary.write_text('hello HH\nextra UNKNOWN\n', encoding='utf-8')
+            second = self.service.list()['presets'][0]['status']
+            self.assertFalse(second['mapping_ready'])
+            self.assertIn('UNKNOWN', ' '.join(second['issues']))
+
+    def test_targeted_dictionary_lookup_keeps_candidates_and_validates_unrequested_rows(self):
+        self.dictionary.write_text('Straße a\nOTHER b\nstraße i\nstraße a\n', encoding='utf-8')
+        self.assertEqual(dictionary_pronunciations(self.dictionary, ['straße']), {'strasse': [['a'], ['i']]})
+        self.assertEqual(dictionary_inventory(self.dictionary), frozenset({'a', 'b', 'i'}))
+        self.dictionary.write_text('Straße a\nbroken 0.8\n', encoding='utf-8')
+        for reader in (dictionary_inventory, lambda p: dictionary_pronunciations(p, ['straße'])):
+            with self.assertRaisesRegex(ValueError, '第 2 行'):
+                reader(self.dictionary)
+
+    def test_custom_language_pairing_can_be_saved_selected_and_resolved(self):
+        from praat_ai.mfa_resources import validate_preset
+        g2p = self.g2p(language='german', phones=['a'], graphemes=list('straße'))
+        preset = self.preset(id='custom-' + 'a' * 32, name='德语', language='de', variant='', rule_id=None,
+                             g2p=g2p, dictionary='', acoustic='', phone_set='ipa', confirmed=True)
+        data = self.service.save(preset, self.launcher, make_default=True)
+        self.assertEqual(data['default_preset'], preset['id'])
+        saved = next(p for p in data['presets'] if p['id'] == preset['id'])
+        self.assertEqual(saved['language'], 'de')
+        self.assertTrue(saved['status']['can_generate'], saved['status'])
+        self.assertEqual(self.service.resolve(preset['id'])['preset']['name'], '德语')
+        self.assertEqual(next(r for r in data['resources']['g2p'] if r['id'] == g2p)['used_by'], [preset['id']])
+        for patch_value in ({'id':'unknown'}, {'language':''}, {'language':'bad/code'}, {'rule_id':'en-US-general-v1'}):
+            with self.subTest(patch_value=patch_value), self.assertRaises(ValueError):
+                validate_preset(dict(preset, **patch_value))
+
     def test_mapping_must_be_one_valid_ipa_unit(self):
         for value in ('hello', 'ab', 'HH', 'a,b'):
             with self.subTest(value=value), self.assertRaises(ValueError):
@@ -437,7 +475,7 @@ class MfaResourceTests(unittest.TestCase):
         self.assertEqual((japanese['language'], japanese['variant'], japanese['rule_id']),
                          ('ja', 'ja-JP', 'ja-JP-standard-v1'))
         self.assertEqual(japanese['phone_set'], 'ipa')
-        self.assertFalse(japanese['confirmed'])
+        self.assertNotIn('confirmed', japanese)
         self.assertEqual(japanese['phone_map'],
                          {'dzː': 'd͡zː', 'dʑː': 'd͡ʑː', 'tsː': 't͡sː', 'tɕː': 't͡ɕː'})
         for preset in pronunciation_presets():
@@ -536,8 +574,7 @@ class MfaResourceTests(unittest.TestCase):
         self.assertIn('对齐环境可用', result['summary'])
         self.assertEqual(result['resources']['acoustic']['exists'], True)
         self.assertEqual(result['preset']['language'], 'en')
-        self.assertIn('不代表资源与目标口音匹配', result['notes'][1])
-        self.assertIn('不会安装、下载或修改任何配置', result['notes'][0])
+        self.assertEqual(result['notes'], ['检测项目：MFA 启动、Python 依赖与资源兼容性'])
 
     def test_environment_uses_the_draft_launcher_and_reports_every_blocker(self):
         preset = self.ready_preset()

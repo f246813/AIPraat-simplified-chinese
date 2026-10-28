@@ -61,7 +61,7 @@ for (const theme of ['light','dark'] as const) test(`compact messages fit narrow
   await expect(page.locator('.process-details')).toHaveCount(1);
   await expect(page.locator('.message.user .prose')).toHaveCSS('border-top-width','0px');
   expect(await page.locator('.transcript').evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
-  await page.getByRole('button',{name:'取消当前任务'}).click();
+  await page.getByRole('button',{name:'暂停当前任务'}).click();
   await expect(page.locator('.process-details > summary')).toContainText('已取消');
   await expect(page.locator('.process-details')).not.toHaveAttribute('open','');
   if (process.env.PI_SCRATCH_DIR) await page.screenshot({path:join(process.env.PI_SCRATCH_DIR,`compact-${theme}-375.png`)});

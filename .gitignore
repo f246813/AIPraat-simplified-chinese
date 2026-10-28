@@ -47,6 +47,12 @@ ai/logs/
 ai/ai_config.json
 ai/runtime/
 logs/runtime/
+/logs/
+/cache/
+/models/
+/reports/
+/tools/ffmpeg/
+/tools/miniforge3/
 
 # Local zip packages/releases
 *.zip
@@ -90,3 +96,6 @@ torchinductor_*/
 installer/build/
 test-records/**/mfa-cache/
 test-records/**/mfa-work/
+
+# 测试与诊断产物中的大型可执行文件（安装测试/超时诊断），不入库
+test-records/**/*.exe

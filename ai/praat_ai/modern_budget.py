@@ -74,16 +74,49 @@ def model_settings(section, *, sdk=False, input_cost=0):
     return result
 
 
-def text_request(config, messages, *, cancel=None, runtime=None, metrics=None, phase='summary'):
-    """Shared validation/summary adapter without hidden probe sampling defaults."""
+def _metric_targets(metrics, state):
+    """这次请求的 timing 该写进哪些 dict：显式 ``metrics``，以及 ``state.metrics``。
+
+    两者常常是**同一个对象**（调用方把 state.metrics 传进来），那就只记一次；
+    不是同一份时都写，保持旧调用方（只给 ``metrics``）的行为不变。
+    """
+
+    targets: list[dict] = []
+    for candidate in (metrics, getattr(state, 'metrics', None) if state is not None else None):
+        if isinstance(candidate, dict) and all(candidate is not seen for seen in targets):
+            targets.append(candidate)
+    return targets
+
+
+def text_request(config, messages, *, cancel=None, runtime=None, metrics=None, phase='summary', state=None):
+    """Shared validation/summary adapter without hidden probe sampling defaults.
+
+    ``state``（可选）把这次真实请求接进**同一份**任务账本：发出去之前检查取消与
+    ``state.budget.request_limit``、记一次尝试（失败也计），并把 timing/用量写回
+    ``state.metrics``——后续 ``CloudSession`` 就是用这份账本初始化请求数与 token 的。
+    传 state 时只在这里加一次 ``state.requests``，别的地方不要重复加。
+    """
     if cancel is not None and cancel.is_set():
         raise RuntimeError('已取消请求')
     if not config.api.enabled:
         return qwen.QwenClient(config.qwen).chat(messages, max_tokens=config.qwen.plan_max_tokens,
                                                temperature=config.qwen.plan_temperature)
-    from pydantic_ai import Agent
+    from pydantic_ai import Agent, UsageLimits
+    from pydantic_ai.usage import RunUsage
     from .cloud_agent import create_model
     from .config import QwenConfig
+    targets = _metric_targets(metrics, state)
+    if state is not None:
+        limit = int(getattr(getattr(state, 'budget', None), 'request_limit', 0) or 0)
+        used = int(getattr(state, 'requests', 0) or 0)
+        if limit and used >= limit:
+            raise RuntimeError('本轮模型请求总预算已用完')
+        # 发之前记一次尝试：这次请求真的会发出去，失败也照样算（保守计数）。
+        state.requests = used + 1
+        request_index = state.requests
+    else:
+        request_index = len((targets[0].get('request_timings') or [])) + 1 if targets else 1
+
     async def run(shared_model=None):
         model = shared_model or create_model(config)
         settings = model_settings(config.api, sdk=True, input_cost=qwen.estimate_tokens(json.dumps(messages, ensure_ascii=False)))
@@ -97,23 +130,33 @@ def text_request(config, messages, *, cancel=None, runtime=None, metrics=None, p
         async def invoke():
             from .session_context import native_history
             from . import cloud_metrics
-            timing = dict(request=len((metrics or {}).get('request_timings', []))+1, phase=phase,
-                          attempt=1, retry=False, reason='context_compaction')
-            timing.update({key:(metrics or {}).get(key, '') for key in ('session_id','task_id','context_epoch')})
+            timing = dict(request=request_index, phase=phase, attempt=1, retry=False,
+                          reason='context_compaction')
+            source = targets[0] if targets else {}
+            timing.update({key: source.get(key, '') for key in ('session_id', 'task_id', 'context_epoch')})
             started = time.monotonic()
             token = cloud_metrics.current_request.set(timing)
+            usage = None
             try:
+                # 一次 run 只允许一次请求：不重试、不重置预算（成本不翻倍）。
                 result = await Agent(model, output_type=str, retries=0).run(
-                    message_history=native_history(messages), model_settings=settings)
+                    message_history=native_history(messages), model_settings=settings,
+                    usage=RunUsage(), usage_limits=UsageLimits(request_limit=1))
+                usage = getattr(result, 'usage', None)
                 timing['status'] = 'complete'
                 return result.output
             finally:
                 timing.setdefault('status', 'failed')
                 timing['elapsed_seconds'] = time.monotonic()-started
                 timing.update(cloud_metrics.normalize_usage(timing.pop('raw_usage', {}), provider_url=config.api.base_url))
+                if timing.get('input_tokens_total') is None and usage is not None:
+                    # 没有 HTTP 钩子观测（替身模型/非 HTTP 路径）时用 SDK 公开用量补齐。
+                    timing['input_tokens_total'] = getattr(usage, 'input_tokens', None)
+                    timing['output_tokens'] = getattr(usage, 'output_tokens', None)
+                    timing['usage_source'] = ['pydantic_ai_usage']
                 cloud_metrics.current_request.reset(token)
-                if metrics is not None:
-                    metrics.setdefault('request_timings', []).append(timing)
+                for target in targets:
+                    target.setdefault('request_timings', []).append(dict(timing))
         task = asyncio.create_task(invoke())
         try:
             while not task.done():

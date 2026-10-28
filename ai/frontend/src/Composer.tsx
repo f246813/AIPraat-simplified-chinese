@@ -3,10 +3,10 @@ import { ComposerPrimitive, AttachmentPrimitive, useAuiState, type ThreadCompose
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useComposerLayout } from './composer-layout';
-import { Bold, Italic, Code, List, Paperclip, ArrowUp, Square, X, FileText } from 'lucide-react';
+import { Bold, Italic, Code, List, Paperclip, ArrowUp, X, FileText } from 'lucide-react';
 import { InputHistory, markdownParser, markdownSerializer, shouldSend } from './editor';
 import { availableCommands, completionRange, detectCompletion, matchCommands, type CompletionDetection } from './completions';
-import { ChatStore, useChatState } from './store';
+import { ChatStore, shallowEqual, useChatSelector } from './store';
 import type { Attachment, Preview, Session } from './types';
 import { readOnly } from './types';
 import { IconButton, Modal } from './ui';
@@ -15,15 +15,18 @@ import { ComposerStatus } from './ComposerStatus';
 export const attachmentDescriptor = (a: Attachment) => ({id: a.id, type: a.mime.startsWith('image/') ? 'image' : 'file', name: a.name, contentType: a.mime, content: []});
 export function AttachmentPreview({preview, onClose}: {preview: Preview; onClose: () => void}) {
   const url = safePreviewUrl(preview.dataUrl);
-  return <Modal title={preview.name} onClose={onClose}><p className="muted">{preview.mime}</p>{preview.text !== undefined && <pre className="preview-text">{preview.text}</pre>}{url && (preview.mime.startsWith('image/') ? <img className="preview-image" alt={preview.name} src={url}/> : preview.mime.startsWith('audio/') ? <audio controls src={url}/> : null)}{!url && preview.text === undefined && <p>此格式没有安全预览。附件可提交，由宿主校验处理；不会在前端执行或打开文件。</p>}</Modal>;
+  return <Modal title={preview.name} onClose={onClose}><p className="muted">{preview.mime}</p>{preview.text !== undefined && <pre className="preview-text">{preview.text}</pre>}{url && (preview.mime.startsWith('image/') ? <img className="preview-image" alt={preview.name} src={url}/> : preview.mime.startsWith('audio/') ? <audio controls src={url}/> : null)}{!url && preview.text === undefined && <p>此格式暂不支持预览，可作为附件提交</p>}</Modal>;
 }
 export function Composer({store, session, composer, onSettings}: {store: ChatStore; session: Session; composer: ThreadComposerRuntime; onSettings: () => void}) {
-  const state = useChatState(store); const [busy, setBusy] = useState(false); const [preview, setPreview] = useState<Preview>();
+  // Consume only the submit flag for this session and the settings this composer
+  // reads; streaming text in any session never re-renders the editor host.
+  const state = useChatSelector(store, s => ({boot: s.boot, submitting: s.submitting[session.id]}), shallowEqual); const [busy, setBusy] = useState(false); const [preview, setPreview] = useState<Preview>();
   const form = useRef<HTMLFormElement>(null); const composing = useRef(false); const compositionEnd = useRef(-Infinity); const history = useRef(new InputHistory());
   // The completion list is dismissed for one token only: retyping the same trigger reopens it.
   const [completion, setCompletion] = useState<(CompletionDetection & {caret: number}) | null>(null);
   const [highlight, setHighlight] = useState(0); const [dismissed, setDismissed] = useState<number | null>(null);
   const running = Boolean(store.running(session.id));
+  const submitting = Boolean(state.submitting);
   const disabled=readOnly(session)||Boolean(session.archived);
   const commands = availableCommands(running, !disabled);
   const matches = completion ? matchCommands(commands, completion.query) : [];
@@ -117,7 +120,7 @@ export function Composer({store, session, composer, onSettings}: {store: ChatSto
     };
     sync(); return composer.subscribe(sync);
   }, [composer, editor, store, session.id]);
-  useEffect(() => { editor?.setEditable(!disabled && !state.submitting[session.id]); }, [editor, disabled, session.id, state.submitting[session.id]]);
+  useEffect(() => { editor?.setEditable(!disabled && !state.submitting); }, [editor, disabled, session.id, state.submitting]);
   const chooseFiles = async () => {
     setBusy(true);
     try { const attachments = await store.rpc('attachments.choose', {}); for (const a of attachments) await composer.addAttachment(attachmentDescriptor(a)); }
@@ -132,6 +135,6 @@ export function Composer({store, session, composer, onSettings}: {store: ChatSto
   return <div className={`composer-zone${wide ? ' composer-wide' : ''}`}><div className="composer-stack">{completionOpen && <div className="completion-list" role="listbox" aria-label="命令补全">{matches.map((command, index) => <button key={command.id} type="button" role="option" aria-selected={index === highlight} className={`completion-item ${index === highlight ? 'selected' : ''}`} onMouseDown={event => { event.preventDefault(); acceptCompletion.current(index); }} onMouseEnter={() => setHighlight(index)}><code>/{command.names[0]}</code><span>{command.label}</span><small>{command.hint}</small></button>)}</div>}<ComposerPrimitive.Root ref={form} className="composer" onSubmitCapture={e => { if (composing.current || performance.now() - compositionEnd.current < 90 || busy) e.preventDefault(); }} onDrop={e => { if (e.dataTransfer.files.length) { e.preventDefault(); e.stopPropagation(); void addFiles(Array.from(e.dataTransfer.files)); } }} onDragOver={e => { if (e.dataTransfer.types.includes('Files')) e.preventDefault(); }}>
     <div className="editor-toolbar" role="toolbar" aria-label="文本格式"><IconButton label="加粗（Ctrl+B）" aria-pressed={editor?.isActive('bold')} onClick={() => editor?.chain().focus().toggleBold().run()}><Bold size={15}/></IconButton><IconButton label="斜体（Ctrl+I）" onClick={() => editor?.chain().focus().toggleItalic().run()}><Italic size={15}/></IconButton><IconButton label="行内代码" onClick={() => editor?.chain().focus().toggleCode().run()}><Code size={15}/></IconButton><IconButton label="项目列表" onClick={() => editor?.chain().focus().toggleBulletList().run()}><List size={15}/></IconButton></div>
     <div onInputCapture={e => { if (!(e.nativeEvent as InputEvent).isComposing) composing.current = false; }} onCompositionStartCapture={() => { composing.current = true; }} onCompositionEndCapture={() => { composing.current = false; compositionEnd.current = performance.now(); }}><EditorContent editor={editor}/></div><div className="attachment-list"><ComposerPrimitive.Attachments components={{Attachment: NativeAttachment}}/></div>
-    <div className="composer-actions"><button type="button" className="attach-button" disabled={busy} onClick={() => void chooseFiles()}><Paperclip size={16}/>{busy ? '导入中…' : '添加附件'}</button><ComposerStatus store={store} session={session} composer={composer} onSettings={onSettings}/><ComposerPrimitive.Cancel className="stop-button" aria-label="取消当前任务"><Square size={15}/>停止</ComposerPrimitive.Cancel><ComposerPrimitive.Send className="send-button" aria-label="发送消息" disabled={busy} onClickCapture={e => { if (composing.current || editor?.view.composing || performance.now() - compositionEnd.current < 90 || busy) { e.preventDefault(); e.stopPropagation(); } }}><ArrowUp size={20}/></ComposerPrimitive.Send></div>
+    <div className="composer-actions"><button type="button" className="attach-button" disabled={busy} onClick={() => void chooseFiles()}><Paperclip size={16}/>{busy ? '导入中…' : '添加附件'}</button><ComposerStatus store={store} session={session} composer={composer} onSettings={onSettings}/>{running ? <ComposerPrimitive.Cancel className="send-button" aria-label="暂停当前任务" title="暂停当前任务"><span className="send-loading-square" aria-hidden="true"/></ComposerPrimitive.Cancel> : <ComposerPrimitive.Send className="send-button" aria-label={submitting ? '正在发送' : '发送消息'} disabled={busy || submitting} onClickCapture={e => { if (composing.current || editor?.view.composing || performance.now() - compositionEnd.current < 90 || busy) { e.preventDefault(); e.stopPropagation(); } }}>{submitting ? <span className="send-loading-square" aria-hidden="true"/> : <ArrowUp size={20}/>}</ComposerPrimitive.Send>}</div>
   </ComposerPrimitive.Root></div>{preview && <AttachmentPreview preview={preview} onClose={() => setPreview(undefined)}/>}</div>;
 }

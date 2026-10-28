@@ -22,10 +22,10 @@ $native = Join-Path $stage 'Praat.exe'
 if ($LASTEXITCODE -ne 0) { throw 'Praat link failed' }
 # A binary recreated in this Low-labelled workspace launches as Low and cannot
 # write Medium status.json. Publish the FINAL object at Medium; hashes alone do
-# not cover this metadata. See docs/ai-frontend/windows-integrity-design.md.
+# not cover this metadata. See docs/CURRENT-IMPLEMENTATION.zh-CN.md.
 & (Join-Path $PSScriptRoot 'Publish-NativeExecutable.ps1') -Source $native -Destination $native -MediumDirectory (Split-Path -Parent $projectRoot)
 $test = Join-Path $stage 'PythonWaitTests.exe'
-& $compiler --driver-mode=g++ -std=gnu++17 -O2 (Join-Path $projectRoot 'test/sys/python_wait.cpp') -o $test -luser32 -static
+& $compiler --driver-mode=g++ -std=gnu++17 -O2 (Join-Path $projectRoot 'test/sys/python_wait.cpp') -o $test -luser32 -lcomctl32 -static
 if ($LASTEXITCODE -ne 0) { throw 'Python wait test compilation failed' }
 & $test
 if ($LASTEXITCODE -ne 0) { throw 'Python wait tests failed' }

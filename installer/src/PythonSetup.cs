@@ -11,7 +11,7 @@ namespace AIPraat.Setup
         public static ProcessStartInfo CreateStartInfo(string script,string python)
         {
             string shell=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),@"WindowsPowerShell\v1.0\powershell.exe");
-            return new ProcessStartInfo(shell,"-NoLogo -NoProfile -ExecutionPolicy Bypass -File "+PathValidation.QuoteArgument(script)+" -PythonPath "+PathValidation.QuoteArgument(python)) {
+            return new ProcessStartInfo(shell,"-NoLogo -NoProfile -ExecutionPolicy Bypass -File "+PathValidation.QuoteArgument(script)+" -PythonPath "+PathValidation.QuoteArgument(python)+" -InstallRoot "+PathValidation.QuoteArgument(RuntimeDependencies.InstallRoot)) {
                 UseShellExecute=true,WindowStyle=ProcessWindowStyle.Normal
             };
         }

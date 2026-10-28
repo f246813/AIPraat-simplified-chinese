@@ -1,4 +1,4 @@
-﻿param([Parameter(Mandatory=$true)][string]$PythonPath,[ValidateSet('Online','Local')][string]$Mode='Online',[ValidateSet('cpu','cuda')][string]$Device='cpu',[string]$PlanPath='',[string]$ResultPath='',[string]$LogPath='',[switch]$NoLog,[switch]$NoPause)
+﻿param([Parameter(Mandatory=$true)][string]$PythonPath,[ValidateSet('Online','Local')][string]$Mode='Online',[ValidateSet('cpu','cuda')][string]$Device='cpu',[string]$PlanPath='',[string]$ResultPath='',[string]$LogPath='',[switch]$NoLog,[switch]$NoPause,[string]$InstallRoot='')
 $ErrorActionPreference='Stop'
 [Console]::OutputEncoding=[Text.UTF8Encoding]::new($false)
 $env:PYTHONIOENCODING='utf-8'
@@ -13,7 +13,18 @@ if(-not (Test-Path -LiteralPath $probeScript)) {
     $requirementsFile=Join-Path $runtimeSource 'requirements.txt'
 }
 $installationError=''
-$logDirectory=Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'AIPraat/logs/runtime'
+if(-not $InstallRoot){$InstallRoot=if($env:PRAAT_AI_INSTALL_ROOT){$env:PRAAT_AI_INSTALL_ROOT}else{Split-Path -Parent (Split-Path -Parent $probeScript)}}
+$InstallRoot=[IO.Path]::GetFullPath($InstallRoot)
+$env:PRAAT_AI_INSTALL_ROOT=$InstallRoot
+$pipCache=Join-Path $InstallRoot 'cache/pip'
+$temporaryDirectory=Join-Path $InstallRoot 'cache/temp'
+New-Item -ItemType Directory -Path $temporaryDirectory -Force | Out-Null
+$env:TEMP=$temporaryDirectory
+$env:TMP=$temporaryDirectory
+foreach($entry in @(@('HF_HOME','cache/huggingface'),@('TORCH_HOME','cache/torch'),@('NUMBA_CACHE_DIR','cache/numba'))) {
+    if(-not [Environment]::GetEnvironmentVariable($entry[0])){[Environment]::SetEnvironmentVariable($entry[0],(Join-Path $InstallRoot $entry[1]))}
+}
+$logDirectory=Join-Path $InstallRoot 'logs/runtime'
 if($NoLog){$LogPath=''}
 elseif(-not $LogPath) {
     $LogPath=Join-Path $logDirectory ('install-'+[DateTime]::UtcNow.ToString('yyyyMMdd-HHmmss-fff')+'Z-'+[guid]::NewGuid().ToString('N').Substring(0,8)+'.log')
@@ -52,7 +63,7 @@ function Test-PipCacheFailure([string]$Text) {
 
 function Invoke-Pip([string[]]$Arguments) {
     Write-Host ('pip install '+($Arguments -join ' '))
-    $prefix=@('-I','-m','pip','--isolated','install','--disable-pip-version-check')
+    $prefix=@('-I','-m','pip','--isolated','install','--disable-pip-version-check','--cache-dir',$pipCache)
     $status=Invoke-Python -Arguments ($prefix+$Arguments)
     if($status -ne 0 -and (Test-PipCacheFailure $script:lastNativeOutput)) {
         Write-Host '检测到 pip 缓存错误；本次安装禁用缓存重试一次，其他安装仍使用缓存。'

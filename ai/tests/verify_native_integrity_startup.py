@@ -2,7 +2,7 @@
 
 Private preferences, synthetic audio and a Medium status.json reproduce the
 publication bug without touching the user's runtime or sending model requests.
-See docs/ai-frontend/windows-integrity-design.md.
+See docs/CURRENT-IMPLEMENTATION.zh-CN.md.
 """
 import argparse
 import ctypes

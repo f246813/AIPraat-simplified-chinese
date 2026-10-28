@@ -7,7 +7,7 @@
 默认在配置里的前两个预设之间来回切换，检查：
 
 1. 每次切换后端口上加载的模型和预设一致（读 ``/v1/models``）。
-2. 每次切换后 ``ai/logs/qwen-server.log`` 里加载的 mmproj 就是预设配的那个。
+2. 每次切换后 ``logs/qwen-server.log`` 里加载的 mmproj 就是预设配的那个。
 3. 切回原来的预设后，状态和日志都恢复正常。
 
 它不会被 ``unittest discover`` 收集，因为会真的停掉正在运行的模型服务。
@@ -26,7 +26,7 @@ from praat_ai.presets import find_preset   # noqa: E402
 
 
 PROJECT = Path(__file__).resolve().parents[2]
-LOG = PROJECT / "ai" / "logs" / "qwen-server.log"
+LOG = PROJECT / "logs" / "qwen-server.log"
 
 
 def loaded_mmproj() -> str:

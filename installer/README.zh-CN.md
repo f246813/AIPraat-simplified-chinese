@@ -33,7 +33,7 @@ WebView2 本地安装需要微软 x64 Evergreen 完整离线安装程序 `Micros
 
 联网补齐根据当前逐项检测结果，只把未就绪的项目加入安装清单，保留 requirements 的版本约束与 `[openai]` 扩展。界面把检测结果传给 PowerShell；单独运行脚本时，先检测以生成清单。安装后由 PowerShell 做一遍完整复检，界面直接显示返回结果；若结果缺失或失败，保持未就绪，可点击“重新检测”。保存路径或继续安装程序前的最终环境确认仍保留。
 
-pip 默认使用缓存。只有检测到缓存权限或损坏错误时，才禁用缓存重试一次；网络错误或 Python 目录写入权限错误不会触发此重试。检测及安装日志优先保存到 `%LOCALAPPDATA%\AIPraat\logs\runtime`，不可写时依次尝试 `%TEMP%\AIPraat\logs\runtime`、程序目录的 `logs\runtime`，文件名带 UTC 时间戳；尽力在旁边保存检测 JSON，安装还保存补齐清单和版本约束。所有日志目录均不可写时仍继续检测和配置，提示“日志未保存，不影响检测”，“查看本次日志”置灰。检测结果通过临时工作目录独立传回窗口；临时目录不可写时，工作文件依次回退到程序的 ai/runtime、logs/runtime/work 目录，使用后清理。关闭窗口或清理临时脚本后已保存的日志仍保留。独立 PowerShell 调用可用 `-LogPath` 自定义日志文件，或用 `-NoLog` 禁用日志。
+pip 默认使用安装目录的 `cache/pip` 缓存（通过显式 `--cache-dir` 传入，适用于 pip isolated 模式）。只有检测到缓存权限或损坏错误时，才禁用缓存重试一次；网络错误或 Python 目录写入权限错误不会触发此重试。检测及安装日志优先保存到安装目录的 `logs\runtime`，不可写时依次尝试 `%LOCALAPPDATA%\AIPraat\logs\runtime`、`%TEMP%\AIPraat\logs\runtime`，文件名带 UTC 时间戳；尽力在旁边保存检测 JSON，安装还保存补齐清单和版本约束。所有日志目录均不可写时仍继续检测和配置，提示“日志未保存，不影响检测”，“查看本次日志”置灰。检测结果通过安装目录的 `cache/temp` 独立传回窗口；该目录不可写时回退到系统临时目录，使用后清理。关闭窗口或清理临时脚本后已保存的日志仍保留。独立 PowerShell 调用可用 `-LogPath` 自定义日志文件，或用 `-NoLog` 禁用日志。
 
 向导和路径配置要求全部必需运行库及 FFmpeg 解码检测通过后才能安装或保存，不提供跳过环境配置的入口。MFA 程序及模型可选；模型通过资源管理或“添加模型路径”维护，不要求提前下载。路径配置保留现有模型和 API 设置并备份原配置；运行中的服务或对话窗口需重新启动后使用新的启动路径。云端 API 不要求本地 llama.cpp 和模型文件。
 
@@ -48,9 +48,13 @@ PowerShell 可独立调用（所有 pip 命令均使用所选解释器；以下�
 
 ## 路径保存位置
 
+托管数据默认随安装目录保存：`tools/ffmpeg` 为 FFmpeg，`tools/miniforge3` 为新安装的 Miniforge/MFA 环境，`models/mfa` 为 MFA 词典和声学模型，`models/Qwen3.5` 为模型下载，`cache` 为 pip、Conda、Hugging Face、Torch、Numba 缓存和下载临时文件，`logs` 为日志，`reports` 为发音分析报告。安装向导使用用户选定的目标目录；路径配置使用当前安装目录，与安装器 EXE 所在目录和进程工作目录无关。已有手动路径和显式缓存环境变量仍可使用；`PRAAT_AI_INSTALL_ROOT` 可指定托管数据根目录。词典选择器默认打开 `models/mfa/pretrained_models/dictionary`，声学模型选择器打开对应的 `acoustic` 目录。
+
+系统安装的 Python 包继续安装到所选 Python 环境，WebView2/Tcl-Tk 由各自安装器管理；Praat 首选项、消息文件和插件仍使用系统用户目录。MFA/Kaldi/OpenFst 需要纯 ASCII 工作和解压路径。安装路径为纯英文时，MFA 缓存使用 `models/mfa`；安装路径含中文时，运行缓存使用最近的纯英文父目录下 `AIPraat-mfa/<安装目录标识>`，词典和模型压缩包仍放在安装目录。MFA 对齐与 G2P 显式使用任务临时目录，结束后清理；现有 TEMP/TMP 设置继续生效。
+
 “前端 → 路径配置”在 Python 区域下方提供 FFmpeg 音频解码配置。可浏览已有 `ffmpeg.exe`，使用顶部“自动查找”，或在缺失时通过“安装 FFmpeg…”安装。检测先验证程序版本，再用随程序提供的 OGG 样本实际解码成 WAV；未通过时不能保存路径或继续安装。安装向导也保存 `ai/ai_config.json` 的 `audio.ffmpeg`；共享读取层在下一次备用解码时读取，无需重启来应用 FFmpeg 路径。
 
-一键安装使用 [FFmpeg 官网](https://ffmpeg.org/download.html)列出的 [Gyan Windows x64 构建](https://www.gyan.dev/ffmpeg/builds/)，下载 ZIP 和发布方 SHA-256，校验、解压并实际解码后安装到 `%LOCALAPPDATA%\AIPraat\ffmpeg`。不修改 PATH，不要求管理员权限。安装日志保存在 `%LOCALAPPDATA%\AIPraat\logs\ffmpeg`，失败时界面显示日志路径。也可独立运行：
+一键安装使用 [FFmpeg 官网](https://ffmpeg.org/download.html)列出的 [Gyan Windows x64 构建](https://www.gyan.dev/ffmpeg/builds/)，下载 ZIP 和发布方 SHA-256，校验、解压并实际解码后安装到 安装目录的 `tools\ffmpeg`。不修改 PATH；安装目录需可写。安装日志保存在安装目录的 `logs\ffmpeg`，失败时界面显示日志路径。也可独立运行：
 
 ```powershell
 .\ai\Install-FFmpeg.ps1
@@ -91,3 +95,18 @@ PowerShell 可独立调用（所有 pip 命令均使用所选解释器；以下�
 测试 runner 共用 `installer/tests/TestEnvironment.ps1`：默认先查项目及相邻目录的 `.venv`、`venv-ai-modern`、`venv-ai`，实际检查 Python 版本、架构和必需运行库，选择第一个已就绪环境。PATH 中的 WindowsApps Python 别名不参与默认选择；`-Python` 或环境变量 `AIPRAAT_TEST_PYTHON` 可明确指定解释器，显式选择未就绪时不会自动换环境，会在执行断言前提示“测试环境未就绪，请用 -Python 指定”。
 
 `Run-DependencyTests.ps1` 可无参数运行：FFmpeg 优先检查项目目录、`tools`、AIPraat 托管目录，再查 PATH；也可用 `-FFmpeg` 指定。验证图默认写入 `test-records/installer/dependency-discovery`，可用 `-OutputDirectory` 修改。直接执行底层测试 EXE 而缺少参数时会打印用法；初始化异常会打印异常类型和具体消息。
+
+## 实现与检查入口
+
+`WizardForm.cs` 与 `PathSettingsForm.cs` 共用 `DependencyPanel`。必需环境为 Python 运行库、
+FFmpeg 与变更路径校验；MFA 环境报告单列，不参与面板 Ready 的布尔条件。
+`PathSettings.SavePaths` 保存前重新检测，取得服务与配置锁，重读 JSON 后合并；模型／活动
+预设已被其他窗口切换时拒绝保存。`AlignmentPaths.Apply` 只合并路径，不改对齐后端或启用状态。
+当前非空 conda 字段由 `PutLauncher` 写入，清空文本不会清除已保存的 conda 启动方式。
+
+`InstallEngine.Run` 核对环境、运行中的目标进程与 ZIP 路径，再解包、合并配置并创建快捷方式；
+存在 payload 清单时逐文件核对 SHA256。写入使用备份与逐项替换，失败尝试恢复并报告恢复错误。
+源码、生成包与 EXE 内嵌负载分别核对。对齐探针见[对齐接口](../docs/PRONUNCIATION.zh-CN.md#对齐环境与资源接口)。
+
+检查脚本位于 `installer/tests/`：`Run-Tests.ps1` 为入口；路径、环境与资源检查按主题运行。
+真实安装需另用干净环境验证，测试窗口与预览页面不替代安装验收。

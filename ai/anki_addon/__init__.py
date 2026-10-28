@@ -126,17 +126,24 @@ def open_card(card):
 
 def render(text, card, kind):
     # Anki reuses the same document when the card or entry setting changes.
-    text += '<script>if(window.aipraatMagnifierHandler){document.removeEventListener("click",window.aipraatMagnifierHandler,true);window.aipraatMagnifierHandler=null;}</script>'
+    text += '<script>if(window.aipraatDetachButton)window.aipraatDetachButton();if(window.aipraatMagnifierHandler){document.removeEventListener("click",window.aipraatMagnifierHandler,true);window.aipraatMagnifierHandler=null;}</script>'
     if not audio_files(card):
         return text
     cfg = config()
-    if cfg.get('mode', 'button') in ('button', 'both'):
-        text += '<div style="margin:12px 0"><button onclick="pycmd(\'aipraat:open\');return false;">查看语图 · AIPraat</button></div>'
-    if cfg.get('mode') in ('magnifier', 'both'):
+    mode = cfg.get('mode', 'button')
+    if mode in ('button', 'both'):
+        text += ('<button id="aipraat-audio-button" type="button" title="点击查看语图；长按后拖动位置" '
+                 'style="position:fixed;left:12px;top:50%;transform:translateY(-50%);z-index:2147483647;'
+                 'margin:0;max-width:100vw;box-sizing:border-box;user-select:none;touch-action:none;cursor:grab;">'
+                 '查看语图 · AIPraat</button>')
+    if mode in ('button', 'magnifier', 'both'):
         script = (Path(__file__).parent / 'entry.js').read_text(encoding='utf-8')
         # Constants are read in Python; avoid redeclaration as cards change.
-        script = script[script.index('function aipraatAttachMagnifier'):]
-        text += '<script>' + script + ';setTimeout(()=>aipraatAttachMagnifier(' + json.dumps(cfg.get('magnifier_selector', '.search a')) + '),0);</script>'
+        script = script[script.index('function aipraatAttachButton'):]
+        attach = 'aipraatAttachButton();' if mode in ('button', 'both') else ''
+        if mode in ('magnifier', 'both'):
+            attach += 'aipraatAttachMagnifier(' + json.dumps(cfg.get('magnifier_selector', '.search a')) + ');'
+        text += '<script>' + script + ';' + attach + '</script>'
     return text
 
 

@@ -1,4 +1,4 @@
-"""tools 包的一个分片；行为与原 tools.py 完全一致。"""
+"""自定义及社区 Praat 脚本的校验和执行包装。"""
 from __future__ import annotations
 
 import json
@@ -34,18 +34,6 @@ PYTHON_SCRIPT_PATTERNS = re.compile(
 )
 
 
-# 会弹出「Praat Info」窗口的输出命令。脚本是交给 GUI 版 Praat 执行的，这些命令
-# 走 MelderInfo_* → gui_information()，于是每执行一次就把 Info 窗口顶到前面
-# （用户报的 bug，见 guide.md §8.5）。自定义脚本里一律**改写成写结果文件**，
-# 模型想让用户看到的内容一句都不许丢（参考 PraatPlugin 的 ADR-006：宁可原样带
-# 过去，也不要静默丢输出）：
-#   - 带值列表的 appendInfoLine / writeInfoLine / appendInfo / writeInfo 直接换成
-#     appendFileLine，参数原样带过去；
-#   - printline / print / echo 在 Praat 里是把这一行剩下的**字面文字**写给 Info
-#     窗口（不参与表达式求值，见 sys/praat_script.cpp），所以整段抄成一个字符串
-#     参数；
-#   - printtab 只写一个制表符、clearinfo 只管清空 Info 窗口，这两条没有可保留的
-#     内容，改成注释说明。
 INFO_LINE_PATTERN = re.compile(
     r"^(\s*)(appendInfoLine|writeInfoLine)\s*:(.*)$", re.IGNORECASE
 )
@@ -333,12 +321,7 @@ WHOLE_OBJECT_ONLY = frozenset({
 
 
 def _reject_unsupported_arguments(name: str, arguments: dict[str, Any]) -> None:
-    """执行前挡下「参数名不认识」和「这个工具不吃范围」。
-
-    所有工具的 schema 都没有 ``additionalProperties: false``，未知键会被 build 忽略：
-    用户说的单位、范围、上下限就这样消失了（2026-10-07 实测：``pitch_flor``、
-    ``spectral_emphasis`` 的 ``from``/``to`` 都是静默丢弃）。
-    """
+    """执行前拒绝未知参数及工具不支持的范围字段，避免 build 忽略用户要求。"""
 
     from .schema import TOOL_PARAMETERS  # 延迟导入：打断注册表 <-> builder 的环
     schema = TOOL_PARAMETERS.get(name) or {}

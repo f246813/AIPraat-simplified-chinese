@@ -1,4 +1,4 @@
-"""表格驱动的声学测量参数（B1）。
+"""表格驱动的声学测量参数。
 
 出处：chengafni/praat 的 ``plugin_CompleteAnalysis`` 把「生成哪些对象」
 (``objects.txt``)、「每个参数怎么查」(``queries.txt``)、「分析设置」

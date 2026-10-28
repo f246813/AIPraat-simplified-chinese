@@ -49,8 +49,10 @@ export function messageMenuEntries({text, hasEvidence}: {text: string; hasEviden
 
 export function conversationMenuEntries({hasMessages}: {hasMessages: boolean}): TranscriptMenuEntry[] {
   return [
+    // Full-session copy is a data-path operation; the selection item only ever covers the rows the
+    // virtual list currently shows, so its label says which of the two the reader is getting.
     {id: 'copy-conversation', label: '复制整个会话', disabled: !hasMessages},
-    {id: 'select-conversation', label: '选择会话文本', separatorBefore: true},
+    {id: 'select-conversation', label: '选择当前显示内容', separatorBefore: true},
     {id: 'scroll-top', label: '跳到顶部', separatorBefore: true},
     {id: 'scroll-bottom', label: '回到最新'},
   ];

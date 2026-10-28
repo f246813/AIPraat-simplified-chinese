@@ -46,7 +46,7 @@ describe('history organization snapshots',()=>{
     let resolve!:(value:unknown)=>void;let reads=0;
     const rpc=vi.fn(async(method:string)=>method==='bootstrap'?structuredClone(boot):method==='sessions.get'?(++reads===1?{session,messages:[]}:new Promise(r=>resolve=r)):method==='sessions.section'?{sessions:[{...session,sectionId:'section',sectionPosition:1000000}],sections:[section]}:{ok:true});
     const store=new ChatStore(rpc as Rpc);await store.initialize();const pending=store.load('a');await store.moveToSection('a','section');resolve({session:{...session,draft:'stale'},messages:[]});await pending;
-    expect(store.getSnapshot().sessions[0]).toMatchObject({sectionId:'section',draft:'saved',scroll:88});store.stop();
+    expect(store.getSnapshot().sessions[0]).toMatchObject({sectionId:'section'});expect(store.getView('a')).toMatchObject({draft:'saved',scroll:88});store.stop();
   });
   it('forks by the clicked session id and selects only the new independent session',async()=>{
     const fork={...session,id:'fork',title:'parent · 分叉',forkedFrom:'a',draft:'',scroll:0};

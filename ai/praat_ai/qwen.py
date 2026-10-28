@@ -45,16 +45,7 @@ PLANNER_MODE_ENV = "PRAAT_AI_PLANNER"
 
 
 def planner_mode() -> str:
-    """这次用哪种规划接口。
-
-    - ``tools``：把工具的 JSON Schema 放进 ``tools``，读模型返回的 ``tool_calls``
-      （llama-server 原生 function calling，实测本机 Qwen3.5-2B 支持，见
-      ai/docs/adr/ADR-003）。
-    - ``json``：老的「把工具清单和十几条规则写进提示词，让模型自己拼 JSON」。
-    - ``auto``（默认）：先走 ``tools``；模型既没给工具调用、也没给任何正文时退回
-      ``json``。换成不支持工具调用的服务端时，直接设 ``PRAAT_AI_PLANNER=json``
-      可以省掉这一趟。
-    """
+    """选择规划接口：tools 读取原生 tool_calls；json 读取 JSON 计划；auto 优先 tools，无调用且无正文时回退 json。环境变量 PRAAT_AI_PLANNER 可显式选择。"""
 
     value = os.getenv(PLANNER_MODE_ENV, "").strip().casefold()
     if value in {"json", "prompt", "legacy"}:
@@ -95,7 +86,7 @@ CLOUD_EVIDENCE_INSTRUCTIONS = """
 - 透明推导：可以用已知输入计算差值、比例、归一化结果等；说明输入来源、公式或
   计算方法、单位和适用条件，明确这是推导而非新增实测。输入缺失时不要补造数字。
 - 一般知识：能否用于解释与比较由下面的知识模式决定；它不能充当本次录音的证据。
-- 假设：把可能原因和待验证判断写成假设，说明不确定性及怎样验证，不作确定结论。
+- 假设：说明可能原因及验证方法。
 听感只能来自本轮真的收到的音频；对象列表、测量表、波形图片都不是听感证据。即使收到
 图像，也只能把图中可见内容当作图像证据。保留工具报告的未定义值、
 错误和限制，不得修改既有分数或冒充已完成尚未执行的操作。
@@ -131,7 +122,7 @@ Praat 英文脚本，绝对不能写 Python。Praat 字符串用双引号，单�
 appendFileLine 写到指定结果文件。只有用户提供新名字时才设置 name / new_name。
 
 回答要交付用户请求的实际结论、测量范围、解释或下一步；只回一句「已完成」等于没做。
-回答长度按问题需要决定，失败时明确说明尚未完成的部分及限制。
+回答长度按问题需要决定；失败时说明具体原因和可行下一步。
 """.strip()
 
 #: API 开放知识模式下的解释规则，不再叠加本地的数字/单操作限制。
@@ -142,8 +133,8 @@ WORLD_KNOWLEDGE_INSTRUCTIONS = """
 录音测量数字只能来自实际工具结果；透明推导必须说明已知输入和计算方法。
 引用“文献里的常见范围”时，明确这是一般知识而非本次测量，并说明语言、音素、说话者、
 测量方法等适用条件；范围没有可靠把握就使用定性描述，不能编造文献、来源或统一标准值。
-单凭少量声学指标不能确定发音是否标准、音素身份或健康状况；解释证据能支持什么、
-还有什么不确定，针对用户目标给出具体可实行的练习及验证方式。
+按用户目标解释相关观测，给出具体可实行的练习及验证方式；缺少判断依据时，
+说明具体缺少的参照或测量。
 """.strip()
 
 CLOUD_STRICT_KNOWLEDGE_INSTRUCTIONS = """
@@ -164,8 +155,7 @@ def identity_instructions(config: QwenConfig | None) -> str:
     model = str(getattr(config, "model", "") or "").strip() or "（未配置的模型）"
     if str(getattr(config, "provider", LOCAL_PROVIDER)) == API_PROVIDER:
         return (
-            f"当前配置的模型身份是 {model}；涉及模型身份时如实说明这个配置名称，"
-            "不要猜测服务端实际模型、厂商或声称已独立验证身份。\n"
+            f"当前配置的模型身份是 {model}；身份介绍使用此配置名称。\n"
             f"可以自然地回答，例如「我是 {model}，我被设置成 Praat 的前端。」；"
             "无需固定句式。用户问「我是谁」是询问用户身份，不能当成模型自我介绍；"
             "没有用户身份信息时如实说明。"
@@ -186,11 +176,20 @@ def knowledge_is_open(config: QwenConfig | None) -> bool:
 
 
 def planner_instructions(config: QwenConfig | None = None) -> str:
-    """按 provider 选择流程，知识模式仅决定 API 可以引用哪些解释依据。"""
+    """按 provider 选择流程，知识模式仅决定 API 可以引用哪些解释依据。
 
+    本地（llama.cpp）的 JSON 路径本来就在 ``knowledge_mode=open`` 时追加
+    ``WORLD_KNOWLEDGE_INSTRUCTIONS``；原生工具路径共用同一份提示词，这里补齐，
+    免得同一个开关在两条路径上表现不一致。strict 仍然只发本地保守流程。
+    """
+
+    knowledge = WORLD_KNOWLEDGE_INSTRUCTIONS if knowledge_is_open(config) else ""
     if str(getattr(config, "provider", LOCAL_PROVIDER)) == API_PROVIDER:
         return CLOUD_WORKFLOW_INSTRUCTIONS + "\n\n" + analysis_instructions(config)
-    return TOOL_PLANNER_INSTRUCTIONS + "\n\n" + identity_instructions(config)
+    local = "\n\n".join(
+        part for part in (TOOL_PLANNER_INSTRUCTIONS, knowledge, identity_instructions(config)) if part
+    )
+    return local
 
 
 def analysis_instructions(config: QwenConfig) -> str:
@@ -682,7 +681,7 @@ class QwenClient:
             payload["max_tokens"] = max_tokens
         # 思考档位：云端是 reasoning_effort，本地是 chat_template_kwargs
         # （llama.cpp 专有：用模型自带的 chat 模板，多轮里把工具结果作为
-        # role=tool 回灌，没有这一条小模型会跑偏，见 ADR-004）。
+        # role=tool 回灌）。
         fields = thinking_request_fields(self.config)
         rejected = rejected_thinking_fields(self.base_url)
         fields = {
@@ -1015,7 +1014,7 @@ tool 只能是工具清单中的名称或 custom_script；自定义脚本放 arg
 输出：{"reply": "查询该时刻的第一、第二共振峰。", "tool": "formant_frequency", "arguments": {"object": 7, "formant": "1,2", "time": 0.4}, "script": ""}
 用户：导入 D:/in/a.wav
 输出：{"reply": "读取声音文件。", "tool": "read_file", "arguments": {"path": "D:/in/a.wav"}, "script": ""}
-已有观测足够回答时：{"reply": "在此填写观测、必要的透明推导、解释和限制。", "tool": "", "arguments": {}, "script": ""}
+已有观测足够回答时：{"reply": "在此填写观测、必要的透明推导和解释。", "tool": "", "arguments": {}, "script": ""}
 """.strip()
         context_message = "\n".join(
             [
@@ -1058,7 +1057,7 @@ tool 只能是工具清单中的名称或 custom_script；自定义脚本放 arg
         cloud = self.config.provider == API_PROVIDER
         system_prompt = (
             analysis_instructions(self.config)
-            + "\n\n你是发音训练助手。依据给定结果解释偏差，回答用户目标并说明证据和限制；"
+            + "\n\n你是发音训练助手。依据给定结果解释偏差，回答用户目标并引用相关证据；"
             "开放知识模式下可提供原理与可验证的练习建议，不得修改既有分数。"
             if cloud else
             "你是发音训练助手。根据给定数值解释发音偏差，"
@@ -1074,7 +1073,7 @@ tool 只能是工具清单中的名称或 custom_script；自定义脚本放 arg
                 "content": (
                     f"请求：{json.dumps(request, ensure_ascii=False)}\n"
                     f"分析结果：{json.dumps(result, ensure_ascii=False)}"
-                    + ("\n音位判据说明：观察不等于发音错误；保持实验性、未评估及证据不足状态，不得推断未执行的音素识别或给出总分。" if result.get("profile_snapshot") else "")
+                    + ("\n按各音位的测量、判据状态和缺测原因解释差异；未执行的识别和评分保持未评估。" if result.get("profile_snapshot") else "")
                 ),
             },
         ]
@@ -1119,7 +1118,7 @@ tool 只能是工具清单中的名称或 custom_script；自定义脚本放 arg
                         "text": (
                             f"请求：{json.dumps(request, ensure_ascii=False)}\n"
                             f"分析结果：{json.dumps(result, ensure_ascii=False)}"
-                            + ("\n音位判据说明：图表仅为实验性声学观察，不能判定发音对错；保留未评估与证据不足状态。" if result.get("profile_snapshot") else "")
+                            + ("\n结合图中声学特征和各音位判据解释差异，保留未评估状态和具体缺测原因。" if result.get("profile_snapshot") else "")
                         ),
                     },
                 ],

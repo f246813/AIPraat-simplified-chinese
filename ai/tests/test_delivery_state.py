@@ -103,33 +103,30 @@ class ReportContextTests(unittest.TestCase):
         config = AppConfig()
         config.api.model = 'review-fixture'
         clean = AnalysisState('测量选中这段的vot', CONTEXT)
-        self.assertNotIn('不能把投递或环境故障写成模型能力不足', self.guidance(config, clean))
+        self.assertNotIn('skill=failure', self.guidance(config, clean))
         failed = AnalysisState('测量选中这段的vot', CONTEXT)
         failed.attempts = [{'tool':'export_original_audio', 'status':'failed', 'reason':MESSAGE_FILE_ERROR}]
         text = self.guidance(config, failed)
-        self.assertIn('不能把投递或环境故障写成模型能力不足', text)
-        self.assertIn('不能据此说无法测量', text)
+        self.assertIn('具体失败原因', text)
+        self.assertIn('成功测量照常交付', text)
+        self.assertIn('Praat 测量仍使用桌面声音对象', text)
         paused = AnalysisState('测量选中这段的vot', CONTEXT)
         paused.failures = {'vot':2}
-        self.assertIn('不能把投递或环境故障写成模型能力不足', self.guidance(config, paused))
+        self.assertIn('skill=failure', self.guidance(config, paused))
         self.assertEqual(report_instructions(config, clean), report_instructions(config, failed))
 
-    def test_report_requires_arithmetic_before_claiming_a_segment_position(self):
-        """2026-10-04：报告阶段没有工具，只有数字。
-
-        三次实测：把含「た」爆破点的选段说成「词首清辅音之前」、直接断言「目标音素是
-        /a/」、以及跳过定位直接谈音素（「第一个元音 a 前的辅音是 /n/」）。所以选段定位
-        必须是报告的第一节；对话类目标不付这笔提示词开销（4096 上下文的续写预检只剩
-        十几 token 余量）。
-        """
+    def test_report_places_segments_from_evidence_without_a_mandatory_section(self):
+        """定位使用实际边界，单项测量直接交付结果。"""
 
         for goal in ('与标准音对比，指出发音不足之处与待改进点', '分析选中这段的vot'):
             with self.subTest(goal=goal):
                 text = self.guidance(AppConfig(), AnalysisState(goal, CONTEXT))
-                self.assertIn('报告开头先写一节「选段定位」', text)
-                self.assertIn('不要凭对象名猜一个假名或音素', text)
+                self.assertIn('实际对齐区间或人工标注', text)
+                self.assertIn('不凭对象名猜音素', text)
+                self.assertIn('单项声学测量直接给出所求结果', text)
+                self.assertNotIn('报告开头先写一节', text)
         plain = self.guidance(AppConfig(), AnalysisState('直接听原始音频', CONTEXT))
-        self.assertNotIn('报告开头先写一节「选段定位」', plain)
+        self.assertNotIn('skill=placement', plain)
 
     def test_report_refuses_an_accent_claim_without_a_pitch_contour(self):
         """2026-10-04：只拿全段平均基频 81.6 Hz 就断言「あなた」是平板型，并据此给出

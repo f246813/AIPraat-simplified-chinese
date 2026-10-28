@@ -8,6 +8,7 @@
 .mfa-editor input:not([type=checkbox]),.mfa-editor select,.mfa-editor button { min-height:44px; }
 .mfa-resource { display:flex; gap:10px; align-items:end; margin:12px 0; }
 .mfa-resource label { flex:1; }
+.mfa-custom-identity { display:grid; gap:12px; margin-top:12px; }
 .mfa-resource button { flex-shrink:0; }
 .mfa-editor .mfa-check { flex-direction:row; align-items:start; gap:10px; margin:14px 0; }
 .mfa-check input[type=checkbox] { margin-top:3px; }
@@ -15,6 +16,7 @@
 .mfa-editor summary { cursor:pointer; min-height:44px; }
 .mfa-editor textarea { min-height:140px; font-family:Consolas,monospace; padding:10px; resize:vertical; }
 .mfa-editor .actions { display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; margin-top:18px; }
+.mfa-launcher-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:12px; }
 .mfa-note,.mfa-status { color:var(--muted); font-size:12px; overflow-wrap:anywhere; }
 .mfa-note { background:var(--soft); border-radius:8px; padding:10px 12px; }
 .mfa-status { background:transparent; border-top:1px solid var(--border); padding:10px 0; }
@@ -30,7 +32,6 @@
 .mfa-check-name { display:block; font-weight:550; }
 .mfa-check-detail { display:block; color:var(--text); }
 .mfa-check-repair { display:block; color:var(--muted); }
-.mfa-discard { border:1px solid var(--bad); padding:12px; border-radius:8px; }
 @media(max-width:540px) {
   .mfa-resource { flex-direction:column; align-items:stretch; }
   .mfa-resource button { align-self:start; }

@@ -40,7 +40,7 @@ SETTINGS = {
     'extractor': 'praat-parselmouth-burg', 'time_step_sec': 0.01,
     'max_number_of_formants': 5.0, 'maximum_formant_hz': 5500.0,
     'window_length_sec': 0.025, 'pre_emphasis_from_hz': 50.0,
-    'sampling': 'basic-rms-frame-centers-v1',
+    'sampling': 'burg-observation-centres-v2',
 }
 CONFIG_KEYS = ('language', 'profile_id', 'reading_id', 'normalization_version',
                'protocol', 'measurement_settings', 'normalization_options')
@@ -49,7 +49,8 @@ PROSODY_OPTIONS = dict(pitch=True, pitch_confirmed=True,
                        pitch_baseline_mode='utterance', loudness=True)
 # Reviewed prosody protocol: the runner refuses to analyse when the live core drifts from it.
 PITCH_PROTOCOL = 'neutral-phrase-median-log2-v1'
-PITCH_EXTRACTION = dict(extractor='praat-parselmouth-autocorrelation', time_step_sec=.01,
+PITCH_EXTRACTION = dict(extractor='praat-parselmouth-filtered-autocorrelation', time_step_sec=.01,
+                        attenuation_at_top=.03, silence_threshold=.09,
                         octave_suspicion_st=[11, 13], maximum_adjacent_gap_sec=.03)
 TARGET_LUFS = -23.0
 

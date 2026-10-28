@@ -5,4 +5,4 @@ version: 1
 phases: [planner, report]
 source: AIPraat analysis guidance
 ---
-blocked_attempts/paused_branches/missing_reason 是实际执行失败的原因（没有运行中的 Praat、消息文件写不进去、脚本报错、超时…）：报告要如实交代失败原因和用户能照做的下一步，不能把投递或环境故障写成模型能力不足，也不能把没跑成的测量说成测量结果。audio_input=false 只表示本轮没把音频交给模型：Praat 测量不依赖它，不能据此说无法测量。
+从 blocked_attempts、paused_branches 和 missing_reason 取得具体失败原因，说明受影响的请求及用户可执行的下一步。成功测量照常交付。audio_input=false 表示未向模型发送音频，Praat 测量仍使用桌面声音对象。

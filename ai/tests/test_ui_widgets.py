@@ -332,5 +332,20 @@ class ChipAndSnackbarTests(WidgetTestCase):
         self.assertEqual(self.theme.listener_count(), 0)
 
 
+
+def tearDownModule():
+    # 模块级共用 root 必须在主线程销毁并回收：否则后端线程的下一次 GC 会析构它，
+    # 触发 Tcl_AsyncDelete（async handler 是在主线程注册的）。
+    global _SHARED_ROOT
+    import gc
+
+    root, _SHARED_ROOT = _SHARED_ROOT, None
+    if root is not None:
+        try:
+            root.destroy()
+        except tk.TclError:
+            pass
+    gc.collect()
+
 if __name__ == "__main__":
     unittest.main()

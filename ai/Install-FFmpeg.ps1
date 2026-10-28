@@ -1,15 +1,19 @@
 ﻿param(
-    [string]$InstallDirectory = (Join-Path $env:LOCALAPPDATA 'AIPraat\ffmpeg'),
+    [string]$InstallDirectory = '',
     [string]$ArchivePath = '',
-    [string]$ExpectedSha256 = ''
+    [string]$ExpectedSha256 = '',
+    [string]$InstallRoot = $(if($env:PRAAT_AI_INSTALL_ROOT){$env:PRAAT_AI_INSTALL_ROOT}else{Split-Path -Parent $PSScriptRoot})
 )
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Console]::OutputEncoding
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$installRoot = [IO.Path]::GetFullPath($InstallDirectory)
-$stage = Join-Path ([IO.Path]::GetTempPath()) ('aipraat-ffmpeg-download-' + [Guid]::NewGuid().ToString('N'))
-New-Item -ItemType Directory -Path $stage | Out-Null
+$InstallRoot = [IO.Path]::GetFullPath($InstallRoot)
+if(-not $InstallDirectory){$InstallDirectory=Join-Path $InstallRoot 'tools/ffmpeg'}
+$ffmpegDirectory = [IO.Path]::GetFullPath($InstallDirectory)
+$stageRoot = Join-Path $InstallRoot 'cache/temp'
+$stage = Join-Path $stageRoot ('aipraat-ffmpeg-download-' + [Guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $stage -Force | Out-Null
 try {
     if (-not $ArchivePath) {
         $url = 'https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip'
@@ -36,19 +40,19 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'FFmpeg 检测样本生成失败。' }
     & $executable -nostdin -v error -i $compressedProbe -map 0:a:0 -vn -c:a pcm_s24le -y $probe
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $probe)) { throw 'FFmpeg 实际 OGG 解码检测失败。' }
-    New-Item -ItemType Directory -Path $installRoot -Force | Out-Null
-    $target = Join-Path $installRoot 'ffmpeg.exe'
+    New-Item -ItemType Directory -Path $ffmpegDirectory -Force | Out-Null
+    $target = Join-Path $ffmpegDirectory 'ffmpeg.exe'
     Copy-Item -LiteralPath $executable -Destination ($target + '.new') -Force
     Move-Item -LiteralPath ($target + '.new') -Destination $target -Force
     foreach ($name in @('LICENSE','LICENSE.txt','README.txt')) {
         $license = @(Get-ChildItem -LiteralPath $unpacked -Recurse -File -Filter $name)
-        foreach ($file in $license) { Copy-Item -LiteralPath $file.FullName -Destination (Join-Path $installRoot $name) -Force }
+        foreach ($file in $license) { Copy-Item -LiteralPath $file.FullName -Destination (Join-Path $ffmpegDirectory $name) -Force }
     }
     Write-Output ('已安装：' + $target)
     Write-Output $version[0]
 } finally {
     $resolvedStage = [IO.Path]::GetFullPath($stage)
-    $tempRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\') + '\'
+    $tempRoot = [IO.Path]::GetFullPath($stageRoot).TrimEnd('\') + '\'
     if ($resolvedStage.StartsWith($tempRoot,[StringComparison]::OrdinalIgnoreCase) -and [IO.Path]::GetFileName($resolvedStage).StartsWith('aipraat-ffmpeg-download-')) {
         Remove-Item -LiteralPath $resolvedStage -Recurse -Force
     }

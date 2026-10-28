@@ -9,6 +9,7 @@ foreach($name in @('Test-PipCacheFailure','Invoke-Pip')) {
     . ([scriptblock]::Create($function.Extent.Text))
 }
 $script:attempts=@();$script:errors=@();$script:codes=@()
+$pipCache=Join-Path $PSScriptRoot 'cache fixture/pip'
 function Invoke-Python([string[]]$Arguments) {
     $index=$script:attempts.Count
     $script:attempts+=,@($Arguments)
@@ -20,6 +21,8 @@ function Case($name,$messages,$codes,$expectedAttempts,$expectedCode) {
     $result=Invoke-Pip -Arguments @('--prefer-binary','pillow>=10.0')
     if($result -ne $expectedCode -or $script:attempts.Count -ne $expectedAttempts){throw "${name}: wrong retry count/exit code"}
     if($script:attempts[0] -contains '--no-cache-dir'){throw "${name}: initial install disabled cache"}
+    $cacheIndex=[array]::IndexOf($script:attempts[0],'--cache-dir')
+    if($cacheIndex -lt 0 -or $script:attempts[0][$cacheIndex+1] -ne $pipCache){throw "${name}: installation cache was not passed to isolated pip"}
     if($expectedAttempts -eq 2 -and $script:attempts[1] -notcontains '--no-cache-dir'){throw "${name}: retry did not disable cache"}
     Write-Output "PASS $name"
 }

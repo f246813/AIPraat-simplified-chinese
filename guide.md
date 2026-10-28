@@ -1,398 +1,82 @@
-# Praat 中文版维护指南
+# 开发与维护
 
-本文件说明翻译源、原生界面、构建入口与 AI 前端的维护方式。所有项目文档和代码注释只描述已核实的当前状态，不记录 AI 历史修改、临时开发阶段或已被取代的决策。采用新决策后直接更新现状描述，不保留废弃决策的叙事。未确认的实现偏差不得写成新业务规则；应区分源码事实、已复现缺陷和待核实事项。第三方出处、许可证和原始测试证据按其用途保留。
+从[文档索引](docs/README.md)按任务阅读；维护规则见 [AGENTS.md](AGENTS.md)，模块职责见[当前实现](docs/CURRENT-IMPLEMENTATION.zh-CN.md)。文档与注释只保留现状，不保存阶段规划、执行流水或被替代的决策。
 
-## 0. 接任务后的默认动作
+## 翻译与原生构建
 
-1. 先看工作区状态，不要覆盖用户已有改动：
+- UI 映射源为 `tools/generate_translation_map.py::EXACT_MAP`，运行脚本生成 `sys/praat_translate.cpp`。
+- 手册正文维护各模块 `manual_*.cpp`，`docs/manual/` 为生成结果；`MAN_BEGIN` 名称与链接目标保持一致。
+- 术语源为 `tools/build_glossary.py::MANUAL_OVERRIDES`；GUI 控件与报错入口在 `sys/Gui*.cpp`、`sys/Ui.cpp` 及具体调用方核对。
+- Windows 使用 MSYS2 CLANG64 和根 Makefile，例如 `make PRAAT_COMPILER=clang PRAAT_ARCH=x64v3 -j2`。其他平台见[上游构建说明](HOW_TO_BUILD_ONE.md)。
 
-   ```powershell
-   git status --short
-   git diff --stat
-   ```
+C++、翻译表和手册源修改需要重建 Praat。Python 修改后重开 AI 窗口；前端修改后重新构建并重开窗口加载资源。Windows 发布需满足[文件与进程完整性要求](docs/CURRENT-IMPLEMENTATION.zh-CN.md#windows-发布)。
 
-2. 再按任务类型定位源码：
+## 后端检查
 
-   - UI / 菜单 / 对话框文字：优先看 `tools/generate_translation_map.py` 和 `sys/praat_translate.cpp`。
-   - 内置帮助手册：看 `fon/manual_*.cpp`，必要时用抽取脚本生成双语审校材料。
-   - Windows 文件拖拽：看 `sys/motifEmulator.cpp`、`sys/GuiMenu.cpp`、`sys/praat_objectMenus.cpp`。
-   - 启动时图像窗口隐藏：看 `sys/praat_picture.cpp` 和 `sys/praat_objectMenus.cpp`。
-   - 发布打包：看 `installer/build.ps1`、`installer/publish-release.ps1` 和 `.github/workflows/release.yml`，具体环境要求见 `installer/README.zh-CN.md`。
-   - AI 对话、测量与双音频纠音：看 `ai/praat_ai/`；先读 `docs/CURRENT-IMPLEMENTATION.zh-CN.md` 和 `handoff/AI-MODULE.zh-CN.md`，验证入口见 `ai/docs/validation.zh-CN.md`。
-
-3. 修改前先读相关上下文。不要只凭英文字符串全局替换；Praat 有大量手写宏、菜单别名和旧拼写，错误替换很容易导致启动时报错或 UI 不匹配。
-
-4. 如果用户给的是截图里的“漏网之鱼”，先把截图转成受控清单和定位表，不要立刻做全仓库审计。清单越窄，修改越快也越安全。
-
-## 1. 项目现状速览
-
-本仓库是 Praat 源码的非官方简体中文本地化版本，不是基于 gettext/Qt/i18n 框架的普通翻译项目。当前中文化主要由三部分组成：
-
-- 运行时 UI 翻译：`sys/praat_translate.cpp` 中的 `g_translation_map`，通过 `praat_translate()` 被 GUI 和表单代码调用。
-- 内置手册翻译：直接改 `fon/manual_*.cpp` 中的 Praat 手册源字符串。
-- 本地化功能差异：Windows 原生拖拽打开文件、启动时默认隐藏 Picture window，并在 Objects 窗口的 Praat 菜单提供打开入口。
-
-当前仓库还包含若干用于抽取、恢复、审校翻译的 Python 脚本和中间产物。永久性翻译维护应优先改规范源头，不要把临时审校输出当作唯一真相。
-
-## 2. UI 翻译工作流
-
-### 2.1 真正的入口
-
-UI 翻译运行时入口是：
-
-- `sys/praat_translate.h`
-- `sys/praat_translate.cpp`
-
-翻译函数已接入这些常见控件路径：
-
-- `sys/GuiButton.cpp`
-- `sys/GuiCheckButton.cpp`
-- `sys/GuiDialog.cpp`
-- `sys/GuiLabel.cpp`
-- `sys/GuiMenu.cpp`
-- `sys/GuiMenuItem.cpp`
-- `sys/Ui.cpp`
-
-如果某个新 UI 文本完全没有被翻译，先确认它是否经过上述 GUI/Ui 创建路径。不要只往翻译表里加词条后就假定完成。
-
-### 2.2 推荐修改方式
-
-`sys/praat_translate.cpp` 是可编译产物，但当前更稳的维护入口是 `tools/generate_translation_map.py` 里的 `EXACT_MAP`。
-
-常规流程：
-
-1. 在源码中找到未翻译英文原文，保持原文逐字符准确。
-2. 在 `tools/generate_translation_map.py` 的 `EXACT_MAP` 里添加或修正映射。
-3. 运行生成脚本：
-
-   ```powershell
-   python tools/generate_translation_map.py
-   ```
-
-4. 检查生成结果：
-
-   ```powershell
-   git diff -- tools/generate_translation_map.py sys/praat_translate.cpp
-   Get-Content -TotalCount 40 tools/debug_translations.txt
-   Get-Content -TotalCount 40 tools/translation_candidates.txt
-   ```
-
-5. 需要给其他 AI 或人工审校导出翻译库时，再运行：
-
-   ```powershell
-   python tools/extract_translations.py
-   ```
-
-注意：
-
-- `tools/debug_translations.txt` 和 `tools/translation_candidates.txt` 是生成/审校辅助文件，默认被 `.gitignore` 忽略，不要把它们当作需要发布的源码。
-- `tools/praat_translations.json` 和 `tools/praat_translations.txt` 是从 `EXACT_MAP` 导出的参考资料，不是运行时读取的文件。
-- `recovered_exact_map.py` 和 `scratch/` 更像恢复或实验材料。除非任务明确要求恢复旧翻译，否则不要把它们并回主流程。
-
-### 2.3 匹配规则和坑
-
-翻译键必须精确匹配 Praat 传入 `praat_translate()` 的原文。
-
-- 保留上游拼写错误。例如当前有 `"- Draw spectogram to picture window:"`，这里的 `spectogram` 少了 `r`，但必须照抄。
-- 保留前后缀、空格、冒号、省略号、换行和别名分隔符。`"Open Picture window"`、`"Open Picture window..."`、`"- Query pitch:"` 是不同键。
-- `tools/generate_translation_map.py` 会按 Python `sorted()` 输出 `g_translation_map`，不要手动维护排序。
-- 中文在生成的 C++ 里会转为 `\uXXXX` 形式，这是脚本行为。不要手写一半 UTF-8、一半转义导致 diff 难审。
-- `praat_translate()` 只额外处理前导空格复用；其他变化不会自动模糊匹配。
-
-### 2.4 什么时候可以直接改 `sys/praat_translate.cpp`
-
-只有在做非常小的临时验证时才考虑直接改生成后的 C++。如果最终要保留改动，必须同步回 `tools/generate_translation_map.py`，否则下一次运行脚本会把改动覆盖。
-
-### 2.5 截图漏网 UI 的高效处理
-
-当用户只给截图并说“把这些漏网之鱼翻译一下”时，不要从截图直接扩展成全项目翻译审计。先要求或自行整理一个最小清单：
-
-```text
-类型：菜单 / 按钮 / 对话框 / 弹窗 / 手册
-英文原文：Extract intervals
-建议中文：提取区间
-出现场景：TextGrid 编辑器菜单
-截图：用户已附
-备注：只处理本条，不扩大到相邻菜单
-```
-
-推荐执行顺序：
-
-1. 先抄出截图中可见的英文原文，保持大小写、冒号、省略号和前后空格。
-2. 给出定位表，再动手修改：
-
-   ```text
-   英文原文 | 类型 | 命中的文件 | 修改入口 | 建议中文 | 状态
-   ```
-
-3. 每个英文原文优先做精确搜索，搜索预算控制在 2 次左右。找不到就列入“未定位”，不要因为一个短词把全仓库都扫一遍。
-4. 普通 UI / 菜单 / 按钮优先回到 `tools/generate_translation_map.py` 的 `EXACT_MAP`；确认不经过 `praat_translate()` 时，才继续追具体 GUI 创建路径。
-5. 弹窗、报错、警告要单独标记。许多 `Melder_throw` / `Melder_warning` 文案可能不经过普通 UI 翻译表，不要硬塞进 `EXACT_MAP` 后就宣称完成。
-6. 用户只要求修截图里的几条时，不要生成大而全的 `implementation_plan.md`；定位表足够，确认后直接按清单改。
-
-可直接复用的任务提示：
-
-```text
-请根据下面的漏网英文清单补翻译。不要做全项目审计，不要写 implementation_plan。
-只处理我列出的字符串；每个字符串最多精确搜索 2 次，找不到就报告未定位。
-
-规则：
-1. 普通 UI / 菜单 / 按钮优先修改 tools/generate_translation_map.py，并按项目流程更新 sys/praat_translate.cpp。
-2. 手册正文只修改 fon/manual_*.cpp，不修改 docs/manual 生成结果。
-3. 弹窗 / 报错单独标记；如果不经过 praat_translate，不要硬塞进 EXACT_MAP。
-4. 修改前先给出“英文原文 | 位置 | 修改入口 | 建议中文”的定位表。
-5. 我确认后再执行修改。
-
-漏网清单：
-- ...
-```
-
-## 3. 内置帮助手册工作流
-
-### 3.1 真正的入口
-
-内置手册位于各模块的 `manual_*.cpp`，其中高频文件包括：
-
-- `fon/manual_tutorials.cpp`
-- `fon/manual_annotation.cpp`
-- `fon/manual_sound.cpp`
-- `fon/manual_soundFiles.cpp`
-- `fon/manual_glossary.cpp`
-- `fon/manual_Fon.cpp`
-
-这些文件不是 Markdown。它们使用 Praat 自研手册宏，例如 `MAN_BEGIN`、`INTRO`、`NORMAL`、`LIST_ITEM`、`ENTRY`、`TERM`。
-
-### 3.2 手册漏网内容的快速定位
-
-手册相关任务也不要从 `docs/manual/*.html` 或全仓库英文短词开始搜。更高效的定位顺序是：
-
-1. 如果截图或页面顶部能看到手册页标题，先精确搜索标题：
-
-   ```powershell
-   rg -n 'MAN_BEGIN\s*\(\s*U"TextGridEditor"' fon dwtools stat gram
-   ```
-
-   如果标题来自生成的 HTML 文件名，例如 `TextGridEditor.html`，优先回到 `fon/manual_*.cpp` 查对应 `MAN_BEGIN`。
-
-2. 如果只有正文里的英文短句，先限定手册源文件：
-
-   ```powershell
-   rg -n -F "every interval whose label" fon/manual_*.cpp
-   rg -n -F "every interval whose label" dwtools/manual_*.cpp stat/manual_*.cpp gram/manual_*.cpp
-   ```
-
-3. 如果短句太普通，例如 `the text`、`is equal to`、`click`，不要直接全仓库扫。先结合截图里的页面标题、对象名、菜单名、章节名或相邻句子扩大成更长的搜索片段。
-4. 定位到页面后，只改包含该页面的 `manual_*.cpp` 段落；不要修改 `docs/manual/*.html`，这些是生成产物。
-5. 找不到源头时，输出“未定位：英文原文 + 已搜索范围 + 下一步建议”，不要为了凑结果扩大成手册全量审计。
-
-手册漏网清单建议使用这种格式：
-
-```text
-页面标题：TextGridEditor
-英文原文：every interval whose label...
-建议中文：每个标签为……的区间
-源文件范围：fon/manual_annotation.cpp 优先
-是否允许调整链接文本：否，链接目标保持英文
-```
-
-现有 `tools/extract_full_manuals_bilingual.py` 和 `tools/extract_manuals_bilingual.py` 更适合“已有手册改动后的审校”，不是截图漏网任务的第一步。截图漏网任务应先定位源文件和页面，再按需要运行脚本导出审校材料。
-
-### 3.3 链接和页面标题规则
-
-手册最容易踩坑的是 dangling link。
-
-- `MAN_BEGIN (U"PageTitle", ...)` 的页面标题必须保持官方英文标题，除非你同时能证明所有引用都同步更新且不会破坏上游页面查找。
-- `@PageTitle` 和 `@@PageTitle@` 中的链接目标必须是存在的英文页面标题。
-- 如需显示中文链接文本，用这种形式：
-
-  ```cpp
-  NORMAL (U"请参见 @@waveform|波形图@。")
-  ```
-
-- 不要写成 `@波形图` 或 `@@波形图@`，这会让 Praat 在启动/打开手册时查找不存在的页面。
-- `##Command#`、`%emphasis%`、`\xx`、`\uXXXX`、`@@Page|label@` 这些标记要按 Praat 语法保留。
-
-### 3.4 审校辅助脚本
-
-当前有两条脚本路径，但要注意它们的比较基准：
-
-- `tools/extract_full_manuals_bilingual.py`：从当前源码和 `git show HEAD:<file>` 抽取核心页面，输出 `tools/manuals_bilingual_review.txt`。因为当前 `HEAD` 已经包含中文手册翻译，所以它不能稳定代表“官方英文原文”；更适合在你刚做了未提交手册改动时查看当前工作区相对 HEAD 的变化。
-- `tools/extract_manuals_bilingual.py`：基于 `git diff fon/` 提取未提交 diff。只适合当前有手册改动时使用。
-- 如果需要真正的上游英文原文，应改用 `upstream/master` 或匹配发布版本的上游 tag，例如 `git show upstream/master:fon/manual_tutorials.cpp`，然后再和当前中文源码对照。
-
-使用建议：
+在仓库根目录使用满足 `ai/requirements.txt` 的项目 Python：
 
 ```powershell
-python tools/extract_full_manuals_bilingual.py
+$env:PYTHONPATH = 'ai;ai/tests'
+python -m compileall -q ai/praat_ai
+python -c "from praat_ai.capabilities import analysis_capabilities; assert analysis_capabilities()['ready']"
+python -m unittest discover -s ai/tests
 ```
 
-或在有手册 diff 后：
+按修改范围可先运行相关用例：
+
+| 范围 | `ai/tests/` 中的入口 |
+| --- | --- |
+| 云端协议、上下文与缓存 | `test_phase_context`、`test_cloud_protocol`、`test_dialogue_protocol`、`test_cloud_escape` |
+| 工具、证据与报告 | `test_tool_guards`、`test_report_guards`、`test_evidence_consistency`、`test_report_chain_regressions` |
+| 投递与取消 | `test_delivery_state`、`test_alignment_control` |
+| 本地规划与数值推导 | `test_explanation_guard`、`test_calc_delivery` |
+| 测量与 VOT | [测量说明](ai/docs/measurements.zh-CN.md#回归) |
+| 归一化与真实材料 | [方法及材料入口](docs/NORMALIZATION.zh-CN.md) |
+| 文档引用 | `test_maintenance_docs` |
+
+测量检查核对用户实际调用入口、输入来源、对象、范围、量名、单位与缺测原因，覆盖适用的正／零／负值和无法确定样本。依赖缺失、提取失败、未评估和没有差异必须区分。完成状态以 `check_statuses`、逐音位 `checks`、`delivery_guard` 与 `explanation_status` 等实际结果字段为准。
+
+协议夹具和合成音只证明对应行为。真实 Praat 需要实际可执行程序，可用 `PRAAT_AI_PRAAT_EXECUTABLE` 指定；真实录音须核对人工地标及材料来源。需要 GUI、模型或外部依赖的脚本先读其参数与运行要求，跳过需如实报告。
+
+`run_backend_scenarios.py --mode tools` 运行隔离 Praat 模板，`--mode live` 使用模型与真实 RPC；场景见 `backend_scenarios.json`，参数见 `--help`。模型模式可产生费用，测试不继承旧记录中的授权。
+
+修改模型消息、技能、压缩或 schema 时，比较同一阶段连续三次请求的最终 HTTP 消息，核对固定前缀和动态尾部；配置或摘要改变的上下文版本分别检查。`cloud_metrics.py` 缺失统计不补零，不以缓存覆盖率单独推断提速。
+
+## 前端与桌面检查
+
+在 `ai/frontend` 运行：
 
 ```powershell
-python tools/extract_manuals_bilingual.py
+npm ci
+npm test
+npm run build
+npm run test:ui
 ```
 
-`tools/manuals_bilingual_review.txt` 是审校材料，不是手册源码。发现问题后要回到 `fon/manual_*.cpp` 修改。
+`prebuild` 复制离线资源、第三方许可及可重建来源，`build` 生成 `dist/`；构建会更新来源镜像与产物。生产运行只需离线资产、WebView2 与项目 Python 依赖，不需要 Node。
 
-### 3.5 术语表维护
+会话缩略导航与正文间距运行 `npm run test:ui -- tests/browser/minimap.spec.ts tests/browser/pane-resize.spec.ts`；用例覆盖不同窗宽、侧栏状态、对话区宽度和明暗主题，并检查正文边界及横向溢出。
 
-术语表文件是 `tools/praat_glossary.md`，生成入口是 `tools/build_glossary.py`。如果发现术语不准，优先改 `tools/build_glossary.py` 里的 `MANUAL_OVERRIDES`，再重新生成：
+浏览器用例见 `ai/frontend/tests/browser/`；桌面检查入口为 `ai/tests/verify_modern_desktop.py`，窗口拖动为 `test_window_drag.py`。浏览器夹具不替代真实 WebView2、实体输入法、Praat 菜单或多屏检查。平滑流式显示的单元和浏览器入口为 `tests/smooth-text.test.tsx`、`tests/browser/smooth-stream.spec.ts`；`python ai/tests/verify_smooth_stream_desktop.py --output test-records/frontend/smooth-stream-webview2.json` 使用构建产物、正式宿主事件与离线文字，在可见 WebView2 窗口记录逐步增字及最终全文一致性，不调用模型或 Praat。
 
-```powershell
-python tools/build_glossary.py
-```
+新对话预设按钮可用 `npx playwright test tests/browser/empty-layout.spec.ts` 检查入口。交互核验时分别点击三个按钮，检查空草稿填入预设、已有多行草稿追加后保留原文、连续点击可组合需求；切换会话后草稿和附件仍保留，点击按钮不会提交任务。
 
-术语原则：
+Windows 对象列表右键框选的原生验证入口为 `tools/verify-native-list-selection.ps1`。它需要现有原生构建库，编译当前 `GuiList.cpp`、`praat.cpp` 和 `ai/tests/native_list_selection.cpp`，在独立测试进程中创建 Sound 对象并检查真实列表及 Praat 对象选择回调。完整原生重建后传入 `-UseBuiltSystemLibrary`，可直接使用根 Makefile 生成的 `sys/libsys.a` 验证。测试构建位于 `scratch/native-list-selection`，不替换根目录程序。可设置 `PRAAT_LIST_TEST_SCREENSHOT` 保存框选截图。消息驱动用例覆盖框选、反向、修饰键、撤销、菜单、键盘与边缘滚动；实体鼠标手感和多屏 DPI 需人工检查。
 
-- Praat 对象类型和编辑器类名优先保留英文专名，再用括号给中文释义，例如 `TextGrid（文本标注）`、`SoundEditor（声音编辑器）`。
-- UI 命令尽量和 `tools/praat_translations.json` / `tools/generate_translation_map.py` 保持一致，例如 `Remove` 对应“删除”，`Inspect` 对应“检查”。
-- 声学概念避免过度合并。`tier` 译为“层”，`boundary` 译为“边界”，`time domain` 译为“时间域”；只有在上下文需要时再补充说明。
-- 不要把 `tools/praat_glossary.md` 当作手工孤立文件长期维护；否则下一次运行生成脚本会覆盖手改结果。
+Python 脚本编辑器与退出流程的入口为 `tools/verify-native-python-editor-quit.ps1`：编译 `ai/tests/native_python_script_editor.cpp` 并链接当前各库与 `main/praat_win.o`，在与产品相同的独立进程内打开真正的原生窗口，答掉写盘失败提示与另存为询问，并重新读取磁盘文件；其中“保存工程并退出”由第二个进程点击按钮后自行结束。Whisper 模型维度检查的入口为 `tools/verify-native-whisper-model-dims.ps1`，用维度计数 `-1`、`0`、`2`、`4`、`5` 的最小 ggml 夹具走 `Create SpeechRecognizer...` 实际路径。配置共存的入口为 `tools/verify-native-prefs-coexistence.ps1`，在隔离的 `USERPROFILE` 下分别以批处理和关闭窗口两种方式退出 `Praat.exe`，核对新文件写出、`Preferences5.ini` 与 `Buttons5.ini` 字节不变；关窗那条会短暂显示主窗口。三者都在 `scratch/` 下建立私有目录，不加载用户偏好，不替换根目录 `Praat.exe`；`make ... all` 末尾的发布步骤需 Medium 完整性会话，失败不影响链接产物。
 
-## 4. 本地化功能改动入口
+Python 编辑器和 Whisper 维度验证脚本将 `-OutputDirectory` 作为输出根目录，每次在其中创建独立的 `run-<GUID>` 子目录，结果位于该子目录的 `result.json`；不清理既有文件或上次结果。Python 编辑器验证的输出路径须使用 ASCII。`tools/verify-native-output-isolation.ps1` 对这两个真实入口各运行两次，核对现有文件与前一次结果保持不变。
 
-### 4.1 Windows 原生文件拖拽
+日常启动程序与测试构建须分别核对。将通过验证的原生构建安装到本地入口时，运行 `tools/Publish-NativeExecutable.ps1 -Source <构建路径> -Destination ./Praat.exe -MediumDirectory ..`；该脚本保留旧文件备份并核对哈希和完整性。已经打开的 Praat 仍运行原程序，须保存音频和编辑内容、退出后重新打开根目录 `Praat.exe` 才能加载更新；测试目录构建成功不代表当前进程已更新。
 
-现有实现已经有完整链路：
+框选视觉回归还会在两条 Sound 对象下逐像素比较空白区，检查松开、Esc、捕获丢失后的背景恢复、缩小选框后的旧区域清理及重复重绘的颜色稳定性。设置 `PRAAT_LIST_TEST_CLEANUP_SCREENSHOT` 可保存松开后的列表截图。
 
-- `sys/motifEmulator.cpp`：Windows/Motif 层启用 `DragAcceptFiles`，处理 `WM_DROPFILES`，逐个调用打开回调。
-- `sys/GuiMenu.cpp`：Cocoa 侧有 `openFiles` 回调，错误文案也走翻译表。
-- `sys/praat_objectMenus.cpp`：`cb_openDocument` / `cb_finishedOpeningDocuments` 负责把文件读入 Praat 对象系统，并通过 `Gui_setOpenDocumentCallback` 绑定回调。
+Ctrl 交互回归覆盖原生 Ctrl＋左键的添加与取消选择、Ctrl＋右键不显示框选，以及框选途中通过按键或鼠标修饰键状态检测 Ctrl 后恢复原选区；Shift 仍可扩展右键框选。
 
-如果拖拽有问题，先追这条链路。不要另写一套文件读取逻辑绕过 Praat 的对象加载流程。
+## 安装与发行
 
-### 4.2 启动时默认隐藏 Picture window
+`installer/build.ps1` 构建安装包，`installer/publish-release.ps1` 发布；安装与环境检查见[安装说明](installer/README.zh-CN.md)。源码、包内载荷、安装后文件及运行进程分别核对。
 
-现有实现不是删除 Picture window，而是在初始化后隐藏窗口：
+`.github/workflows/release.yml` 手动触发，后端能力门和离线回归、前端 TypeScript 与单元测试通过后才构建 Windows x64 及可选 macOS。Windows 生成 `Praat.exe` 后运行真实 VOT、基频与事件分层回归。该门槛不覆盖真实录音效果和干净环境安装验收。
 
-- `sys/praat_picture.cpp` 中 `praat_picture_init(bool showPictureWindowAtStartUp)` 会先创建 Picture 相关对象和菜单，再在 `!showPictureWindowAtStartUp` 时隐藏实际窗口。
-- `sys/praat_objectMenus.cpp` 在 Objects 窗口的 Praat 菜单注册 `"Open Picture window"`，中文显示由翻译表映射为“打开图像窗口 (Praat Picture)”。
-
-不要为了“隐藏图像窗口”跳过 Picture 初始化；绘图、脚本和手册中的 Picture 功能仍依赖这些对象存在。
-
-## 5. 构建、验证和打包
-
-### 5.1 本地 Windows 构建
-
-本地 Windows 开发通常使用 MSYS2 shell 调用仓库根目录的 `Makefile`。当前本机常用命令为：
-
-```powershell
-$env:MSYSTEM="CLANG64"   # 本机只装了 CLANG64 工具链（没有 mingw64 的 g++）
-C:\msys64\usr\bin\bash.exe -lc "cd /d/path/to/Praat_ZH && make PRAAT_COMPILER=clang -j16"
-```
-
-链接写 `Praat.exe` 时如果报 `Permission denied`，说明 Praat 还开着：先关掉所有
-Praat 窗口（包括对话窗口），再重新执行上面的命令，构建是增量的。
-
-构建成功后根目录生成 `Praat.exe`。如果只改文档或 guide，不需要构建；如果改 C++、翻译表或手册源字符串，至少应尝试本地构建，或明确说明未构建原因。
-
-### 5.2 最低验证清单
-
-按改动类型选择验证。测试运行日志和结果归档在 [`test-records/`](test-records/README.md)；测试脚本与所需夹具仍位于源码目录。
-
-
-- UI 翻译：运行 `python tools/generate_translation_map.py`，检查 `sys/praat_translate.cpp` 中目标键存在；能构建时再构建。
-- 手册翻译：检查 `@@...@` / `@...` 链接目标仍是英文页面；能构建/启动时确认没有 dangling link 警告。
-- Windows 拖拽：构建后把 `.wav`、`.TextGrid`、`.praat` 等文件拖入窗口，确认对象列表或脚本编辑器有响应。
-- Picture window 行为：启动后确认 Picture window 默认不弹出；通过 Objects 窗口 `Praat -> Open Picture window` 可打开。
-- 发布改动：确认 `README.txt`、`README.md` 和 workflow 中的说明一致。
-
-### 5.3 本地打包
-
-本地 Windows zip 包只包含运行必需项和简短说明：
-
-```powershell
-Compress-Archive -Path Praat.exe, README.txt -DestinationPath Praat-ZH-Windows-x64.zip -Force
-```
-
-`*.zip` 和 `Praat.exe` 默认被 `.gitignore` 忽略，不要误以为未跟踪就是源码遗漏。
-
-## 6. GitHub Actions 发布工作流
-
-发布工作流位于 `.github/workflows/release.yml`，实际包含：
-
-- `ai-offline-regression`（测试门槛，`ubuntu-latest` / Python 3.12）：装分析运行库（不装模型、不联网下载）→ `compileall` → 能力门（`praat_ai.capabilities.analysis_capabilities()["ready"]` 必须为真）→ `python -m unittest discover -s tests -t tests`。
-- `frontend-tests`（测试门槛，`ubuntu-latest` / Node 22）：`npm ci` → `npx tsc -b` → `npm test`（vitest 单元）。浏览器级 `npm run test:ui` 需要真实窗口，不在 CI 里。
-- `build-windows-x64`：在 `windows-latest` 上用 MSYS2 `CLANG64` 构建 `make PRAAT_ARCH=x64v3 -j2`，产出 Windows x64 zip。
-- `build-macos`：在 `macos-26` 上准备 Xcode project，必要时从上游 release 下载 `praatXXXX_xcodeproj.zip`，并把 `sys/praat_translate.cpp` 注入 `praat_mac` target，产出 macOS universal dmg。
-- `create-release`：下载两个构建产物，用 `gh release create` 创建 GitHub release。
-
-两个测试门槛是 `build-windows-x64` 与 `build-macos` 的 `needs`：**测试不过就不构建、不发布**。
-但这条门槛只覆盖源码级离线回归与前端单测——真实录音材料验收、安装产物验收、WebView2/原生
-菜单行为仍要按各自文档独立进行（见 `ai/docs/validation.zh-CN.md`）。
-
-该 workflow 是手动触发的 `workflow_dispatch`，输入包括：
-
-- `tag_name`
-- `release_name`
-- `praat_upstream_tag`
-- `praat_version_digits`
-- `xcodeproj_url`
-- `draft`
-- `prerelease`
-
-不要把它描述成自动随 push 发布，也不要说它构建 Linux 或 Windows ARM64。当前 release 产物只有 Windows x64 zip 和 macOS universal dmg。
-
-如果新增了需要 macOS 编译的 `.cpp` 文件，必须检查 Xcode project 注入逻辑是否也要更新；否则 Windows 本地构建可能过了，macOS CI 会漏文件。
-
-## 7. 提交前检查
-
-完成任务前给出真实验证结果，不要只说“应该可以”。
-
-推荐最后检查：
-
-```powershell
-git status --short
-git diff -- guide.md
-```
-
-如果改了源码，再补充对应构建或脚本命令。若因为环境限制没有运行构建，要明确说明。
-
-提交前注意：
-
-- 不要提交 `Praat.exe`、zip 包、`.o`、`debug_translations.txt`、`translation_candidates.txt` 等忽略产物。
-- 如果修改了生成后的 `sys/praat_translate.cpp`，确认 `tools/generate_translation_map.py` 中的源映射也同步了。
-- 如果修改了手册源码，优先审查链接语法和页面标题，不要让中文显示文本变成链接目标。
-
-## 8. AI 对话前端
-
-默认启动链为 `ai/start_ai_chat.py` → `ai/run_ai_chat.py` →
-`ai/praat_ai/modern_host.py`。桌面使用 React / assistant-ui / Tiptap 与
-pywebview / WebView2；`--legacy` 使用 Tk 窗口。现代宿主的存储、任务和事件
-分别由 `modern_store.py`、`modern_execution.py`、`modern_app.py` 管理。
-
-前端通过 `bridge.ts` 和 `store.ts` 调用宿主白名单 RPC。
-浏览器开发页面需要真实宿主连接，演示数据通过显式 `?demo=1` 启用。
-声学工具、表驱动测量和 Praat 插件见 `ai/praat_ai/tools.py`、
-`ai/praat_ai/measures.tsv` 与 `ai/plugin/`。社区脚本来源和贡献者见
-[CREDITS.zh-CN.md](CREDITS.zh-CN.md)。
-
-### 8.1 Tk（legacy）界面：设计语言与进度小窗
-
-四个 Tk 界面（`chat.py`、`api_settings.py`、`progress_popup.py`、`ui.py`）共用
-`ui_theme.py` 的令牌与 `ui_widgets.py` 的自绘控件，设计语言参考 TW-Elements（见
-[CREDITS.zh-CN.md](CREDITS.zh-CN.md)，未复制它的代码）。代码注释里历史引用写作
-`guide.md §8.16`，指的就是这一节。
-
-`progress_popup.MiniProgress` 的对外契约（回归脚本按这些读，语义不要改）：
-
-- `bar` 的 `value` 仍是 **0–100**；`update(fraction, message=None)` 收 0–1 的进度；
-- `configure`/`cget` 兼容 ttk 的 `state`/`text`/`command`/`kind`/`background`；
-- `remaining_minimum_seconds()` 是「最少显示 0.8 秒」的剩余时间；
-- 默认关窗键不做事（简约：不给中途关闭）；传了可选的 `on_stop` 才长出「停止」按钮，
-  关窗键与它同义；收尾用 `complete(message=None)`（推到 100% 并禁掉按钮），
-  这样「分析已经结束」与「用户要求停止」不会混起来。
-- 纠音**分析**阶段用 `analysis_progress.run_with_stop` 起这个窗口（见
-  [validation.zh-CN.md](ai/docs/validation.zh-CN.md)）；Praat 菜单那一档的进度窗属于
-  Praat（`PRAAT_PROGRESS` → `Melder_progress`），不在本模块里，也没有停止按钮。
-
-维护参考：
-- [启动与配置](ai/README.zh-CN.md)
-- [当前模块、接口与限制](ai/HANDOFF.md)
-- [前端架构](docs/ai-frontend/CHAT-UI-ARCHITECTURE.zh-CN.md)
-- [后端契约](ai/docs/adr/README.md)
-- [前端源码与许可证](docs/ai-frontend/FRONTEND-SOURCES.md)
-
-Python 修改在重新启动宿主后加载；React 源码与 `dist` 是不同层，源码修改
-不会自动更新生产资源。原生源码、工作目录中的可执行文件和 Release 附件也
-应分别核对，不能用某个旧测试日志证明它们一致。
+本次日志与材料保存到 `test-records/`；旧结果不代表当前版本通过，也不写回维护文档作为固定通过数。图示生成入口为 `node docs/pictures/aipraat/build-detailed-workflows.mjs`，图示内容须与实际调用路径一致。

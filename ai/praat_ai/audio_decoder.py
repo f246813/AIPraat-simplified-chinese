@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import shutil
 from .config import default_config_path
+from .paths import installation_root
 
 
 def resolve_ffmpeg():
@@ -22,8 +23,7 @@ def resolve_ffmpeg():
             legacy = json.loads(legacy_path.read_text(encoding='utf-8-sig'))
             if legacy.get('ffmpeg'):
                 return str(legacy['ffmpeg'])
-    if os.name == 'nt' and os.environ.get('LOCALAPPDATA'):
-        managed = Path(os.environ['LOCALAPPDATA']) / 'AIPraat' / 'ffmpeg' / 'ffmpeg.exe'
-        if managed.is_file():
-            return str(managed)
+    managed = installation_root() / 'tools' / 'ffmpeg' / ('ffmpeg.exe' if os.name == 'nt' else 'ffmpeg')
+    if managed.is_file():
+        return str(managed)
     return shutil.which('ffmpeg')

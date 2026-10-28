@@ -150,6 +150,18 @@ class ModernStore:
             db.execute('INSERT INTO sessions(id,title,created,updated,project_path) VALUES (?,?,?,?,?)', (sid, self.clean(str(title)[:100]), stamp, stamp, self.project_path))
         return self.get(sid)['session']
 
+    def import_report(self, sid, title, message, evidence):
+        """Commit a report and its measured evidence without touching running sessions."""
+        stamp = now()
+        with self.connect() as db:
+            if db.execute('SELECT 1 FROM sessions WHERE id=?', (sid,)).fetchone():
+                return
+            db.execute('INSERT INTO sessions(id,title,created,updated,project_path,anchor) VALUES (?,?,?,?,?,?)',
+                       (sid, self.clean(str(title)[:100]), stamp, stamp, self.project_path,
+                        self.encode({'messageId': message['id'], 'offset': 0})))
+            db.execute('INSERT INTO messages(id,session,payload) VALUES (?,?,?)', (message['id'], sid, self.encode(message)))
+            db.execute('INSERT INTO evidence(session,task,payload) VALUES (?,?,?)', (sid, sid, self.encode(evidence)))
+
     def discard_empty_sessions(self, session_ids):
         """Discard unused window-created sessions, preserving drafts and history."""
         with self.connect() as db:

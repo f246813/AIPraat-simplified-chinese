@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import base64
 import copy
-import hashlib
 import json
 import mimetypes
 import threading
@@ -26,7 +25,7 @@ ACTIVE = {'running', 'queued', 'cancelling'}
 POLL_EVENT_LIMIT = 400
 #: RPC 参数的中文名：缺参数时不能把裸 KeyError（``'sessionId'``）抛给前端。
 PARAM_LABELS = {'sessionId': '会话标识', 'taskId': '任务标识', 'title': '标题',
-                'text': '消息内容', 'sourceTaskId': '原任务标识', 'mode': '动作',
+                'text': '消息内容',
                 'settings': '设置内容', 'kind': '测试类型', 'data': '附件内容',
                 'name': '附件名', 'url': '链接地址', 'attachmentId': '附件标识',
                 'sectionId': '分区标识', 'settingsId': '设置标识'}
@@ -40,6 +39,14 @@ def param(params, key, *, default=...):
     if default is not ...:
         return default
     raise ValueError(f'缺少{ PARAM_LABELS.get(key, key) }（{key}）')
+
+
+def drop_followup_actions(message):
+    """旧版本把回答后的快捷续接动作落进消息；该交互已删除，读取时不再交给客户端。"""
+
+    if 'followup_actions' not in message:
+        return message
+    return {key: value for key, value in message.items() if key != 'followup_actions'}
 
 
 class LocalResources:
@@ -110,7 +117,7 @@ class LocalResources:
 class Attachments:
     LIMIT = 20 * 1024 * 1024
     TYPES = {'.txt': 'text/plain', '.md': 'text/markdown', '.csv': 'text/csv', '.json': 'application/json',
-             '.wav': 'audio/wav', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp'}
+             '.wav': 'audio/wav', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.textgrid': 'text/plain'}
     def __init__(self, root):
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
@@ -173,8 +180,9 @@ class Attachments:
 
 class ModernApplication:
     def __init__(self, root: Path, config_path: Path | None = None, legacy_path: Path | None = None,
-                 *, allow_cloud=False, configured_cloud=False, executor=None):
+                 *, allow_cloud=False, configured_cloud=False, executor=None, report_runtime=None):
         self.root = Path(root)
+        self.report_runtime = Path(report_runtime) if report_runtime else self.root.parent
         self.settings = SettingsService(config_path or default_config_path())
         cfg = self.settings.candidate()
         self.store = ModernStore(self.root / 'sessions.sqlite3', legacy_path, secrets=(cfg.api.api_key, cfg.qwen.api_key),project_path=Path(__file__).resolve().parents[2])
@@ -223,18 +231,9 @@ class ModernApplication:
             live = {task['message']['id']: self.store.clean(copy.deepcopy(task['message']))
                     for task in self.tasks.values()
                     if task['sessionId'] == sid and task['status'] in ACTIVE}
-            result['messages'] = [live.get(message['id'], message) for message in result['messages']]
-            actionable = [m for m in result['messages'] if m.get('followup_actions') and m.get('taskId')]
-            if actionable:
-                from .workflow_policy import WorkflowPolicy
-                cfg = self.settings.candidate()
-                for message in actionable:
-                    try:
-                        record = self.store.task_evidence(sid, message['taskId'])
-                        cfg.workflow = WorkflowPolicy.validate(record.get('metrics', {}).get('workflow_policy'))
-                        message['followup_actions'] = self.followup_actions(cfg, record) if cfg.api.enabled else []
-                    except (OSError, ValueError):
-                        message['followup_actions'] = []
+            # 快捷续接按钮已删除：新回合不再产出 followup_actions，读旧历史也不再补齐，
+            # 并且把旧库里残留的同名字段剥掉，旧对话不会把按钮带回来。
+            result['messages'] = [drop_followup_actions(live.get(message['id'], message)) for message in result['messages']]
             result['cursor'] = self.cursor
             return result
 
@@ -412,7 +411,6 @@ class ModernApplication:
             for key in ('results', 'result_content', 'analysis_content'):
                 if key in result:
                     message[key] = result[key]
-            message['followup_actions'] = self.followup_actions(cfg, result) if cfg.api.enabled else []
             message['status'] = result.get('status', 'complete')
             message['formal_content'] = result.get('formal_content', message['content'])
             message['formal'] = result.get('formal', message['status'] == 'complete')
@@ -445,47 +443,6 @@ class ModernApplication:
                 self.event(task, 'message', message)
                 self.event(task, 'task', self.public_task(task))
 
-    def followup_actions(self, cfg, record):
-        actions = []
-        if record.get('evidence'):
-            actions.append('L2')  # Explicit one-shot explanation works even when globally off.
-        metadata = record.get('material_metadata', {})
-        source = metadata.get('recording_source', '')
-        from .model_capabilities import config_identity
-        actual_audio = bool(record.get('metrics', {}).get('audio_received')
-                            and record['metrics'].get('capability_identity') == config_identity(cfg.api))
-        available = False
-        if cfg.api.audio_input_enabled and (cfg.api.audio_input_source in {'preset','verified'} or actual_audio) and source:
-            try:
-                available = (Path(source).is_file() and Path(source).stat().st_size <= Attachments.LIMIT
-                             and hashlib.sha256(Path(source).read_bytes()).hexdigest() == metadata.get('source_sha256'))
-            except OSError:
-                pass
-        if available:
-            actions.append('L3')
-        if record.get('evidence') and cfg.workflow.l4_enabled:
-            # 「基于这些结果进行通用讨论」要有结果才算数：没有测量的轮次（例如随手一句问候）
-            # 不给这个续接入口，否则点下去是对着没有目标依据的旧任务重跑报告阶段。
-            actions.append('L4')
-        return actions
-
-    def followup(self, sid, source_task, mode):
-        if mode not in {'L2','L3','L4'}:
-            raise ValueError('本次动作必须是 L2/L3/L4')
-        with self.guard:
-            record = self.store.task_evidence(sid, source_task)
-            cfg = self.prepared()
-            if not cfg.api.enabled:
-                raise ValueError('本次继续动作适用于云端 API；当前启用的是本地模型')
-            from .workflow_policy import WorkflowPolicy
-            cfg.workflow = WorkflowPolicy.validate(record.get('metrics', {}).get('workflow_policy'))
-            if mode not in self.followup_actions(cfg, record):
-                raise ValueError('原证据、材料或当前模型能力不支持此动作')
-            if not record.get('goal'):
-                raise ValueError('旧任务没有原目标绑定；请明确提出新目标')
-            record['mode'] = mode
-            return self.submit(sid, {'L2':'本次解释结果','L3':'本次分析原材料','L4':'基于这些结果进行通用讨论'}[mode], continuation=record)
-
     def cancel(self, task_id):
         with self.guard:
             task = self.tasks.get(task_id)
@@ -504,6 +461,9 @@ class ModernApplication:
             navigation = model_settings_request(self.navigation_id)
             if navigation:
                 self.navigation_id = navigation['id']
+            from .desktop_launch import runtime_directory
+            from .tutor_report import receive_reports
+            navigation = receive_reports(self, runtime=getattr(self, 'report_runtime', runtime_directory())) or navigation
             try:
                 after = int(after)
             except (TypeError, ValueError):
@@ -683,7 +643,8 @@ class ModernApplication:
                 return dict(ok=True)
             if method == 'sessions.view':
                 self.store.view(param(params, 'sessionId'), draft=params.get('draft'), scroll=params.get('scroll'), anchor=params.get('anchor')); return dict(ok=True)
-            if method == 'tasks.followup': return self.followup(param(params, 'sessionId'), param(params, 'sourceTaskId'), param(params, 'mode'))
+            # 快捷续接已删除：旧客户端仍可能调用这个方法，明确拒绝而不是静默走普通任务。
+            if method == 'tasks.followup': raise ValueError('快捷续接已删除；请在输入框直接追问')
             if method == 'tasks.submit': return self.submit(param(params, 'sessionId'), param(params, 'text'), params.get('attachmentIds', []))
             if method == 'tasks.cancel': return self.cancel(param(params, 'taskId'))
             if method == 'events.poll': return self.poll(params.get('after', 0))

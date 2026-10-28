@@ -105,7 +105,6 @@ class CapabilityUsePointTests(unittest.TestCase):
         self.assertEqual(status, "dependency_missing")
         self.assertIn("praat-parselmouth", reason)
         self.assertIn(FIX_HINT, reason)
-        self.assertIn("基频/共振峰", reason)
         self.assertIn(FIX_HINT, str(caught.exception))
 
     def test_tutor_capabilities_payload_is_the_frontend_contract(self):

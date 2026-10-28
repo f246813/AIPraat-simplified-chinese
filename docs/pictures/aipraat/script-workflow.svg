@@ -42,5 +42,5 @@
 <path class="edge" d="M300 2064V2098"/>
 <path class="edge" d="M900 2064V2098"/>
 <text class="note" x="50" y="2321">custom_script 运行于当前 GUI；run_praat_script 的用户脚本运行于独立批处理，两者有不同调用契约。</text>
-<text class="note" x="50" y="2369">当前 AI VOT 工具使用 tools.py 的显式边界或声学估计脚本；此工具路径没有 MFA / wav2vec2 调用。</text>
+<text class="note" x="50" y="2369">AI VOT 工具使用 tools/ 的人工地标或声学候选脚本；此工具路径没有 MFA / wav2vec2 调用。</text>
 <text class="note" x="50" y="2417">MFA / wav2vec2 的实际调用来自对比纠音分析，见 C、D 图。</text></svg>

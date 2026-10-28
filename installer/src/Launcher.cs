@@ -31,6 +31,7 @@ public static class Launcher
                 (source,dest,count)=>{ Directory.CreateDirectory(Path.GetDirectoryName(dest)); File.Copy(source,dest,true); });
             var start=new ProcessStartInfo(executable) {UseShellExecute=false,WorkingDirectory=root};
             start.EnvironmentVariables["PRAAT_AI_PROJECT_DIR"]=Path.Combine(root,"ai");
+            start.EnvironmentVariables["PRAAT_AI_INSTALL_ROOT"]=root;
             start.EnvironmentVariables["PRAAT_AI_CONFIG_PATH"]=Path.Combine(root,"ai","ai_config.json");
             start.EnvironmentVariables["PRAAT_AI_PRAAT_EXECUTABLE"]=executable;
             if(python!="") start.EnvironmentVariables["PRAAT_PYTHON_EXECUTABLE"]=python;

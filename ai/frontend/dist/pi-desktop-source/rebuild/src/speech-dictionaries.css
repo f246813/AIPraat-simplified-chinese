@@ -25,6 +25,10 @@
 .dictionary-error { color:var(--bad); font-size:12px; overflow-wrap:anywhere; max-height:100px; overflow:auto; }
 .dictionary-error button { margin-left:8px; padding:3px 8px; font-size:11px; }
 .mfa-library-row { display:flex; align-items:center; }
+.mfa-model-target { display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
+.mfa-model-target select { width:100%; min-height:44px; }
+.mfa-model-target small { color:var(--muted); }
+.mfa-model-actions { display:flex; flex-wrap:wrap; gap:8px; flex-shrink:0; }
 .mfa-library-row button { min-height:44px; }
 .mfa-library-row>button { color:var(--bad); border-color:transparent; background:transparent; }
 .mfa-preset-card { padding:18px; margin-bottom:8px; background:var(--card-surface,var(--panel)); border:0; border-radius:10px; box-shadow:var(--card-shadow); }
@@ -47,5 +51,5 @@
   .dictionary-manager .dictionary-window { min-height:0; padding:14px; }
   .dictionary-window>footer { flex-wrap:wrap; }
   .mfa-library-row { flex-wrap:wrap; }
-  .mfa-library-row button { margin-left:30px; }
+  .mfa-model-actions { margin-left:30px; }
 }

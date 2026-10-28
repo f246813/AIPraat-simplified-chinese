@@ -142,5 +142,11 @@ class ChatMessageBlockTests(unittest.TestCase):
         )
 
 
+def tearDownModule():
+    # Tk 解释器必须在主线程回收：否则后端线程的下一次 GC 会析构它，触发 Tcl_AsyncDelete。
+    import gc
+
+    gc.collect()
+
 if __name__ == "__main__":
     unittest.main()

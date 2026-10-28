@@ -17,8 +17,9 @@ describe('modern integration boundaries', () => {
     const store = new ChatStore(rpc as Rpc); await store.initialize();
     store.view(session.id, {scroll:200, draft:'not saved'}); store.flushView(session.id);
     await vi.advanceTimersByTimeAsync(500);
-    expect(store.getSnapshot().sessions[0].scroll).toBe(200);
-    expect(store.getSnapshot().sessions[0].draft).toBe('');
+    expect(store.getView(session.id).scroll).toBe(200);
+    expect(store.getView(session.id).draft).toBe('');
+    expect(store.getSnapshot().sessions[0].scroll).toBe(0);
     expect(rpc.mock.calls.some(([method]) => method === 'sessions.view')).toBe(false);
     store.stop();
   });

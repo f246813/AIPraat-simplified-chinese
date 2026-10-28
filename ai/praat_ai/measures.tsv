@@ -1,4 +1,4 @@
-# 声学测量参数表（B1）：加一个参数 = 加一行。
+# 声学测量参数表：加一个参数 = 加一行。
 #
 # 出处与设计说明见 measures.py 的模块 docstring；参考 chengafni/praat 的
 # plugin_CompleteAnalysis（objects.txt / queries.txt / settings.txt）。
@@ -21,8 +21,8 @@
 
 @@ settings
 key	value	min	max	kind	note
-pitch_floor	75	10	2000	number	基频下限 Hz（Praat 默认 75；嗓音分析常用 50）
-pitch_ceiling	600	20	5000	number	基频上限 Hz（Praat 默认 600；嗓音分析常用 700）
+pitch_floor	75	10	2000	number	基频下限 Hz（工具预设 75，可按分析目的调整）
+pitch_ceiling	600	20	5000	number	基频上限 Hz（工具预设 600，可按分析目的调整）
 formant_count	5	1	20	integer	共振峰条数
 formant_max	5500	500	20000	number	共振峰分析最高频率 Hz
 formant_window	0.025	0.001	1	number	共振峰分析窗长 s
@@ -35,7 +35,7 @@ cpps_ceiling	330	50	2000	number	CPPS 峰值搜索上限 Hz
 
 @@ derivations
 key	source	command	note
-pitch	Sound	To Pitch: 0, {pitch_floor}, {pitch_ceiling}	基频曲线
+pitch	Sound	To Pitch (filtered autocorrelation): 0, {pitch_floor}, {pitch_ceiling}, 15, "no", 0.03, 0.09, 0.50, 0.055, 0.35, 0.14	基频曲线（filtered autocorrelation）
 formant	Sound	To Formant (burg): 0, {formant_count}, {formant_max}, {formant_window}, {formant_preemphasis}	共振峰
 intensity	Sound	To Intensity: {intensity_floor}, 0, "yes"	强度曲线（dB）
 spectrum	Sound	To Spectrum: "yes"	频谱（fft）
@@ -46,9 +46,9 @@ powerCepstrogram	Sound	To PowerCepstrogram: {cpps_floor}, 0.002, 5000, 50	倒谱
 
 @@ queries
 parameter	label	unit	decimals	source	command	note
-mean_pitch	平均基频	Hz	2	pitch	median = Get quantile: tmin, tmax, 0.5, "Hertz"; firstFrameTime = Get frame number from time: tmin; lastFrameTime = Get frame number from time: tmax; nFrames = Get number of frames; firstFrame = round (firstFrameTime); lastFrame = round (lastFrameTime); if firstFrame < 1; firstFrame = 1; endif; if lastFrame > nFrames; lastFrame = nFrames; endif; if lastFrame < 1; lastFrame = 1; endif; value = undefined; if median <> undefined; ceilingValue = median * 1.5; floorValue = median * 0.5; totalValue = 0; countValue = 0; for pitchFrame from firstFrame to lastFrame; f = Get value in frame: pitchFrame, "Hertz"; if f <> undefined and f <= ceilingValue and f >= floorValue; totalValue = totalValue + f; countValue = countValue + 1; endif; endfor; if countValue > 0; value = totalValue / countValue; endif; endif	整段（或圈选段）的平均基频；和最高/最低基频统计同一批限幅帧，剔除倍频误判（裸 Get mean 会把误判帧算进去，出现「平均比最高还大」，见 2026-10-04）
-minimum_pitch	最低基频	Hz	2	pitch	median = Get quantile: tmin, tmax, 0.5, "Hertz"; firstFrameTime = Get frame number from time: tmin; lastFrameTime = Get frame number from time: tmax; nFrames = Get number of frames; firstFrame = round (firstFrameTime); lastFrame = round (lastFrameTime); if firstFrame < 1; firstFrame = 1; endif; if lastFrame > nFrames; lastFrame = nFrames; endif; if lastFrame < 1; lastFrame = 1; endif; value = undefined; if median <> undefined; floorValue = median * 0.5; lowest = 0; for pitchFrame from firstFrame to lastFrame; f = Get value in frame: pitchFrame, "Hertz"; if f <> undefined and f >= floorValue; if lowest = 0 or f < lowest; lowest = f; endif; endif; endfor; if lowest > 0; value = lowest; endif; endif	稳取：逐帧找最低，忽略低于中位数一半的次谐波误判（裸 Get minimum 会被单帧误判劫持）
-maximum_pitch	最高基频	Hz	2	pitch	median = Get quantile: tmin, tmax, 0.5, "Hertz"; firstFrameTime = Get frame number from time: tmin; lastFrameTime = Get frame number from time: tmax; nFrames = Get number of frames; firstFrame = round (firstFrameTime); lastFrame = round (lastFrameTime); if firstFrame < 1; firstFrame = 1; endif; if lastFrame > nFrames; lastFrame = nFrames; endif; if lastFrame < 1; lastFrame = 1; endif; value = undefined; if median <> undefined; ceilingValue = median * 1.5; highest = 0; for pitchFrame from firstFrame to lastFrame; f = Get value in frame: pitchFrame, "Hertz"; if f <> undefined and f <= ceilingValue and f > highest; highest = f; endif; endfor; if highest > 0; value = highest; endif; endif	稳取：逐帧找最高，忽略超过中位数 1.5 倍的倍频误判（裸 Get maximum 会被单帧误判劫持，见 2026-09-30 的 598.5 Hz 问题）
+mean_pitch	平均基频	Hz	2	pitch	median = Get quantile: tmin, tmax, 0.5, "Hertz"; firstFrameTime = Get frame number from time: tmin; lastFrameTime = Get frame number from time: tmax; nFrames = Get number of frames; firstFrame = round (firstFrameTime); lastFrame = round (lastFrameTime); if firstFrame < 1; firstFrame = 1; endif; if lastFrame > nFrames; lastFrame = nFrames; endif; if lastFrame < 1; lastFrame = 1; endif; firstCenter = Get time from frame number: firstFrame; lastCenter = Get time from frame number: lastFrame; if firstCenter < tmin; firstFrame = firstFrame + 1; endif; if lastCenter > tmax; lastFrame = lastFrame - 1; endif; value = undefined; if median <> undefined; ceilingValue = median * 1.5; floorValue = median * 0.5; totalValue = 0; countValue = 0; for pitchFrame from firstFrame to lastFrame; f = Get value in frame: pitchFrame, "Hertz"; if f <> undefined and f >= floorValue and f <= ceilingValue; totalValue = totalValue + f; countValue = countValue + 1; endif; endfor; if countValue > 0; value = totalValue / countValue; endif; endif	整段（或圈选段）的平均基频；和最高/最低基频用同一批限幅帧（中位数的 0.5–1.5 倍）与同一批区间内帧中心；没有可信帧时不给值
+minimum_pitch	最低基频	Hz	2	pitch	median = Get quantile: tmin, tmax, 0.5, "Hertz"; firstFrameTime = Get frame number from time: tmin; lastFrameTime = Get frame number from time: tmax; nFrames = Get number of frames; firstFrame = round (firstFrameTime); lastFrame = round (lastFrameTime); if firstFrame < 1; firstFrame = 1; endif; if lastFrame > nFrames; lastFrame = nFrames; endif; if lastFrame < 1; lastFrame = 1; endif; firstCenter = Get time from frame number: firstFrame; lastCenter = Get time from frame number: lastFrame; if firstCenter < tmin; firstFrame = firstFrame + 1; endif; if lastCenter > tmax; lastFrame = lastFrame - 1; endif; value = undefined; if median <> undefined; ceilingValue = median * 1.5; floorValue = median * 0.5; lowest = 0; for pitchFrame from firstFrame to lastFrame; f = Get value in frame: pitchFrame, "Hertz"; if f <> undefined and f >= floorValue and f <= ceilingValue; if lowest = 0 or f < lowest; lowest = f; endif; endif; endfor; if lowest > 0; value = lowest; endif; endif	稳取：逐帧找最低，只用中位数的 0.5–1.5 倍之间的帧（倍频、次谐波误判一起排除），且只用区间内帧中心；没有可信帧时不给值
+maximum_pitch	最高基频	Hz	2	pitch	median = Get quantile: tmin, tmax, 0.5, "Hertz"; firstFrameTime = Get frame number from time: tmin; lastFrameTime = Get frame number from time: tmax; nFrames = Get number of frames; firstFrame = round (firstFrameTime); lastFrame = round (lastFrameTime); if firstFrame < 1; firstFrame = 1; endif; if lastFrame > nFrames; lastFrame = nFrames; endif; if lastFrame < 1; lastFrame = 1; endif; firstCenter = Get time from frame number: firstFrame; lastCenter = Get time from frame number: lastFrame; if firstCenter < tmin; firstFrame = firstFrame + 1; endif; if lastCenter > tmax; lastFrame = lastFrame - 1; endif; value = undefined; if median <> undefined; ceilingValue = median * 1.5; floorValue = median * 0.5; highest = 0; for pitchFrame from firstFrame to lastFrame; f = Get value in frame: pitchFrame, "Hertz"; if f <> undefined and f >= floorValue and f <= ceilingValue; if f > highest; highest = f; endif; endif; endfor; if highest > 0; value = highest; endif; endif	稳取：逐帧找最高，同样只用中位数的 0.5–1.5 倍之间的区间内帧中心帧；没有可信帧时不给值
 median_pitch	基频中位数	Hz	2	pitch	Get quantile: tmin, tmax, 0.5, "Hertz"	
 sd_pitch	基频标准差	Hz	2	pitch	Get standard deviation: tmin, tmax, "Hertz"	
 pitch_slope	基频平均绝对斜率	Hz/s	2	pitch	Get mean absolute slope: "Hertz"	

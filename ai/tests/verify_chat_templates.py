@@ -317,7 +317,7 @@ CASES: tuple[Case, ...] = (
         tool="textgrid_set_interval",
     ),
     Case("select_object", {}, SOUND, ONE_SOUND, "已选中"),
-    # B3：借用 Chen Gafni 的现成测量脚本算出来的量（公式与出处见 tools.py 的 docstring）。
+    # 借用 Chen Gafni 的现成测量脚本算出来的量（公式与出处见 tools.py 的 docstring）。
     Case("spectral_emphasis", {}, SOUND, ONE_SOUND, "谱强调"),
     Case("hl_ratio", {}, SOUND, ONE_SOUND, "H/L ="),
     Case("hammarberg_index", {}, SOUND, ONE_SOUND, "Hammarberg 指数"),

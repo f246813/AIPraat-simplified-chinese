@@ -180,7 +180,7 @@ class AnalysisObjectTypeTests(unittest.TestCase):
         self.assertIn("mean = pitchTotal / pitchCount", script)
         self.assertIn("meanNote$", script)
         # 裸最大值只允许出现在「剔除了什么」的披露里，而且必须报给用户看。
-        self.assertIn("已按倍频误判剔除", script)
+        self.assertIn("已排除在这组统计之外", script)
         self.assertIn('rawMaximum = Get maximum: tmin, tmax, "Hertz", "Parabolic"', script)
 
     def test_pitch_statistics_keeps_a_consistent_contract_for_pitch_objects(self):

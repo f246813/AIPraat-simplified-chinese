@@ -1,22 +1,4 @@
-"""「简约小窗口 + 进度条」：加载/停止模型时给用户看的那个小窗。
-
-两种入口用两套 UI，但数据是同一条进度流（0–1 的进度 + 一句中文说明）：
-
-- Praat 菜单里点「启动前端 / 加载模型」→ 控制脚本把进度打到标准输出
-  （``PRAAT_PROGRESS\\t<进度>\\t<说明>``）→ Praat 自己的进度小窗
-  （`sys/praat_python.cpp` → `Melder_progress`，那个窗口属于 Praat，见 guide.md §8.1
-  说明为什么不动它）；
-- 对话窗口里点「应用预设 / API 配置」→ 本模块的 :class:`MiniProgress`。
-
-界面按 TW-Elements 的卡片形态做：圆角卡片 + 圆角进度条 + 右侧百分比（等宽数字），
-深浅色跟随系统。既有接口一个都没变（``bar.cget("value")`` 仍是 0–100，``configure``/``cget``
-兼容层照旧）。
-
-``on_stop`` 是给「分析阶段」用的可选第三档：传了回调才长出一个「停止」按钮，点一次置位一次
-（按钮随即变成不可再点的「正在停止…」），关窗键也与它同义；不传就与以前完全一样。
-收尾用 :meth:`MiniProgress.complete`（推到 100% 并禁掉按钮），让「分析已经结束」与
-「用户要求停止」不再混淆。
-"""
+"""模型操作和分析使用的进度窗口。MiniProgress 显示卡片、百分比和系统主题；on_stop 提供停止与关窗取消，complete 推至完成并禁用停止。Praat 菜单的 PRAAT_PROGRESS 由原生进度窗显示。"""
 
 from __future__ import annotations
 

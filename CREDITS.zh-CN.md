@@ -20,10 +20,10 @@
 
 | 项目 | 借了什么 | 落在哪里 |
 | --- | --- | --- |
-| [chengafni/praat](https://github.com/chengafni/praat) | 声学测量脚本的公式与做法：`plugin_CompleteAnalysis`（表驱动：`objects.txt`/`queries.txt`/`settings.txt`）、`plugin_SpectralEmphasis`、`plugin_HL`、`plugin_HammarbergIndex`、`plugin_PA`、`plugin_IntensitySlope`、`plugin_PitchPeakLatency` 的原理与原脚本 | `ai/praat_ai/tools.py` 的测量模板、`ai/praat_ai/measures.tsv`（表结构参考）、`ai/plugin/`（原生插件的 `setup.praat` + `Add menu command` 做法），说明见 [ADR-005](ai/docs/adr/ADR-005-table-driven-measurements.md)、guide §8 |
-| [QwenLM/Qwen-Agent](https://github.com/QwenLM/Qwen-Agent) | agent 循环的设计参考：工具自带 JSON Schema → 交给服务端原生 function calling → 把结果作为 function/tool 消息回灌 → 再规划；工具报错当「可恢复的观察」；输入按 token 预算截断 | `ai/praat_ai/qwen.py`、`ai/praat_ai/chat.py`（见 [ADR-003](ai/docs/adr/ADR-003-planning-interface.md)、[ADR-004](ai/docs/adr/ADR-004-agent-loop.md)、[ADR-008](ai/docs/adr/ADR-008-context-token-budget.md)） |
-| [Ron-312/PraatPlugin](https://github.com/Ron-312/PraatPlugin) | 调用层的做法参考：Praat 安装位置的定位（对应 `PraatInstallationLocator`）、脚本投递与结果契约的取舍 | `ai/praat_ai/praat_app.py`（找 Praat）、`ai/docs/adr/ADR-001/002`（当前桥接契约说明） |
-| [mdbootstrap/TW-Elements](https://github.com/mdbootstrap/TW-Elements)（MIT） | **界面设计语言的参考**：色板（primary `#3B71CA`、success `#14A44D`、danger `#DC4C64`、warning `#E4A11B`、info `#54B4D3`）、卡片/按钮/进度条/状态胶囊/提示条的组件形态与层级。它是给网页用的 Tailwind 组件库，我们**没有复制它的代码**——显式 legacy 界面使用 Python + Tkinter，圆角卡片与进度条是 Canvas 自绘 | `ai/praat_ai/ui_theme.py`（令牌）、`ai/praat_ai/ui_widgets.py`（自绘控件）、`ai/praat_ai/chat.py` / `api_settings.py` / `progress_popup.py` / `ui.py`（四个界面），说明见 guide §8 |
+| [chengafni/praat](https://github.com/chengafni/praat) | 声学测量脚本的公式与做法：`plugin_CompleteAnalysis`（表驱动：`objects.txt`/`queries.txt`/`settings.txt`）、`plugin_SpectralEmphasis`、`plugin_HL`、`plugin_HammarbergIndex`、`plugin_PA`、`plugin_IntensitySlope`、`plugin_PitchPeakLatency` 的原理与原脚本 | `ai/praat_ai/tools/` 的测量模板、`ai/praat_ai/measures.tsv`（表结构参考）、`ai/plugin/`（原生插件的 `setup.praat` + `Add menu command` 做法），说明见[测量入口](ai/docs/measurements.zh-CN.md) |
+| [QwenLM/Qwen-Agent](https://github.com/QwenLM/Qwen-Agent) | agent 循环的设计参考：工具自带 JSON Schema → 交给服务端原生 function calling → 把结果作为 function/tool 消息回灌 → 再规划；工具报错当「可恢复的观察」；输入按 token 预算截断 | `ai/praat_ai/qwen.py`、`ai/praat_ai/chat.py`（执行路径见[当前实现](docs/CURRENT-IMPLEMENTATION.zh-CN.md)） |
+| [Ron-312/PraatPlugin](https://github.com/Ron-312/PraatPlugin) | 调用层的做法参考：Praat 安装位置的定位（对应 `PraatInstallationLocator`）、脚本投递与结果契约的取舍 | `ai/praat_ai/praat_app.py`（找 Praat）、`ai/praat_ai/sendpraat.py`（投递与结果核对） |
+| [mdbootstrap/TW-Elements](https://github.com/mdbootstrap/TW-Elements)（MIT） | **界面设计语言的参考**：色板（primary `#3B71CA`、success `#14A44D`、danger `#DC4C64`、warning `#E4A11B`、info `#54B4D3`）、卡片/按钮/进度条/状态胶囊/提示条的组件形态与层级。它是给网页用的 Tailwind 组件库，我们**没有复制它的代码**——显式 legacy 界面使用 Python + Tkinter，圆角卡片与进度条是 Canvas 自绘 | `ai/praat_ai/ui_theme.py`（令牌）、`ai/praat_ai/ui_widgets.py`（自绘控件）、`ai/praat_ai/chat.py` / `api_settings.py` / `progress_popup.py` / `ui.py`（四个界面），说明见[当前实现](docs/CURRENT-IMPLEMENTATION.zh-CN.md) |
 
 ## 直接复用或移植的源码贡献者
 
@@ -61,8 +61,7 @@ React、assistant-ui、Tiptap、Markdown 等作为锁定版本的包依赖使用
 
 前端菜单使用 picojson（BSD-2-Clause，完整单头文件）、gpustat 的显存非负处理（MIT，适配片段）和 pywebview 关闭事件绑定示例（BSD-3-Clause，适配片段）。固定来源、实际复用范围与许可证见 `external/picojson/`、`ai/third_party/gpustat/`、`ai/third_party/pywebview/`；前端集成范围见[来源说明](docs/ai-frontend/FRONTEND-SOURCES.md)。
 
-在基座 `modern` 分支之上加的是**本地 AI 前端**（对话窗口、规划循环、表驱动声学测量、
-Praat 原生插件、社区脚本包装、token 预算与可取消的等待）。当前后端契约看 [`ai/docs/adr/`](ai/docs/adr/README.md)，维护方式看 [`guide.md`](guide.md) §8。
+项目的 AI 前端包括对话窗口、规划循环、表驱动声学测量、Praat 原生插件、社区脚本包装、token 预算与可取消的等待。后端职责见[当前实现](docs/CURRENT-IMPLEMENTATION.zh-CN.md)，维护方式见[维护指南](guide.md)。
 
 ## AI 与纠音依赖
 
@@ -84,7 +83,7 @@ Praat 原生插件、社区脚本包装、token 预算与可取消的等待）�
 | [Mermaid](https://github.com/mermaid-js/mermaid)、[KaTeX](https://github.com/KaTeX/KaTeX)、[highlight.js](https://github.com/highlightjs/highlight.js) | 对话中的流程图、公式、代码高亮；离线资产随前端分发 | MIT / MIT / BSD-3-Clause；完整文本见[第三方通知](ai/frontend/public/THIRD-PARTY-NOTICES.txt) |
 | [react-markdown](https://github.com/remarkjs/react-markdown)、remark / rehype、[DOMPurify](https://github.com/cure53/DOMPurify) | Markdown、表格与公式处理；Markdown / SVG 清理 | MIT；DOMPurify 为 Apache-2.0 OR MPL-2.0；同上第三方通知 |
 | [pywebview](https://github.com/r0x0r/pywebview)、[pythonnet](https://github.com/pythonnet/pythonnet) | WebView2 桌面宿主和 Python / .NET 桥接 | BSD-3-Clause / MIT；分别锁定 6.2.1 / 3.2.0 |
-| [Pi 的 pi-ai 模型数据](https://github.com/badlogic/pi-mono/tree/781152fc24841dc54b22284514604048ebe5e2c9/packages/ai) | 从 0.73.1 发布包抽取四条模型窗口与输出元数据；没有引入 Pi Agent 内核 | MIT 来源说明、包哈希与端点限制见[模型数据来源](docs/ai-frontend/PI-MODEL-SOURCES.md) |
+| [Pi 的 pi-ai 模型数据](https://github.com/badlogic/pi-mono/tree/781152fc24841dc54b22284514604048ebe5e2c9/packages/ai) | 从 0.73.1 发布包抽取四条模型窗口与输出元数据；没有引入 Pi Agent 内核 | MIT 来源说明、包哈希与端点限制见[模型数据来源](docs/ai-frontend/FRONTEND-SOURCES.md#fixed-model-metadata-provenance) |
 | [FFmpeg](https://ffmpeg.org/)、[Gyan Windows builds](https://www.gyan.dev/ffmpeg/builds/) | Praat 原生读取失败后的备用音频解码；一键安装从 Gyan 发布包下载并核对 SHA-256 | 许可随所选构建及启用组件而定；安装脚本保留构建附带 LICENSE / README，不能统一视为 LGPL |
 | [Anki](https://github.com/ankitects/anki) | 通过 Anki 插件接口取得当前卡片音频，连接 AIPraat；本仓库提供独立 .ankiaddon | Anki 本体为 AGPL-3.0；[本项目插件说明](ai/anki_addon/README.md)，插件不等同于复制 Anki 源码 |
 
@@ -97,4 +96,10 @@ Praat 原生插件、社区脚本包装、token 预算与可取消的等待）�
 | [En-us-hello.ogg](https://commons.wikimedia.org/wiki/File:En-us-hello.ogg)，Dvortygirl | 音频读取验证与纠音表单示例的美音 hello | 公有领域 |
 | [En-uk-hello.ogg](https://commons.wikimedia.org/wiki/File:En-uk-hello.ogg)，Judith Franck / Association Shtooka | 音频读取验证与纠音表单示例的英音 hello；没有将说话人当作发音错误样本 | CC BY 3.0 US |
 
-仓库首页沿用两张基座界面图片；新增界面截图与流程图的来源见[图像说明](docs/pictures/aipraat/README.md)。模型和素材许可独立于本项目代码许可。
+仓库首页沿用两张基座界面图片；模型和素材许可独立于本项目代码许可。
+
+### 界面截图与流程图
+
+`docs/pictures/aipraat/` 的工作台、设置、Anki 和纠音表单截图来自生产 WebView2 宿主，使用独立配置与示例输入；输入框内容不代表已执行分析。纠音表单使用英音／美音 hello 示例，不把任一说话人标为发音错误。样本来源与许可见[音频来源](test-records/AUDIO-SOURCES.md)。
+
+流程图描述对应源码的执行入口与分支，可编辑 SVG 与生成脚本保存在同目录；生成命令见[维护指南](guide.md)。图示不代替对实际工具调用和测量证据的验证。

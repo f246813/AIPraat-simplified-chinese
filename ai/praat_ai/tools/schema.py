@@ -1,4 +1,4 @@
-"""tools 包的一个分片；行为与原 tools.py 完全一致。"""
+"""聊天工具的参数 schema 与工具注册。"""
 from __future__ import annotations
 
 import json
@@ -12,7 +12,7 @@ from .. import external_script, measures
 
 from ._common import (CUSTOM_SCRIPT_TOOL, EMPTY_PARAMETERS, LocalTool, MEASURE_TOOL, RUN_SCRIPT_TOOL, Tool, ToolContext, ToolError, _assemble, _formants_arg, _integer_arg, _number_arg, _object_arg, _seconds_arg, _text_arg, _times_arg, _unit_arg)
 from .scripts import (_reject_unsupported_arguments, _run_external_script, neutralize_info_commands, validate_script, validate_script_source_types)
-from .measurements import (_build_duration, _build_formant_bandwidth, _build_formant_frequency, _build_formant_statistics, _build_hammarberg_index, _build_harmonicity_statistics, _build_hl_ratio, _build_intensity, _build_intensity_slope, _build_intensity_statistics, _build_measure, _build_object_info, _build_peak_to_average_ratio, _build_pitch, _build_pitch_peak_latency, _build_pitch_statistics, _build_spectral_emphasis, _build_vot, _measure_schema, measure_parameter_help, measure_signature)
+from .measurements import (_build_duration, _build_formant_bandwidth, _build_formant_frequency, _build_formant_statistics, _build_hammarberg_index, _build_harmonicity_statistics, _build_hl_ratio, _build_intensity, _build_intensity_slope, _build_intensity_statistics, _build_measure, _build_object_info, _build_peak_to_average_ratio, _build_pitch, _build_pitch_peak_latency, _build_pitch_statistics, _build_pulses, _build_spectral_emphasis, _build_vot, _measure_schema, measure_parameter_help, measure_signature)
 from .operations import (_build_concatenate, _build_create_sound, _build_duplicate, _build_extract_part, _build_play, _build_read_file, _build_remove, _build_rename, _build_resample, _build_save_sound, _build_select, _build_spectrogram, _build_textgrid_info, _build_textgrid_insert_boundary, _build_textgrid_set_interval, _build_view)
 
 
@@ -38,7 +38,7 @@ TOOLS: tuple[Tool, ...] = (
     Tool(
         name="formant_frequency",
         summary="查询第 n 共振峰在某一时刻的频率，并同时给出带宽；要「F1/F2 的频率」「频率和带宽」都用这个。",
-        signature="formant（默认 2，可写 1,2 查多条）、time（秒，默认中点，可写 0.25,0.75 查多个时刻）、unit（hertz/Bark）、object（可选）",
+        signature="formant（默认 2，可写 1,2 查多条）、time（秒，默认中点；可写 0.25,0.75 查多个时刻，或 auto 按区间长度均匀取点）、unit（hertz/Bark）、object（可选）",
         build=_build_formant_frequency,
     ),
     Tool(
@@ -50,19 +50,25 @@ TOOLS: tuple[Tool, ...] = (
     Tool(
         name="pitch",
         summary="查询某一时刻的基频（Hz）。",
-        signature="time（秒，默认中点，可写 0.25,0.75 查多个时刻）、pitch_floor、pitch_ceiling、object（可选）",
+        signature="time（秒，默认中点；可写 0.25,0.75 查多个时刻，或 auto 按区间长度均匀取点）、pitch_floor、pitch_ceiling、sound（对象是 Pitch 时可指定源声音做能量门）、object（可选）",
         build=_build_pitch,
     ),
     Tool(
         name="pitch_statistics",
         summary="统计一段时间的基频：平均值、最低值、最高值和最高点的时刻（Hz）。要「基频平均/最高/范围」时用这个。",
-        signature="from、to（秒，默认整个对象）、pitch_floor、pitch_ceiling、object（可选）",
+        signature="from、to（秒，默认整个对象）、pitch_floor、pitch_ceiling、sound（对象是 Pitch 时可指定源声音做能量门）、object（可选）",
         build=_build_pitch_statistics,
+    ),
+    Tool(
+        name="pulses",
+        summary="读取声门脉冲（PointProcess）：脉冲点数、平均/最短/最长脉冲间隔与对应速率、相邻间隔抖动。对象是 Sound 时自动先做周期性点过程检测；对象已经是 PointProcess（Praat 里已标注的脉冲）时直接读它。",
+        signature="from、to（秒，默认整个对象）、pitch_floor、pitch_ceiling（自动检测时用）、sound（对象是 PointProcess 时可指定源声音做能量门）、object（可选）",
+        build=_build_pulses,
     ),
     Tool(
         name="intensity",
         summary="查询某一时刻的强度（dB）。",
-        signature="time（秒，默认中点，可写 0.25,0.75 查多个时刻）、object（可选）",
+        signature="time（秒，默认中点；可写 0.25,0.75 查多个时刻，或 auto 按区间长度均匀取点）、object（可选）",
         build=_build_intensity,
     ),
     Tool(
@@ -103,8 +109,8 @@ TOOLS: tuple[Tool, ...] = (
     ),
     Tool(
         name="vot",
-        summary="算 VOT（嗓音起始时间）：给了 burst（爆破）和 voicing（浊音起始）就直接相减；只给 from/to 就在这个大概范围里自动估计（结果标注是估计值）。结果同时给出爆破与浊音起始占目标时长的百分比。",
-        signature="burst、voicing（秒，给全就相减）、from、to（秒，自动估计的范围）、burst_db（默认 6，爆破最小升幅 dB）、pitch_floor（默认 75）、tier（默认 1）、object（可选）",
+        summary="测量有符号 VOT：voicing 可早于 burst（负值）或与其重合（零值）。自动检查爆破前预浊及爆破后稳定起声，分列地标与间隔；清晰元音起点只接受人工 vowel，不由基频推断。",
+        signature="burst、voicing（秒，给全就相减）、vowel（人工清晰元音时刻，秒，可选）、closure_start（人工闭塞起始，秒，可选）、from、to（秒，自动估计的范围）、burst_db（默认 6，爆破最小升幅 dB）、pitch_floor（默认 75）、pitch_ceiling（默认 600）、object（可选）",
         build=_build_vot,
     ),
     Tool(
@@ -321,6 +327,7 @@ TOOL_PARAMETERS: dict[str, dict[str, Any]] = {
             "time": _times_arg('秒，可写多个时刻，如 "0.25,0.75"'),
             "pitch_floor": _number_arg("基频下限 Hz，默认 75"),
             "pitch_ceiling": _number_arg("基频上限 Hz，默认 600"),
+            "sound": _object_arg("对象是 Pitch 时，用来做能量门的源 Sound（id 或名称）"),
             "object": _object_arg(),
         },
         "required": [],
@@ -332,6 +339,19 @@ TOOL_PARAMETERS: dict[str, dict[str, Any]] = {
             "to": _seconds_arg("终点（秒），不填就是整个对象"),
             "pitch_floor": _number_arg("基频下限 Hz，默认 75"),
             "pitch_ceiling": _number_arg("基频上限 Hz，默认 600"),
+            "sound": _object_arg("对象是 Pitch 时，用来做能量门的源 Sound（id 或名称）"),
+            "object": _object_arg(),
+        },
+        "required": [],
+    },
+    "pulses": {
+        "type": "object",
+        "properties": {
+            "from": _seconds_arg("起点（秒），不填就是整个对象"),
+            "to": _seconds_arg("终点（秒），不填就是整个对象"),
+            "pitch_floor": _number_arg("检测脉冲时的基频下限 Hz，默认 75"),
+            "pitch_ceiling": _number_arg("检测脉冲时的基频上限 Hz，默认 600"),
+            "sound": _object_arg("对象是 PointProcess 时，用来做能量门的源 Sound（id 或名称）"),
             "object": _object_arg(),
         },
         "required": [],
@@ -410,16 +430,18 @@ TOOL_PARAMETERS: dict[str, dict[str, Any]] = {
         "properties": {
             "burst": _seconds_arg(
                 "爆破时刻（秒）；只有用户明确说出爆破时刻时才填，两个都要给，"
-                "不要填 0 或凭猜测填"
+                "未提供时省略，不猜测；明确的零时刻可填 0"
             ),
             "voicing": _seconds_arg(
-                "浊音起始时刻（秒）；只有用户明确说出这个时刻时才填，不要填 0"
+                "浊音起始绝对时刻（秒），允许早于或等于 burst；只有用户明确给出时才填"
             ),
+            "vowel": _seconds_arg("清晰元音起始绝对时刻（秒），仅人工提供；用于独立的爆破到清晰元音间隔"),
+            "closure_start": _seconds_arg("目标塞音闭塞起始绝对时刻（秒），仅用户明确提供；用于验证间断预浊的闭塞归属"),
             "from": _seconds_arg("自动估计的搜索起点（秒）；用户给了范围才填"),
             "to": _seconds_arg("自动估计的搜索终点（秒）；用户给了范围才填"),
             "burst_db": _number_arg("爆破最小升幅 dB，默认 6"),
             "pitch_floor": _number_arg("基频下限 Hz，默认 75"),
-            "tier": _integer_arg("TextGrid 层号，默认 1"),
+            "pitch_ceiling": _number_arg("起声跟踪上限 Hz，默认 600"),
             "object": _object_arg(),
         },
         "required": [],
@@ -631,12 +653,7 @@ def tool_parameters(name: str) -> dict[str, Any]:
 
 
 def tool_schemas() -> list[dict[str, Any]]:
-    """OpenAI 风格的 ``tools`` 参数，交给 llama-server 的原生 function calling。
-
-    对比「把十几条规则和工具清单写进提示词、让模型自己拼 JSON」：schema 里带了
-    类型、枚举和必填项，模型编不出不存在的工具名，``unit`` 这种只在两个值里选的
-    参数也不会写错（见 guide.md §8.4 与 ai/docs/adr/ADR-003）。
-    """
+    """生成工具名称、说明、类型、枚举与必填字段的 function calling schema。执行层另行校验模型返回的工具与参数。"""
 
     schemas: list[dict[str, Any]] = [
         {
@@ -676,18 +693,9 @@ def tool_schemas() -> list[dict[str, Any]]:
     return schemas
 
 
-#: 一次请求最多执行几个动作。模型会为「0.25 秒和 0.75 秒的基频」这类请求
-#: 一次给多个工具调用（实测 Qwen3.5-2B 就会这么做），它们按顺序拼进同一条脚本里
-#: 执行；给个上限是怕模型一口气列十几个，把一次投递变成一串没人看过的操作。
 MAX_ACTIONS_PER_REQUEST = 3
 
 
-#: 会**改动 Praat 里的对象**（建/删/改名/标注/写盘）的工具。
-#:
-#: 对话循环用它做第二道护栏：用户没说「然后再……」时，第二轮之后不许再动这些工具。
-#: 实测 0.8B 预设下「打开当前声音的编辑器」会在第二轮顺手做两次频谱图，把选中对象
-#: 也换掉，后面的请求全被带偏；只读查询（pitch、object_info 这类）不受限制。
-#: 认不出来的工具（例如 custom_script）按「会改动」处理。
 MUTATING_TOOLS: frozenset[str] = frozenset(
     {
         "create_sound",

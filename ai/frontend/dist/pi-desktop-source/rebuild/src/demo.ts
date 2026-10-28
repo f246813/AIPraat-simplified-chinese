@@ -12,11 +12,12 @@ export function createDemoAdapter(): Rpc {
     'demo-history': Array.from({length:120},(_,i) => ({id:`history-${i}`,role:i%2 ? 'assistant' : 'user',content:i%2 ? `## 第 ${i+1} 条夹具\n\n这不是实际测量结果。公式：$f_0 = 1/T$。\n\n| 来源 | 证据 |\n|---|---|\n| 演示 | 未执行 |\n\n\`\`\`python\nprint(\"仅离线渲染测试\")\n\`\`\`` : `演示历史问题 ${i+1}`,status:'complete'} as Message)),
   };
   messages['demo-history'].push({id:'diagram-fixture',role:'assistant',content:'```mermaid\nflowchart LR\n A[材料] --> B[宿主校验]\n B --> C[结构化证据]\n```',status:'complete',activities:[{id:'fixture-thinking',type:'thinking',text:'仅测试夹具提供的思考文本，不是真实模型思考。',status:'complete'},{id:'fixture-tool',type:'tool',name:'Praat 测试卡片',args:{object:'fixture',scope:[0,1]},result:{source:'fixture',measured:false},status:'failed',execution:'未投递（演示夹具）'}]});
-  // Mid-history collapsible rows. Without content above the held row there is nothing to
-  // compensate, so the transcript-scroll fixtures need rows that are not the tail: one to
-  // change height above, one to hold as the reading anchor.
-  messages['demo-history'][39].activities = [{id:'fixture-early-thinking',type:'thinking',text:'较早折叠夹具：位于锚定行上方，用来制造标题上方的高度变化。\n\n第二段让折叠高度差足够明显。',status:'complete'}];
-  messages['demo-history'][59].activities = [{id:'fixture-mid-thinking',type:'thinking',text:'中段折叠夹具：用于验证展开锚定与长历史导航，不是真实模型思考。\n\n第二段让折叠高度差足够明显，便于断言读数位置是否被保持。',status:'complete'}];
+  // Mid-history collapsible rows, deliberately not the tail. The reading anchor can only be
+  // tested against a row that stays on screen while another one above it changes height, so
+  // under virtualisation the "grows above" row sits directly before the held row: both are
+  // within the mounted window whenever the held row is in view.
+  messages['demo-history'][58].activities = [{id:'fixture-early-thinking',type:'thinking',text:'上方折叠夹具：紧邻锚定行之上，用来制造标题上方的高度变化。\n\n第二段让折叠高度差足够明显。',status:'complete'}];
+  messages['demo-history'][59].activities = [{id:'fixture-mid-thinking',type:'thinking',text:'锚定折叠夹具：用于验证展开锚定与长历史导航，不是真实模型思考。\n\n第二段让折叠高度差足够明显，便于断言读数位置是否被保持。',status:'complete'}];
   if (new URLSearchParams(window.location.search).get('workflowResults') === '1') messages['demo-1'] = [{id:'workflow-result',role:'assistant',taskId:'workflow-fixture',status:'cancelled',content:'已取消后续解释。离线展示夹具。',result_content:'fixture 总时长 = 1.250000 秒',results:[{id:'fixture-result',tool:'duration',arguments:{object:1},rows:['fixture 总时长 = 1.250000 秒'],status:'success',execution:'delivered',source:'离线工具结果夹具',evidence_ref:0,range:{},reason:'夹具'}]}];
   const tasks = new Map<string,Task>(); const events: HostEvent[] = []; const attachments = new Map<string, Attachment>(); const previews = new Map<string,string>();
   const pinnedId='01984de2-8f74-7c91-a3b2-5c5e937cf318';
@@ -100,7 +101,12 @@ export function createDemoAdapter(): Rpc {
         const answer: Message = {id:`${task.id}-assistant`,role:'assistant',content:'',taskId:task.id,status:'running'};
         if (compactProcess) answer.activities = [{id:'stream-thinking',type:'thinking',text:'离线过程折叠测试。',status:'complete'}];
         messages[session.id].push(user,answer); emit(task,'message',user); emit(task,'message',answer);
-        const response = '这是一条**浏览器测试响应**，没有调用模型、云端或 Praat。\n\n可以切换会话观察事件隔离，使用停止按钮取消当前夹具任务。\n\n- Markdown 与公式 $f_0 = 1/T$\n- 附件只有演示元数据\n- 所有数字都不是专业测量结果';
+        const response = '这是一条**浏览器测试响应**，没有调用模型、云端或 Praat。\n\n可以切换会话观察事件隔离，点击发送位置的暂停按钮取消当前夹具任务。\n\n- Markdown 与公式 $f_0 = 1/T$\n- 附件只有演示元数据\n- 所有数字都不是专业测量结果';
+        if (new URLSearchParams(window.location.search).get('streamDelivery') === 'complete') {
+          answer.content = response; answer.status = 'complete'; task.status = 'complete';
+          emit(task,'message',answer); emit(task,'task',task);
+          return structuredClone(task);
+        }
         let offset=0;
         const timer = setInterval(() => {
           if (!activeTask(task)) { clearInterval(timer); return; }

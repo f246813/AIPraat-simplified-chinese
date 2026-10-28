@@ -162,6 +162,31 @@ class CloudPromptTests(unittest.TestCase):
         self.assertIn("不要输出 Markdown", prompt)
         self.assertNotIn("透明推导", prompt)
 
+    def test_local_native_open_knowledge_carries_world_knowledge_rules(self):
+        network = HttpCapture([answer("可以用一般知识解释，并说明这不是本次测量。")])
+        with patch.dict(os.environ, {qwen.PLANNER_MODE_ENV: "tools"}), patch("urllib.request.urlopen", network):
+            self.plan(self.client("open", "llama.cpp"), tool_schemas=tools.tool_schemas())
+        prompt = self.system(network.payloads[0])
+        self.assertIn(qwen.WORLD_KNOWLEDGE_INSTRUCTIONS, prompt)
+        self.assertIn("语言学", prompt)
+        # 放行知识不等于丢掉本地工具流程。
+        self.assertIn("一个都不要自己编造或推算", prompt)
+        self.assertIn("不要输出 Markdown", prompt)
+        # 知识规则只是提示词的一部分，不能换来额外一次模型请求。
+        self.assertEqual(len(network.payloads), 1)
+
+    def test_local_planner_instructions_follow_knowledge_mode_only(self):
+        opened = qwen.planner_instructions(self.client("open", "llama.cpp").config)
+        self.assertIn(qwen.TOOL_PLANNER_INSTRUCTIONS, opened)
+        self.assertIn(qwen.WORLD_KNOWLEDGE_INSTRUCTIONS, opened)
+        strict_config = self.client("strict", "llama.cpp").config
+        self.assertEqual(
+            qwen.planner_instructions(strict_config),
+            qwen.TOOL_PLANNER_INSTRUCTIONS + "\n\n" + qwen.identity_instructions(strict_config),
+        )
+        self.assertNotIn(qwen.WORLD_KNOWLEDGE_INSTRUCTIONS,
+                         qwen.planner_instructions(strict_config))
+
     def test_error_explanation_uses_cloud_evidence_and_knowledge_policy(self):
         network = HttpCapture([answer("**观测**：偏差来自给出的测量；建议分段练习。")])
         with patch("urllib.request.urlopen", network):

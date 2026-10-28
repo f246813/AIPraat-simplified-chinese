@@ -1,4 +1,3 @@
-import contextlib
 import copy
 import os
 import sys
@@ -8,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from praat_ai.mfa_g2p import (english_words, generate, choose_readings, check_launcher,
+from praat_ai.mfa_g2p import (transcript_words, validate_graphemes, generate, choose_readings, check_launcher,
                               launcher_command, run_command)
 from praat_ai.phone_labels import map_sequence, map_phone
 from praat_ai.mfa_task import task_alignment, file_state, explanation_payload
@@ -72,12 +71,47 @@ class G2pTests(unittest.TestCase):
                 generate(self.snapshot, 'hello', threading.Event())
 
     def test_word_normalization_does_not_erase_unsupported_characters(self):
-        self.assertEqual(english_words("Hello—world".replace('—', '-')), ['hello', 'world'])
-        self.assertEqual(english_words("Don't, don’t!"), ["don't", "don't"])
-        self.assertEqual(english_words('I am a.'), ['i', 'am', 'a'])
-        for text in ('', 'hello 123', '你好', 'U.S.A.', 'hi @bob', 'a' * 2001):
+        self.assertEqual(transcript_words('Hello—world'), ['hello', 'world'])
+        self.assertEqual(transcript_words("Don't, don’t!"), ["don't", "don't"])
+        self.assertEqual(transcript_words('I am a.'), ['i', 'am', 'a'])
+        self.assertEqual(transcript_words('日本語。こんにちは！東京'), ['日本語', 'こんにちは', '東京'])
+        self.assertEqual(transcript_words('你好，世界。 Привет мир! café 123'), ['你好', '世界', 'привет', 'мир', 'café', '123'])
+        for text in ('', 'hi @bob', 'a' * 2001):
             with self.assertRaises(ValueError):
-                english_words(text)
+                transcript_words(text)
+
+    def test_input_capability_comes_from_selected_model_graphemes(self):
+        validate_graphemes(['日本語'], {'graphemes': list('日本語')})
+        validate_graphemes(['123'], {'graphemes': list('123')})
+        validate_graphemes(['straße'], {'graphemes': list('straße')})
+        with self.assertRaisesRegex(ValueError, '所选 G2P 模型不支持'):
+            validate_graphemes(['日本語'], {'graphemes': list('abc')})
+        with self.assertRaisesRegex(ValueError, '所选 G2P 模型不支持'):
+            validate_graphemes(['123'], {'graphemes': list('abc')})
+
+    def test_generation_has_no_language_allowlist(self):
+        for language, text in [('ja', '日本語、東京。日本語'), ('cmn', '你好 世界 你好'), ('xx', 'café café'), ('de', 'Straße Straße')]:
+            with self.subTest(language=language):
+                snapshot = copy.deepcopy(self.snapshot)
+                snapshot['preset'].update(language=language, phone_set='ipa', phone_map={})
+                words = transcript_words(text)
+                def fake(command, *args):
+                    requested = Path(command[2]).read_text(encoding='utf-8').splitlines()
+                    self.assertEqual(requested, list(dict.fromkeys(words)))
+                    Path(command[4]).write_text(''.join(word + '\t a\n' for word in requested), encoding='utf-8')
+                    return ''
+                with patch('praat_ai.mfa_g2p.check_launcher', return_value=dict(help_order='input-first')), patch('praat_ai.mfa_g2p.launcher_command', return_value=['mfa']), patch('praat_ai.mfa_g2p.run_command', side_effect=fake):
+                    result = generate(snapshot, text, threading.Event())
+                self.assertEqual(result['sequence'], words)
+                readings, ipa, raw = choose_readings(result, {word: 0 for word in set(words)})
+                self.assertEqual([r['word'] for r in readings], words)
+                self.assertEqual(ipa, ['a'] * len(words))
+                snapshot['file_state'] = file_state(snapshot['paths'])
+                request = AnalysisRequest(1, 2, language, [PhoneSpec(p, label=r) for p, r in zip(ipa, raw)],
+                                          transcript=text, mfa_snapshot=snapshot, selected_readings=readings)
+                with task_alignment(request, AlignmentConfig()) as task:
+                    selected = Path(task.mfa.dictionary_path).read_text(encoding='utf-8')
+                    self.assertEqual(selected, ''.join(word + '\ta\n' for word in dict.fromkeys(words)))
 
     def test_explicit_unicode_and_arpabet_mapping(self):
         self.assertEqual(map_phone('AH0', 'arpabet'), 'ə')
@@ -202,19 +236,8 @@ class G2pTests(unittest.TestCase):
         self.assertEqual(map_phone('CH', 'arpabet'), 'tʃ')
 
     def test_relative_launcher_is_absolute_inside_temporary_working_directory(self):
-        """相对路径的 launcher 必须被解析成绝对路径，才能从别的工作目录启动。
-
-        相对路径只在同一个盘上有意义（本机 Python 在 C:、仓库在 D:，跨盘 relpath 直接 ValueError），
-        所以这里以「可执行文件所在盘的根」为基准取相对路径、并在该基准下解析——要验的语义没变：
-        传相对路径进来，``launcher_command`` 必须还一个绝对路径，且换到别的 cwd 也跑得起来。
-        """
-
-        executable = Path(sys.executable)
-        base = Path(executable.drive + os.sep) if executable.drive else Path.cwd()
-        relative = os.path.relpath(executable, base)
-        self.assertFalse(Path(relative).is_absolute())
-        with contextlib.chdir(base):
-            command = launcher_command({'executable': relative})
+        relative = os.path.relpath(sys.executable, Path.cwd())
+        command = launcher_command({'executable': relative})
         self.assertTrue(Path(command[0]).is_absolute())
         self.assertIn('ready', run_command([*command, '-c', 'print("ready")'], cwd=self.root))
 

@@ -92,7 +92,7 @@ class CapabilityDialogTests(unittest.TestCase):
         self.assertIn('已启用',self.dialog.audio_hint.get())
 
     def test_verified_reports_basic_validation_and_enables_audio(self):
-        self.probe({'status':'verified','reason':'基础音频特征校验通过；不代表细微发音判断或精确测量准确'})
+        self.probe({'status':'verified','reason':'基础音频特征校验通过'})
         self.assertTrue(self.dialog.audio_enabled.get())
         self.assertIn('基础音频验证通过',self.dialog.audio_hint.get())
         self.assertTrue(self.dialog.collect()['audio_verified_at'])
@@ -255,5 +255,12 @@ class CapabilityDialogTests(unittest.TestCase):
         self.assertFalse(load_config(self.path).api.audio_input_enabled)
         self.assertEqual(load_config(self.path).api.audio_test_result['status'],'unsupported')
 
+
+
+def tearDownModule():
+    # Tk 解释器必须在主线程回收：否则后端线程的下一次 GC 会析构它，触发 Tcl_AsyncDelete。
+    import gc
+
+    gc.collect()
 
 if __name__=='__main__': unittest.main()

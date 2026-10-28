@@ -131,3 +131,44 @@ With Node/npm available, in `rebuild/` (or the full project's `ai/frontend`):
 4. Replace the full project's `ai/frontend/dist` with the rebuilt `dist`, preserving these notices/licenses/source; close and reopen the frontend normally from Praat's menu.
 
 The standalone rebuild recipe skips the full project's prebuild notice-copy step because notices/source are supplied beside `rebuild/`. The full project may use `npm run build` instead. No signature, proprietary loader or Pi IPC is required. The local deliverable is an unpacked source project, not a newly released installer. Any future installer must retain these notices and replacement/rebuild capability.
+
+## Smooth reply text
+
+The original `hooks/useSmoothText.ts` at revision `8f4285fd2f25380f2f5ed0b6f645b6623418e3f3` is preserved unchanged in `upstream/smooth-text/useSmoothText.ts`. Source: https://github.com/vastsa/PI-Desktop/blob/8f4285fd2f25380f2f5ed0b6f645b6623418e3f3/apps/desktop/src/hooks/useSmoothText.ts (LGPL-3.0).
+
+`rebuild/src/pi/useSmoothText.ts` adapts its adaptive 60-character/second frame pacing, fractional advances, 60 Hz commit limit, UTF-16 pair boundary handling and 32 KiB text limit. It subscribes to reduced-motion changes, starts newly received replies empty, drains queued text after successful completion, and displays authoritative replacements immediately. Loaded history is shown without replay. Host text validation and result publication remain application-owned.
+
+## Stable Markdown blocks
+
+The original `lib/markdown-blocks.ts`, its `markdown-blocks.test.mjs`, the
+component that consumes it (`components/Markdown.tsx`) and `lib/mermaid.ts`
+(`isClosedFencedCodeBlock`) at revision `9f313c8f855ef6f8311622ad63dd7e6583cef2d7`
+are preserved unchanged in `upstream/markdown-blocks/`; `SOURCE.json` there
+records each file's Git blob and SHA-256. Source:
+https://github.com/vastsa/PI-Desktop/tree/9f313c8f855ef6f8311622ad63dd7e6583cef2d7
+(LGPL-3.0).
+
+`ai/frontend/src/pi/markdown-blocks.ts` adapts `parseMarkdownBlocks`,
+`advanceMarkdownBlocks` and `emptyMarkdownBlockCache`:
+the remark AST source-slice splitting, the concatenation-back-to-input property,
+document-scoped definitions that force a single unit, the one-way latch and the
+streaming tail budget are retained. PI's render-diagnostics host runtime is
+removed. The local `src/markdown-code.ts` annotates individual code nodes from
+remark's own fence tokens, including nodes inside lists, quotes and documents
+with footnotes. `receivedCodeText` parses the authoritative source on copy clicks
+to select only the requested code node's value. The parse grammar is shared with
+the renderer through the exported
+`markdownRemarkPlugins`, so the block lexer and ReactMarkdown cannot diverge on a
+block boundary.
+
+`ai/frontend/src/Markdown.tsx` adapts PI's block-memo renderer: it keeps
+this project's sanitize schema, KaTeX, highlight.js, Mermaid gating and host-link
+safety rather than PI's own component set, but adopts PI's stable component maps,
+per-index `memo` block components, the unclosed-fence hold (Mermaid shows source
+until its fence closes instead of re-rendering per fragment) and the separation of
+receiving state from displayed state. Tail budgeting remains active while the
+host is receiving text even when character animation is disabled. Full text stays
+authoritative for copy; only
+the growing tail re-parses. The original test is ported to the project Vitest suite
+(`tests/markdown-blocks.test.ts`). Pi's host store, IPC and Agent runtime are not
+imported.

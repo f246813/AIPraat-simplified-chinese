@@ -51,7 +51,7 @@ tableId = selected ("Table")
 # ---- mean_pitch：平均基频 ----
 if all = 1 or parameter$ = "mean_pitch"
     selectObject: soundId
-    pitchId = To Pitch: 0, 75.000000, 600.000000
+    pitchId = To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000, 15, "no", 0.03, 0.09, 0.50, 0.055, 0.35, 0.14
     selectObject: pitchId
     median = Get quantile: start, end, 0.5, "Hertz"
     firstFrameTime = Get frame number from time: start
@@ -68,6 +68,14 @@ if all = 1 or parameter$ = "mean_pitch"
     if lastFrame < 1
     lastFrame = 1
     endif
+    firstCenter = Get time from frame number: firstFrame
+    lastCenter = Get time from frame number: lastFrame
+    if firstCenter < start
+    firstFrame = firstFrame + 1
+    endif
+    if lastCenter > end
+    lastFrame = lastFrame - 1
+    endif
     value = undefined
     if median <> undefined
     ceilingValue = median * 1.5
@@ -76,7 +84,7 @@ if all = 1 or parameter$ = "mean_pitch"
     countValue = 0
     for pitchFrame from firstFrame to lastFrame
     f = Get value in frame: pitchFrame, "Hertz"
-    if f <> undefined and f <= ceilingValue and f >= floorValue
+    if f <> undefined and f >= floorValue and f <= ceilingValue
     totalValue = totalValue + f
     countValue = countValue + 1
     endif
@@ -107,7 +115,7 @@ endif
 # ---- minimum_pitch：最低基频 ----
 if all = 1 or parameter$ = "minimum_pitch"
     selectObject: soundId
-    pitchId = To Pitch: 0, 75.000000, 600.000000
+    pitchId = To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000, 15, "no", 0.03, 0.09, 0.50, 0.055, 0.35, 0.14
     selectObject: pitchId
     median = Get quantile: start, end, 0.5, "Hertz"
     firstFrameTime = Get frame number from time: start
@@ -124,13 +132,22 @@ if all = 1 or parameter$ = "minimum_pitch"
     if lastFrame < 1
     lastFrame = 1
     endif
+    firstCenter = Get time from frame number: firstFrame
+    lastCenter = Get time from frame number: lastFrame
+    if firstCenter < start
+    firstFrame = firstFrame + 1
+    endif
+    if lastCenter > end
+    lastFrame = lastFrame - 1
+    endif
     value = undefined
     if median <> undefined
+    ceilingValue = median * 1.5
     floorValue = median * 0.5
     lowest = 0
     for pitchFrame from firstFrame to lastFrame
     f = Get value in frame: pitchFrame, "Hertz"
-    if f <> undefined and f >= floorValue
+    if f <> undefined and f >= floorValue and f <= ceilingValue
     if lowest = 0 or f < lowest
     lowest = f
     endif
@@ -162,7 +179,7 @@ endif
 # ---- maximum_pitch：最高基频 ----
 if all = 1 or parameter$ = "maximum_pitch"
     selectObject: soundId
-    pitchId = To Pitch: 0, 75.000000, 600.000000
+    pitchId = To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000, 15, "no", 0.03, 0.09, 0.50, 0.055, 0.35, 0.14
     selectObject: pitchId
     median = Get quantile: start, end, 0.5, "Hertz"
     firstFrameTime = Get frame number from time: start
@@ -179,14 +196,25 @@ if all = 1 or parameter$ = "maximum_pitch"
     if lastFrame < 1
     lastFrame = 1
     endif
+    firstCenter = Get time from frame number: firstFrame
+    lastCenter = Get time from frame number: lastFrame
+    if firstCenter < start
+    firstFrame = firstFrame + 1
+    endif
+    if lastCenter > end
+    lastFrame = lastFrame - 1
+    endif
     value = undefined
     if median <> undefined
     ceilingValue = median * 1.5
+    floorValue = median * 0.5
     highest = 0
     for pitchFrame from firstFrame to lastFrame
     f = Get value in frame: pitchFrame, "Hertz"
-    if f <> undefined and f <= ceilingValue and f > highest
+    if f <> undefined and f >= floorValue and f <= ceilingValue
+    if f > highest
     highest = f
+    endif
     endif
     endfor
     if highest > 0
@@ -215,7 +243,7 @@ endif
 # ---- median_pitch：基频中位数 ----
 if all = 1 or parameter$ = "median_pitch"
     selectObject: soundId
-    pitchId = To Pitch: 0, 75.000000, 600.000000
+    pitchId = To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000, 15, "no", 0.03, 0.09, 0.50, 0.055, 0.35, 0.14
     selectObject: pitchId
     value = Get quantile: start, end, 0.5, "Hertz"
     selectObject: tableId
@@ -240,7 +268,7 @@ endif
 # ---- sd_pitch：基频标准差 ----
 if all = 1 or parameter$ = "sd_pitch"
     selectObject: soundId
-    pitchId = To Pitch: 0, 75.000000, 600.000000
+    pitchId = To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000, 15, "no", 0.03, 0.09, 0.50, 0.055, 0.35, 0.14
     selectObject: pitchId
     value = Get standard deviation: start, end, "Hertz"
     selectObject: tableId
@@ -265,7 +293,7 @@ endif
 # ---- pitch_slope：基频平均绝对斜率 ----
 if all = 1 or parameter$ = "pitch_slope"
     selectObject: soundId
-    pitchId = To Pitch: 0, 75.000000, 600.000000
+    pitchId = To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000, 15, "no", 0.03, 0.09, 0.50, 0.055, 0.35, 0.14
     selectObject: pitchId
     value = Get mean absolute slope: "Hertz"
     selectObject: tableId
@@ -290,7 +318,7 @@ endif
 # ---- pitch_slope_octave_free：不含倍频跳变的基频斜率 ----
 if all = 1 or parameter$ = "pitch_slope_octave_free"
     selectObject: soundId
-    pitchId = To Pitch: 0, 75.000000, 600.000000
+    pitchId = To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000, 15, "no", 0.03, 0.09, 0.50, 0.055, 0.35, 0.14
     selectObject: pitchId
     value = Get slope without octave jumps
     selectObject: tableId
@@ -315,7 +343,7 @@ endif
 # ---- pitch_start：起点基频 ----
 if all = 1 or parameter$ = "pitch_start"
     selectObject: soundId
-    pitchId = To Pitch: 0, 75.000000, 600.000000
+    pitchId = To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000, 15, "no", 0.03, 0.09, 0.50, 0.055, 0.35, 0.14
     selectObject: pitchId
     value = Get value at time: start, "Hertz", "Linear"
     step = Get time step
@@ -349,7 +377,7 @@ endif
 # ---- pitch_end：终点基频 ----
 if all = 1 or parameter$ = "pitch_end"
     selectObject: soundId
-    pitchId = To Pitch: 0, 75.000000, 600.000000
+    pitchId = To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000, 15, "no", 0.03, 0.09, 0.50, 0.055, 0.35, 0.14
     selectObject: pitchId
     value = Get value at time: end, "Hertz", "Linear"
     step = Get time step

@@ -42,6 +42,7 @@
 #include "Printer.h"
 #include "ScriptEditor.h"
 #include "NotebookEditor.h"
+#include "PythonScriptEditor.h"
 #include "Strings_.h"
 #include "praat_python.h"
 #include "PraatAiControl.h"
@@ -1031,9 +1032,9 @@ static void praat_exit (int exit_code) {
 		PraatAiControl_applyPathSettings ();
 		Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // refuse to write the preferences if the locale is wrong (even if tracing is on)
 		Preferences_write_i (& prefsFile7);
-		if (Melder_appVersion() < 8000) {   // allow the concurrent use of Praat 6 and 7, until Praat 8
+		if (Melder_appVersion() >= 8000) {   // allow the concurrent use of Praat 6 and 7, until Praat 8
 			if (MelderFile_readable (& prefsFile7))   // If successful in writing the modern (Praat 7/8) settings file...
-				MelderFile_delete (& prefsFile5);   // ... then delete the obsolete (Praat 6) settings file.
+				MelderFile_delete (& prefsFile5);   // ... then delete the obsolete (Praat 5/6) settings file.
 		}
 
 		trace (U"save the script buttons");
@@ -1049,9 +1050,9 @@ static void praat_exit (int exit_code) {
 				praat_saveAddedActions (& buffer);
 				praat_saveToggledActions (& buffer);
 				MelderFile_writeText_i (& buttonsFile7, buffer.string, kMelder_textOutputEncoding::ASCII_THEN_UTF16);
-				if (Melder_appVersion() < 8000) {   // allow the concurrent use of Praat 6 and 7, until Praat 8
+				if (Melder_appVersion() >= 8000) {   // allow the concurrent use of Praat 6 and 7, until Praat 8
 					if (MelderFile_readable (& buttonsFile7))   // If successful in writing the modern (Praat 7/8) buttons file...
-						MelderFile_delete (& buttonsFile5);   // ... then delete the obsolete (Praat 6) buttons file.
+						MelderFile_delete (& buttonsFile5);   // ... then delete the obsolete (Praat 5/6) buttons file.
 				}
 			} catch (MelderError) {
 				Melder_clearError ();
@@ -1362,30 +1363,56 @@ static void gui_button_cb_directQuit (Thing /* boss */, GuiButtonEvent /* event 
 	praat_exit (0);
 }
 
+/*
+	Save every Praat script, Notebook and Python script that still holds unsaved text.
+	An editor that has no file yet is asked for a file name, through its own Save as...
+	form. Files that were already written stay written; we do not undo them if a later
+	editor is cancelled.
+	@return false as soon as the user cancels or a file cannot be written; the remaining
+	editors are then left untouched.
+*/
+static bool saveAllUnsavedEditors () {
+	for (integer i = 1; i <= theReferencesToAllOpenScriptEditors.size; i ++)
+		if (! TextEditor_saveOrAskSaveAs (theReferencesToAllOpenScriptEditors.at [i]))
+			return false;
+	for (integer i = 1; i <= theReferencesToAllOpenNotebookEditors.size; i ++)
+		if (! TextEditor_saveOrAskSaveAs (theReferencesToAllOpenNotebookEditors.at [i]))
+			return false;
+	for (integer i = 1; i <= theReferencesToAllOpenPythonScriptEditors.size; i ++)
+		if (! TextEditor_saveOrAskSaveAs (theReferencesToAllOpenPythonScriptEditors.at [i]))
+			return false;
+	return true;
+}
+
 static void gui_button_cb_saveProjectAndQuit (Thing /* boss */, GuiButtonEvent /* event */) {
-	autostring32 chosenPath = GuiFileSelect_getOutfileName (theCurrentPraatApplication -> topShell, praat_translate (U"Save workspace as .praat file"), U"workspace.praat");
-	if (! chosenPath || chosenPath [0] == U'\0')
-		return;
+	if (theCurrentPraatObjects -> n > 0) {   // an empty list needs no empty project file; go straight to the scripts
+		autostring32 chosenPath = GuiFileSelect_getOutfileName (theCurrentPraatApplication -> topShell, praat_translate (U"Save workspace as .praat file"), U"workspace.praat");
+		if (! chosenPath || chosenPath [0] == U'\0')
+			return;
 
-	MelderString filePath;
-	MelderString_copy (& filePath, chosenPath.get());
-	if (! Melder_endsWith_caseAware (filePath.string, U".praat"))
-		MelderString_append (& filePath, U".praat");
+		MelderString filePath;
+		MelderString_copy (& filePath, chosenPath.get());
+		if (! Melder_endsWith_caseAware (filePath.string, U".praat"))
+			MelderString_append (& filePath, U".praat");
 
-	try {
-		structMelderFile file;
-		Melder_pathToFile (filePath.string, & file);
-		autoCollection set = Collection_create ();
-		for (integer iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++) {
-			Daata object = (Daata) theCurrentPraatObjects -> list [iobject]. object;
-			if (object)
-				set -> addItem_ref (object);
+		try {
+			structMelderFile file;
+			Melder_pathToFile (filePath.string, & file);
+			autoCollection set = Collection_create ();
+			for (integer iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++) {
+				Daata object = (Daata) theCurrentPraatObjects -> list [iobject]. object;
+				if (object)
+					set -> addItem_ref (object);
+			}
+			Data_writeToBinaryFile (set.get(), & file);
+		} catch (MelderError) {
+			Melder_flushError ();
+			return;
 		}
-		Data_writeToBinaryFile (set.get(), & file);
-	} catch (MelderError) {
-		Melder_flushError ();
-		return;
 	}
+
+	if (! saveAllUnsavedEditors ())
+		return;   // quit aborted; the editors that are still unsaved remain open
 
 	if (theQuitDialog)
 		GuiThing_hide (theQuitDialog);
@@ -1396,7 +1423,7 @@ extern "C" void DO_Quit (UiForm /* sendingForm */, integer /* narg */, Stackel /
 	Interpreter /* interpreter */, conststring32 /* invokingButtonTitle */, bool /* isModified */, void * /* buttonClosure */, Editor /* optionalEditor */)
 {
 	const bool youHaveObjectsInYourList = ( theCurrentPraatObjects -> n > 0 );
-	const bool youHaveUnsavedScriptsOrNotebooks = ( ScriptEditors_dirty () || NotebookEditors_dirty () );
+	const bool youHaveUnsavedScriptsOrNotebooks = ( ScriptEditors_dirty () || NotebookEditors_dirty () || PythonScriptEditors_dirty () );
 	if ((! youHaveObjectsInYourList && ! youHaveUnsavedScriptsOrNotebooks) || theCurrentPraatApplication -> batch) {
 		praat_exit (0);
 		return;
@@ -2662,6 +2689,7 @@ void praat_init (conststring32 title,
 		praatList_objects = GuiList_create (raam, 0, -250, topBarY + topBarH + 4, -114, true, U" Objects ");
 		GuiList_setSelectionChangedCallback (praatList_objects, gui_cb_list_selectionChanged, nullptr);
 		GuiList_setContextMenuCallback (praatList_objects, gui_cb_list_contextMenu, nullptr);
+		GuiList_enableRightDragSelection (praatList_objects);
 		GuiThing_show (praatList_objects);
 		praat_addFixedButtons (raam);
 

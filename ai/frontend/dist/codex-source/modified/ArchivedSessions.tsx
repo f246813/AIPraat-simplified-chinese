@@ -65,10 +65,10 @@ export function ArchivedSessions({store,sessions,busy,onOpen,sections=store.getS
     const current=store.getSnapshot().sessions.filter(s=>s.archived&&deletion.ids.includes(s.id));
     setPending('delete');setError('');let deleted=0;
     try{
-      if(current.some(session=>!canDelete(session)))throw new Error('所选会话有任务尚未结束，暂时不能删除。');
+      if(current.some(session=>!canDelete(session)))throw new Error('所选会话有任务尚未结束，暂时不能删除');
       for(const session of current){const params:ThreadDeleteParams={threadId:session.id};await store.delete(params.threadId);deleted++;}
       setDeletion(undefined);focusAfterRestore.current=0;
-    }catch(reason){setError(`${deleted?`已删除 ${deleted} 个会话。`:''}${reason instanceof Error?reason.message:String(reason)}`);}
+    }catch(reason){setError(`${deleted?`已删除 ${deleted} 个会话`:''}${reason instanceof Error?reason.message:String(reason)}`);}
     finally{setPending('');}
   }
   function openGroupMenu(group:ArchivedGroup,trigger:HTMLButtonElement){
@@ -102,8 +102,8 @@ export function ArchivedSessions({store,sessions,busy,onOpen,sections=store.getS
     {!groups.length&&!search?.loading&&<p className="archived-sessions-empty">{rows.length?'没有匹配的已归档会话':'暂无已归档会话'}</p>}
     <ContextMenu state={menu} onClose={()=>setMenu(null)}/>
     {deletion&&<Modal title={deletion.scope==='all'?'删除全部已归档会话':deletion.scope==='group'?'删除分组中的已归档会话':'删除已归档会话'} onClose={()=>{if(!locked)setDeletion(undefined);}}>
-      <p>{deletion.scope==='one'?`删除“${deletion.name}”？`:deletion.scope==='group'?`删除“${deletion.name}”中当前显示的 ${selectedDelete.length} 个已归档会话？`:`删除全部 ${selectedDelete.length} 个已归档会话？搜索和分类筛选不会限制此操作。`}删除后无法在本应用中恢复。</p>
-      {selectedDelete.some(s=>s.id.startsWith('legacy:'))&&<p className="muted">旧版会话仅从本应用中移除，原始旧版记录会保留。</p>}
+      <p>{deletion.scope==='one'?`删除“${deletion.name}”？`:deletion.scope==='group'?`删除“${deletion.name}”中当前显示的 ${selectedDelete.length} 个已归档会话？`:`删除全部 ${selectedDelete.length} 个已归档会话？搜索和分类筛选不会限制此操作`}删除后无法在本应用中恢复</p>
+      {selectedDelete.some(s=>s.id.startsWith('legacy:'))&&<p className="muted">旧版会话仅从本应用中移除，原始旧版记录会保留</p>}
       {error&&<p role="alert" className="warning">{error}</p>}
       <div className="actions"><button disabled={locked} onClick={()=>setDeletion(undefined)}>取消</button><button className="danger" aria-label="确认删除归档会话" disabled={locked} onClick={()=>void remove()}>{pending==='delete'?'删除中…':'删除'}</button></div>
     </Modal>}

@@ -21,7 +21,7 @@ static class RuntimeLogTests
     }
     static string Stem(string[] folders){return (string)typeof(RuntimeDependencies).GetMethod("LogStem",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,new object[]{"detect",folders});}
     static readonly BindingFlags flags=BindingFlags.Instance|BindingFlags.NonPublic;
-    static string[] LogFolders(){return new[]{Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"AIPraat","logs","runtime"),Path.Combine(Path.GetTempPath(),"AIPraat","logs","runtime"),Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"logs","runtime")};}
+    static string[] LogFolders(){return new[]{Path.Combine(RuntimeDependencies.InstallRoot,"logs","runtime"),Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"AIPraat","logs","runtime"),Path.Combine(Path.GetTempPath(),"AIPraat","logs","runtime")};}
     static void Restore(string folder,DirectorySecurity original)
     {
         var restored=new DirectorySecurity();
@@ -82,7 +82,7 @@ static class RuntimeLogTests
                 Environment.SetEnvironmentVariable("TEMP",blocked);Environment.SetEnvironmentVariable("TMP",blocked);
                 using(var assets=new RuntimeAssets()) {
                     working=assets.Folder;
-                    Assert(Path.GetDirectoryName(working)==Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"ai","runtime")&&File.Exists(assets.Script),"working resources did not fall back to program directory");
+                    Assert(Path.GetDirectoryName(working)==Path.Combine(RuntimeDependencies.InstallRoot,"cache","temp")&&File.Exists(assets.Script),"working resources did not prefer installation cache");
                 }
                 Assert(!Directory.Exists(working),"fallback working resources were not cleaned up");
             }finally{Environment.SetEnvironmentVariable("TEMP",oldTemp);Environment.SetEnvironmentVariable("TMP",oldTmp);}

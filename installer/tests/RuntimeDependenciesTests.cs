@@ -110,7 +110,7 @@ static class RuntimeDependenciesTests
         Case("installer_engine_rechecks_and_rejects_skip_before_writing",()=>{
             var request=new InstallRequest{InstallDirectory=Path.Combine(root,"blocked"),PythonPath=missing,ConfigurePrerequisites=true};
             bool blocked=false;try{new InstallEngine().Run(request,null,null);}catch(IOException){blocked=true;}
-            Assert(blocked&&!Directory.Exists(request.InstallDirectory),"missing environment installed");
+            Assert(blocked&&!File.Exists(Path.Combine(request.InstallDirectory,"Praat.exe"))&&!File.Exists(Path.Combine(request.InstallDirectory,"ai","ai_config.json")),"missing environment installed");
             request.PythonPath=python;request.ConfigurePrerequisites=false;blocked=false;
             try{new InstallEngine().Run(request,null,null);}catch(IOException){blocked=true;}
             Assert(blocked,"skip accepted");

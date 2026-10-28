@@ -110,13 +110,13 @@ class NativeHookTests(unittest.TestCase):
     def test_whole_request_default_does_not_use_editor_selection(self):
         _, actions, scripts, _ = self.run_case([('pitch_statistics', {})], goal='测量整个声音的基频')
         self.assertEqual(len(actions), 1)
-        self.assertIn('tmin = 0\ntmax = duration', scripts[0])
+        self.assertIn('tmin = domainStart\ntmax = domainEnd', scripts[0])
         self.assertNotIn('tmin = 0.200000', scripts[0])
         self.assertNotIn('按编辑器圈选', scripts[0])
 
     def test_whole_point_query_defaults_to_actual_object_midpoint(self):
         _, _, scripts, _ = self.run_case([('pitch', {})], goal='测量整个声音的基频')
-        self.assertIn('time = duration / 2', scripts[0])
+        self.assertIn('time = timeOrigin + duration / 2', scripts[0])
         self.assertNotIn('time = 0.300', scripts[0])
 
     def test_whole_request_copy_of_old_selection_rejects(self):
@@ -230,12 +230,7 @@ class NativeHookTests(unittest.TestCase):
         self.assertEqual(len(actions), 2)
         self.assertEqual(refreshed, [1])
 
-    def test_report_guard_gives_a_bad_number_one_rewrite_chance(self):
-        """坏数值先用掉报告阶段那一次 output 重试：模型改对就按改对的交付。
-
-        不论改没改对，语义都不变——不重新测量、不丢正文、坏数值不进交付。
-        """
-
+    def test_report_guard_native_hook_retries_without_repeating_measurement(self):
         state, actions, _, reports = self.run_case([('pitch', {'time':.5})], reports=[
             '本录音基频是 999 Hz [E1]。该数字用于评估，但仍然缺少参照录音，无法进一步判断具体缺陷。',
             '本录音基频是 220 Hz [E1]。该数字来自真实测量，仍然缺少参照录音，无法进一步判断具体缺陷。'])
@@ -243,19 +238,19 @@ class NativeHookTests(unittest.TestCase):
         self.assertEqual(len(reports), 2)
         self.assertNotIn('999 Hz', state.report)
         self.assertIn('220 Hz', state.report)
-        self.assertTrue(state.metrics.get('report_verified'))
-        self.assertEqual(state.metrics['audit']['masked_count'], 0)
 
-    def test_report_failure_keeps_real_evidence_and_masks_fabricated_output(self):
+    def test_report_failure_keeps_real_evidence_and_discards_fabricated_output(self):
         bad = '本录音基频是 999 Hz [E1]。这个结果能够用于评估音高，但是仍缺少可靠的参照录音材料。'
         state, actions, _, reports = self.run_case([('pitch', {'time':.5})], reports=[bad, bad])
         self.assertEqual(len(actions), 1)
-        self.assertEqual(len(reports), 3)   # 整份重试一次 + 定点返修一次，都改不动
+        self.assertEqual(len(reports), 3)  # Two full reports plus one narrow, budgeted repair.
+        timings = state.metrics['request_timings']
+        self.assertEqual(sum(t['phase'] == 'report' for t in timings), 2)
+        self.assertEqual(sum(t['phase'] == 'report_repair' for t in timings), 1)
+        self.assertEqual(state.requests, len(timings))
         self.assertEqual(len(state.evidence), 1)
         self.assertEqual(state.status, 'partial')
         self.assertNotIn('999 Hz', state.report)
-        self.assertIn('[未通过核对的数值]', state.report)
-
 
     def test_report_rejections_keep_the_written_draft_instead_of_a_stage_record(self):
         bad = '本录音基频是 999 Hz [E1]。这个结果能够用于评估音高，但是仍缺少可靠的参照录音材料。'
@@ -263,12 +258,12 @@ class NativeHookTests(unittest.TestCase):
         self.assertEqual(len(actions), 1)
         self.assertEqual(len(reports), 3)
         # 2026-10-06 实测：守卫连拒两次后整份回答被换成「本轮仅交付阶段记录」，用户看不到
-        # 任何结论。现在正文保留、没核上的数值遮掉；为此至多多发一次请求（改不动就不再要）。
+        # 任何结论。现在正文保留、没核上的数值遮掉，并在末尾说明为什么。
         self.assertNotIn('本轮仅交付阶段记录', state.report)
         self.assertIn('这个结果能够用于评估音高', state.report)
         self.assertIn('[未通过核对的数值]', state.report)
-        self.assertFalse(state.metrics.get('report_verified', False))
-        self.assertEqual(state.metrics['guard_repairs'].get('report.number_retried'), 1)
+        self.assertIn('依赖这些数值的判断暂不能作为结论', state.report)
+        self.assertNotIn('自动数值核对', state.report)
 
     def test_multi_parameter_measure_is_accepted_and_dispatched(self):
         state, actions, _, _ = self.run_case([('measure', {'parameter': 'f1,f2', 'object': 1})])

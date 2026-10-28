@@ -756,8 +756,17 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 			        << "      \"id\": " << objectId << ",\n"
 			        << "      \"name\": \"" << escape_json_string (utf8Name ? utf8Name.get() : "") << "\",\n"
 			        << "      \"class\": \"" << escape_json_string (utf8Class ? utf8Class.get() : "") << "\",\n"
-			        << "      \"file\": \"" << escape_json_string (objPathStr) << "\"\n"
-			        << "    }";
+			        << "      \"file\": \"" << escape_json_string (objPathStr) << "\"";
+			if (isSound) {
+				Sound sound = static_cast <Sound> (object);
+				jsonOfs << std::setprecision (17)
+				        << ",\n      \"original_sound_domain\": [" << sound -> xmin << ", " << sound -> xmax << "]"
+				        << ",\n      \"wav_to_sound_offset_sec\": " << sound -> xmin
+				        << ",\n      \"sample_rate_hz\": " << 1.0 / sound -> dx
+				        << ",\n      \"channels\": " << sound -> ny
+				        << ",\n      \"export_format\": \"wav-pcm16\"";
+			}
+			jsonOfs << "\n    }";
 		}
 		jsonOfs << "\n  ]\n}\n";
 		jsonOfs.close();
@@ -846,7 +855,7 @@ static void praat_runPythonScriptFile_impl (conststring32 filePath, conststring3
 		// Child token integrity follows the desktop parent. Publishing a new PE
 		// inside the Low workspace can lower both Praat and this Python process,
 		// causing Medium runtime/status.json writes to fail. Final EXE publication
-		// must satisfy docs/ai-frontend/windows-integrity-design.md.
+		// must satisfy docs/CURRENT-IMPLEMENTATION.zh-CN.md.
 		BOOL success = CreateProcessW (
 			nullptr,
 			cmdLineMutable.data(),

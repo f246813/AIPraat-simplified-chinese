@@ -73,7 +73,7 @@ def probe_audio(config, root: Path, *, cancel=None, model=None):
             answer = await task
             verified = validate_probe(answer.model_dump(), expected)
             return {'status':'verified' if verified else 'unverified',
-                    'reason':'基础音频特征校验通过；不代表细微发音判断或精确测量准确' if verified else '接口接受了请求，但特征校验未通过；能力仍未验证'}
+                    'reason':'基础音频特征校验通过' if verified else '音频特征校验未通过，请查看返回结果'}
         except asyncio.CancelledError:
             return {'status':'cancelled', 'reason':'音频验证已取消'}
         except Exception as error:

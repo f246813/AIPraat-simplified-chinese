@@ -26,6 +26,8 @@ from .models import (
 from .pronunciation_rules import evaluate_phone_rules, profile_snapshot, resolve_profile
 from .normalization import apply_formant_normalization, audio_identity
 from .normalization_prosody import apply_prosody_normalization, evaluate_prosody_observations, pitch_settings
+from .measurement_protocol import bind_tracks, compatibility, compare_trajectories, valid_samples
+from .normalization import resolve_measurement_settings
 
 
 def infer_learner_segments(
@@ -61,44 +63,56 @@ def infer_learner_segments(
 
 
 def _valid_values(values: list[float]) -> bool:
-    if len(values) < 2:
-        return False
-    return any(abs(value) > 1e-9 for value in values)
+    return len(values) >= 2 and all(math.isfinite(value) for value in values)
 
 
 #: 解释守卫里给一族特征用的可读名：报告守卫按这些名字认量名（F1→formant.1，基频→pitch…）。
 _EXPLANATION_LABELS = {"f1": "F1", "f2": "F2", "f3": "F3", "pitch": "基频", "intensity": "强度"}
 
 
+def _quantity_role(name):
+    return {"pitch": "pitch.mean", "f1": "formant.1.mean", "f2": "formant.2.mean", "f3": "formant.3.mean",
+            "intensity": "intensity.mean", "vot": "vot.value", "vot_ms": "vot.value"}.get(name, name)
+
+
 def _acoustic_evidence(role: str, tracks: list[PhoneFeatureTracks], context_text: str,
                        object_id: Any) -> escape_policy.Evidence:
-    """一侧音频的证据行：区间起止、时长，以及每个已测量特征的均值。"""
-
-    rows: list[str] = []
+    """Raw-frame summaries retain identity; DTW means are separate derivations."""
+    rows, measurements = [], []
     latest = 0.0
     for item in sorted(tracks, key=lambda phone: (phone.start, phone.phone_index)):
-        start = float(item.start)
-        end = float(item.end)
+        start, end = float(item.start), float(item.end)
         if math.isfinite(start) and math.isfinite(end) and end > start:
-            rows.append(f"区间 起点 {start:.3f} 秒")
-            rows.append(f"区间 终点 {end:.3f} 秒")
-            rows.append(f"时长 {end - start:.3f} 秒")
+            for label, value, quantity in (("区间 起点", start, "range.start"), ("区间 终点", end, "range.end"),
+                                            ("时长", end-start, "duration")):
+                rows.append(f"{label} {value:.3f} 秒")
+                measurements.append(dict(value=value, unit="s", role=quantity, phone_index=item.phone_index))
             latest = max(latest, end)
-        for name, track in item.tracks.items():
-            values = [value for value in track.values if math.isfinite(value)]
-            if not _valid_values(values):
-                continue
-            mean, _ = mean_and_stddev(values)
-            label = _EXPLANATION_LABELS.get(name, name)
-            unit = f"{track.unit}".strip()
-            rows.append(f"{label} {role}均值 {mean:.3f} {unit}".rstrip())
+        for name, track in {**item.tracks, **item.derived_tracks}.items():
+            samples = valid_samples(track)
+            metadata = track.analysis
+            if samples:
+                mean = sum(v for _, _, v in samples) / len(samples)
+                rows.append(f"{_EXPLANATION_LABELS.get(name, name)} {role}原始帧均值 {mean:.3f} {track.unit}".rstrip())
+                measurements.append(dict(value=mean, unit=track.unit, role=_quantity_role(name),
+                    measurement_id=metadata.get("measurement_id"), statistic="raw_frame_mean",
+                    phone_index=item.phone_index, status="screened", scope=[item.start, item.end]))
+            else:
+                rows.append(f"{name} 未测得：{metadata.get('reason') or '无有效观察帧'}")
+        for name, measure in item.measurements.items():
+            rows.append(f"{name} {role} {measure.value:.3f} {measure.unit}（{measure.status}）" if measure.value is not None
+                        else f"{name} 未测得：{measure.reason}")
+            measurements.append(dict(value=measure.value, unit=measure.unit, role=_quantity_role(name),
+                measurement_id=measure.analysis.get("measurement_id"), status=measure.status,
+                reason=measure.reason, phone_index=item.phone_index))
     if latest > 0:
         rows.append(f"总时长 {latest:.3f} 秒")
-    # 签名里必须带侧别：两侧的证据行结构相同，只按工具名+来源会被 ``add_evidence`` 去重丢掉。
+        measurements.append(dict(value=latest, unit="s", role="duration"))
     arguments: dict[str, Any] = {"side": role}
     if object_id is not None:
         arguments["object"] = object_id
-    return escape_policy.Evidence("pronunciation_acoustics", arguments, rows, context_text)
+    return escape_policy.Evidence("pronunciation_acoustics", arguments, rows, context_text,
+        acoustic=dict(schema="pronunciation-measurements-v2", measurements=measurements))
 
 
 def explanation_evidence(
@@ -110,9 +124,8 @@ def explanation_evidence(
 ) -> escape_policy.AnalysisState:
     """把一次纠音分析整理成报告守卫要的证据（与云端 ``state.evidence`` 同形状）。
 
-    每个音素每一侧一条证据，行里写清「特征 + 侧别 + 均值」以及区间起止与时长。
-    这样解释里引用的实测值核得上、编造或张冠李戴的数值核不上：解释与云端报告共用
-    同一份证据契约，而不是各写一套提示词兜底。
+    原始帧摘要、DTW 派生统计和地标单值保留各自测量 ID、量名与状态，
+    解释与报告守卫使用同一组测量结果。
     """
 
     state = escape_policy.AnalysisState(goal="纠音解释", context_text=str(context_text or ""))
@@ -120,28 +133,77 @@ def explanation_evidence(
         "参考", list(result.reference_phones), state.context_text, reference_object))
     state.add_evidence(_acoustic_evidence(
         "学习者", list(result.learner_phones), state.context_text, learner_object))
+    for item in [*result.observations, *result.errors]:
+        metadata = item.evidence
+        if metadata.get("statistic") != "dtw_resampled_mean":
+            continue
+        for role, value in (("参考", item.reference_value), ("学习者", item.learner_value)):
+            state.add_evidence(escape_policy.Evidence("pronunciation_derivation",
+                dict(side=role, phone_index=item.phone_index, feature=item.feature,
+                     measurement_id=metadata.get("measurement_id")),
+                [f"{_EXPLANATION_LABELS.get(item.feature, item.feature)} {role} DTW重采样均值 {value:.6g} {item.unit}"],
+                state.context_text, acoustic=dict(schema="pronunciation-measurements-v2", measurements=[dict(
+                    value=value, unit=item.unit, role=_quantity_role(item.feature),
+                    measurement_id=metadata.get("measurement_id"), statistic="dtw_resampled_mean",
+                    input_measurement_ids=metadata.get("input_measurement_ids", []))])))
     return state
 
 
-def conclusion_caveat(result: AnalysisResult) -> str:
-    """本次对比不完整时要附在解释后的结论等级说明；完整时返回空串。
+#: ``check_statuses`` 里表示「这一项没问题」的状态，其余都要在结论等级里交代。
+CONFIRMED_STATUSES = frozenset({"observed", "ok", "applied"})
 
-    解释和 JSON 报告必须说同一件事：``check_statuses`` 说没测全，解释就不能给出
-    无条件结论。这里把状态原样写进去，而不是另起一套措辞。
+#: 缺口项的对外名字：用户读到的是这些词，而不是 ``check_statuses`` 的键。
+_CHECK_LABELS = {
+    "phone_acoustics": "音位声学对比",
+    "pitch_formant_measurement": "基频/共振峰测量",
+    "independent_phone_recognition": "独立音素识别",
+}
+
+#: 状态码 → 用户能读的一句原因；内部码只留在结构化字段里，不抄进正文。
+STATUS_LABELS = {
+    "not_evaluated": "没有评估",
+    "not_applicable": "这次不适用",
+    "partial": "只覆盖了一部分",
+    "insufficient_evidence": "证据不足，无法判断",
+    "dependency_missing": "缺少必要的组件，没能测成",
+    "extraction_failed": "测量没有成功",
+    "unavailable": "当前不可用",
+}
+
+#: 未知状态码的通用说法：不回显原码，也不假装知道具体原因。
+UNKNOWN_STATUS = "暂不可用或状态不明"
+
+
+def conclusion_gaps(result: AnalysisResult) -> tuple[dict[str, str], ...]:
+    """本次对比没测全的项；每项 ``{"check", "status", "label", "reason"}``。
+
+    ``check`` 与 ``status`` 是原始结构化状态（原样保留，前端与 JSON 报告据此对齐），
+    ``label`` 与 ``reason`` 是给用户看的说法。未知状态码只给 :data:`UNKNOWN_STATUS`，
+    不把内部码原样写进正文。
     """
 
-    gaps = []
-    for key, label in (("phone_acoustics", "音位声学对比"),
-                       ("pitch_formant_measurement", "基频/共振峰测量"),
-                       ("independent_phone_recognition", "独立音素识别")):
+    gaps: list[dict[str, str]] = []
+    for key, label in _CHECK_LABELS.items():
         status = str(result.check_statuses.get(key) or "")
-        if status and status not in {"observed", "ok"}:
-            gaps.append(f"{label} {status}")
+        if not status or status in CONFIRMED_STATUSES:
+            continue
+        gaps.append({
+            "check": key,
+            "status": status,
+            "label": label,
+            "reason": STATUS_LABELS.get(status, UNKNOWN_STATUS),
+        })
+    return tuple(gaps)
+
+
+def conclusion_caveat(result: AnalysisResult) -> str:
+    """列出本次具体缺测项；完整时返回空串。"""
+
+    gaps = conclusion_gaps(result)
     if not gaps:
         return ""
-    return ("（本次对比不完整：" + "；".join(gaps)
-            + "。上面的解释只覆盖已测量的部分，不构成独立音素识别结论，"
-              "也不等于发音正确性判定。）")
+    listed = "；".join(f"{gap['label']}{gap['reason']}" for gap in gaps)
+    return "本次缺测：" + listed + "。"
 
 
 #: 合并参考/学习者两侧的基频-共振峰测量状态时，越靠前的原因越根本（环境 > 数据 > 音频）。
@@ -149,11 +211,7 @@ _MEASUREMENT_STATUS_ORDER = ("dependency_missing", "extraction_failed", "unavail
 
 
 def _measurement_status(*extractions: dict) -> str:
-    """把两侧提取状态并成一个结论等级：两侧都好才算 ``ok``。
-
-    「依赖没装」比「这一段音频太短」更根本，所以按固定优先级取第一条非 ``ok``：
-    报告里给出的原因必须是这次真的说得通的那一条，不能挑一个好看的说。
-    """
+    """Aggregate actual extraction statuses without hiding partial failures."""
 
     statuses = [str(item.get("pitch_formant_status") or "unknown") for item in extractions]
     for candidate in _MEASUREMENT_STATUS_ORDER:
@@ -178,14 +236,10 @@ def _direction(delta: float, unit: str) -> str:
 
 @dataclass
 class PhoneComparison:
-    """一次旧式声学对比的结果：既给偏差，也给「哪些特征根本没测到」。
-
-    旧实现把「参考侧量不出来」当成没发生过（静默 ``continue``），把「学习者侧量
-    不出来」当成严重度 1.0、双方数值 0.0 的偏差。两者都会让交付物读起来像
-    「已经量过且结论明确」。这里把可测/不可测分开记账，交给上层写进结论等级。
-    """
+    """Measured differences, descriptive observations and unavailable quantities."""
 
     errors: list[PronunciationError] = field(default_factory=list)
+    observations: list[PronunciationError] = field(default_factory=list)
     #: 真正比过的特征名。
     measured: list[str] = field(default_factory=list)
     #: 没能比的特征及原因 ``(特征名, 原因)``。
@@ -215,8 +269,12 @@ def compare_phone_evidence(
                 (feature_name, f"/{reference.ipa}/ 的 {feature_name} 缺少学习者侧取值，未比较。")
             )
             continue
-        reference_values = [value for value in reference_track.values if math.isfinite(value)]
-        learner_values = [value for value in learner_track.values if math.isfinite(value)]
+        incompatible = compatibility(reference_track, learner_track)
+        if incompatible:
+            comparison.unmeasured.append((feature_name, incompatible))
+            continue
+        reference_values = [v for _, _, v in valid_samples(reference_track)]
+        learner_values = [v for _, _, v in valid_samples(learner_track)]
         if not _valid_values(reference_values):
             # 参考侧没有可用取值：这不是「没有差异」，是这次没法比较。
             comparison.unmeasured.append(
@@ -230,18 +288,15 @@ def compare_phone_evidence(
             )
             continue
 
-        aligned_reference, aligned_learner, normalized_distance = dtw_align(
-            reference_values,
-            learner_values,
-        )
-        if not aligned_reference:
-            comparison.unmeasured.append(
-                (feature_name, f"/{reference.ipa}/ 的 {feature_name} 无法对齐，未比较。")
-            )
-            continue
+        reference_mean, learner_mean, reference_stddev, derivation = compare_trajectories(reference_track, learner_track)
+        normalized_distance = derivation["normalized_distance"]
         comparison.measured.append(feature_name)
-        reference_mean, reference_stddev = mean_and_stddev(aligned_reference)
-        learner_mean, _ = mean_and_stddev(aligned_learner)
+        if feature_name in {"high_frequency_ratio", "rms", "intensity"}:
+            from .pronunciation_rules import _observation
+            comparison.observations.append(_observation(reference, learner, feature_name,
+                "measurement.descriptive." + feature_name, reference_mean, learner_mean,
+                reference_track.unit, derivation))
+            continue
         delta = learner_mean - reference_mean
         tolerance = max(reference_track.minimum_tolerance, reference_stddev)
         score = abs(delta) / max(tolerance, 1e-9)
@@ -276,6 +331,7 @@ def compare_phone_evidence(
                 learner_value=round(learner_mean, 6),
                 unit=reference_track.unit,
                 alignment_confidence=learner.alignment_confidence,
+                evidence=derivation,
             )
         )
 
@@ -430,6 +486,24 @@ def analyze_pronunciation(
 
     reference_sound = read_wav(reference_path)
     learner_sound = read_wav(learner_path)
+    sources = {}
+    for role, sound, path in (("reference", reference_sound, reference_path), ("learner", learner_sound, learner_path)):
+        snapshot = deepcopy(request.sources.get(role, {}))
+        snapshot.update(role=role, audio_id=audio_identity(sound), file=path, sample_rate_hz=sound.sample_rate,
+                        wav_time_domain=[0.0, sound.duration])
+        snapshot.setdefault("original_sound_domain", None)
+        snapshot.setdefault("wav_to_sound_offset_sec", None)
+        domain, offset = snapshot["original_sound_domain"], snapshot["wav_to_sound_offset_sec"]
+        if domain is not None and offset is not None:
+            if (not isinstance(domain, (list, tuple)) or len(domain) != 2
+                    or not all(isinstance(v, (int, float)) and math.isfinite(v) for v in (*domain, offset))
+                    or not math.isclose(domain[0], offset, abs_tol=1e-8)
+                    or not math.isclose(domain[1]-domain[0], sound.duration, abs_tol=1/sound.sample_rate)):
+                raise ValueError("原 Sound 时间域与 WAV 时间轴映射不一致。")
+            snapshot["timeline_status"] = "mapped"
+        else:
+            snapshot["timeline_status"] = "unknown_original_domain"
+        sources[role] = snapshot
     _require_not_cancelled(cancel, '已取消分析：音频已读取，未开始对齐。')
     needs_reference_alignment = (
         not _has_reference_boundaries(request.phonemes)
@@ -523,15 +597,22 @@ def analyze_pronunciation(
             and request.normalization.get('pitch_confirmed') is True else {})
     reference_extraction: dict[str, Any] = {}
     learner_extraction: dict[str, Any] = {}
+    common_spectrum = dict(band_low_hz=0.0,
+                           band_high_hz=min(reference_sound.sample_rate, learner_sound.sample_rate) / 2,
+                           cutoff_hz=2000.0)
     reference_tracks = extract_phone_tracks(
         reference_path,
         reference_phones,
         learner=False, diagnostics=reference_extraction, **measurement_options,
+        formant_settings=resolve_measurement_settings(request.normalization, "reference"),
+        spectral_settings=common_spectrum,
     )
     learner_tracks = extract_phone_tracks(
         learner_path,
         learner_phones,
         learner=True, diagnostics=learner_extraction, **measurement_options,
+        formant_settings=resolve_measurement_settings(request.normalization, "learner"),
+        spectral_settings=common_spectrum,
     )
 
     invalid_intervals = set()
@@ -543,6 +624,9 @@ def analyze_pronunciation(
                 invalid_intervals.add(track.phone_index)
                 track.alignment_confidence = 0.0
                 warnings.append(f"{role} /{track.ipa}/ 的区间无效或超出音频范围，未评估。")
+
+    bind_tracks(reference_tracks, sources["reference"])
+    bind_tracks(learner_tracks, sources["learner"])
 
     normalization = apply_formant_normalization(
         request.normalization, reference_tracks, learner_tracks, language=rule_profile.language if rule_profile else request.language,
@@ -562,8 +646,14 @@ def analyze_pronunciation(
         for feature, state in normalization["formants"].items():
             if state["status"] != "applied":
                 warnings.append(f"{feature} 仅原始 Hz 观察：{state['reason']}")
-        if any(state["status"] == "applied" for state in normalization["formants"].values()):
-            warnings.append("Lobanov 为独立多元音校准变换；近音 F2/F3 的应用为待真实材料验证的实验性扩展。")
+    bind_tracks(reference_tracks, sources["reference"])
+    bind_tracks(learner_tracks, sources["learner"])
+    if rule_profile:
+        from .pronunciation_vot import extract_stop_measurements
+        for path, tracks, sound, role in ((reference_path, reference_tracks, reference_sound, "reference"),
+                                          (learner_path, learner_tracks, learner_sound, "learner")):
+            extract_stop_measurements(path, tracks, language=rule_profile.language,
+                                      duration=sound.duration, source=sources[role], cancel=cancel)
 
     errors: list[PronunciationError] = []
     observations = []
@@ -604,7 +694,6 @@ def analyze_pronunciation(
         checks["stress_or_pitch_accent"] = "not_evaluated"
         if rule_profile.language == "ja":
             checks["mora_structure"] = "not_evaluated"
-        warnings.append("音位判据为实验性声学观察；未执行独立音素识别，未校准判错阈值。")
     else:
         learner_by_index = {item.phone_index: item for item in learner_tracks}
         legacy_statuses: list[str] = []
@@ -625,6 +714,7 @@ def analyze_pronunciation(
                 continue
             comparison = compare_phone_evidence(request, reference, learner)
             errors.extend(comparison.errors)
+            observations.extend(comparison.observations)
             legacy_statuses.append(comparison.status)
             assessments.append(dict(phone_index=reference.phone_index, ipa=reference.ipa,
                 status=comparison.status,
@@ -634,7 +724,7 @@ def analyze_pronunciation(
                           for name in comparison.measured]))
         checks["phone_acoustics"] = ("observed" if legacy_statuses and
             all(status == "observed" for status in legacy_statuses) else
-            "partial" if "observed" in legacy_statuses else "not_evaluated")
+            "partial" if any(status in {"observed", "partial"} for status in legacy_statuses) else "not_evaluated")
 
     return AnalysisResult(
         language=request.language,
@@ -654,4 +744,5 @@ def analyze_pronunciation(
         phone_assessments=assessments,
         check_statuses=checks,
         normalization=normalization,
+        sources=sources,
     )

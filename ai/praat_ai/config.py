@@ -80,9 +80,6 @@ class ApiConfig:
     #: 云端模型可以发挥自己的语言学/语音学知识（默认开；本地小模型仍然是
     #: ``strict``，免得它拿想象出来的数字当测量结果）。
     use_world_knowledge: bool = True
-    #: 启用 API 时要不要顺手停掉本机 llama-server（默认 True：腾出显存）。
-    #: 关掉之后本机服务继续跑，切回本地模型时不用重新加载（见 guide.md §8.13）。
-    #: 老配置里没有这个键时按 True 读，不写迁移。
     stop_local_service: bool = True
     #: 最近一次「测试连接」成功的时间（只用于显示，不参与逻辑）。
     verified_at: str = ""
@@ -207,7 +204,7 @@ _BUILTIN_PRESETS = (
 
 def pronunciation_presets() -> list[dict[str, Any]]:
     """Stable identities; never infer a dialect or bind legacy global resources."""
-    return [dict(entry, g2p="", dictionary="", acoustic="", confirmed=False,
+    return [dict(entry, g2p="", dictionary="", acoustic="",
                  phone_map=dict(entry["phone_map"]))
             for entry in _BUILTIN_PRESETS]
 

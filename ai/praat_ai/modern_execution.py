@@ -19,7 +19,7 @@ from pathlib import Path
 from types import FunctionType
 from typing import Callable
 
-from . import chat, delivery, model_capabilities as caps, qwen, tools
+from . import chat, delivery, delivery_text, model_capabilities as caps, qwen, tools
 from .cloud_agent import run_cloud_turn, run_dialogue_turn
 from .cloud_runtime import CloudRuntime
 from .cloud_workflow import (explicit_range, explicit_wav, object_context_text,
@@ -36,16 +36,15 @@ PRAAT_LOCK = threading.RLock()
 _POISON = ''  # 投递状态不明的原因；由一次成功的显式核对 ping 解除，不再要求重启桌面。
 _IDENTITY_PREFIX = '# modern-process='
 _MAX_TEXT_BYTES = 1024 * 1024
+# Only fixed application validation messages may bypass the generic error copy.
+_PUBLIC_INPUT_ERRORS = frozenset({
+    '每次最多 8 个附件', '附件路径必须指向真实文件', '每次只能绑定一个 WAV 主材料',
+    '文本附件总量超过 1 MiB', '仅支持真实文本文件和 PCM WAV 附件',
+})
 
 
 def _gate(cancel: threading.Event, *, reconcile: bool = False) -> None:
-    """投递前的闸门。``reconcile=True`` 只用于「显式寻址的核对 ping」那条路。
-
-    投递状态不明（`_POISON`）时不能再发新脚本——但也不能只靠重启解决：2026-10-07 实测
-    一次 25 秒超时（Praat 临时被模态窗口挡住）就把整个进程锁死，之后的测量全部失败。
-    核对 ping 是串行队列里排在那个不明脚本**之后**的消息：ping 能成功返回，就说明
-    Praat 已经把它处理完了，且结果文件按请求编号区分，不会串行——这时可以放行。
-    """
+    """投递前核对执行状态。状态不明时拒绝普通脚本，reconcile=True 允许显式寻址的核对请求进入串行队列；解除阻断由完整目标核对决定。"""
 
     if _POISON and not reconcile:
         raise BranchExit('Praat dispatcher blocked until reconciliation: ' + _POISON)
@@ -682,7 +681,12 @@ class ModernExecutor:
             state.reason = caps.safe_error(error, config.api.api_key)
             if config.qwen.api_key and config.qwen.api_key != 'EMPTY':
                 state.reason = state.reason.replace(config.qwen.api_key, '[redacted]')
-            state.report = ''.join(deltas) or ('本次任务未完成：' + state.reason)
+            state.metrics['reason_detail'] = state.reason
+            measured = any(valid_measurement_rows(item.tool, item.rows)
+                           for item in (state.evidence or (dispatcher.evidence if dispatcher else [])))
+            public_reason = (state.reason if isinstance(error, ValueError) and state.reason in _PUBLIC_INPUT_ERRORS
+                             else delivery_text.user_reason(state.reason, has_measurements=measured))
+            state.report = ''.join(deltas) or public_reason
             state.status = 'partial' if deltas or (dispatcher and dispatcher.evidence) else 'failed'
             if dispatcher and not state.evidence:
                 state.evidence = dispatcher.evidence
@@ -703,9 +707,9 @@ class ModernExecutor:
                 state.report = ''.join(deltas)
         analysis_content = state.report
         formal_content = state.report
-        if state.measurement_content and not formal_content.startswith(state.measurement_content):
-            formal_content = state.measurement_content + '\n\n' + formal_content
-            state.report = formal_content
+        # Measurement rows already live in result_content/results. Prefixing
+        # them here duplicates the result panel and pollutes follow-up history.
+        # Direct measurement-only replies keep their original state.report.
         # 遮过数值仍交付的正文也算正式回合：它已经显示给用户，
         # 下一轮追问需要能引用它。
         formal = not cancel.is_set() and (state.status == 'complete'

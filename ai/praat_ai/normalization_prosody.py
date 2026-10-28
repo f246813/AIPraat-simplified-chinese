@@ -22,7 +22,8 @@ from .normalization import VERSION, audio_identity
 PITCH_SOURCE = 'librosa@08e2c0a20d650fe00f10aaf3a1eaa9698ac19641/librosa/core/convert.py:hz_to_midi'
 PITCH_DEFAULTS = dict(floor_hz=75.0, ceiling_hz=600.0)
 PITCH_PROTOCOL = 'neutral-phrase-median-log2-v1'
-PITCH_EXTRACTION = dict(extractor='praat-parselmouth-autocorrelation', time_step_sec=.01,
+PITCH_EXTRACTION = dict(extractor='praat-parselmouth-filtered-autocorrelation', time_step_sec=.01,
+                        attenuation_at_top=.03, silence_threshold=.09,
                         octave_suspicion_st=[11, 13], maximum_adjacent_gap_sec=.03)
 TARGET_LUFS = -23.0
 
@@ -45,17 +46,18 @@ def pitch_settings(options):
 
 
 def utterance_pitch(path, settings):
-    """Native Praat timeline, including all unvoiced/undefined positions."""
+    """Use the same screened observations as chat and pronunciation F0."""
     try:
-        import parselmouth
-        sound = parselmouth.Sound(str(path))
-        pitch = sound.to_pitch(time_step=.01, pitch_floor=settings['floor_hz'], pitch_ceiling=settings['ceiling_hz'])
-        times = pitch.xs().tolist()
-        values = [float(pitch.get_value_at_time(t)) for t in times]
-        return FeatureTrack('pitch', times, values, 'Hz')
-    except Exception:
+        from .audio import _open_parselmouth, read_wav
+        sound = read_wav(path)
+        view, status, reason = _open_parselmouth(path, pitch_settings=settings)
+        if view is None:
+            return FeatureTrack('pitch', [], [], 'Hz', analysis=dict(status=status, reason=reason))
+        return view.tracks([], scope=(0., sound.duration))['pitch']
+    except Exception as error:
         # Material too short / unavailable backend is missing evidence, not 0 Hz.
-        return FeatureTrack('pitch', [], [], 'Hz')
+        return FeatureTrack('pitch', [], [], 'Hz', analysis=dict(status='extraction_failed',
+            reason=f'{type(error).__name__}: {error}'))
 
 
 def reliable_pitch(track, settings):
@@ -124,8 +126,11 @@ def import_pitch_baseline(path, *, settings, language, reading_id, speaker_label
 
 def _derive(phone, feature, values, unit, times=None):
     name = feature
+    raw = 'pitch' if name.startswith('pitch_') else 'rms' if name.startswith('rms_') else 'intensity'
+    original = phone.tracks.get(raw)
     phone.derived_tracks[name] = FeatureTrack(name, list(times if times is not None else []),
-                                             [float(v) for v in values], unit, minimum_tolerance=0)
+        [float(v) for v in values], unit, minimum_tolerance=0, analysis=dict(protocol='prosody-derived-v2',
+            algorithm=name, input_measurement_ids=[original.analysis.get('measurement_id')] if original else []))
 
 
 def apply_pitch(options, references, learners, sounds, paths, *, language, reading_id):
@@ -179,6 +184,11 @@ def apply_pitch(options, references, learners, sounds, paths, *, language, readi
             relative = [float(hz_to_midi(values[i]) - baseline['baseline_midi']) if math.isfinite(values[i]) else math.nan for i in indices]
             _derive(phone, 'pitch_reliable_hz', [values[i] for i in indices], 'Hz', times)
             _derive(phone, 'pitch_relative_st', relative, 'st', times)
+            phone.derived_tracks['pitch_relative_st'].analysis.update(baseline_id=baseline.get('id'),
+                parameters=dict(baseline_midi=baseline['baseline_midi'], **settings),
+                formula='12 * log2(screened_f0_hz / 440) + 69 - baseline_midi')
+            phone.derived_tracks['pitch_reliable_hz'].analysis.update(parameters=dict(settings),
+                formula='shared_pitch_screening_and_octave_suspicion(raw_f0_hz)')
         metadata.setdefault('target_quality', []).append(quality)
     available = [sum(sum(math.isfinite(v) for v in p.derived_tracks['pitch_relative_st'].values) for p in phones)
                  for phones in (references, learners)]
@@ -283,6 +293,8 @@ def apply_loudness(options, references, learners, sounds):
                 if track and track.unit == unit:
                     values = [(v + gain_db if raw == 'intensity' else v * gain) if math.isfinite(v) else math.nan for v in track.values]
                     _derive(phone, feature, values, unit, track.times)
+                    phone.derived_tracks[feature].analysis.update(parameters=dict(gain_db=gain_db, gain_linear=gain),
+                        formula='raw_intensity_db + gain_db' if raw == 'intensity' else 'raw_rms * gain_linear')
     return state('applied', **metadata)
 
 
@@ -300,7 +312,7 @@ def apply_prosody_normalization(options, references, learners, sounds, paths, *,
 def evaluate_prosody_observations(normalization, references, learners):
     """Match contiguous voiced runs, never DTW a concatenation across gaps."""
     from .pronunciation_rules import _sequence_locations
-    from .alignment import dtw_align
+    from .measurement_protocol import compare_trajectories
     if not normalization or len(references) != len(learners):
         return []
     left_ok, right_ok = _sequence_locations(references), _sequence_locations(learners)
@@ -332,16 +344,20 @@ def evaluate_prosody_observations(normalization, references, learners):
                         feature=feature, reason='单音位连续帧超过 1000，跳过无界 DTW；未重采样抹平细节，完整曲线仍保留。'))
                     continue
                 lv, rv = [lt.values[j] for j in lrun], [rt.values[j] for j in rrun]
-                a, b, distance = dtw_align(lv, rv)
-                if not a:
-                    continue
-                lm, rm = float(np.mean(a)), float(np.mean(b))
+                ltrack = FeatureTrack(feature, [lt.times[j] for j in lrun], lv, lt.unit, analysis=lt.analysis)
+                rtrack = FeatureTrack(feature, [rt.times[j] for j in rrun], rv, rt.unit, analysis=rt.analysis)
+                lm, rm, _, derivation = compare_trajectories(ltrack, rtrack)
+                from .measurement_protocol import identity
+                for pairing in derivation['pairs']:
+                    pairing['reference_index'] = lrun[pairing['reference_index']]
+                    pairing['learner_index'] = rrun[pairing['learner_index']]
+                derivation['measurement_id'] = identity({k: v for k, v in derivation.items() if k != 'measurement_id'})
                 observations.append(PronunciationError(left.phone_index, left.ipa, rt.times[rrun[0]], rt.times[rrun[-1]],
                     feature, 0, 0, '独立观察',
                     f'/{left.ipa}/ {feature}：参考 {lm:.3f}{lt.unit}，学习者 {rm:.3f}{lt.unit}（实验性独立观察；未诊断重音、高低音或声调）。',
                     lm, rm, lt.unit, min(left.alignment_confidence, right.alignment_confidence), issue_type='observation',
-                    rule_id='prosody_observation.' + feature, evidence=dict(method='dtw_contiguous_run', normalized_distance=distance,
+                    rule_id='prosody_observation.' + feature, evidence=dict(**{**derivation, 'method': 'dtw_contiguous_run'},
                         reference_interval=[lt.times[lrun[0]], lt.times[lrun[-1]]], learner_interval=[rt.times[rrun[0]], rt.times[rrun[-1]]],
-                        original_phone_interval=[right.start, right.end], reference_valid_frames=len(lv), learner_valid_frames=len(rv),
+                        original_phone_interval=[right.start, right.end],
                         normalization_version=VERSION, diagnostic=False)))
     return observations

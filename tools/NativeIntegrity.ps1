@@ -1,5 +1,5 @@
 # File labels, rather than a successful compile or SHA256, determine the token
-# of a newly launched desktop process. See docs/ai-frontend/windows-integrity-design.md.
+# of a newly launched desktop process. See docs/CURRENT-IMPLEMENTATION.zh-CN.md.
 if (-not ('AIPraat.NativeIntegrity' -as [type])) {
     Add-Type -TypeDefinition @'
 using System;

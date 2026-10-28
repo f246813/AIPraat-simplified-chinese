@@ -43,6 +43,21 @@ class DialoguePolicyTests(unittest.TestCase):
                      '你能帮我测量基频吗', 'measure intensity between 0.1 and 0.3 seconds'):
             with self.subTest(text=text): self.assertIsNone(self.classify(text))
 
+    def test_capability_question_with_a_real_operation_is_not_dialogue(self):
+        for text in ('你能测哪些参数？顺便测量当前声音的平均基频',
+                     '你有哪些功能？另外分析一下这个声音'):
+            with self.subTest(text=text): self.assertIsNone(self.classify(text))
+
+    def test_negated_measurement_clause_keeps_knowledge_requests_out_of_the_tools(self):
+        for text in ('用你自己的知识帮我纠音，讲日语发音练习，不测录音',
+                     '讲日语发音练习方法，不需要测量我的录音'):
+            with self.subTest(text=text): self.assertEqual(self.classify(text), 'advice')
+
+    def test_negated_measurement_clause_does_not_hide_a_positive_operation(self):
+        for text in ('帮我分析当前录音，不用测量别的',
+                     '不测录音，但请测量当前声音的平均基频'):
+            with self.subTest(text=text): self.assertIsNone(self.classify(text))
+
     def test_general_knowledge_marker_keeps_positive_operations_in_analysis(self):
         for text in ('请解释 F0，这是一般知识问题，另外测量对象 1 的基频。',
                      '一般知识问题：解释基频，不需要测量我的录音，但删除 Sound 3。'):
@@ -164,5 +179,11 @@ class ForceSettingTests(unittest.TestCase):
             api_settings.save_settings({'force_deep_thinking':False}, path)
             self.assertIs(getattr(load_config(path).api, 'force_deep_thinking', None), False)
 
+
+def tearDownModule():
+    # Tk 解释器必须在主线程回收：否则后端线程的下一次 GC 会析构它，触发 Tcl_AsyncDelete。
+    import gc
+
+    gc.collect()
 
 if __name__ == '__main__': unittest.main()

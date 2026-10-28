@@ -1,6 +1,6 @@
 import type { Methods, Rpc } from './types';
 declare global { interface Window { pywebview?: {api?: {rpc?: (method: string, params: unknown) => Promise<unknown>}} } }
-const allowed = new Set<keyof Methods>(['bootstrap', 'sessions.create', 'sessions.get', 'sessions.search', 'sessions.context', 'window.drag', 'sessions.rename', 'sessions.pin', 'sessions.delete', 'sessions.view', 'sessions.fork', 'sessions.section', 'sessions.archive', 'sessions.group', 'sections.create', 'sections.update', 'sections.delete', 'sections.archive', 'tasks.submit', 'tasks.followup', 'tasks.cancel', 'events.poll', 'settings.get', 'settings.save', 'settings.test', 'settings.choose_model', 'attachments.choose', 'attachments.import', 'attachments.preview', 'links.open']);
+const allowed = new Set<keyof Methods>(['bootstrap', 'sessions.create', 'sessions.get', 'sessions.search', 'sessions.context', 'window.drag', 'sessions.rename', 'sessions.pin', 'sessions.delete', 'sessions.view', 'sessions.fork', 'sessions.section', 'sessions.archive', 'sessions.group', 'sections.create', 'sections.update', 'sections.delete', 'sections.archive', 'tasks.submit', 'tasks.cancel', 'events.poll', 'settings.get', 'settings.save', 'settings.test', 'settings.choose_model', 'attachments.choose', 'attachments.import', 'attachments.preview', 'links.open']);
 export class HostBridge {
   constructor(private adapter?: Rpc) {}
   ready() { return Boolean(this.adapter || window.pywebview?.api?.rpc); }
@@ -9,7 +9,7 @@ export class HostBridge {
     await new Promise<void>((resolve, reject) => {
       const finish = () => { clearTimeout(timer); clearInterval(interval); window.removeEventListener('pywebviewready', check); };
       const check = () => { if (this.ready()) { finish(); resolve(); } };
-      const timer = setTimeout(() => { finish(); reject(new Error('未连接桌面宿主。请从现代桌面启动器打开此页面；浏览器不会模拟后端。')); }, milliseconds);
+      const timer = setTimeout(() => { finish(); reject(new Error('未连接桌面宿主，请从 AIPraat 打开 AI 工作台')); }, milliseconds);
       const interval = setInterval(check, 100);
       window.addEventListener('pywebviewready', check);
     });

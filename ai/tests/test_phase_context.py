@@ -75,7 +75,11 @@ class PhaseContextTests(unittest.TestCase):
                 for a, b in zip(requests, requests[1:]):
                     self.assertEqual(a['messages'], b['messages'][:len(a['messages'])])
                 self.assertEqual([m['role'] for m in requests[-1]['messages']],
-                                 ['system', 'user', 'assistant', 'user', 'assistant', 'user'])
+                                 ['system', 'user', 'user', 'assistant', 'user', 'assistant', 'user'])
+                guidance = str(requests[-1]['messages'][1]['content'])
+                self.assertIn('专业讲解约定', guidance)
+                self.assertEqual(sum('专业讲解约定' in str(m['content'])
+                                     for m in requests[-1]['messages']), 1)
                 self.assertIn('wire', state.metrics['request_timings'][0])
             finally:
                 runtime.close(wait=True)
@@ -237,7 +241,7 @@ class PhaseContextTests(unittest.TestCase):
             cfg.api.base_url = base
             async def run():
                 model = create_model(cfg)
-                state = AnalysisState('分析目标', '')
+                state = AnalysisState('分析声调', '')
                 schemas = [s for s in tools.tool_schemas() if s['function']['name'] == 'pitch']
                 session = CloudSession(cfg, state, lambda *_:self.fail('fixture must not call a tool'),
                                        threading.Event(), None, model, schemas, None, None, None)
@@ -254,6 +258,11 @@ class PhaseContextTests(unittest.TestCase):
             for phase_requests in (requests[::2],requests[1::2]):
                 fingerprints = [wire_fingerprint(p) for p in phase_requests]
                 self.assertEqual(len(set(p['static'] for p in fingerprints)), 1)
+                for request in phase_requests:
+                    guidance = [m for m in request['messages'] if 'skill=prosody' in str(m.get('content', ''))]
+                    self.assertEqual(len(guidance), 1)
+                    self.assertEqual(guidance[0]['role'], 'user')
+                    self.assertIn('非负变化幅度', str(guidance[0]['content']))
                 for a,b in zip(phase_requests,phase_requests[1:]):
                     self.assertEqual(a['messages'], b['messages'][:len(a['messages'])])
             self.assertNotEqual(wire_fingerprint(requests[0])['static'],wire_fingerprint(requests[1])['static'])

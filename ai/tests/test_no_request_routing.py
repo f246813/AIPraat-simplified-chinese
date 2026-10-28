@@ -33,6 +33,69 @@ class NoRequestRoutingTests(unittest.TestCase):
                 self.assertIsNone(dialogue_kind(text))
                 self.assertEqual(entry_mode(text, CONTEXT), 'L0')
 
+    def test_capability_question_with_a_real_operation_stays_in_the_tools(self):
+        for text in ('你能测哪些参数？顺便测量当前声音的平均基频',
+                     '你都能测什么？然后分析一下这个声音',
+                     '帮我把聊天窗口的字体调大，再测量当前声音的时长'):
+            with self.subTest(text=text):
+                self.assertIsNone(dialogue_kind(text))
+                self.assertEqual(entry_mode(text, CONTEXT), 'L0')
+
+    def test_pure_capability_and_interface_questions_stay_in_dialogue(self):
+        for text in ('你都能测哪些参数', '你有哪些功能？', '支持哪些测量',
+                     '帮我把聊天窗口的字体调大一点。'):
+            with self.subTest(text=text):
+                self.assertEqual(dialogue_kind(text), 'conversation')
+                self.assertEqual(entry_mode(text, CONTEXT), 'L4')
+
+    def test_capability_phrasing_does_not_hide_a_measurement_request(self):
+        """裸「你能测」被当成能力问句剥掉后，后面的真实操作就漏进对话了。"""
+        for text in ('你能测当前声音的时长吗', '你能测当前声音的平均基频吗',
+                     '你能分析当前声音吗', '你能看当前声音的共振峰吗'):
+            with self.subTest(text=text):
+                self.assertIsNone(dialogue_kind(text))
+                self.assertEqual(entry_mode(text, CONTEXT), 'L0')
+
+    def test_parameter_shorthand_is_a_real_request(self):
+        """「F0 多少」这类简写是测量请求，不能因为没有动词就当成闲聊。"""
+        for text in ('F0 多少', 'F1 是多少', 'F2 呢', 'HNR 多少', 'CPPS 多少',
+                     '斜率多少', '抖动多少', '频谱重心是多少', '谐噪比是多少'):
+            with self.subTest(text=text):
+                self.assertFalse(no_executable_request(text))
+                self.assertIsNone(dialogue_kind(text))
+                self.assertEqual(entry_mode(text, CONTEXT), 'L0')
+
+    def test_plain_capability_and_negated_advice_are_not_measurements(self):
+        for text in ('你都能测哪些参数', '你能测吗', '你能看什么', '你能分析什么'):
+            with self.subTest(text=text):
+                self.assertEqual(dialogue_kind(text), 'conversation')
+                self.assertEqual(entry_mode(text, CONTEXT), 'L4')
+        for text, kind in (('讲日语发音练习方法，不测录音', 'advice'),
+                           ('用你自己的知识教我纠音，不测录音', 'advice'),
+                           ('你能讲一下 HNR 吗？不测录音', 'concept')):
+            with self.subTest(text=text):
+                self.assertEqual(dialogue_kind(text), kind)
+                self.assertEqual(entry_mode(text, CONTEXT, dialogue=kind), 'L4')
+
+    def test_negated_measurement_statement_does_not_trigger_the_tools(self):
+        for text, kind in (('用你自己的知识帮我纠音，讲日语发音练习，不测录音', 'advice'),
+                           ('讲日语发音练习方法，不需要测量我的录音', 'advice'),
+                           ('解释一下基频是什么，不用测量录音', 'concept'),
+                           ('我没有录音，能讲日语发音练习吗', 'advice'),
+                           ('practice pronunciation with your own knowledge, '
+                            'without measuring the recording', 'advice')):
+            with self.subTest(text=text):
+                self.assertEqual(dialogue_kind(text), kind)
+                self.assertEqual(entry_mode(text, CONTEXT, dialogue=kind), 'L4')
+
+    def test_positive_operation_next_to_a_negated_phrase_still_uses_the_tools(self):
+        for text in ('帮我分析当前录音，不用测量别的',
+                     '不测录音，但请测量当前声音的平均基频',
+                     '先删除对象，再告诉我怎么练习'):
+            with self.subTest(text=text):
+                self.assertIsNone(dialogue_kind(text))
+                self.assertEqual(entry_mode(text, CONTEXT), 'L0')
+
     def test_material_domain_and_operation_words_are_never_no_request(self):
         for text in ('当前', 'Sound 1', '基频', 'VOT', '测量', '把结果导出', '再做一次',
                      'Explain its average', '这个怎么样？', '你好，删除对象'):

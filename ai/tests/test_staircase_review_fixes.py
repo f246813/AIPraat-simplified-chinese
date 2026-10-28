@@ -22,6 +22,7 @@ from praat_ai.conversation_store import ConversationStore
 from praat_ai.escape_policy import AnalysisState, Budget
 from praat_ai.materials import TaskMaterials
 from praat_ai.model_capabilities import is_audio_unsupported
+from praat_ai.workflow_policy import WorkflowPolicy
 
 CONTEXT = 'id\tclass\tname\tselected\tsel_start\tsel_end\n1\tSound\ttone\t1\t0.02\t0.08\n'
 GENERAL = '补充一般原理、参照和练习方法，明确具体录音证据的缺口'
@@ -74,26 +75,27 @@ class ReviewFixTests(unittest.TestCase):
                        tool_schemas=[s for s in tools.tool_schemas() if s['function']['name'] in names], **kwargs)
         return dispatched
 
-    def successful_measurement(self, *, missing='audio', request_limit=12):
+    def successful_measurement(self, *, missing='audio', request_limit=12, workflow=None):
         goal = '比较这段录音与德语发音目标'
-        state = AnalysisState(goal, CONTEXT, budget=Budget(request_limit=request_limit))
+        state = AnalysisState(goal, CONTEXT, budget=Budget(request_limit=request_limit), workflow=workflow)
         calls, inputs = [], []
         def respond(messages, info):
             calls.append(bool(info.function_tools))
             inputs.append(has_audio(messages))
             if info.function_tools:
                 return ModelResponse([ToolCallPart('pitch', {'time':0.05})]) if len(calls) == 1 else ModelResponse([TextPart('测量结束')])
-            return report(goal, missing=missing, marker='L3 音频解释' if has_audio(messages) else 'L2 证据解释')
+            return report(goal, missing=missing, marker='音频解释' if has_audio(messages) else '证据解释')
         dispatched = self.run_turn(state, respond)
         return state, inputs, dispatched
 
     def test_successful_measurement_gap_escalates_once_on_shared_budget(self):
-        state, inputs, dispatched = self.successful_measurement()
+        # 现代路径的自动音频门禁：CloudSession.should_escalate_audio 要求 workflow.l3_mode == 'auto'。
+        state, inputs, dispatched = self.successful_measurement(workflow=WorkflowPolicy(l3_mode='auto'))
         self.assertEqual(inputs, [False, False, False, True])
         self.assertEqual(len(dispatched), 1)
         self.assertEqual(state.requests, 4)
         self.assertEqual(state.mode, 'L3')
-        self.assertIn('L3 音频解释', state.report)
+        self.assertIn('音频解释', state.report)
 
     def test_reference_gap_does_not_upload_audio(self):
         state, inputs, _ = self.successful_measurement(missing='reference')
@@ -132,7 +134,7 @@ class ReviewFixTests(unittest.TestCase):
 
     def test_missing_snapshot_does_not_add_an_audio_report(self):
         self.material.audio_path.unlink()
-        state, inputs, _ = self.successful_measurement()
+        state, inputs, _ = self.successful_measurement(workflow=WorkflowPolicy(l3_mode='auto'))
         self.assertEqual(inputs, [False, False, False])
         self.assertEqual(state.mode, 'L2')
 
@@ -152,15 +154,15 @@ class ReviewFixTests(unittest.TestCase):
 
     def test_failed_automatic_audio_retains_the_valid_l2_report(self):
         goal = '比较这段录音与德语发音目标'
-        state = AnalysisState(goal, CONTEXT)
+        state = AnalysisState(goal, CONTEXT, workflow=WorkflowPolicy(l3_mode='auto'))
         calls = []
         def respond(messages, info):
             calls.append(has_audio(messages))
             if info.function_tools:
                 return ModelResponse([ToolCallPart('pitch', {'time':0.05})]) if len(calls) == 1 else ModelResponse([TextPart('测量结束')])
-            return ModelResponse([TextPart('invalid JSON')]) if has_audio(messages) else report(goal, marker='L2-KEEP')
+            return ModelResponse([TextPart('invalid JSON')]) if has_audio(messages) else report(goal, marker='KEEP-MARK')
         self.run_turn(state, respond)
-        self.assertIn('L2-KEEP', state.report)
+        self.assertIn('KEEP-MARK', state.report)
         self.assertEqual(calls, [False, False, False, True, True])
         self.assertTrue(state.audio_received)
         self.assertFalse(state.audio_report_completed)

@@ -1,15 +1,6 @@
-"""报告审计：数值没对上就地遮蔽，绝不重写整份回答。
+"""报告审计处置：结构性问题交由上层有限重试，无法核对的数值就地遮蔽并记账。
 
-设计见 ``ai/docs/backend-workflow-redesign.zh-CN.md`` 第 4 节（P0，B 方案）。
-``report_guards`` 负责确定性判定，本模块只负责**处置**：
-
-- **结构性错误**（编造对象、用「没有音频输入」搪塞、用户点名对象缺失未说明、
-  跨对象冒充量名）→ 交给上层重试一次，因为那是"说了不该说的话"；
-- **数值没对上** → 只遮蔽那一个数值并记账，继续交付其余正文。
-
-这样一次回答不会因为几个数字被整份退回，也不会为了几个数字再整包重发一遍证据
-（真机事故：15 秒的 L2 时限里，一次重写就等于整份回答被丢弃）。
-"""
+确定性判定由 report_guards 提供；本模块保留其余正文与有效证据。"""
 from __future__ import annotations
 
 import copy
@@ -185,6 +176,14 @@ def audit_report(state: Any, report: Any, *, fill_citations: bool = True,
             note_guard(state, 'repair', 'report.number_masked')
             continue
             continue
+        # Rendering may replace malformed/unknown q or calc references without
+        # raising a numeric mismatch. Those gaps are not verified quantities.
+        rendered_text = str(getattr(validated, 'analysis', '') or '') + '\n' + '\n'.join(
+            str(getattr(item, 'explanation', '') or '') for item in getattr(validated, 'coverage', []))
+        if any(marker in rendered_text for marker in (
+                report_guards.UNVERIFIED_NUMBER, report_guards.UNVERIFIED_CALC,
+                report_guards.INTERPRETATION_NOTE)):
+            summary.verified = False
         summary.record(state)
         return _rebuild(report, validated)
     # 轮数用完仍没核干净：正文保留，问题数值已全部遮蔽，标注在正文里。
