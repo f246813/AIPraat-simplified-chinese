@@ -1021,9 +1021,19 @@ int main (int, char *[]) {
 	for (const UINT dpi : { 96u, 120u, 144u, 192u }) {
 		layoutDpi = dpi;
 		std::vector <std::string> failures;
-		EditorAppearancePanel_state state { kEditorAppearancePalette::MIST_BLUE_GREY, 64 };
+		EditorAppearancePanel_state state { kEditorAppearancePalette::MIST_BLUE_GREY, 100 };
 		bool passed = EditorAppearancePanel_show (panel, owner, 150, 100, 40, 24, & state);
 		pump ();
+		const SliderGeometry firstHandle = sliderGeometry (panel);
+		passed &= expect (std::abs (firstHandle.centreX - panel -> travelRight) <= 1.0f,
+				failures, "the fresh fully opaque handle is not at its displayed endpoint");
+		pressAt (panel, firstHandle.centreX, firstHandle.centreY, "first press at the initial handle");
+		releaseAt (panel, firstHandle.centreX, firstHandle.centreY, "first release without moving");
+		passed &= expect (appliedValue (panel) == 100, failures,
+				"the first click at the initial handle changed the value without movement");
+		state.opacityPercent = 64;
+		EditorAppearancePanel_setState (panel, & state);
+		pump (20);
 		RECT window;
 		GetWindowRect (panel -> window, & window);
 		passed &= window.right - window.left == MulDiv (328, dpi, 96);
