@@ -874,4 +874,79 @@ void GuiDrawingArea_setZoomCallback (GuiDrawingArea me, GuiDrawingArea_ZoomCallb
 	my d_zoomBoss = boss;
 }
 
+#if motif
+HBITMAP GuiDrawingArea_renderToBitmap (GuiDrawingArea me, int *out_width, int *out_height) {
+	/*
+		The same redraw that paints the screen, but into a bitmap of our own: the expose callback
+		draws with the drawing area's contexts, and both the plain GDI calls and the GDI+ calls take
+		the device context that is current when they run, so everything lands in this bitmap. The
+		window is neither repainted nor touched, which is what makes a copy of a semi-transparent
+		window come out white and completely opaque.
+	*/
+	if (my numberOfGraphicses < 1 || ! my d_exposeCallback || ! my d_widget || ! out_width || ! out_height)
+		return nullptr;
+	GraphicsScreen graphics = (GraphicsScreen) my graphicses [1];
+	if (! Thing_isa (graphics, classGraphicsScreen) || ! graphics -> d_gdiGraphicsContext)
+		return nullptr;
+	const int width = my d_widget -> width, height = my d_widget -> height;
+	*out_width = *out_height = 0;
+	if (width <= 0 || height <= 0)
+		return nullptr;
+	HDC screen = GetDC (nullptr);
+	HDC memoryDC = screen ? CreateCompatibleDC (screen) : nullptr;
+	BITMAPINFO bitmapInfo {};
+	bitmapInfo. bmiHeader. biSize = sizeof (BITMAPINFOHEADER);
+	bitmapInfo. bmiHeader. biWidth = width;
+	bitmapInfo. bmiHeader. biHeight = height;
+	bitmapInfo. bmiHeader. biPlanes = 1;
+	bitmapInfo. bmiHeader. biBitCount = 32;
+	bitmapInfo. bmiHeader. biCompression = BI_RGB;
+	void *pixels = nullptr;
+	HBITMAP bitmap = memoryDC ? CreateDIBSection (screen, & bitmapInfo, DIB_RGB_COLORS, & pixels, nullptr, 0) : nullptr;
+	bool drawn = bitmap != nullptr && pixels != nullptr;
+	if (drawn) {
+		HGDIOBJ previous = SelectObject (memoryDC, bitmap);
+		const RECT whole { 0, 0, width, height };
+		FillRect (memoryDC, & whole, (HBRUSH) GetStockObject (WHITE_BRUSH));
+		SetBkMode (memoryDC, TRANSPARENT);   // not the default!
+		SelectPen (memoryDC, GetStockPen (BLACK_PEN));
+		SelectBrush (memoryDC, GetStockBrush (BLACK_BRUSH));
+		SetTextAlign (memoryDC, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);   // baseline is not the default!
+		HDC screenContexts [1 + structGuiDrawingArea::MAXIMUM_NUMBER_OF_GRAPHICSES];
+		for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++) {
+			screenContexts [igraphics] = ((GraphicsScreen) my graphicses [igraphics]) -> d_gdiGraphicsContext;
+			((GraphicsScreen) my graphicses [igraphics]) -> d_gdiGraphicsContext = memoryDC;
+		}
+		structGuiDrawingArea_ExposeEvent event { me };
+		try {
+			my d_exposeCallback (my d_exposeBoss, & event);
+		} catch (MelderError) {
+			Melder_flushError (U"Offscreen redraw not completed");
+			drawn = false;
+		}
+		for (int igraphics = 1; igraphics <= my numberOfGraphicses; igraphics ++)
+			((GraphicsScreen) my graphicses [igraphics]) -> d_gdiGraphicsContext = screenContexts [igraphics];
+		GdiFlush ();
+		if (drawn) {
+			/* The bitmap is BGRX; set the alpha explicitly so that no reader can see through it. */
+			for (size_t i = 0; i < (size_t) width * height; i ++)
+				((uint32_t *) pixels) [i] |= 0xFF000000;
+		}
+		SelectObject (memoryDC, previous);
+	}
+	if (memoryDC)
+		DeleteDC (memoryDC);
+	if (screen)
+		ReleaseDC (nullptr, screen);
+	if (! drawn) {
+		if (bitmap)
+			DeleteObject (bitmap);
+		return nullptr;
+	}
+	*out_width = width;
+	*out_height = height;
+	return bitmap;
+}
+#endif
+
 /* End of file GuiDrawingArea.cpp */

@@ -20,7 +20,8 @@ it('pins authoritatively, preserves local views/attachments/messages and restore
   store.attachments.set('demo-history',[{id:'file',name:'x',size:1,mime:'text/plain'}]);
   const messages = store.getSnapshot().messages;
   await store.pin('demo-history',true);
-  expect(store.getSnapshot().sessions[0]).toMatchObject({id:'demo-history',pinned:true,draft:'local',scroll:142});
+  expect(store.getSnapshot().sessions[0]).toMatchObject({id:'demo-history',pinned:true});
+  expect(store.getView('demo-history')).toMatchObject({draft:'local',scroll:142});
   expect(store.getSnapshot().messages).toBe(messages); expect(store.attachments.get('demo-history')).toHaveLength(1);
   const restored = new ChatStore(bridge.rpc); await restored.initialize(); expect(restored.getSnapshot().sessions[0].pinned).toBe(true);
   await store.pin('demo-history',false); expect(store.getSnapshot().sessions.find(s=>s.id==='demo-history')?.pinned).toBe(false);

@@ -48,6 +48,17 @@ REPAIRS = {
 }
 
 
+def mfa_root_directory(install_root):
+    """Kaldi/OpenFst cannot open model/work files in a non-ASCII directory."""
+    root = Path(install_root).resolve()
+    if os.name != 'nt' or str(root).isascii():
+        return root / 'models' / 'mfa'
+    import hashlib
+    ancestor = next(parent for parent in root.parents if str(parent).isascii())
+    identity = hashlib.sha256(str(root).casefold().encode('utf-8')).hexdigest()[:12]
+    return ancestor / 'AIPraat-mfa' / identity
+
+
 def child_report():
     """Runs inside the MFA environment; never raises for a missing dependency."""
     report = dict(python=sys.version.split()[0], executable=sys.executable, checks={})
@@ -211,8 +222,13 @@ def aggregate(launcher, version, child, child_error, files):
 def run_command(command, timeout):
     """Never raises; always keeps the full stdout so the child JSON can be parsed."""
     try:
+        root = Path(os.environ.get('PRAAT_AI_INSTALL_ROOT') or Path(__file__).resolve().parent.parent)
+        environment = dict(os.environ)
+        for name, default in {'MFA_ROOT_DIR': mfa_root_directory(root), 'NUMBA_CACHE_DIR': root / 'cache/numba'}.items():
+            if not environment.get(name):
+                environment[name] = str(default)
         completed = subprocess.run(command, capture_output=True, encoding='utf-8',
-                                   errors='replace', timeout=timeout)
+                                   errors='replace', timeout=timeout, env=environment)
     except (OSError, subprocess.SubprocessError) as error:
         return dict(status='error', detail=f'{type(error).__name__}: {error}', stdout='')
     stdout = (completed.stdout or '').strip()

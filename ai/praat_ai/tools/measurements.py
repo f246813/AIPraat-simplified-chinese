@@ -1,4 +1,4 @@
-"""tools 包的一个分片；行为与原 tools.py 完全一致。"""
+"""聊天声学测量的 Praat 脚本模板。"""
 from __future__ import annotations
 
 import json
@@ -8,7 +8,7 @@ import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
-from .. import external_script, measures
+from .. import external_script, measures, pitch_quality, pitch_analysis
 
 from ._common import (ANALYSIS_SOUND_CLASSES, SOUND_CLASSES, TEMPORARY_OBJECT_NAME, TIME_DOMAIN_CLASSES, ToolContext, ToolError, _assemble, _echoes_editor_selection, _formant_lines, _formant_numbers, _insert_boundary_block, _integer, _integer_arg, _number, _number_arg, _object_arg, _pitch_band, _pitch_extreme_lines, _point_query_lines, _range_lines, _range_pair, _rise_onset_lines, _seconds_arg, _seconds_argument, _tier_number, _unit_arg, _unit_display, _unit_literal, _vot_time, _write_result, quote)
 
@@ -47,21 +47,59 @@ def _build_formant_frequency(arguments: Mapping[str, Any], context: ToolContext)
     )
 
 
+def _source_sound(row, arguments: Mapping[str, Any], context: ToolContext, *,
+                  derived: bool) -> tuple[str | None, str]:
+    """能量门该用哪段原始音频。``derived`` 表示分析对象就是刚从该 Sound 生成的。
+
+    已有 Pitch / PointProcess 对象**不含波形**：没有源 Sound 就做不了相对能量门，
+    事实行只能写「未核验」。配对顺序：显式 ``sound`` 参数 → 对象列表里唯一的声音
+    （此时事实行写明是“按列表推断”，不假装是精确溯源）。
+    """
+
+    if derived:
+        return str(row.id), ""
+    requested = arguments.get("sound")
+    if requested not in (None, ""):
+        sound = context.resolve_by_class(
+            requested, SOUND_CLASSES, "sound 参数要指向一个 Sound 对象（用来做能量门）"
+        )
+        return str(sound.id), f"显式指定对象 {sound.id}"
+    sounds = [item for item in context.objects if item.class_name in SOUND_CLASSES]
+    if len(sounds) == 1:
+        return str(sounds[0].id), f"对象列表里唯一的声音（对象 {sounds[0].id}，按列表推断）"
+    return None, ""
+
+
 def _build_pitch(arguments: Mapping[str, Any], context: ToolContext) -> str:
     row = context.resolve_by_class(
         arguments.get("object"), frozenset({"Sound", "Pitch"}),
         "基频分析需要 Sound 或 Pitch 对象",
     )
     temporary = row.class_name != "Pitch"
+    floor, ceiling = _pitch_band(arguments)
+    # 已有 Pitch 对象没有波形：配到源 Sound 才能做相对能量门（否则写「未核验」）。
+    sound, source_note = _source_sound(row, arguments, context, derived=temporary)
+    if not temporary and sound is not None:
+        source_note += "；下限/上限按命令行参数假定（对象自身设置读不出来）"
     lines = [f"selectObject: {row.id}", "duration = Get total duration"]
     if temporary:
-        floor, ceiling = _pitch_band(arguments)
         lines.extend(
             [
-                f"To Pitch: 0, {floor:.6f}, {ceiling:.6f}",
+                pitch_analysis.command(floor, ceiling),
                 f"Rename: {quote(TEMPORARY_OBJECT_NAME)}",
             ]
         )
+    lines.append('pitchId = selected ("Pitch")')
+    # 点查询没有自己的范围：能量门与连续段按整个对象算（与统计工具同一套筛查）。
+    lines.extend(["tmin = Get start time", "tmax = Get end time"])
+    lines.extend(
+        pitch_quality.screen_lines(sound=sound, floor=floor, ceiling=ceiling,
+                                   source_note=source_note)
+    )
+    # 质量事实行放在最前面：口径与帧数，不是实测基频值。
+    lines.append(_write_result(context, ["quality$"]))
+    lines.extend(pitch_quality.receipt_lines(quote(context.result_path),
+        method="filtered_autocorrelation" if temporary else "existing_pitch", floor=floor, ceiling=ceiling))
     lines.extend(
         _point_query_lines(
             arguments,
@@ -70,13 +108,20 @@ def _build_pitch(arguments: Mapping[str, Any], context: ToolContext) -> str:
             label="基频",
             unit_text=" Hz",
             undefined_message=(
-                " 秒处）无法计算：该时刻没有周期性声源（可能是无声段或清音）"
+                " 秒处）没有可用的基频：这一帧没通过质量筛查（能量门/连续段/中位带），"
+                "或该时刻没有周期性声源"
             ),
             row=row,
+            value_lines=pitch_quality.point_value_lines(),
         )
     )
-    if temporary:
-        lines.extend(["Remove", f"selectObject: {row.id}"])
+
+    lines.extend(
+        pitch_quality.cleanup_lines(
+            pitch="pitchId" if temporary else None, sound=temporary
+        )
+    )
+    lines.append(f"selectObject: {row.id}")
     return _assemble(lines, context)
 
 
@@ -89,21 +134,35 @@ def _build_pitch_statistics(
         "基频分析需要 Sound 或 Pitch 对象",
     )
     temporary = row.class_name != "Pitch"
+    floor, ceiling = _pitch_band(arguments)
+    # 已有 Pitch 对象没有波形：配到源 Sound 才能做相对能量门（否则写「未核验」）。
+    sound, source_note = _source_sound(row, arguments, context, derived=temporary)
+    if not temporary and sound is not None:
+        source_note += "；下限/上限按命令行参数假定（对象自身设置读不出来）"
     # 注意：Praat 里 from / to / end 都是保留字，变量名只能用 tmin / tmax。
     lines = [f"selectObject: {row.id}", "duration = Get total duration"]
     lines.extend(_range_lines(arguments, row))
     if temporary:
-        floor, ceiling = _pitch_band(arguments)
         lines.extend(
             [
-                f"To Pitch: 0, {floor:.6f}, {ceiling:.6f}",
+                pitch_analysis.command(floor, ceiling),
                 f"Rename: {quote(TEMPORARY_OBJECT_NAME)}",
             ]
         )
-    lines.extend(['nFrames = Get number of frames'])
-    lines.extend(_pitch_extreme_lines())
+    lines.append('pitchId = selected ("Pitch")')
+    # 平均/最低/最高/中位数/峰值时刻都来自共享质量筛查的同一批有效帧
+    # （能量门 → 候选带 → 连续段），见 praat_ai/pitch_quality.py。
+    lines.extend(
+        _pitch_extreme_lines(sound=sound, floor=floor, ceiling=ceiling,
+                             source_note=source_note)
+    )
+    # 质量事实行单独一行，放在实测行前面：阈值与帧数不混进实测值那一行。
+    lines.append(_write_result(context, ["quality$"]))
+    lines.extend(pitch_quality.receipt_lines(quote(context.result_path),
+        method="filtered_autocorrelation" if temporary else "existing_pitch", floor=floor, ceiling=ceiling))
     lines.extend(
         [
+            # 未过滤的原始均值只在内部解释「剔除了多少」，绝不作为已测值打印。
             'rawMean = Get mean: tmin, tmax, "Hertz"',
             "if rawMean = undefined",
             _write_result(
@@ -118,16 +177,7 @@ def _build_pitch_statistics(
                 ],
             ),
             "else",
-            # ``mean`` 来自逐帧限幅循环，和最低/最高同一批帧；median 取不到时
-            # （理论上 rawMean 有值就取得到）退回 Praat 自己的均值，宁可退回也不报 undefined。
             "if mean = undefined",
-            "    mean = rawMean",
-            "endif",
-            'meanNote$ = ""',
-            "if abs (mean - rawMean) > 1",
-            '    meanNote$ = "（含被剔除帧的原始平均为 " + fixed$ (rawMean, 1) + " Hz）"',
-            "endif",
-            "if minimum = undefined or maximum = undefined",
             _write_result(
                 context,
                 [
@@ -135,15 +185,17 @@ def _build_pitch_statistics(
                     "fixed$ (tmin, 3)",
                     quote("–"),
                     "fixed$ (tmax, 3)",
-                    quote(" 秒）：平均 "),
-                    "fixed$ (mean, 3)",
-                    quote(" Hz（这一段里没有可信的最高/最低值）"),
-                    "rangeNote$",
+                    quote(" 秒）：这一段里没有可信的基频统计"),
                     "pitchLimit$",
-                    "meanNote$",
+                    "rangeNote$",
                 ],
             ),
             "else",
+            'meanNote$ = ""',
+            "if abs (mean - rawMean) > 1",
+            '    meanNote$ = "（含被剔除帧的原始平均为 " + fixed$ (rawMean, 1) + " Hz）"',
+            "endif",
+            # 平均、最低、最高、峰值时刻来自同一个过滤集合：能走到这里，四个值都有定义。
             _write_result(
                 context,
                 [
@@ -169,8 +221,53 @@ def _build_pitch_statistics(
             "endif",
         ]
     )
+    lines.extend(
+        pitch_quality.cleanup_lines(
+            pitch="pitchId" if temporary else None, sound=temporary
+        )
+    )
+    lines.append(f"selectObject: {row.id}")
+    return _assemble(lines, context)
+
+
+def _build_pulses(arguments: Mapping[str, Any], context: ToolContext) -> str:
+    """读取声门脉冲（PointProcess）：数量、首末时刻、间隔与抖动。
+
+    对象是 Sound 时先 ``To PointProcess (periodic, cc)`` 自动检测（用完删掉）；
+    对象本身就是 PointProcess 时直接读它（Praat 里已标注/已有的脉冲）。
+    只有配到源 Sound 才能做相对能量门；没有就写「未核验」，间隔只能当原始候选。
+    """
+
+    row = context.resolve_by_class(
+        arguments.get("object"), frozenset({"Sound", "PointProcess"}),
+        "脉冲分析需要 Sound 或 PointProcess 对象",
+    )
+    temporary = row.class_name != "PointProcess"
+    floor, ceiling = _pitch_band(arguments)
+    sound, source_note = _source_sound(row, arguments, context, derived=temporary)
+    if not temporary and sound is not None:
+        source_note += "；检测参数按命令行参数假定（对象自身设置读不出来）"
+    lines = [f"selectObject: {row.id}", "duration = Get total duration"]
+    lines.extend(_range_lines(arguments, row))
     if temporary:
-        lines.extend(["Remove", f"selectObject: {row.id}"])
+        lines.extend(
+            [
+                f"To PointProcess (periodic, cc): {floor:.6f}, {ceiling:.6f}",
+                f"Rename: {quote(TEMPORARY_OBJECT_NAME)}",
+            ]
+        )
+    lines.append('pulseProcessId = selected ("PointProcess")')
+    lines.extend(
+        pitch_quality.pulse_screen_lines(sound=sound, floor=floor, source_note=source_note)
+    )
+    # 事实行与结果行分开：门限/点数不混进实测间隔那一行。
+    lines.append(_write_result(context, ["pulseQuality$"]))
+    lines.extend(pitch_quality.pulse_value_lines())
+    lines.append(_write_result(context, ["pulseText$", "rangeNote$"]))
+    lines.extend(
+        pitch_quality.pulse_cleanup_lines(point_process="pulseProcessId" if temporary else None)
+    )
+    lines.append(f"selectObject: {row.id}")
     return _assemble(lines, context)
 
 
@@ -419,139 +516,137 @@ def _build_harmonicity_statistics(
 
 
 def _build_vot_explicit(arguments: Mapping[str, Any], context: ToolContext) -> str:
-    """VOT（嗓音起始时间）= 浊音起始时刻 − 爆破/除阻时刻。
-
-    这里不做自动检测：VOT 依赖"爆破"和"浊音起始"这两个点的判断，靠脚本猜很容易
-    给出看起来精确、其实错得离谱的数字。所以要么用用户/标注给出的两个时刻相减，
-    要么由 TextGrid 的边界来定，并把用的两个时刻写进结果，让用户能核对。
-    """
-
-    row = context.resolve_by_class(
-        arguments.get("object"),
-        frozenset({"TextGrid", "Sound"}),
-        "算 VOT 需要一个 TextGrid（按层补边界）或 Sound（直接按两个时刻相减）",
-    )
-    if arguments.get("burst", None) in (None, ""):
-        raise ToolError(
-            "算 VOT 需要 burst 参数：爆破/除阻时刻（秒）。"
-            "前端不做自动检测，请先看波形或标出这个点。"
-        )
-    if arguments.get("voicing", arguments.get("onset", None)) in (None, ""):
-        raise ToolError("算 VOT 需要 voicing 参数：浊音起始时刻（秒）。")
+    """Read manual point landmarks without splitting an existing IntervalTier."""
+    row = context.resolve_by_class(arguments.get("object"), frozenset({"TextGrid", "Sound"}),
+                                   "人工 VOT 地标需要 Sound 或 TextGrid")
+    if arguments.get("burst") in (None, "") or arguments.get("voicing", arguments.get("onset")) in (None, ""):
+        raise ToolError("需要同时提供 burst 和 voicing 两个绝对时刻。")
     burst = _number(arguments, "burst", 0.0, 0.0, 36000.0)
-    voicing = _number(
-        {"voicing": arguments.get("voicing", arguments.get("onset", None))},
-        "voicing",
-        0.0,
-        0.0,
-        36000.0,
-    )
-    if voicing <= burst:
-        raise ToolError(
-            f"浊音起始必须晚于爆破时刻（现在 burst={burst:.3f} 秒、"
-            f"voicing={voicing:.3f} 秒）；先浊后爆（prevoiced）的负 VOT 需要原生动作，那条路线已暂停。"
-        )
-    tier = _tier_number(arguments)
-    lines = [
-        f"selectObject: {row.id}",
-        f"t1 = {burst:.6f}",
-        f"t2 = {voicing:.6f}",
-        "vot = t2 - t1",
-    ]
-    if row.class_name == "TextGrid":
-        lines.extend(
-            [
-                "duration = Get total duration",
-                f"tier = {tier}",
-                "inserted = 0",
-                *_insert_boundary_block(tier, "t1", "inserted", "v1"),
-                *_insert_boundary_block(tier, "t2", "inserted", "v2"),
-                'note$ = ""',
-                "if inserted > 0",
-                '    note$ = "，并在该层补上了边界"',
-                "endif",
-                _write_result(
-                    context,
-                    [
-                        quote("VOT = "),
-                        "fixed$ (vot, 4)",
-                        quote(" 秒（"),
-                        "fixed$ (vot * 1000, 1)",
-                        quote(" 毫秒）：第 "),
-                        "fixed$ (tier, 0)",
-                        quote(" 层 "),
-                        "fixed$ (t1, 3)",
-                        quote(" 秒（爆破，占时长 "),
-                        "fixed$ (t1 / duration * 100, 0)",
-                        quote("%）→ "),
-                        "fixed$ (t2, 3)",
-                        quote(" 秒（浊音起始，占时长 "),
-                        "fixed$ (t2 / duration * 100, 0)",
-                        quote("%）"),
-                        "note$",
-                    ],
-                ),
-            ]
-        )
-    else:
-        lines.append("duration = Get total duration")
-        lines.append(
-            _write_result(
-                context,
-                [
-                    quote("VOT = "),
-                    "fixed$ (vot, 4)",
-                    quote(" 秒（"),
-                    "fixed$ (vot * 1000, 1)",
-                    quote(" 毫秒）："),
-                    "fixed$ (t1, 3)",
-                    quote(" 秒（爆破，占时长 "),
-                    "fixed$ (t1 / duration * 100, 0)",
-                    quote("%）→ "),
-                    "fixed$ (t2, 3)",
-                    quote(" 秒（浊音起始，占时长 "),
-                    "fixed$ (t2 / duration * 100, 0)",
-                    quote("%）；按给出的两个时刻相减，未做自动检测"),
-                ],
-            )
-        )
+    voicing = _number({"voicing": arguments.get("voicing", arguments.get("onset"))}, "voicing", 0.0, 0.0, 36000.0)
+    lines = [f"selectObject: {row.id}", f"t1 = {burst:.9f}", f"t2 = {voicing:.9f}",
+             "tmin = Get start time", "tmax = Get end time", "vot = t2 - t1",
+             _write_result(context, [quote("VOT = "), "fixed$ (vot, 4)", quote(" 秒（"),
+                                     "fixed$ (vot * 1000, 1)", quote(" 毫秒）；人工地标相减，未做自动检测")]),
+             *_vot_landmark_lines(arguments, context, "t1", "t2", manual=True),
+             "preTime = -1", "preEnd = -1", "postVoicingTime = -1", "preF0 = 0",
+             "preTruncated = 0", "preAmbiguous = 0", "burstRise = 0", 'burstBand$ = "manual"',
+             "if t2 < t1", "    preTime = t2", "else", "    postVoicingTime = t2", "endif",
+             "burstTime = t1", *_vot_receipt_lines(row, arguments, context)]
     return _assemble(lines, context)
 
 
+def _vot_landmark_lines(arguments: Mapping[str, Any], context: ToolContext,
+                        burst: str, voicing: str, *, manual: bool = False) -> list[str]:
+    """Report independent landmarks; pitch alone does not locate a clear vowel."""
+    lines = [
+        f"if {voicing} >= 0 and {voicing} < {burst}",
+        _write_result(context, [quote("预浊起始" + ("（人工提供）" if manual else "候选") + "："),
+                                f"fixed$ ({voicing}, 4)", quote(" 秒；请确认属于目标塞音闭塞段")]),
+        "endif",
+        _write_result(context, [quote("Release burst："), f"fixed$ ({burst}, 4)", quote(" 秒")]),
+    ]
+    vowel = _vot_time(arguments, "vowel")
+    if vowel is None:
+        lines.append(_write_result(context, [quote(
+            "清晰元音起始：未自动判定；稳定周期性不等于清晰元音，可用 vowel 提供人工时刻。"
+        )]))
+    else:
+        vowel = _number(arguments, "vowel", 0.0, 0.0, 36000.0)
+        lines.extend([
+            f"if {vowel:.6f} >= {burst} and {vowel:.6f} <= tmax",
+            _write_result(context, [quote("清晰元音起始（人工提供）："), f"fixed$ ({vowel:.6f}, 4)", quote(" 秒")]),
+            _write_result(context, [quote("Burst-to-clear-vowel interval = "),
+                                    f"fixed$ (({vowel:.6f} - {burst}) * 1000, 1)", quote(" 毫秒（人工元音地标）")]),
+            "else",
+            _write_result(context, [quote("清晰元音地标无效：必须在 burst 与范围终点之间；未计算元音间隔。")]),
+            "endif",
+        ])
+    return lines
+
+
+def _vot_receipt_lines(row, arguments, context) -> list[str]:
+    """Machine receipt carries candidates, never an inferred phoneme label."""
+    from ..acoustic_events import RECEIPT
+    vowel = _vot_time(arguments, "vowel")
+    closure = _vot_time(arguments, "closure_start")
+    if closure is not None:
+        closure = _number(arguments, "closure_start", 0, 0, 36000)
+    variables = ['tmin', 'tmax', 'sourceStart', 'sourceEnd', 'burstTime', 'preTime',
+                 'preEnd', 'preF0', 'postVoicingTime', str(vowel if vowel is not None else -1),
+                 'preTruncated', 'preAmbiguous', 'burstRise', 'highBand',
+                 str(closure if closure is not None else -1)]
+    items = [quote(RECEIPT)]
+    for i, variable in enumerate(variables):
+        if i:
+            items.append(quote('\t'))
+        items.append(f'fixed$ ({variable}, 9)')
+    return [f'selectObject: {row.id}', 'sourceStart = Get start time', 'sourceEnd = Get end time',
+            'highBand = burstBand$ = "高频带 2–8 kHz"', _write_result(context, items)]
+
+
+def _vot_prevoicing_lines(row, pitch_floor: float, pitch_ceiling: float = 600) -> list[str]:
+    """Inspect low-band periodic runs before release, including weak nasal voicing.
+
+    Keep the selected range, rather than a fixed 150 ms cutoff. Three periods
+    and at least 20 ms distinguish sustained lead from pitch-window smearing.
+    A separated run is evidence to inspect, never proof of negative/positive VOT.
+    """
+    return [
+        "preTime = -1", "preEnd = -1", "preF0 = 0", "preTruncated = 0",
+        "preAmbiguous = 0", "preRun = 0", "preStart = -1", "preStartF0 = 0",
+        f"if burstTime > tmin and tmax - tmin >= {3 / pitch_floor:.6f}",
+        f"    selectObject: {row.id}",
+        '    Extract part: tmin, tmax, "rectangular", 1, "yes"',
+        '    preSlice = selected ("Sound")',
+        '    ' + pitch_analysis.command(pitch_floor, pitch_ceiling, purpose='stop_voicing', step=.002),
+        "    preN = Get number of frames",
+        "    for p from 1 to preN",
+        "        pt = Get time from frame number: p",
+        "        if pt <= burstTime",
+        '            pf = Get value in frame: p, "Hertz"',
+        "            if pf <> undefined",
+        "                preRun = preRun + 1",
+        "                if preRun = 1",
+        "                    preStart = pt",
+        "                    preStartF0 = pf",
+        "                endif",
+        "                if pt - preStart >= max (0.02, 3 / preStartF0)",
+        "                    preTime = preStart",
+        "                    preEnd = pt",
+        "                    preF0 = preStartF0",
+        # Pitch windows cannot establish an onset already present at the edge.
+        f"                    preTruncated = preStart <= tmin + {1.5 / pitch_floor + .004:.6f}",
+        "                endif",
+        "            else",
+        "                preRun = 0",
+        "            endif",
+        "        endif",
+        "    endfor",
+        "    Remove",
+        "    selectObject: preSlice",
+        "    Remove",
+        "    if preTime >= 0",
+        "        preAmbiguous = burstTime - preEnd > max (0.02, 2 / preF0)",
+        "    endif",
+        "endif",
+    ]
+
+
 def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
-    """在用户圈出的大概范围里自动估计 VOT（爆破 → 浊音起始）。
+    """Estimate signed VOT and retain independent post-release periodicity.
 
-    爆破和浊音起始分成两步测，结果里分别写清楚，好让人判断是哪一步不稳：
-
-    1. 爆破（释放瞬态）：把声音带通到 2–8 kHz 再算强度包络（1 ms 步长、3.2 ms
-       窗口，比全频段窗口短，免得把爆破点平均到前面去），取最陡的一段上升沿，
-       再退到这段上升沿之前的低能量帧。升幅不到 ``burst_db``（默认 6 dB）就换
-       全频段包络兜底，两个都不够就报"找不到爆破瞬态"。不用"区间峰值 − x dB"
-       当阈值：范围里只要还夹着别的强段，这个阈值就会漂。
-    2. 浊音起始：``To Pitch (ac)``（2 ms 步长、默认浊音阈值，走的就是短时自相关）
-       连续 3 帧（6 ms）都判出基频才算声带开始振动；谐噪比只截起点之后 50 ms
-       那一小段算峰值，当谐波结构的依据写进结果——整段声音做交叉相关太慢
-       （10 秒的声音上要 0.3 秒，用户能感觉出卡）。
-       注意：``To Harmonicity (cc)`` 的 periodsPerWindow 给 0.5 会让 Praat 7.0.02
-       直接在 Sound_to_Pitch.cpp 断言崩溃，只能 ≥ 1；而 4 ms 的窗口（minPitch 250）
-       在 220 Hz 上会判成"全是噪声"，所以窗口就用 1/minPitch。
-    3. VOT = 浊音起始 − 爆破时刻。
-
-    范围整段都在浊音里时报"起点已是浊音"；范围内后面还有第二段浊音（中间隔了
-    ≥20 毫秒的低谐噪比段）时只报第一个候选，并提示范围偏大。
-
-    范围来自用户话里的 from/to，或者他在波形上手动拖出来的选区
-    （``chat_context.tsv`` 的 ``sel_start``/``sel_end``）；模型把圈选抄成
-    from/to 时结果里仍注明"按编辑器圈选"。
-
-    这是估计值，不是人工标注：结果里写明两步各自的依据、范围和时间分辨率。
+    Inspect low-frequency voicing before release over the selected range. A
+    sustained run is a prevoicing candidate; truncated onset is undetermined.
+    Interrupted prevoicing requires closure association. Post-release pitch is a
+    separate landmark, never an automatic clear-vowel onset. All automatic
+    boundaries remain candidates for inspection on the waveform/spectrogram.
     """
 
     row = context.resolve_by_class(
         arguments.get("object"), ANALYSIS_SOUND_CLASSES, "自动检测 VOT 需要一个 Sound 对象"
     )
     burst_db = _number(arguments, "burst_db", 6.0, 3.0, 30.0)
-    pitch_floor, _ = _pitch_band(arguments, with_ceiling=False)
+    pitch_floor, pitch_ceiling = _pitch_band(arguments)
     start_arg, end_arg = _range_pair(arguments)
     editor_selection = row.selection
     # 模型常把编辑器里的圈选原样抄进 from/to；数值对得上就还按圈选报，
@@ -567,8 +662,10 @@ def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
     lines = [
         f"selectObject: {row.id}",
         "duration = Get total duration",
-        "tmin = 0",
-        "tmax = duration",
+        "sourceStart = Get start time",
+        "sourceEnd = Get end time",
+        "tmin = sourceStart",
+        "tmax = sourceEnd",
     ]
     if editor_selection is not None:
         lines.append(f"tmin = {editor_selection[0]:.6f}")
@@ -591,11 +688,11 @@ def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
         ]
     lines.extend(
         [
-            "if tmin < 0",
-            "    tmin = 0",
+            "if tmin < sourceStart",
+            "    tmin = sourceStart",
             "endif",
-            "if tmax > duration",
-            "    tmax = duration",
+            "if tmax > sourceEnd",
+            "    tmax = sourceEnd",
             "endif",
             "if tmin > tmax - 0.002",
             _write_result(context, [quote(
@@ -631,10 +728,10 @@ def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
             "plusObject: bbEnv",
             "plusObject: hfSound",
             "Remove",
+            *_vot_prevoicing_lines(row, pitch_floor, pitch_ceiling),
             # ② 浊音起始：自相关基频连续 3 帧（6 ms）成立；谐噪比另取一小段当佐证
             f"selectObject: {row.id}",
-            f'To Pitch (ac): 0.002, {pitch_floor:.6f}, 15, "no", 0.03, '
-            '0.45, 0.01, 0.35, 0.14, 600',
+            pitch_analysis.command(pitch_floor, pitch_ceiling, purpose='stop_voicing', step=.002),
             "pn = Get number of frames",
             "voicingTime = -1",
             "f0Onset = 0",
@@ -649,6 +746,9 @@ def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
             "    ft = Get time from frame number: i",
             "    if ft >= tmin and ft <= tmax",
             '        v = Get value in frame: i, "Hertz"',
+            "        if ft < burstTime",
+            "            v = undefined",
+            "        endif",
             "        if v <> undefined",
             "            run = run + 1",
             "            if run = 1",
@@ -658,7 +758,7 @@ def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
             "            if firstVoicedTime < 0",
             "                firstVoicedTime = ft",
             "            endif",
-            "            if voicingTime < 0 and run >= 3 and runStart >= burstTime",
+            "            if voicingTime < 0 and run >= 3",
             "                voicingTime = runStart",
             "                f0Onset = runStartF0",
             "            endif",
@@ -677,14 +777,37 @@ def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
             "    endif",
             "endfor",
             "Remove",
-            "if firstVoicedTime >= 0 and firstVoicedTime <= tmin + 0.01",
+            "postVoicingTime = voicingTime",
+            *_vot_receipt_lines(row, arguments, context),
+            'preNote$ = "未发现满足持续性条件的爆破前低频周期段"',
+            "if preTime >= 0",
+            '    preNote$ = "预浊候选：低频周期段至少持续 3 个周期且不少于 20 毫秒；需核对闭塞归属"',
+            "    voicingTime = preTime",
+            "    f0Onset = preF0",
+            "endif",
+            "if preAmbiguous",
+            '    preNote$ = preNote$ + "；起声在除阻前中断，闭塞归属待确认；间断本身不改变候选时差的符号"',
+            "endif",
+            "if burstTime >= 0",
+            _write_result(context, [quote("预浊检查："), "preNote$"]),
+            *_vot_landmark_lines(arguments, context, "burstTime", "preTime"),
+            "endif",
+            "if postVoicingTime >= 0 and burstTime >= 0",
+            _write_result(context, [quote("爆破后稳定周期性候选："),
+                                    "fixed$ (postVoicingTime, 4)", quote(" 秒；爆破后稳定起声候选间隔 = "),
+                                    "fixed$ ((postVoicingTime - burstTime) * 1000, 1)",
+                                    quote(" 毫秒（不代表清晰元音起点；预浊连续时仅为爆破后参考帧）")]),
+            "endif",
+            "if preTruncated",
+            _write_result(context, [quote("自动检测失败：预浊起始被范围左端截断，VOT 无法确定；请扩大选区。"), "rangeNote$"]),
+            "elsif firstVoicedTime >= 0 and firstVoicedTime <= tmin + 0.01",
             _write_result(
                 context,
                 [
                     quote("自动检测失败：范围起点附近（"),
                     "fixed$ (firstVoicedTime, 3)",
                     quote(" 秒）已经是浊音（自相关基频连续成立），"
-                          "说明爆破不在这个范围里。请把 from 提前到闭音段"
+                          "起声可能被范围左端截断。请把 from 提前到闭音段"
                           "（爆破之前），或直接给出 burst 和 voicing 两个时刻。"),
                     "rangeNote$",
                 ],
@@ -718,8 +841,8 @@ def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
             # 谐噪比只当佐证，就只算起点之后 50 ms 那一小段：整段声音做交叉相关
             # 在 10 秒的声音上要 0.3 秒，用户能感觉出卡。
             "    hnrEnd = voicingTime + 0.05",
-            "    if hnrEnd > duration",
-            "        hnrEnd = duration",
+            "    if hnrEnd > sourceEnd",
+            "        hnrEnd = sourceEnd",
             "    endif",
             "    hnrMax = 0",
             "    if hnrEnd - voicingTime >= 0.03",
@@ -742,7 +865,7 @@ def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
             "    endif",
             "    vot = voicingTime - burstTime",
             '    caution$ = ""',
-            "    if vot < 0.005",
+            "    if vot >= 0 and vot < 0.005",
             '        caution$ = "（不到 5 毫秒：可能范围起点已在浊音里，'
             '也可能是不送气塞音，请核对）"',
             "    endif",
@@ -783,6 +906,8 @@ def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
                     quote("–"),
                     "fixed$ (tmax / duration * 100, 0)",
                     quote("%）；爆破与浊音起始分开估计，请对着语图核对"),
+                    quote("；"),
+                    "preNote$",
                     "caution$",
                     "secondNote$",
                     "rangeNote$",
@@ -796,18 +921,10 @@ def _build_vot_auto(arguments: Mapping[str, Any], context: ToolContext) -> str:
 
 
 def _build_vot(arguments: Mapping[str, Any], context: ToolContext) -> str:
-    """给了爆破/浊音两个时刻就相减，否则在大概范围里自动估计。
-
-    ``burst`` / ``voicing`` 是可选字段，但模型（尤其走原生 tool calling 之后）会把
-    可选字段"填满"，给两个 ``0``。两条都是 0 的 VOT 本来就没有意义，所以这里把它
-    当成"没给"，继续走自动估计——比拿它报「浊音起始必须晚于爆破时刻」更贴近用户
-    的意图（实测「提取这段语音的 vot」就是这么被卡住的）。
-    """
+    """明确地标（包括零时刻）按有符号时差计算；没有地标时自动估计。"""
 
     burst = _vot_time(arguments, "burst")
     voicing = _vot_time(arguments, "voicing", alias="onset")
-    if burst == 0.0 and voicing == 0.0:
-        burst = voicing = None
     if burst is not None and voicing is not None:
         return _build_vot_explicit(arguments, context)
     if burst is not None or voicing is not None:
@@ -838,7 +955,7 @@ def _build_spectral_emphasis(
         f"selectObject: {row.id}",
         "duration = Get total duration",
         "intensity = Get intensity (dB)",
-        f"To Pitch: 0, {floor:.6f}, {ceiling:.6f}",
+        pitch_analysis.command(floor, ceiling),
         'meanPitch = Get mean: 0, 0, "Hertz"',
         "Remove",
         f"selectObject: {row.id}",
@@ -1003,13 +1120,20 @@ def _build_pitch_peak_latency(
     if temporary:
         lines.extend(
             [
-                f"To Pitch: 0, {floor:.6f}, {ceiling:.6f}",
+                pitch_analysis.command(floor, ceiling),
                 f"Rename: {quote(TEMPORARY_OBJECT_NAME)}",
             ]
         )
-    lines.extend(['nFrames = Get number of frames'])
-    # 峰值时刻复用基频候选过滤，过滤规则的限制同 _pitch_extreme_lines。
-    lines.extend(_pitch_extreme_lines())
+    lines.append('pitchId = selected ("Pitch")')
+    # 峰值时刻复用同一套质量筛查（能量门 → 候选带 → 连续段）。
+    lines.extend(
+        _pitch_extreme_lines(
+            sound=str(row.id) if temporary else None, floor=floor, ceiling=ceiling
+        )
+    )
+    lines.append(_write_result(context, ["quality$"]))
+    lines.extend(pitch_quality.receipt_lines(quote(context.result_path),
+        method="filtered_autocorrelation" if temporary else "existing_pitch", floor=floor, ceiling=ceiling))
     lines.extend(
         [
             "peakTime = maxtime",
@@ -1044,8 +1168,12 @@ def _build_pitch_peak_latency(
             "endif",
         ]
     )
-    if temporary:
-        lines.extend(["Remove", f"selectObject: {row.id}"])
+    lines.extend(
+        pitch_quality.cleanup_lines(
+            pitch="pitchId" if temporary else None, sound=temporary
+        )
+    )
+    lines.append(f"selectObject: {row.id}")
     return _assemble(lines, context)
 
 
@@ -1510,11 +1638,12 @@ def _build_measure(arguments: Mapping[str, Any], context: ToolContext) -> str:
     unit_text = _unit_display(arguments, "hertz").strip()
     created = _measure_plan(table, entries, variables)
 
+    pitch_entries = [entry for entry in queries if pitch_quality.measure_value(entry.parameter)]
     uses_range = any(
         "tmin" in entry.command or "tmax" in entry.command for entry in queries
     )
     lines = [f"selectObject: {row.id}"]
-    if uses_range:
+    if uses_range or pitch_entries:
         lines.append("duration = Get total duration")
         lines.extend(_range_lines(arguments, row))
     for key in created:
@@ -1535,15 +1664,39 @@ def _build_measure(arguments: Mapping[str, Any], context: ToolContext) -> str:
         )
         lines.append(f"{key}Id = {command}")
         variables[key] = f"{key}Id"
+    if pitch_entries and "pitch" in variables:
+        # 这一批基频参数共用同一套质量筛查（能量门 → 候选带 → 连续段），
+        # 平均/最低/最高/中位数/标准差/斜率/首尾都来自同一批有效帧，
+        # 事实行另起一行（见 praat_ai/pitch_quality.py）。已有 Pitch 对象没有原始
+        # Sound 时能量门做不了，事实行会写「未核验」。
+        lines.append(f"selectObject: {variables['pitch']}")
+        lines.extend(
+            _pitch_extreme_lines(
+                sound=variables.get("sound"),
+                floor=float(settings["pitch_floor"]),
+                ceiling=float(settings["pitch_ceiling"]),
+            )
+        )
+
+    # 质量事实行只写一次（一批基频参数共用同一批有效帧），放在实测行前面。
+    if pitch_entries and "pitch" in variables:
+        lines.append(_write_result(context, ["quality$"]))
+        lines.extend(pitch_quality.receipt_lines(quote(context.result_path),
+            method="filtered_autocorrelation" if row.class_name == "Sound" else "existing_pitch",
+            floor=float(settings["pitch_floor"]), ceiling=float(settings["pitch_ceiling"])))
 
     for entry in queries:
         lines.extend(_measure_select_lines(measures.source_keys(entry.source), variables))
-        command = _measure_expand(
-            entry.command, settings, unit_literal=unit_literal, unit_text=unit_text
-        )
-        statements = [piece.strip() for piece in command.split(";") if piece.strip()]
-        if not any("=" in statement for statement in statements):
-            statements[0] = f"value = {statements[0]}"
+        screened = pitch_quality.measure_value(entry.parameter)
+        if screened and "pitch" in variables:
+            statements = [f"value = {screened}"]
+        else:
+            command = _measure_expand(
+                entry.command, settings, unit_literal=unit_literal, unit_text=unit_text
+            )
+            statements = [piece.strip() for piece in command.split(";") if piece.strip()]
+            if not any("=" in statement for statement in statements):
+                statements[0] = f"value = {statements[0]}"
         lines.extend(statements)
         unit = _measure_expand(
             entry.unit, settings, unit_literal=unit_literal, unit_text=unit_text
@@ -1585,6 +1738,8 @@ def _build_measure(arguments: Mapping[str, Any], context: ToolContext) -> str:
             ]
         )
         lines.append("endif")
+    if pitch_entries and "pitch" in variables:
+        lines.extend(pitch_quality.cleanup_lines(sound="sound" in variables))
 
     # 编辑器专属参数在对象列表上不可用：执行前拒绝并给出替代做法，
     # 不能只写一行说明却记作成功测量。

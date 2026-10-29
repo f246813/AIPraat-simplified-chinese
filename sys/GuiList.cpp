@@ -17,6 +17,7 @@
  */
 
 #include "GuiP.h"
+#include <vector>
 
 Thing_implement (GuiList, GuiControl, 0);
 
@@ -57,13 +58,115 @@ Thing_implement (GuiList, GuiControl, 0);
 		}
 	}
 
+	struct _GuiWinListDrag {
+		bool enabled = false, pressed = false, dragging = false, additive = false;
+		bool nativeRightPress = false;
+		POINT start {}, current {};
+		int anchorY = 0, initialCaret = 0;
+		std::vector <bool> initialSelection;
+	};
+
+	static int _GuiWinList_scrollOffset (HWND hwnd) {
+		return (int) SendMessageW (hwnd, LB_GETTOPINDEX, 0, 0) *
+			(int) SendMessageW (hwnd, LB_GETITEMHEIGHT, 0, 0);
+	}
+
+	static RECT _GuiWinList_dragRect (HWND hwnd, const _GuiWinListDrag & drag) {
+		const int startY = drag.anchorY - _GuiWinList_scrollOffset (hwnd);
+		return { std::min (drag.start.x, drag.current.x), std::min (startY, (int) drag.current.y),
+			std::max (drag.start.x, drag.current.x) + 1, std::max (startY, (int) drag.current.y) + 1 };
+	}
+
+	static void _GuiWinList_updateDrag (HWND hwnd, _GuiWinListDrag & drag, bool restore = false) {
+		const RECT band = _GuiWinList_dragRect (hwnd, drag);
+		const int count = (int) SendMessageW (hwnd, LB_GETCOUNT, 0, 0);
+		bool changed = false;
+		for (int i = 0; i < count; i ++) {
+			RECT row {}, overlap {};
+			SendMessageW (hwnd, LB_GETITEMRECT, i, (LPARAM) & row);
+			const bool wasSelected = i < (int) drag.initialSelection.size() && drag.initialSelection [i];
+			const bool selected = restore ? wasSelected :
+				(IntersectRect (& overlap, & band, & row) || (drag.additive && wasSelected));
+			if ((SendMessageW (hwnd, LB_GETSEL, i, 0) > 0) != selected) {
+				SendMessageW (hwnd, LB_SETSEL, selected, i);
+				changed = true;
+			}
+		}
+		InvalidateRect (hwnd, nullptr, TRUE);
+		if (changed) {
+			GuiObject widget = (GuiObject) GetWindowLongPtr (hwnd, GWLP_USERDATA);
+			if (widget)
+				_GuiWinList_handleClick (widget);
+		}
+	}
+
+	static void _GuiWinList_endDrag (HWND hwnd, _GuiWinListDrag & drag, bool cancel) {
+		const bool restore = cancel && drag.dragging;
+		drag.pressed = drag.dragging = false;
+		KillTimer (hwnd, (UINT_PTR) & drag);
+		if (restore) {
+			_GuiWinList_updateDrag (hwnd, drag, true);
+			SendMessageW (hwnd, LB_SETCARETINDEX, drag.initialCaret, FALSE);
+		}
+		if (GetCapture () == hwnd)
+			ReleaseCapture ();
+		drag.initialSelection.clear ();
+		RedrawWindow (hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_UPDATENOW);
+	}
+
+	static void _GuiWinList_paintDrag (HWND hwnd, const _GuiWinListDrag & drag) {
+		RECT client {}, band = _GuiWinList_dragRect (hwnd, drag);
+		GetClientRect (hwnd, & client);
+		HDC dc = GetDC (hwnd);
+		const int saved = SaveDC (dc);
+		IntersectClipRect (dc, client.left, client.top, client.right, client.bottom);
+		_GuiWin_ensureGdiplus ();
+		{
+			Gdiplus::Graphics graphics (dc);
+			const COLORREF color = GetSysColor (COLOR_HIGHLIGHT);
+			Gdiplus::Color fillColor (40, GetRValue (color), GetGValue (color), GetBValue (color));
+			Gdiplus::Color edgeColor (255, GetRValue (color), GetGValue (color), GetBValue (color));
+			Gdiplus::SolidBrush brush (fillColor);
+			Gdiplus::Pen pen (edgeColor);
+			const Gdiplus::Rect bounds ((int) band.left, (int) band.top,
+				(int) (band.right - band.left - 1), (int) (band.bottom - band.top - 1));
+			graphics.FillRectangle (& brush, bounds);
+			graphics.DrawRectangle (& pen, bounds);
+		}
+		RestoreDC (dc, saved);
+		ReleaseDC (hwnd, dc);
+	}
+
 	static LRESULT CALLBACK _ModernListSubclassProc (
 		HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 		UINT_PTR uIdSubclass, DWORD_PTR dwRefData
 	) {
-		(void) dwRefData;
+		auto & drag = * (_GuiWinListDrag *) dwRefData;
 		switch (uMsg) {
+			case WM_PAINT: {
+				if (drag.dragging)
+					InvalidateRect (hwnd, nullptr, TRUE);
+				const LRESULT result = DefSubclassProc (hwnd, uMsg, wParam, lParam);
+				if (drag.dragging)
+					_GuiWinList_paintDrag (hwnd, drag);
+				return result;
+			}
 			case WM_MOUSEMOVE: {
+				if (drag.pressed) {
+					if (wParam & MK_CONTROL) {
+						_GuiWinList_endDrag (hwnd, drag, true);
+						return 0;
+					}
+					drag.current = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
+					if (! drag.dragging && (abs (drag.current.x - drag.start.x) >= GetSystemMetrics (SM_CXDRAG) ||
+							abs (drag.current.y - drag.start.y) >= GetSystemMetrics (SM_CYDRAG))) {
+						drag.dragging = true;
+						SetTimer (hwnd, (UINT_PTR) & drag, 50, nullptr);
+					}
+					if (drag.dragging)
+						_GuiWinList_updateDrag (hwnd, drag);
+					return 0;
+				}
 				LRESULT itemRes = SendMessageW (hwnd, LB_ITEMFROMPOINT, 0, lParam);
 				int newHover = (HIWORD (itemRes) == 0) ? (int) LOWORD (itemRes) : -1;
 				int oldHover = (int) (LONG_PTR) GetPropW (hwnd, L"Praat_HoverItem") - 1;
@@ -102,6 +205,43 @@ Thing_implement (GuiList, GuiControl, 0);
 				break;
 			}
 			case WM_RBUTTONDOWN: {
+				drag.nativeRightPress = drag.enabled && (wParam & MK_CONTROL);
+				if (drag.nativeRightPress)
+					return DefSubclassProc (hwnd, uMsg, wParam, lParam);
+				if (drag.enabled) {
+					SetFocus (hwnd);
+					drag.start = drag.current = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
+					drag.anchorY = drag.start.y + _GuiWinList_scrollOffset (hwnd);
+					drag.initialCaret = (int) SendMessageW (hwnd, LB_GETCARETINDEX, 0, 0);
+					drag.additive = (wParam & MK_SHIFT) != 0;
+					drag.initialSelection.clear ();
+					const int count = (int) SendMessageW (hwnd, LB_GETCOUNT, 0, 0);
+					for (int i = 0; i < count; i ++)
+						drag.initialSelection.push_back (SendMessageW (hwnd, LB_GETSEL, i, 0) > 0);
+					drag.pressed = true;
+					SetCapture (hwnd);
+					return 0;
+				}
+				[[fallthrough]];
+			}
+			case WM_RBUTTONUP: {
+				if (drag.nativeRightPress) {
+					drag.nativeRightPress = false;
+					return DefSubclassProc (hwnd, uMsg, wParam, lParam);
+				}
+				if (drag.enabled) {
+					if (! drag.pressed)
+						return 0;
+					if (drag.dragging) {
+						drag.current = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
+						_GuiWinList_updateDrag (hwnd, drag);
+						_GuiWinList_endDrag (hwnd, drag, false);
+						return 0;
+					}
+					_GuiWinList_endDrag (hwnd, drag, false);
+				} else if (uMsg == WM_RBUTTONUP) {
+					break;
+				}
 				POINT pt = { GET_X_LPARAM (lParam), GET_Y_LPARAM (lParam) };
 				LRESULT itemRes = SendMessageW (hwnd, LB_ITEMFROMPOINT, 0, lParam);
 				int clickedItem = (HIWORD (itemRes) == 0) ? (int) LOWORD (itemRes) : -1;
@@ -117,8 +257,36 @@ Thing_implement (GuiList, GuiControl, 0);
 					}
 				}
 				SetFocus (hwnd);
+				if (uMsg == WM_RBUTTONUP)
+					return DefSubclassProc (hwnd, uMsg, wParam, lParam);
 				return 0;
 			}
+			case WM_TIMER: {
+				if (wParam != (UINT_PTR) & drag || ! drag.dragging)
+					break;
+				RECT client {};
+				GetClientRect (hwnd, & client);
+				const int direction = drag.current.y < client.top ? -1 : (drag.current.y >= client.bottom ? 1 : 0);
+				if (direction) {
+					const int top = (int) SendMessageW (hwnd, LB_GETTOPINDEX, 0, 0);
+					SendMessageW (hwnd, LB_SETTOPINDEX, std::max (0, top + direction), 0);
+					_GuiWinList_updateDrag (hwnd, drag);
+				}
+				return 0;
+			}
+			case WM_KEYDOWN:
+				if (drag.pressed && (wParam == VK_CONTROL || wParam == VK_LCONTROL || wParam == VK_RCONTROL))
+					_GuiWinList_endDrag (hwnd, drag, true);
+				if (drag.pressed && wParam == VK_ESCAPE) {
+					_GuiWinList_endDrag (hwnd, drag, true);
+					return 0;
+				}
+				break;
+			case WM_CAPTURECHANGED:
+			case WM_CANCELMODE:
+				if (drag.pressed)
+					_GuiWinList_endDrag (hwnd, drag, true);
+				break;
 			case WM_CONTEXTMENU: {
 				int x = GET_X_LPARAM (lParam);
 				int y = GET_Y_LPARAM (lParam);
@@ -171,6 +339,8 @@ Thing_implement (GuiList, GuiControl, 0);
 				return 0;
 			}
 			case WM_NCDESTROY: {
+				KillTimer (hwnd, (UINT_PTR) & drag);
+				delete & drag;
 				RemovePropW (hwnd, L"Praat_HoverItem");
 				RemoveWindowSubclass (hwnd, _ModernListSubclassProc, uIdSubclass);
 				break;
@@ -361,7 +531,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 			my d_widget -> parent -> window, nullptr, theGui.instance, nullptr);
 		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
 		SetWindowFont (my d_widget -> window, theWinGuiNormalLabelFont (), false);
-		SetWindowSubclass (my d_widget -> window, _ModernListSubclassProc, 1, 0);
+		SetWindowSubclass (my d_widget -> window, _ModernListSubclassProc, 1, (DWORD_PTR) new _GuiWinListDrag);
 		/*if (MEMBER (my parent, ScrolledWindow)) {
 			XtDestroyWidget (my d_widget -> parent -> motiff.scrolledWindow.horizontalBar);
 			my d_widget -> parent -> motiff.scrolledWindow.horizontalBar = nullptr;
@@ -653,6 +823,16 @@ void GuiList_setScrollCallback (GuiList me, GuiList_ScrollCallback callback, Thi
 void GuiList_setContextMenuCallback (GuiList me, GuiList_ContextMenuCallback callback, Thing boss) {
 	my d_contextMenuCallback = callback;
 	my d_contextMenuBoss = boss;
+}
+
+void GuiList_enableRightDragSelection (GuiList me) {
+	#if motif
+		DWORD_PTR data = 0;
+		if (my d_allowMultipleSelection && GetWindowSubclass (my d_widget -> window, _ModernListSubclassProc, 1, & data))
+			((_GuiWinListDrag *) data) -> enabled = true;
+	#else
+		(void) me;
+	#endif
 }
 
 void GuiList_setTopPosition (GuiList me, integer topPosition) {

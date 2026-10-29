@@ -1,17 +1,8 @@
-"""阶段 1–2 回归：缺测与证据不足不得被表达成「无差异」或「正常结论」。
+"""Missing measurements must remain distinct from observed acoustic differences.
 
-本模块先复现设计文档里三个已复现缺陷（未修复的代码上必须失败）：
-
-① 双方声学特征全为空时，旧式对比仍写「未发现超过旧式声学对比阈值的差异」；
-② 学习者特征全为未定义值时，旧式路径产出 severity=1.0、双方 0.0 的偏差条目；
-③ 本机规划器的最终交付绕过报告守卫，把没有证据支撑的 999 Hz 原样交给用户。
-
-还覆盖阶段 2 的依赖/缺测状态（「依赖未安装」≠「已安装但提取失败」）、
-缺测原因在交付物里可见，以及「一段音频只提取一次基频/共振峰」。
-
-除了「一次提取」用例需要真实 praat-parselmouth 以外，其余都是纯逻辑，
-所以在没有 Parselmouth 的解释器（例如 Python 3.14）上也能跑；该用例会
-如实报 skipped，不报通过。
+Check empty/undefined features, dependency and extraction states, local delivery
+verification and one pitch/formant extraction per audio. Only the extraction
+case requires praat-parselmouth; it is skipped when that dependency is absent.
 """
 
 import math
@@ -20,7 +11,6 @@ import tempfile
 import unittest
 import wave
 from pathlib import Path
-from types import SimpleNamespace
 from unittest.mock import patch
 
 import numpy as np
@@ -214,7 +204,7 @@ class LocalDeliveryGuardTests(unittest.TestCase):
 
         outcome = run(client, execute)
 
-        self.assertEqual(outcome.reply, "0.5 秒处基频 220 Hz。")
+        self.assertEqual(outcome.reply, "## 分析结论\n\n0.5 秒处基频 220 Hz。")
         self.assertEqual(outcome.delivery_guard, "verified")
 
     def test_both_delivery_paths_use_one_guard_entry(self) -> None:
@@ -263,7 +253,7 @@ class AcousticExtractionStatusTests(unittest.TestCase):
                 def __init__(self, *_args, **_kwargs):
                     raise RuntimeError("boom")
 
-            with patch.dict("sys.modules", {"parselmouth": SimpleNamespace(Sound=Broken)}):
+            with patch.object(parselmouth, "Sound", Broken):
                 failed = {}
                 extract_phone_tracks(path, phones, learner=True, diagnostics=failed)
 
@@ -300,9 +290,9 @@ class AcousticExtractionStatusTests(unittest.TestCase):
                 result = analyze_pronunciation(request)
 
         payload = result.to_dict()
-        # 频谱类特征仍然比得到，所以音位层是 observed；「基频/共振峰这一族没测」是另一个
-        # 独立状态（pitch_formant_measurement）。两者分开，正好说明状态没有被合并掉。
-        self.assertEqual(payload["check_statuses"]["phone_acoustics"], "observed")
+        # 频谱类特征仍可比较，基频/共振峰缺失：汇总应为部分完成，而非未评估。
+        self.assertEqual(payload["check_statuses"]["phone_acoustics"], "partial")
+        self.assertTrue(any(check["status"] == "observed" for item in payload["phone_assessments"] for check in item["checks"]))
         self.assertEqual(payload["check_statuses"].get("pitch_formant_measurement"), "dependency_missing")
         reasons = [warning for warning in payload["warnings"] if "基频/共振峰测量" in warning]
         self.assertEqual(len(reasons), 2)  # 参考侧与学习者侧各一条，不是一句笼统的说明。
@@ -352,7 +342,8 @@ class AcousticExtractionStatusTests(unittest.TestCase):
             # 逐音素重新读取整段音频（旧行为）必须给出同样的数值。
             for track, (start, end) in zip(tracks, windows):
                 sound = real_sound(str(path))
-                pitch = sound.to_pitch(time_step=0.01, pitch_floor=75.0, pitch_ceiling=600.0)
+                from praat_ai.pitch_analysis import parselmouth_pitch
+                pitch = parselmouth_pitch(sound, 75.0, 600.0, step=0.01)
                 formant = sound.to_formant_burg(
                     time_step=0.01, max_number_of_formants=5.0, maximum_formant=5500.0,
                     window_length=0.025, pre_emphasis_from=50.0,

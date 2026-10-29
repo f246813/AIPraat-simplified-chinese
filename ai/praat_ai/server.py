@@ -10,6 +10,7 @@ from pathlib import Path
 
 from .config import AppConfig
 from .vram import RuntimeProfile
+from .paths import installation_root
 
 
 class QwenServerError(RuntimeError):
@@ -166,7 +167,7 @@ def running_model(base_url: str, timeout: float = 2.0) -> str:
 def log_dir() -> Path:
     """Folder that holds the llama-server log."""
 
-    path = Path(__file__).resolve().parents[1] / "logs"
+    path = installation_root() / "logs"
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -332,10 +333,7 @@ class QwenServerManager:
             "--parallel",
             str(self.config.server.parallel),
             "--no-webui",
-            # 用模型自带的 chat 模板：对话前端会把工具结果作为 role=tool 的消息回灌
-            # 给模型（见 ai/docs/adr/ADR-004），没有这一条时 llama.cpp 用内置模板，
-            # 小模型在多轮里会跑偏（实测「阅读当前对象的信息」被它做成频谱图，还连着
-            # 多做三步）。开 --jinja 之后同一个多轮对话选对工具、第二轮直接回答。
+            # 使用模型 chat 模板序列化多轮消息和 role=tool 的工具返回。
             "--jinja",
         ]
         if mmproj is not None:
@@ -365,8 +363,7 @@ class QwenServerManager:
     def _wait_for_endpoint(self) -> None:
         started = time.time()
         deadline = started + 60
-        #: 加载一个 0.8B 模型实测 8 秒、2B 十几秒；按 15 秒铺开进度条，
-        #: 永远不越过 0.95（最后那一下由「已就绪」那一条补上）。
+        #: 以 15 秒估算加载进度，未就绪时上限为 0.95。
         expected = 15.0
         while time.time() < deadline:
             if self.process is None:

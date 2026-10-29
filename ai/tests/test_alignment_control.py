@@ -1,16 +1,8 @@
-"""阶段 4 回归：正式 MFA 对齐必须能超时、能取消，而且取消不许被吞掉。
+"""MFA execution must time out, honor cancellation and terminate its process tree.
 
-设计文档点名的硬缺口：实际 MFA 对齐用无超时的 ``subprocess.run``，``run_tutor`` 也没有
-贯穿分析阶段的取消参数——前端能取消的只是音位生成等准备操作。本模块先把缺口写成测试
-（未修复时必须失败）：
-
-① 对齐超时 → 明确失败（带原因），并且真的杀掉子进程，不挂住；
-② 取消 → 抛可辨识的取消异常，且在时限内结束；
-③ 取消不能被 ``CompositeAligner`` 当成「对齐失败」而静默回退到比例对齐；
-④ ``analyze_pronunciation`` / ``run_tutor`` 把取消信号贯穿到对齐层；
-⑤ 分析阶段取消时不给「已完成」的交付物（取消前已取得的结果按调用方策略保留）。
-
-这些用例用真实的子进程（一个会 sleep 的 Python 命令）验证超时与杀进程，不用模型也不用 Praat。
+Cancellation must propagate through pronunciation/tutor and never become a
+proportional-alignment fallback or a completed report. These tests use isolated
+Python subprocesses, not an MFA model or GUI Praat.
 """
 
 import sys

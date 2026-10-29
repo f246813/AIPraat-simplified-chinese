@@ -1,23 +1,4 @@
-"""运行环境缺件的只读体检：Praat / ffmpeg / wav2vec2 模型。
-
-为什么单独一层
---------------
-
-「缺件」以前散在三个地方各判一遍：``praat_app.find_praat()`` 只管找 Praat、
-``audio_decoder.resolve_ffmpeg()`` 只管找 ffmpeg、测试里又各自写了一份路径猜测。
-结果就是同一件事三种说法——一端报 ``FileNotFoundError``，另一端什么都不显示，
-用户只能在失败之后猜缺了什么。
-
-这里给出一份**统一口径**：
-
-- 只做文件/路径检查，不起进程、不联网；Praat 复用 :mod:`praat_ai.praat_app` 的缓存探测；
-- 每项都带 ``required``：必需项缺了整条链路断（Praat），可选项缺了只是降级
-  （ffmpeg 只影响 m4a 解码，wav2vec2 只影响对齐后端）；
-- 前端面板（``tutor.capabilities.environment``）与测试的 skip 条件都用这一份，
-  避免再次各写一遍。
-
-修好之后调 :func:`refresh` 清掉探测缓存，界面上点「重新检测」就走这里。
-"""
+"""Praat、FFmpeg 和 wav2vec2 的只读环境检查。复用各工具的发现接口，返回路径、required、ready 与可读原因；refresh 清理发现缓存。该检查不加载模型或验证真实对齐效果。"""
 from __future__ import annotations
 
 from pathlib import Path

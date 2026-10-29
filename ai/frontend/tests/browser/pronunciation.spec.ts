@@ -86,11 +86,13 @@ test('G2P candidate confirmation, generated submission and resource editor stay 
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     const action = (await page.getByRole('button',{name:'开始分析'}).boundingBox())!; expect(action.y + action.height).toBeLessThanOrEqual(height);
     await page.getByRole('button',{name:'配置配套资源'}).click(); const editor = page.getByRole('dialog',{name:'配置配套资源 · 英语（美式）'}); await expect(editor).toBeVisible();
-    await editor.getByRole('combobox',{name:'G2P 模型'}).focus(); await page.keyboard.press('Tab'); await expect(editor.getByRole('button',{name:'添加本地G2P模型'})).toBeFocused();
-    await editor.getByRole('textbox',{name:'Conda 环境名'}).fill('draft'); await page.keyboard.press('Escape'); await expect(editor).toBeVisible();
-    await expect(editor.getByRole('button',{name:'丢弃并关闭'})).toBeVisible(); await page.screenshot({path:screenshot(`mfa-editor-dirty-dark-${width}.png`)});
+    await expect(editor.getByRole('combobox',{name:'G2P 模型'})).toHaveCount(0);
+    await expect(editor.getByRole('button',{name:'添加本地G2P模型'})).toHaveCount(0);
+    await editor.getByRole('combobox',{name:'MFA 发音词典'}).focus(); await page.keyboard.press('Tab'); await expect(editor.getByRole('button',{name:'添加本地词典'})).toBeFocused();
+    await editor.getByRole('textbox',{name:'Conda 环境名'}).fill('draft');
+    await page.screenshot({path:screenshot(`mfa-editor-draft-dark-${width}.png`)});
     const bounds = (await editor.boundingBox())!; expect(bounds.x).toBeGreaterThanOrEqual(0); expect(bounds.x + bounds.width).toBeLessThanOrEqual(width); expect(bounds.height).toBeLessThanOrEqual(height);
-    await editor.getByRole('button',{name:'丢弃并关闭'}).click(); await expect(editor).toHaveCount(0);
+    await page.keyboard.press('Escape'); await expect(editor).toHaveCount(0);
     await page.getByRole('textbox',{name:/参考文本/}).fill('hello'); await expect(page.getByRole('button',{name:'开始分析'})).toBeDisabled();
     await page.getByRole('button',{name:'转为手动 IPA'}).click(); await expect(target).toHaveValue('');
     await page.getByRole('button',{name:'开始分析'}).click();

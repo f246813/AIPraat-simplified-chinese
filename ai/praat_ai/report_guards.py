@@ -21,10 +21,46 @@ from .tools import SOUND_CLASSES, parse_object_context
 
 
 #: 算不出来的推导式在正文里换成这个：不把内部语法漏给用户，也不因为一句推导丢掉整份报告。
+from . import evidence_quality, interpretation_policy, evidence_boundaries
+
+INTERPRETATION_NOTE = '现有证据不足以支持部分发音判断，相关断言已省略。'
+
 UNVERIFIED_CALC = '[推导未核对]'
 #: 守卫没核上的数值，在保留的正文里换成这个占位符：正文能留，没测过的数字不能当实测。
 #: 云端恢复稿（``cloud_agent.rescued_report``）与本机最终交付（``chat``）共用这一个标记。
 UNVERIFIED_NUMBER = '[未通过核对的数值]'
+UNVERIFIED_NOTE = '（部分数值未能从测量结果中确认，已标出；依赖这些数值的判断暂不能作为结论。）'
+
+#: 正文里「这个数没核上」的标记：缺口标出来可以照常交付，但不能对外说全部核对通过。
+GAP_MARKERS = (UNVERIFIED_NUMBER, UNVERIFIED_CALC)
+
+
+def _gap_markers(text: str) -> int:
+    """正文里明确标出的数值缺口有几处。"""
+
+    body = str(text or '')
+    return sum(body.count(marker) for marker in GAP_MARKERS)
+
+
+def _note_gap(state: Any, count: int) -> None:
+    """记下这份正文里有几处数值缺口（``report_gap``）。
+
+    ``report_verified`` 的语义是「核过的都对上了」，不是「有一处没核上也说全部通过」。
+    缺口已经就地标成 :data:`UNVERIFIED_NUMBER`、正文照常交付，但核对状态必须如实为
+    False：``guard_delivered_text`` 依 ``report_gap`` 返回 ``rejected_masked``，
+    ``audit`` 里另记 ``gap``（``audit_report`` 收尾只重写 ``verified`` 那几项，
+    这个键不会被抹掉）。
+    """
+
+    if count <= 0:
+        return
+    metrics = getattr(state, 'metrics', None)
+    if not isinstance(metrics, dict):
+        return
+    metrics['report_gap'] = int(metrics.get('report_gap') or 0) + int(count)
+    audit = metrics.get('audit')
+    if isinstance(audit, dict):
+        audit['gap'] = int(audit.get('gap') or 0) + int(count)
 
 
 class CalcUnavailable(Exception):
@@ -50,7 +86,7 @@ _NUMBER = re.compile(r"(?<![A-Za-z0-9_.])" + _N + r"(?![A-Za-z0-9_.])")
 _UNIT = re.compile(
     r"\s*(kHz|Hz(?:\s*/\s*(?:s|秒))?|半音\s*/\s*(?:s|秒)|"
     r"milliseconds?|seconds?|msec|sec|ms|s|毫秒|秒|dB|Pa|%|％|倍|半音|八度|"
-    r"赫兹|帕|分贝)(?![A-Za-z])",
+    r"赫兹|帕|分贝|(?:个)?(?:有效)?帧|frames?)(?![A-Za-z])",
     re.I,
 )
 _RANGE = re.compile(
@@ -84,7 +120,9 @@ def _range_parts(text, tool=''):
                 if candidate in {'pitch', 'intensity'} or candidate.startswith('formant.'):
                     category = candidate
                     break
-        start_role, end_role = ((category + '.min', category + '.max') if category
+        extraction = bool(re.search(r'(?:提取|分析|搜索|设置|参数).{0,12}(?:范围|频带|上下限)', prefix[-60:]))
+        start_role, end_role = (('analysis.pitch_floor', 'analysis.pitch_ceiling') if extraction
+                               else (category + '.min', category + '.max') if category
                                 else ('value_range.start', 'value_range.end'))
         parts[match.span('a')] = (start_role, match['ua'] or match['ub'])
         parts[match.span('b')] = (end_role, match['ub'])
@@ -103,15 +141,29 @@ _CALC = re.compile(r"\{\{calc:([^{}|]+)\|([^{}|]+)\}\}")
 _REF = re.compile(r"\b(E\d+)\.q([1-9]\d*)\b")
 #: 结构化出口：``{{q:E2.q3}}`` 由程序按证据第 N 个量原样渲染（值与单位都来自证据）。
 #: 模型不必再自己抄数字——抄错、换小数位、换算单位这些失分点从源头消失。
-_QUANTITY = re.compile(r"\{\{q:(E\d+)\.q([1-9]\d*)\}\}")
+#: 序号上限 6 位：``{{q:E1.q999…}}`` 这种超长序号不能进 ``int()``（Python 3.11+
+#: 对超过 4300 位的整数串直接抛 ``ValueError``，一份报告会崩在守卫里而不是被标缺口）。
+_QUANTITY = re.compile(r"\{\{q:(E\d+)\.q([1-9]\d{0,5})\}\}")
+#: 数值模板的开头：判定正文里还有没有没处理的模板。
+_QUANTITY_TEMPLATE = re.compile(r"\{\{\s*q\s*:")
+#: 有 ``}}`` 收尾、但不在登记表里的数值模板。典型写法 ``{{q:E3.r1}}``：模型把
+#: ``quantity_refs`` 里的 ``r{证据行号}:{量名}`` 当成序号抄了下来。
+_QUANTITY_DELIMITED = re.compile(r"\{\{\s*q\s*:[^{}\n]*?\}\}")
+#: 被截断的数值模板（``{{q:E3.q1``）：只吃模板字符，后面紧跟的中文正文要留下。
+_QUANTITY_TRUNCATED = re.compile(r"\{\{\s*q\s*:[A-Za-z0-9_.:#|<>/\s-]*")
+#: 兜底：模板里夹了中文/换行之类的非常规写法，同样整段去掉，绝不把内部语法漏给用户。
+_QUANTITY_ANY = re.compile(r"\{\{\s*q\s*:[^{}\n]*\}?\}?")
 #: 分句：句号/分号/全角逗号/半角逗号（**数字之间的逗号不算分隔**：``220,000``、``[0.446, 0.66158]``
 #: 里的逗号属于数值本身，切开会把千分位读成两个数）。偏移保持绝对，遮蔽仍按原文定位。
 _CLAUSE_SPLIT = re.compile(r'(?:[^；;。，\n]|,\s*(?=[-+]?\d))+')
 _GENERAL = re.compile(r"一般知识|一般原理|概念说明|概念解释|通用知识|示例[（(]非本录音[）)]|general knowledge", re.I)
 _SPECIFIC = re.compile(r"本(?:段|次|录音|对象|材料)|这(?:段|个|次|份)|该(?:段|录音|对象)|你(?:的|这)|当前|实测|测得|测量结果")
 _ADVICE = re.compile(r'^\s*(?:[-*]\s*)?(?:建议|下一步|请|可以尝试|可尝试|练习时|参数设置)')
+_TONE_CATEGORY = r'第?[一二三四1-4]声(?!音|源|道|学|明|调)|阴平|阳平|上声|去声|轻声'
 _PROSODY = re.compile(
+    _TONE_CATEGORY + r'|'
     r"平板型|头高型|中高型|尾高型|平板调|升调|降调|上升|下降|升高|降低|"
+    r"(?:几乎|近似|接近)(?:是)?一条(?:平)?直线|"
     r"(?:语调|音调|音高|基频).{0,12}(?:平淡|单调|平坦|平稳|起伏小|变化小)|"
     r"(?:平淡|单调|平坦|平稳)的?(?:语调|音调|音高)|"
     r"\b(?:heiban|atamadaka|rising|falling|flat intonation)\b", re.I,
@@ -162,6 +214,8 @@ def _unit(raw: str) -> tuple[str, float, tuple[int, int, str]]:
         return 'Hz/s', 1.0, (1, -1, '')
     if key in {'半音/s', '半音/秒'}:
         return '半音/s', 1.0, (0, -1, '半音')
+    if key in {'帧', '有效帧', '个帧', '个有效帧', 'frame', 'frames'}:
+        return '帧', 1.0, (0, 0, 'frames')
     if key in {'', '%', '倍'}:
         # Percent expressions explicitly multiply by 100, as ordinary formulas do.
         return key, 1.0, (0, 0, '')
@@ -171,7 +225,12 @@ def _unit(raw: str) -> tuple[str, float, tuple[int, int, str]]:
 def _precision(text: str) -> float:
     mantissa, _, exponent = text.lower().partition('e')
     decimals = len(mantissa.split('.')[1]) if '.' in mantissa else 0
-    return .5 * 10 ** ((int(exponent) if exponent else 0) - decimals)
+    # 指数只用来算容差，量级够了就行：``220e999999999`` / 5000 位的指数串
+    # 直接进 ``10 ** n`` 会 ``OverflowError``（``int()`` 本身还会撞上 4300 位的
+    # 整数串上限），整份报告就崩在守卫里。按 ±40 位夹住，行为对正常数字不变。
+    power = int(exponent.lstrip('+-')[:6] or 0) * (-1 if exponent.startswith('-') else 1)
+    power = max(-40, min(40, power))
+    return .5 * 10 ** (power - decimals)
 
 
 #: 全角数字/句点/逗号：模型偶尔会写 ``８１．５５８``，以前整段核对直接跳过它。
@@ -185,12 +244,7 @@ _CN_NUMBER = re.compile(r'[零〇一壹二两贰三叁四肆五伍六陆七柒�
 
 
 def _chinese_number(text: str) -> float | None:
-    """``八十一`` → 81、``一点五`` → 1.5、``二百五十`` → 250；解析不了返回 ``None``。
-
-    中文数字以前完全不核对（2026-10-07 实测：``平均基频约八十一点六赫兹`` 直接通过），
-    编造的数字只要写成中文就能躲过守卫。这里只处理到千位和一位小数——报告里够用，
-    超出的形式按解析不了处理（仍会被当成可疑数值拦下）。
-    """
+    """将支持的中文整数与小数转换为数值，无法解析时返回 None。"""
 
     if '点' in text:
         whole, _, fraction = text.partition('点')
@@ -222,11 +276,7 @@ def _normalize_claim(text: str) -> str:
 
 
 def _number_candidates(raw: str) -> list[str]:
-    """一个数值文本的可能读法：``81,558`` 既可能是千分位也可能是小数逗号。
-
-    两种读法都试：只有能对上真实测量才会通过，所以放宽读法不会放过编造的数字
-    （2026-10-07 实测：``平均基频 81,558 Hz`` 被拆成 81 + 558，整行判成未核对）。
-    """
+    """返回数值文本的可能读法，兼容千分位和小数逗号；由测量证据决定可接受的读法。"""
 
     if ',' not in raw:
         return [raw]
@@ -238,6 +288,13 @@ def _role(prefix: str, tool: str = '') -> str:
     pieces = re.split(r'[，,；;：:=＝]', prefix)
     nearby = next((part for part in reversed(pieces) if part.strip()), '')[-60:]
     full = prefix[-160:]
+    if re.search(r'有效(?:基频)?帧(?:数)?|有效\s*$', nearby):
+        return 'analysis.accepted_frames'
+    analysis_context = re.search(r'基频|提取|分析|搜索|设置|参数', full)
+    if analysis_context and re.search(r'下限|floor', nearby, re.I):
+        return 'analysis.pitch_floor'
+    if analysis_context and re.search(r'上限|ceiling', nearby, re.I):
+        return 'analysis.pitch_ceiling'
     formant = re.search(r'(?:\bF\s*([1-9])\b|第\s*([1-9])\s*共振峰|共振峰\s*([1-9]))', nearby, re.I)
     if not formant and 'formant' in tool:
         formant = re.search(r'(?:\bF\s*([1-9])\b|第\s*([1-9])\s*共振峰)', full, re.I)
@@ -257,12 +314,15 @@ def _role(prefix: str, tool: str = '') -> str:
         category = ''
     if re.search(r'原始平均|raw\s*mean', nearby, re.I):
         metric = 'raw_mean'
+    elif re.search(r'峰值延迟|peak latency', nearby, re.I):
+        metric = 'peak_latency'
     elif re.search(r'中位|median', nearby, re.I):
         metric = 'median'
     elif re.search(r'标准差|standard deviation|\bsd\b', nearby, re.I):
         metric = 'sd'
     elif re.search(r'斜率|slope', nearby, re.I):
-        metric = 'slope_absolute' if '绝对' in nearby or '倍频跳变' in nearby else 'slope'
+        metric = ('slope_octave_free' if '倍频跳变' in nearby else
+                  'slope_absolute' if '绝对' in nearby else 'slope')
     elif re.search(r'起点|起始基频|start', nearby, re.I):
         metric = 'start'
     elif re.search(r'终点|结束基频|end', nearby, re.I):
@@ -287,7 +347,53 @@ def _role(prefix: str, tool: str = '') -> str:
 
 def _quantities(eid: str, evidence: Any) -> list[Quantity]:
     result: list[Quantity] = []
+    acoustic = getattr(evidence, 'acoustic', {}) or {}
+    if acoustic.get('schema') == 'pronunciation-measurements-v2':
+        for row, measure in enumerate(acoustic.get('measurements', []), 1):
+            value = measure.get('value')
+            if value is not None and math.isfinite(float(value)):
+                result.append(Quantity(eid, len(result) + 1, row, float(value),
+                                       f'{float(value):.9g}', measure['unit'], measure['role'], 0, 0))
+        return result
+    if acoustic.get('schema') == 'acoustic-analysis-v1':
+        def add(value, unit, role, row=1):
+            if value is not None and math.isfinite(float(value)):
+                result.append(Quantity(eid, len(result) + 1, row, float(value),
+                                       f'{float(value):.9g}', unit, role, 0, 0))
+        bounds = acoustic.get('scope', [])
+        if len(bounds) == 2:
+            add(bounds[0], 's', 'range.start')
+            add(bounds[1], 's', 'range.end')
+            add(bounds[1] - bounds[0], 's', 'duration')
+        kind = acoustic.get('kind', 'vot')
+        for index, event in enumerate(acoustic.get('events', []), 2):
+            if event.get('status') in {'candidate', 'validated'}:
+                role = ({'f0_peak_time':'pitch.max_time', 'f0_start_time':'pitch.start_time',
+                         'f0_end_time':'pitch.end_time'}.get(event['kind'], 'pitch.query_time')) if kind == 'pitch' else 'vot.' + event['kind']
+                add(event.get('time'), 's', role, index)
+        for measure in acoustic.get('measures', []):
+            role = measure['name'] if kind == 'pitch' else 'vot.value' if measure['name'] == 'vot_ms' else 'vot.' + measure['name']
+            role = {'pitch.minimum': 'pitch.min', 'pitch.maximum': 'pitch.max'}.get(role, role)
+            add(measure.get('value'), measure['unit'], role)
+            if measure['name'] == 'vot_ms' and measure.get('value') is not None:
+                add(measure['value'] / 1000, 's', role)
+        if kind == 'pitch':
+            method = acoustic.get('method') or {}
+            add(method.get('floor_hz'), 'Hz', 'analysis.pitch_floor')
+            add(method.get('ceiling_hz'), 'Hz', 'analysis.pitch_ceiling')
+            screening = next((c for c in acoustic.get('checks', [])
+                              if c.get('rule') == 'pitch.screening'), {})
+            add(screening.get('accepted'), '帧', 'analysis.accepted_frames')
+        if kind == 'vot' or evidence.tool != 'measure':
+            return result
+    quality = evidence_quality.pitch_quality(evidence)
     for row_number, row in enumerate(evidence.rows, 1):
+        if evidence_quality.is_quality_row(row):
+            continue  # Screening thresholds/counts are not measured F0 values.
+        if acoustic.get('kind') == 'pitch':
+            from .pitch_events import covered_row
+            if covered_row(row,acoustic):
+                continue
         range_parts = _range_parts(row, evidence.tool)
         for match in _NUMBER.finditer(row):
             if re.match(r'\s*共振峰', row[match.end():]) or re.search(r'第\s*$', row[:match.start()]):
@@ -296,10 +402,14 @@ def _quantities(eid: str, evidence: Any) -> list[Quantity]:
             unit = unit_match[1] if unit_match else ''
             role = _role(row[:match.start()], evidence.tool)
             if role == 'pitch.slope' and evidence.tool == 'measure':
-                parameters = evidence.arguments.get('parameters') or []
+                # 单项 measure 的正式参数可补全省略的量名；两种斜率均不提供方向。
+                parameters = (evidence.arguments.get('parameter')
+                              or evidence.arguments.get('parameters') or [])
                 if isinstance(parameters, str):
-                    parameters = parameters.split(',')
-                if set(parameters) & {'pitch_slope', 'pitch_slope_octave_free'}:
+                    parameters = [piece for piece in re.split(r'[,，\s]+', parameters) if piece]
+                if set(parameters) == {'pitch_slope_octave_free'}:
+                    role = 'pitch.slope_octave_free'
+                elif set(parameters) == {'pitch_slope'}:
                     role = 'pitch.slope_absolute'
             if match.span() in range_parts:
                 role, unit = range_parts[match.span()]
@@ -307,6 +417,8 @@ def _quantities(eid: str, evidence: Any) -> list[Quantity]:
                 continue
             # Undefined rows contain range/time parameters, never a measured value.
             if re.search(r'无法计算|undefined|没有可用的数据', row, re.I) and not role.startswith('range.'):
+                continue
+            if role.startswith('pitch.') and quality['status'] == 'suspect':
                 continue
             value = float(match[0])
             if not math.isfinite(value):
@@ -370,7 +482,7 @@ def report_context_data(state: Any) -> dict[str, Any]:
     if not records:
         return {}
     data: dict[str, Any] = {'evidence_ids': list(records)}
-    refs = {eid: [f'r{q.row}:{q.role}' for q in record.quantities]
+    refs = {eid: [f'q{index}:{q.role}' for index, q in enumerate(record.quantities, 1)]
             for eid, record in records.items() if record.quantities}
     if refs:
         data['quantity_refs'] = refs
@@ -390,7 +502,9 @@ _NUMERIC_DISCIPLINE = (
     '\n数值纪律（硬约束，全部要遵守）：'
     '①正文里每个数字都必须能落到某条证据的同一对象、范围、量名，没有对应证据就不写这个数；'
     '②不做单位换算：证据写“秒”就写“秒”，写“Hz”就写“Hz”，不要自行换成毫秒或千赫兹；'
-    '③凡是算出来的数（差值、比例、均值、斜率、时长差）一律写成{{calc:…}}由程序算出，'
+    '③工具已返回的均值、斜率等实测量直接引用quantity_refs对应的q模板或照抄结果，不能重新计算。'
+    '只有新增推导（如两对象差值、比例、时长差）使用calc，'
+    '输入必须是真实quantity_refs中的引用，不能把测量数值当常数填进calc。'
     '不要自己写“不到 1 秒”“约 4 秒”“高出 30%”这类自己算好的结论，正文里也不要出现算式或运算过程；'
     '④一行只说一个选区的一个量：两个选区的数不要放进同一句比较，'
     '否则按本行选区核对时另一个数没有归属，会被遮蔽；'
@@ -405,9 +519,7 @@ _NUMERIC_DISCIPLINE_COMPACT = (
 
 
 def report_guard_instructions(state: Any) -> str:
-    # 注意：这里**不**为「没有对照音」加提示。AI 对话窗口里用户要求纠音，本来就是奔着
-    # 模型的世界知识来的（对比纠音是另一条入口，那边自带标准音）。早先版本加过一句
-    # 「本轮没有对照材料，先用一句话说明没有对照音」，等于把用户要的东西堵掉，已撤。
+    # 一般知识与录音测量分别约束；对照材料的要求由具体测量任务确定。
     if not state.evidence:
         return ('\n没有测量时不填录音数值或下音调结论；一般知识明确标注，缺证据就说明。'
                 + _NUMERIC_DISCIPLINE_COMPACT)
@@ -415,7 +527,7 @@ def report_guard_instructions(state: Any) -> str:
         return ('\n没有测量时不填录音数值或下音调结论；一般知识明确标注，缺证据就说明。'
                 + _NUMERIC_DISCIPLINE_COMPACT)
     return ('\n量化陈述逐行引[E编号]，须同对象、范围、量名、单位；一般知识明确标注。'
-            'quantity_refs第N项即E编号.qN。实测值直接写{{q:E1.q2}}，由程序按证据原样渲染（值和单位都来自证据，不用自己抄）。'
+            'quantity_refs直接列出q序号：如q2写{{q:E1.q2}}，不是证据行号；程序按证据原样渲染数值和单位。'
             '推导用{{calc:E1.q1/E2.q1*100|%}}，仅真实输入和四则，程序写算式结果。'
             '多个引证连写成[E1][E2]（不要写成[E1, E2]），否则引证认不出来、要多跑一次补引证。'
             '具体录音音调结论须同目标且有定义值的走向证据，平均值不足。'
@@ -434,6 +546,8 @@ def _same_value(value: float, text: str, unit: str, quantity: Quantity) -> bool:
     # Omitted units do not silently turn Hz into dimensionless numbers.
     if unit == '' and quantity.unit != '' and not unitless_range:
         return False
+    if source_dimension == (0, 0, 'frames'):
+        return value == quantity.value
     tolerance = _precision(text) * scale + _precision(quantity.text) * source_scale + 1e-10
     return abs(value * scale - quantity.value * source_scale) <= tolerance
 
@@ -443,7 +557,7 @@ def _roles_match(claim: str, source: str) -> bool:
         return claim == source
     if claim == source:
         return True
-    if claim in {'mean', 'min', 'max', 'median', 'sd', 'start', 'end', 'slope', 'slope_absolute'}:
+    if claim in {'mean', 'min', 'max', 'median', 'sd', 'start', 'end', 'slope', 'slope_absolute', 'slope_octave_free'}:
         return source.endswith('.' + claim)
     # A generic pitch summary may omit the word "mean", but may not become F1.
     if claim == 'pitch.value':
@@ -459,7 +573,7 @@ def _roles_match(claim: str, source: str) -> bool:
 
 #: 本身就算量名的角色（不在这个集合里、又不带类别的，只能当自由文本标签）。
 _NAMED_ROLES = {'mean', 'min', 'max', 'median', 'sd', 'start', 'end',
-                'slope', 'slope_absolute', 'duration', 'range.start', 'range.end'}
+                'slope', 'slope_absolute', 'slope_octave_free', 'duration', 'range.start', 'range.end'}
 
 
 def _free_label(role: str) -> bool:
@@ -478,7 +592,13 @@ def _free_label(role: str) -> bool:
     return role not in _NAMED_ROLES
 
 
-def _line_targets(state: Any, text: str, records: dict[str, Record]) -> set[str]:
+def _explicit_targets(state: Any, text: str, records: dict[str, Record]) -> set[str]:
+    """这段文字里**点名**的对象（``对象 2``、``#3``、证据里的对象名），不含默认选中目标。
+
+    行里点了名就只认点名的对象；没点名才轮到默认选中目标或原目标授权（见 :func:`_line_targets`
+    与 :func:`_authorized_targets`）。
+    """
+
     explicit = set(_OBJECT_IDENTIFIER.findall(text))
     known = {str(row.id) for row in parse_object_context(state.context_text)}
     known.update(record.target for record in records.values() if record.target is not None)
@@ -487,6 +607,11 @@ def _line_targets(state: Any, text: str, records: dict[str, Record]) -> set[str]
     for record in records.values():
         if record.target and len(record.target_name) >= 2 and record.target_name in text:
             explicit.add(record.target)
+    return explicit
+
+
+def _line_targets(state: Any, text: str, records: dict[str, Record]) -> set[str]:
+    explicit = _explicit_targets(state, text, records)
     if explicit:
         return explicit
     cited = {records[f'E{eid}'].target for eid in _CITATION.findall(text)
@@ -495,6 +620,23 @@ def _line_targets(state: Any, text: str, records: dict[str, Record]) -> set[str]
                          for row in parse_object_context(state.context_text)):
         return cited  # Evidence retains its Sound even when Praat selected a derived object.
     return {str(row.id) for row in parse_object_context(state.context_text) if row.selected}
+
+
+def _authorized_targets(state: Any, records: dict[str, Record]) -> set[str]:
+    """原目标里**明确点名**、而且已有证据确认的对象（「分别测量对象 1 和对象 2，再告诉我两者差值」）。
+
+    跨对象比较/差值/比例只对用户自己点名的对象开放：目标里没提到的对象永远不在这个集合里，
+    所以「两者差值」夹带第三个对象仍然被拦（见 ``report.calc_other_target``）。
+    """
+
+    goal = str(getattr(state, 'goal', '') or '')
+    if not goal:
+        return set()
+    known = {str(row.id) for row in parse_object_context(state.context_text)}
+    known.update(record.target for record in records.values() if record.target is not None)
+    named = {record.target for record in records.values()
+             if record.target and len(record.target_name) >= 2 and record.target_name in goal}
+    return (set(_OBJECT_IDENTIFIER.findall(goal)) | named) & known
 
 
 def _general(text: str, in_general: bool, records: dict[str, Record]) -> bool:
@@ -709,9 +851,8 @@ def _numeric_claim_sources(state: Any, line: str, records: dict[str, Record], *,
 def _supports_range(record: Record, start: float, end: float, match: re.Match[str]) -> bool:
     """这条证据能支持 ``start–end`` 这个范围吗。
 
-    ``object_info``/``duration`` 这类整对象记录没有 ``interval``，但它报告的总时长
-    就是 ``0–duration``：过去只看 ``record.interval`` 会把唯一候选删空，让
-    「本次分析覆盖了 0–0.892 秒」这种正确陈述被判成编造数值（真机事故的直接起因）。
+    ``object_info``/``duration`` 的整对象时长可支持 ``0–duration`` 范围，
+    其余记录按 ``record.interval`` 与数值精度核对。
     """
 
     tolerance_start = _precision(match['a']) * _unit(match['ua'] or match['ub'])[1] + .0005
@@ -823,8 +964,8 @@ def _target_durations(records: dict[str, Record]) -> dict[str, float]:
 
 
 def _check_scope_line(state: Any, line: str, records: dict[str, Record],
-                      notes: set[str] | None = None) -> str:
-    """「整段」话术只引用了局部分段时，追加真实范围；不再否决整份报告。
+                      notes: dict[str, list[str]] | None = None) -> str:
+    """Correct scope claims; whole-object statistics cannot use segment evidence.
 
     这条规则拦的是措辞与引用范围不匹配，不是数值本身；凡是区间确实覆盖整对象、
     引用了 object_info/duration、或显式声明 _whole_object 的，都不加标注。
@@ -838,11 +979,14 @@ def _check_scope_line(state: Any, line: str, records: dict[str, Record],
     chosen = [records[eid] for eid in cites if eid in records]
     if not chosen:
         return line
+    statistic = bool(re.search(r'平均|均值|中位|最[高低大小]|标准差|mean|average|median|minimum|maximum|stdev', line, re.I))
     durations = _target_durations(records)
     whole_ranges = _whole_ranges(state, records)
     spans: list[tuple[float, float]] = []
     for record in chosen:
         if record.evidence.tool in {'object_info', 'duration'}:
+            if statistic:
+                continue
             return line
         arguments = getattr(record.evidence, 'arguments', None) or {}
         if arguments.get('_whole_object'):
@@ -861,6 +1005,9 @@ def _check_scope_line(state: Any, line: str, records: dict[str, Record],
         return line
     start = min(span[0] for span in spans)
     end = max(span[1] for span in spans)
+    if statistic:
+        _block(state, 'report.range_whole_partial',
+               f'整段统计量引用的证据仅覆盖 {start:g}–{end:g} 秒；不能作为整段统计结果。')
     note_guard(state, 'repair', 'report.range_whole_partial')
     if notes is not None:
         notes.setdefault('scope', []).append(f'{start:g}–{end:g} 秒')
@@ -896,7 +1043,8 @@ def mask_rejected_numbers(text: str, values, marker: str, *, state=None) -> str:
                 if not failure or len(failure) != 3:
                     break
                 start, end = failure[2]
-                if re.sub(r'\s+', '', line[start:end]) not in rejected:
+                failed = {re.sub(r'\s+', '', value) for value in rejected_values(failure[1])}
+                if re.sub(r'\s+', '', line[start:end]) not in rejected and not failed.intersection(rejected):
                     break
                 line = line[:start] + marker + line[end:]
         else:
@@ -922,74 +1070,98 @@ def _check_numeric_line(state: Any, line: str, records: dict[str, Record], *, ve
         _block(state, failure[0], failure[1])
 
 
-def _trajectory(records: list[Record], directional: bool, whole_ranges: dict[str, tuple[float, float]]) -> bool:
-    def covers(record: Record, required: tuple[float, float] | None) -> bool:
+def _trajectory(records: list[Record], directional: bool, whole_ranges: dict[str, tuple[float, float]],
+                direction: int = 0) -> bool:
+    # Scalar slopes/endpoints/means do not prove flatness or a lexical accent
+    # category. A signed, screened comparison can support only its net change.
+    if not directional:
+        return False
+
+    def covers(record, required):
         return required is None or (record.interval is not None and
                                    record.interval[0] <= required[0] + .001 and
                                    record.interval[1] >= required[1] - .001)
 
-    by_target: dict[str, list[Record]] = {}
+    def endpoint_covered(record, role, required):
+        acoustic = getattr(record.evidence, 'acoustic', {}) or {}
+        if acoustic.get('kind') != 'pitch':
+            return True
+        event = next((e for e in acoustic.get('events', [])
+                      if e['kind'] == 'f0_' + role.split('.')[-1] + '_time'), None)
+        if event is None or event.get('time') is None:
+            return False
+        required = required or record.interval
+        if required is None:
+            return False
+        # A frame represents half a sampling step on either side of its centre.
+        step = next((c.get('frame_step', 0) for c in acoustic.get('checks', [])
+                     if c['rule'] == 'pitch.screening'), 0)
+        return abs(event['time'] - required[0 if role == 'pitch.start' else 1]) <= step / 2 + 1e-8
+
+    groups = {}
     for record in records:
-        if record.target is not None and record.evidence.kind == 'measurement':
-            by_target.setdefault(record.target, []).append(record)
-    for target, group in by_target.items():
+        if (record.target is not None and record.evidence.kind == 'measurement'
+                and evidence_quality.can_interpret_pitch(record.evidence)):
+            key = (record.target, evidence_quality.pitch_configuration(record.evidence))
+            groups.setdefault(key, []).append(record)
+    for (target, _config), group in groups.items():
         required = whole_ranges.get(target)
         for record in group:
-            slopes = [q for q in record.quantities if q.role in {'pitch.slope', 'pitch.slope_absolute'}
-                      and _unit(q.unit)[2] in {(1, -1, ''), (0, -1, '半音')}]
-            if covers(record, required) and any(q.role == 'pitch.slope' or not directional for q in slopes):
+            if covers(record, required) and any(q.role == 'pitch.slope' and q.value * direction > 0
+                    and _unit(q.unit)[2] in {(1, -1, ''), (0, -1, '半音')} for q in record.quantities):
                 return True
-        endpoints = [(record.interval, q.role) for record in group for q in record.quantities
-                     if covers(record, required) and q.role in {'pitch.start', 'pitch.end'}
-                     and _unit(q.unit)[2] == (1, 0, '')]
-        if any(start_range == end_range and start_role == 'pitch.start' and end_role == 'pitch.end'
-               for start_range, start_role in endpoints for end_range, end_role in endpoints):
+        endpoints = [(r.interval, q.role, q.value) for r in group if covers(r, required)
+                     for q in r.quantities if q.role in {'pitch.start', 'pitch.end'}
+                     and _unit(q.unit)[2] == (1, 0, '') and endpoint_covered(r, q.role, required)]
+        if any(a[0] == b[0] and a[1] == 'pitch.start' and b[1] == 'pitch.end'
+               and (b[2] - a[2]) * direction > 0 for a in endpoints for b in endpoints):
             return True
-        segments = [record for record in group if record.evidence.tool == 'pitch_statistics'
-                    and record.interval is not None and any(q.role == 'pitch.mean' and _unit(q.unit)[2] == (1, 0, '')
-                                                            for q in record.quantities)]
+        segments = [(r, q.value) for r in group if r.evidence.tool == 'pitch_statistics' and r.interval
+                    for q in r.quantities if q.role == 'pitch.mean' and _unit(q.unit)[2] == (1, 0, '')]
         if any(a.interval[1] <= b.interval[0] and a.interval[0] < a.interval[1] and b.interval[0] < b.interval[1]
+               and (bv - av) * direction > 0
                and (required is None or (a.interval[0] <= required[0] + .001 and b.interval[1] >= required[1] - .001
                                         and b.interval[0] - a.interval[1] <= .001))
-               for a in segments for b in segments if a is not b):
+               for a, av in segments for b, bv in segments if a is not b):
             return True
     return False
 
 
-def _check_prosody_line(state: Any, line: str, records: dict[str, Record],
-                        notes: set[str] | None = None) -> str:
-    """音调/走向结论缺走向证据时**标注**这一行，不再拦下整份报告。
-
-    这条规则拦的是「判断」而不是「数值」，2026-10-06 的文档就把它列为「本来该退回提示词、
-    只是历史事故先留着观察」；现在有了真实触发率：用户历史 28 轮 + 真机 30 轮里
-    ``report.prosody_untraced`` **一次都没触发**，而同期的数值规则触发了 7 次。
-    按那条文档自己写的判据（触发率低 → 降为可见提醒），这里改成在结论旁边写明
-    「缺少同目标的走向证据」，规则本身留在 skill=prosody 与报告指令里。
-    """
-
+def _prosody_problems(state, line, records):
     if not _PROSODY.search(line):
-        return line
+        return []
     cites = [f'E{x}' for x in _CITATION.findall(line)]
     targets = _line_targets(state, line, records)
-    whole_ranges = _whole_ranges(state, records)
-    annotated = False
+    applicable = [records[eid] for eid in cites if eid in records and
+                  (not targets or records[eid].target in targets)]
+    problems = []
     for clause in re.split(r'[，,；;。！？!?]|(?:但|然而|不过)', line):
-        claims = list(_PROSODY.finditer(clause))
-        if not claims:
-            continue
-        for claim in claims:
+        # 去掉「- **不足**：」这类项目符号标签：标签里的「不足」不是否定词，
+        # 否则「**不足**：未出现预期的尾音下降」会被当成诚实表述放过。
+        clause = re.sub(r'^\s*[-*]?\s*\*\*[^*]{0,12}\*\*\s*[:：]?\s*', '', clause)
+        for claim in _PROSODY.finditer(clause):
             if re.fullmatch(r'上升|下降|升高|降低|rising|falling', claim[0], re.I) and not re.search(
-                    r'音高|基频|语调|音调|声调|\bF0\b|pitch|intonation|tone', clause, re.I):
+                    r'音高|基频|语调|音调|声调|调型|尾音|音尾|词尾|句尾|末尾|重音|\bF0\b|pitch|intonation|'
+                    r'tone|accent', clause, re.I):
                 continue
             if _INABILITY.search(clause[max(0, claim.start() - 45):claim.start()]):
                 continue
-            # Explicitly attributed conceptual explanations are handled by caller.
-            applicable = [records[eid] for eid in cites if eid in records and
-                          (not targets or records[eid].target in targets)]
-            directional = bool(re.search(r'上升|下降|升高|降低|升调|降调|rising|falling', claim[0], re.I))
-            if not _trajectory(applicable, directional, whole_ranges):
-                annotated = True
-    if not annotated:
+            if re.fullmatch(_TONE_CATEGORY, claim[0]):
+                problems.append(clause.strip())
+                continue
+            if (re.search(r'[ぁ-ゖァ-ヺ]|音素|音拍|元音|辅音|摩拉|モーラ', clause)
+                    and evidence_boundaries.boundary_status(state)['status'] == 'none'):
+                problems.append(clause.strip())
+                continue
+            direction = (1 if re.search(r'上升|升高|升调|rising', claim[0], re.I) else
+                         -1 if re.search(r'下降|降低|降调|falling', claim[0], re.I) else 0)
+            if not _trajectory(applicable, bool(direction), _whole_ranges(state, records), direction):
+                problems.append(clause.strip())
+    return list(dict.fromkeys(p for p in problems if p))
+
+
+def _check_prosody_line(state: Any, line: str, records: dict[str, Record], notes=None) -> str:
+    if not _prosody_problems(state, line, records):
         return line
     state.metrics['prosody_unverified'] = state.metrics.get('prosody_unverified', 0) + 1
     note_guard(state, 'repair', 'report.prosody_unverified')
@@ -997,6 +1169,68 @@ def _check_prosody_line(state: Any, line: str, records: dict[str, Record],
         notes.setdefault('prosody', []).append('1')
         return line
     return line.rstrip() + '（该音调/走向结论缺少同目标的走向证据，未核对）'
+
+def _clean_residue(line: str) -> str:
+    """去掉删除分句留下的空括号、重复标点与孤立粗体标记；只剩符号时返回空串。"""
+
+    body = re.sub(r'[（(]\s*[）)]', '', line)
+    body = re.sub(r'([，,；;])\s*(?=[，,；;。！？!?])', '', body)
+    body = re.sub(r'(^[\s>*\-]*)[，,；;、]+', r'\1', body)
+    body = re.sub(r'[ \t]+([。！？!?])', r'\1', body)
+    if body.count('**') % 2:
+        body = body.replace('**', '')
+    return '' if re.fullmatch(r'[\s#>*\-_.。；;，,、:：()（）]*', body) else body.rstrip()
+
+
+def sanitize_prosody_claims(state, text):
+    """Delete pitch assertions that no screened trajectory supports.
+
+    Headings and bold sub-headings go as a whole (a half sentence title is worse
+    than no title); body lines lose only the offending clause, then residue such
+    as ``（）``/``，，``/unbalanced ``**`` is cleaned so the user never sees edits.
+    """
+
+    if state is None or not hasattr(state, 'evidence'):
+        return str(text), []
+    records, out, removed, in_general = _records(state), [], [], False
+    for line in str(text).splitlines():
+        stripped = line.strip()
+        # Markdown 标题与整行加粗的小标题都当标题：删半句标题比删整行更糟。
+        heading = bool(re.match(r'^\s*#{1,6}\s', line)) or bool(
+            re.fullmatch(r'\*\*[^*]+\*\*', stripped))
+        if heading:
+            in_general = bool(_GENERAL.search(line))
+        issues = [] if _general(line, in_general, records) else _prosody_problems(state, line, records)
+        if issues:
+            removed.extend(issues)
+            # 没有实测数字的行整行删掉：分句手术后剩下的半句（「标准日语中。然而，」）
+            # 比直接不给更糟；数字本身在结构化结果里仍然保留。
+            if heading or not re.search(r'\d', line):
+                continue
+            for clause in issues:
+                line = line.replace(clause, '')
+            line = _clean_residue(line)
+            if not line.strip():
+                continue
+        if line.strip():
+            out.append(line)
+    body = '\n'.join(out)
+    if removed:
+        state.metrics['prosody_claims_removed'] = state.metrics.get('prosody_claims_removed', 0) + len(removed)
+        if INTERPRETATION_NOTE not in body:
+            body = body.rstrip() + '\n\n' + INTERPRETATION_NOTE
+    return body, removed
+    return body, removed
+
+
+def sanitize_interpretation_claims(state, text):
+    body, issues = interpretation_policy.sanitize_interpretation(state, text)
+    if issues:
+        for item in issues:
+            note_guard(state, 'repair', item['rule'])
+        if INTERPRETATION_NOTE not in body:
+            body = body.rstrip() + '\n\n' + INTERPRETATION_NOTE
+    return sanitize_prosody_claims(state, body)[0]
 
 
 def _dim_operation(left: tuple[int, int, str], right: tuple[int, int, str], divide: bool = False) -> tuple[int, int, str]:
@@ -1073,6 +1307,89 @@ def _calculate(match: re.Match[str], records: dict[str, Record]) -> str:
     return f'{substituted} = {value:.6g} {unit} {citations}'.strip()
 
 
+#: 算不出来的推导用一个私有标记占位，再把整小句删掉：绝不把内部占位式给用户看。
+_CALC_FAILED = '\ue002'
+#: 「某一小句」= 两个标点之间的片段（分句、换行都算边界）。
+_CLAUSE_ANY = r'[^，,；;。！？!?\n]*{marker}[^，,；;。！？!?\n]*'
+
+
+def _drop_marker_clauses(state: Any, text: str, marker: str) -> str:
+    """删掉带 ``marker`` 的那一小句；同一行的空档顺手收干净。"""
+
+    if marker not in text:
+        return text
+    pattern = re.compile(_CLAUSE_ANY.format(marker=re.escape(marker)))
+    lines = []
+    for line in pattern.sub('', text).splitlines():
+        lines.append(_clean_residue(line))
+    return '\n'.join(lines)
+
+
+def _settle_calc_templates(state: Any, text: str,
+                           records: dict[str, Record] | None = None,
+                           *, keep_citations: bool = False) -> str:
+    """渲染证据四则运算模板；无法核对时删除相应小句，保留其他有效正文。"""
+
+    if '{{calc:' not in text:
+        return text
+    if records is None:
+        try:
+            records = _records(state) if getattr(state, 'evidence', None) else {}
+        except (AttributeError, TypeError):
+            records = {}
+
+    def render(match: re.Match[str]) -> str:
+        try:
+            rendered = _calculate(match, records)
+        except CalcUnavailable:
+            note_guard(state, 'repair', 'report.calc_unverified')
+            return _CALC_FAILED
+        if not keep_citations:
+            rendered = re.sub(r'\s*\[E\d+\]', '', rendered)
+        receipt = dict(equation=rendered, value=rendered.rsplit(' = ', 1)[-1])
+        receipts = state.metrics.setdefault('calculation_receipts', [])
+        if receipt not in receipts:
+            receipts.append(receipt)
+        note_guard(state, 'repair', 'report.derived_accepted')
+        return rendered
+
+    text = _CALC.sub(render, text)
+    if '{{calc:' in text:
+        # 语法残缺、_CALC 没匹配上的占位式：同样删句，不给用户看内部语法。
+        note_guard(state, 'repair', 'report.calc_malformed')
+        text = _drop_marker_clauses(state, text.replace('{{calc:', _CALC_FAILED), _CALC_FAILED)
+    return _drop_marker_clauses(state, text, _CALC_FAILED)
+
+
+#: 模型自己算的近似值：紧跟在程序渲染结果后面时是重复（数值纪律 ⑥）。
+_APPROX_PAREN = re.compile(r'[（(]\s*约?\s*(-?\d+(?:\.\d+)?)\s*(%|Hz|dB|秒|毫秒|ms|Hz/s)?\s*[）)]')
+
+
+def _drop_duplicate_approx(state: Any, text: str) -> str:
+    """渲染出的结果后面那份「（约 74%）」是重复，去掉。"""
+
+    def replace(match: re.Match[str]) -> str:
+        value = abs(float(match[1]))
+        # 只跟「程序刚渲染出的结果」比：前面紧邻的 `= 74.3806`。别用整句数字去比，
+        # 否则 `(1.025063 秒)` 这种算式里的输入也会被当成重复删掉。
+        before = text[max(0, match.start() - 40):match.start()]
+        rendered = [abs(float(item)) for item in re.findall(r'=\s*(\d+(?:\.\d+)?)', before)]
+        if any(abs(number - value) <= max(number * 0.015, 1e-6) for number in rendered):
+            note_guard(state, 'repair', 'report.duplicate_value_collapsed')
+            return ''
+        return match[0]
+
+    return _APPROX_PAREN.sub(replace, text)
+
+
+def drop_unverified_calc(state: Any, text: str) -> str:
+    """两条出口共用的收尾：把算不出来的推导整小句删掉，不把内部标记交给用户。"""
+
+    text = _settle_calc_templates(state, text) if '{{calc:' in text else text
+    text = _drop_marker_clauses(state, text, UNVERIFIED_CALC)
+    return _drop_marker_clauses(state, text, _CALC_FAILED)
+
+
 def _strip_unknown_citations(state: Any, text: str, records: dict[str, Record]) -> str:
     """清掉不存在的证据编号（``[E99]``），只计数不阻断：编号写错不等于数字是编的。"""
 
@@ -1137,8 +1454,7 @@ def _annotation_note(notes: dict[str, list[str]]) -> str:
 def _collapse_formulas(text: str, state: Any = None) -> str:
     """去掉正文里的算式，只留结果（``(a/b)*100 = 103.042 %`` → ``103.042 %``）。
 
-    真机事故里模型把运算过程原样写进了交付正文，用户看到的是半截公式。
-    判定阶段不动（数值该怎么核对还怎么核对），这里只做排版收尾。
+    这里只负责排版，数值核对由报告判定阶段处理。
     """
 
     collapsed, count = _FORMULA.subn('', text)
@@ -1148,27 +1464,41 @@ def _collapse_formulas(text: str, state: Any = None) -> str:
     return collapsed
 
 
-def _validate_text(state: Any, text: str, records: dict[str, Record], *, fill_citations: bool = True) -> str:
-    """核对正文里的数值/推导。
+_DUPLICATE_VALUE = re.compile(
+    r'[（(]\s*(?P<left>[-+]?\d+(?:\.\d+)?\s*(?:Hz/s|Hz|dB|Pa|%|秒|毫秒|ms|s))'
+    r'\s*[）)]\s*[=＝]\s*(?P<right>[-+]?\d+(?:\.\d+)?'
+    r'\s*(?:Hz/s|Hz|dB|Pa|%|秒|毫秒|ms|s)?)')
 
-    ``fill_citations=False``：只核对、不给数值补 ``[E1]`` 引证。本机最终交付发的是
-    普通聊天正文，没有引证记号，补进去会改动用户看到的答复。
-    """
-    replacements: list[str] = []
-    # 标注类规则（音调走向缺证据 / 「整段」引用局部区间）不再逐行插括号：真机一轮里同一句
-    # 提示重复了 3 次，正文读起来像没写完。这里只记「出现过什么」，最后在正文末尾说一句。
-    notes: dict[str, list[str]] = {}
 
-    if '\ue000' in text or '\ue001' in text:
-        # 模型不可能自己产出这两个内部标记；清掉继续，不拿它中断报告。
-        text = text.replace('\ue000', '').replace('\ue001', '')
-        note_guard(state, 'repair', 'report.internal_marker')
-    text = _strip_unknown_citations(state, text, records)
-    text = _strip_unknown_citations(state, text, records)
-    if fill_citations:
-        text = _fill_citations(state, text, records)
+def _collapse_duplicate_values(state: Any, text: str) -> str:
+    """把「（值 单位）= 同值」压成一个值；两边不相等时原样留着交给核对阶段。"""
 
-    def render_quantity(match: re.Match[str]) -> str:
+    def replace(match: re.Match[str]) -> str:
+        left, right = match.group('left').strip(), match.group('right').strip()
+        left_value = float(re.match(r'[-+]?\d+(?:\.\d+)?', left).group(0))
+        right_value = float(re.match(r'[-+]?\d+(?:\.\d+)?', right).group(0))
+        if abs(left_value - right_value) > 1e-9:
+            return match.group(0)
+        note_guard(state, 'repair', 'report.duplicate_value_collapsed')
+        return left
+
+    return _DUPLICATE_VALUE.sub(replace, text)
+
+
+def _settle_quantity_templates(state: Any, text: str,
+                               records: dict[str, Record] | None = None) -> str:
+    """仅渲染 quantity_refs 中登记的 q:E#.q# 模板。数值、单位和精度来自证据；未知、畸形或截断的引用记录缺口，不猜行号与序号映射。"""
+
+    if _QUANTITY_TEMPLATE.search(text) is None:
+        return text
+    if records is None:
+        try:
+            records = _records(state) if getattr(state, 'evidence', None) else {}
+        except (AttributeError, TypeError):
+            # 证据形状不认识（恢复稿也可能只拿到 dict）：不渲染，一律标缺口更安全。
+            records = {}
+
+    def render(match: re.Match[str]) -> str:
         """``{{q:E2.q3}}`` → 证据里那个量的原样写法（含单位）。"""
 
         record = records.get(match[1])
@@ -1181,13 +1511,63 @@ def _validate_text(state: Any, text: str, records: dict[str, Record], *, fill_ci
         # 逐字渲染证据的写法：单位、小数位都不经模型的手。
         return f'{quantity.text} {quantity.unit}'.strip()
 
-    text = _QUANTITY.sub(render_quantity, text)
+    text = _QUANTITY.sub(render, text)
+
+    def drop(_match: re.Match[str]) -> str:
+        return UNVERIFIED_NUMBER
+
+    text, unregistered = _QUANTITY_DELIMITED.subn(drop, text)
+    text, truncated = _QUANTITY_TRUNCATED.subn(drop, text)
+    if _QUANTITY_TEMPLATE.search(text):
+        # 模板里夹了中文/换行之类的非常规写法：整段去掉。宁可多标一个缺口，
+        # 也不能让 ``{{q:`` 这类内部语法漏到用户面前。
+        text, blunt = _QUANTITY_ANY.subn(drop, text)
+        truncated += blunt
+    for _ in range(unregistered):
+        note_guard(state, 'repair', 'report.quantity_unverified')
+    for _ in range(truncated):
+        note_guard(state, 'repair', 'report.quantity_malformed')
+    return text
+
+
+def _validate_text(state: Any, text: str, records: dict[str, Record], *, fill_citations: bool = True) -> str:
+    """核对正文里的数值/推导。
+
+    ``fill_citations=False``：只核对、不给数值补 ``[E1]`` 引证。本机最终交付发的是
+    普通聊天正文，没有引证记号，补进去会改动用户看到的答复。
+    """
+    replacements: list[str] = []
+    # 标注类规则（音调走向缺证据 / 「整段」引用局部区间）不再逐行插括号：真机一轮里同一句
+    # 提示重复了 3 次，正文读起来像没写完。这里只记「出现过什么」，最后在正文末尾说一句。
+    notes: dict[str, list[str]] = {}
+    # 缺口计数按「这次调用新增了几个标记」算：上一轮已经标过的标记不重复记账。
+    gaps_at_entry = _gap_markers(text)
+
+    if '\ue000' in text or '\ue001' in text:
+        # 模型不可能自己产出这两个内部标记；清掉继续，不拿它中断报告。
+        text = text.replace('\ue000', '').replace('\ue001', '')
+        note_guard(state, 'repair', 'report.internal_marker')
+    text = _strip_unknown_citations(state, text, records)
+    text = _strip_unknown_citations(state, text, records)
+    if fill_citations:
+        text = _fill_citations(state, text, records)
+
+    # 数值模板只有一份实现：``{{q:E#.q#}}`` 逐字渲染，未登记/写错/截断的标缺口。
+    text = _settle_quantity_templates(state, text, records)
 
     def calculate(match: re.Match[str]) -> str:
         line_start = text.rfind('\n', 0, match.start()) + 1
         line_end = text.find('\n', match.end())
         source_line = text[line_start:line_end if line_end >= 0 else len(text)]
-        targets = _line_targets(state, source_line, records)
+        explicit = _explicit_targets(state, source_line, records)
+        targets = explicit or _line_targets(state, source_line, records)
+        referenced_targets = {records[eid].target for eid, _ in _REF.findall(match[1]) if eid in records}
+        comparison = re.search(r'差值|相差|差异|比值|比例|比率|倍|比较|对比|difference|ratio|compar',
+                               source_line + '\n' + str(getattr(state, 'goal', '')), re.I)
+        if not explicit and comparison and len(referenced_targets) > 1:
+            # Only a real, goal-authorized comparison may widen the implicit
+            # selected-object scope. A lone E2 value is not a comparison.
+            targets = targets | _authorized_targets(state, records)
         for reference in _REF.findall(match[1]):
             record = records.get(reference[0])
             if record and targets and record.target not in targets:
@@ -1267,6 +1647,10 @@ def _validate_text(state: Any, text: str, records: dict[str, Record], *, fill_ci
         sentence = _annotation_note(notes)
         if sentence not in masked:
             masked = masked.rstrip() + '\n\n' + sentence
+    # 这次调用新增的数值缺口（模板没登记、calc 算不出、换算维度不符…）：正文照常交付，
+    # 但「全部核对通过」这句话从现在起不能再说（见 :func:`_note_gap`）。
+    _note_gap(state, _gap_markers(masked) - gaps_at_entry)
+    masked = sanitize_interpretation_claims(state, _collapse_duplicate_values(state, masked))
     return masked
 
 
@@ -1341,8 +1725,7 @@ def _guard_note(text: str, detail: str, values=()) -> str:
     逐行引证；推导用calc占位式…」），既不解决问题也读不懂。原因只留一句说明。
     """
 
-    note = ('（标成 ' + UNVERIFIED_NUMBER + ' 的位置没能在测量结果里找到对应值，已就地标出；'
-            '其余结论仍基于本次实测数据。）')
+    note = UNVERIFIED_NOTE
     if note in text:
         return text
     return text.rstrip() + '\n\n' + note
@@ -1356,16 +1739,30 @@ def guard_delivered_text(state: Any, text: str, *, values=(), verify: bool = Tru
     数值没对上就就地遮蔽并继续核对，只有结构性错误才放弃（标注，不假装通过）。
 
     返回 ``(可交付文本, 状态)``：``verified``（全部对上）、``rejected_masked``
-    （有数值被遮蔽/标注）、``masked_only``（调用方已知道要遮哪些值）。
-    被遮蔽不等于通过核对，状态必须如实往上带。
+    （有数值被遮蔽/标注/缺口）、``masked_only``（调用方已知道要遮哪些值）。
+    被遮蔽不等于通过核对，状态必须如实往上带：正文里有 :data:`GAP_MARKERS` 标记时
+    一律 ``rejected_masked``，不说 ``verified``。
+
+    两条出口都要处理数值模板：``verify=False``（云端恢复稿）没有重跑诊断的机会，
+    但 ``{{q:E3.r1}}`` 这类未登记模板同样不能漏给用户——已登记的照常渲染，其余标缺口。
     """
 
     text = str(text or '')
     pending = list(dict.fromkeys(value for value in values if value))
     if not verify:
-        if not pending:
-            return text, 'masked_only'
-        return mask_rejected_numbers(text, pending, UNVERIFIED_NUMBER, state=state), 'rejected_masked'
+        gaps = _gap_markers(text)
+        text = _collapse_duplicate_values(state, _settle_quantity_templates(state, text))
+        # calc 也要在这里渲染：这条路以前一个占位式都不处理，用户看到的是
+        # `所选区间占时长的 [推导未核对]（约 74%）`。
+        text = _settle_calc_templates(state, text)
+        text = _drop_duplicate_approx(state, text)
+        _note_gap(state, _gap_markers(text) - gaps)
+        if pending:
+            text = mask_rejected_numbers(text, pending, UNVERIFIED_NUMBER, state=state)
+        text = sanitize_interpretation_claims(state, text)
+        if pending or _gap_markers(text) or INTERPRETATION_NOTE in text:
+            return text, 'rejected_masked'
+        return text, 'masked_only'
     from .report_audit import audit_report
 
     probe = copy.copy(state)
@@ -1374,14 +1771,38 @@ def guard_delivered_text(state: Any, text: str, *, values=(), verify: bool = Tru
         audited = audit_report(probe, _TextDraft(analysis=text), fill_citations=fill_citations)
     except ModelRetry as error:
         # 与数值无关的规则（对象、声称等）遮蔽不了：留一句人话，不伪装成通过。
+        # 但解释边界仍要过一遍——这条早退以前把整段原文直接交出去，连带
+        # 「发声位置靠后、气息支撑不足」这类生理归因一起漏给了用户。
         _merge_counters(state, probe.metrics)
-        return _guard_note(text, str(error), pending), 'rejected_masked'
+        safe = _settle_calc_templates(state, _collapse_duplicate_values(state, text))
+        safe = _drop_duplicate_approx(state, safe)
+        if getattr(state, 'evidence', None):
+            safe = sanitize_interpretation_claims(state, safe)
+        return _guard_note(safe, str(error), pending), 'rejected_masked'
     _merge_counters(state, probe.metrics)
     verified = bool((probe.metrics.get('audit') or {}).get('verified', True))
+    # 缺口是「这个数没核上」的事实，不是核对通过的证明：``audit`` 的 verified 只看
+    # 「有没有对不上的数」，模板缺口走的是另一条路，这里必须自己把它算进来。
+    gaps = int(probe.metrics.get('report_gap') or 0)
     body = str(getattr(audited, 'analysis', text) or '')
-    if verified:
+    body = _collapse_duplicate_values(state, body)
+    # audit 不渲染 calc：占位式（以及它标成 [推导未核对] 的那种）在这里一并处理——
+    # 能算的按证据算出结果，算不出来的整小句删掉，内部标记不给用户看。
+    unverified_calc = int((state.metrics.get('guard_repairs') or {}).get('report.calc_unverified') or 0)
+    body = _settle_calc_templates(state, body)
+    body = _drop_marker_clauses(state, body, UNVERIFIED_CALC)
+    body = _drop_duplicate_approx(state, body)
+    if int((state.metrics.get('guard_repairs') or {}).get('report.calc_unverified') or 0) > unverified_calc:
+        verified = False
+    # 「基频偏低说明发声位置靠后、气息支撑不足」原样交给了用户，而云端恢复稿那条路
+    # 会中和它。两条出口必须用同一个 sanitize（云端恢复稿见上面 verify=False 分支）。
+    if getattr(state, 'evidence', None):
+        body = sanitize_interpretation_claims(state, body)
+        if INTERPRETATION_NOTE in body:
+            verified = False
+    if verified and not gaps:
         return body, 'verified'
-    if UNVERIFIED_NUMBER not in body:
+    if not _gap_markers(body) and INTERPRETATION_NOTE not in body:
         body = _guard_note(body, '', pending)
     return body, 'rejected_masked'
 
@@ -1396,11 +1817,15 @@ def _merge_counters(state: Any, metrics: dict) -> None:
         for rule, count in (metrics.get(bucket) or {}).items():
             slot = target.setdefault(bucket, {})
             slot[rule] = slot.get(rule, 0) + count
-    for rule in ('report_derived_accepted', 'report_general_value_assumed'):
+    for rule in ('report_derived_accepted', 'report_general_value_assumed', 'report_gap'):
         if metrics.get(rule):
             target[rule] = target.get(rule, 0) + metrics[rule]
     if metrics.get('audit'):
         target['audit'] = dict(metrics['audit'])
+    for receipt in metrics.get('calculation_receipts', []):
+        items = target.setdefault('calculation_receipts', [])
+        if receipt not in items:
+            items.append(receipt)
 
 
 def _general_claim(clause: str) -> bool:

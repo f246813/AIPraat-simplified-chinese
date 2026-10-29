@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +15,7 @@ class SelectedObject:
     name: str
     class_name: str
     file: Path
+    source: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def from_praat(cls, value: dict[str, Any]) -> "SelectedObject":
@@ -23,6 +24,8 @@ class SelectedObject:
             name=str(value.get("name", "")),
             class_name=str(value.get("class", "")),
             file=Path(str(value.get("file", ""))),
+            source={key: value[key] for key in ('original_sound_domain', 'wav_to_sound_offset_sec',
+                'sample_rate_hz', 'channels', 'export_format') if key in value},
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -31,6 +34,7 @@ class SelectedObject:
             "name": self.name,
             "class": self.class_name,
             "file": str(self.file),
+            **self.source,
         }
 
 

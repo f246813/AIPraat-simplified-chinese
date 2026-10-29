@@ -78,7 +78,7 @@ class CloudTests(unittest.TestCase):
 
     def test_low_context_reserves_report(self):
         large_context = CONTEXT + ''.join(f'{i}\tSound\t' + '原始材料描述' * 30 + '\t0\n' for i in range(2, 30))
-        state = AnalysisState('分析目标', large_context, budget=Budget(context_tokens=2048, response_tokens=500))
+        state = AnalysisState('分析目标', large_context, budget=Budget(context_tokens=8192, response_tokens=500))
         cfg = config()
         cfg.api.limit_tokens = True
         state, model, scripts = self.run_case([('pitch', {'time':0.5})], state=state, cfg=cfg)

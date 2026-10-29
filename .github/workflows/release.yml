@@ -53,9 +53,7 @@ permissions:
   contents: write
 
 jobs:
-  # 阶段 5 门槛①：AI 后端离线回归。发布前先证明「不联网、不下载模型、不装东西」也能跑通，
-  # 并且分析路径的运行库（NumPy / SciPy / pyloudnorm / praat-parselmouth）真的可用——
-  # 这一步用的就是 ai/praat_ai/capabilities.py 这份进程内检测。
+  # 离线协议回归与分析运行库能力门；原生声学检查在构建后执行。
   ai-offline-regression:
     name: AI backend offline regression
     runs-on: ubuntu-latest
@@ -166,6 +164,29 @@ jobs:
 
       - name: Build Praat
         run: make PRAAT_ARCH=x64v3 -j2
+
+      - name: Set up Python for acoustic regression
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install acoustic verification dependencies
+        shell: pwsh
+        run: |
+          $acousticRequirements = Get-Content ai/requirements.txt | Where-Object { $_ -match '^(numpy|praat-parselmouth|pydantic-ai-slim|pydantic-graph|jsonschema)([>=;\[]|$)' }
+          python -m pip install @acousticRequirements
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Verify acoustic standards with the built Praat
+        shell: pwsh
+        env:
+          PYTHONPATH: 'ai;ai/tests'
+          PYTHONIOENCODING: utf-8
+        run: |
+          if (-not (Test-Path -LiteralPath './Praat.exe')) { throw 'Built Praat.exe is missing' }
+          $env:PRAAT_AI_PRAAT_EXECUTABLE = (Resolve-Path -LiteralPath './Praat.exe').Path
+          python -m unittest test_vot_prevoicing test_acoustic_events test_acoustic_standards test_pitch_quality test_pitch_statistics_regression -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Prepare release package
         env:

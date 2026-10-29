@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>改色语图叠加原版 · 外观设计</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f5f3;color:#343a40;font:14px/1.6 "Segoe UI Variable","Microsoft YaHei UI",sans-serif}main{max-width:1240px;margin:auto;padding:32px 32px 36px}h1{font-size:27px;line-height:1.3;letter-spacing:-.5px;margin:0}h2{font-size:17px;font-weight:600;margin:0}p{margin:7px 0 0;color:#687078}.header{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:22px}.design-note{font-size:12px;color:#687078;white-space:nowrap}.pair{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}.sheet{background:#fff;border-radius:10px;box-shadow:0 6px 28px #2029320b;padding:20px 20px 12px;min-width:0}.sheet-heading{display:flex;align-items:center;gap:9px}.chip{width:15px;height:15px;border-radius:4px;display:inline-block;flex:none}.blue{background:#71889b}.clay{background:#9f7e71}.original{background:linear-gradient(135deg,#dfdfdf,#333)}.marks{display:flex;flex-wrap:wrap;gap:12px 24px;margin:10px 0 12px;font-size:12px;color:#4f5860}.marks span{display:flex;align-items:center;gap:7px}.pulse-symbol{height:13px;width:9px;border-left:2px solid #4f6054;border-right:2px solid #4f6054}.pitch-symbol{height:0;width:17px;border-top:3px solid #75613f}.formant-symbol{width:7px;height:7px;border-radius:50%;background:#315f5b}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:14px;position:relative;min-height:34px;margin-bottom:10px}.layer-key{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:12px;color:#626c74}.layer-key>span{display:flex;gap:6px;align-items:center}.layer-key i{width:10px;height:10px;border-radius:50%;display:inline-block}.menu-button{font:inherit;color:#343a40;background:#f1f2f2;border:0;border-radius:6px;padding:6px 12px;min-height:34px;white-space:nowrap;cursor:pointer}.menu-button:hover{background:#e8eaeb}.menu-button:focus-visible,.colour:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid #626e78;outline-offset:3px}.popover{position:absolute;z-index:3;right:0;top:calc(100% + 8px);width:288px;padding:16px;background:#fff;border-radius:8px;box-shadow:0 10px 36px #20293224}.popover[hidden]{display:none}.choice-label{font-size:12px;color:#626c74;margin-bottom:8px}.choices{display:flex;gap:8px;margin-bottom:18px}.colour{display:flex;align-items:center;justify-content:center;gap:7px;flex:1;font:inherit;background:#f6f7f7;color:#343a40;border:0;border-radius:6px;min-height:36px;cursor:pointer;padding:6px}.colour[aria-checked=true]{background:#e9ecee;font-weight:600}.tick{font-size:12px;min-width:12px}.range-label{display:flex;justify-content:space-between;align-items:center}output{font-variant-numeric:tabular-nums}input[type=range]{width:100%;height:32px;accent-color:#68727a;margin:4px 0 0;cursor:ew-resize}.range-ends{display:flex;justify-content:space-between;font-size:11px;color:#737b82}canvas{display:block;width:100%;height:312px}#primary-chart{height:340px}.panel-caption{font-size:12px;color:#687078;margin:8px 0 12px}.footer{display:flex;justify-content:space-between;gap:16px;margin-top:8px;font-size:12px;color:#687078}.secondary{margin-top:22px}.secondary summary{font-size:13px;color:#626c74;cursor:pointer}.secondary-inner{padding-top:12px}.secondary canvas{height:280px}.preview-caption{font-size:12px;color:#687078;margin-top:18px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+@media(max-width:760px){main{padding:24px 16px}.header{align-items:flex-start}.design-note{white-space:normal;text-align:right}.pair{grid-template-columns:1fr;gap:16px}.sheet{padding:18px 14px 12px}.panel-head{flex-wrap:wrap}.layer-key{gap:10px}.footer{flex-wrap:wrap}h1{font-size:23px}.popover{max-width:calc(100vw - 60px)}}
+@media(pointer:coarse){.menu-button,.colour{min-height:44px}input[type=range]{height:44px}}
+</style>
+<main>
+<div class="header"><div><h1>改色语图 × 原版语图</h1><p>谱纹保持柔和，脉冲、音高和共振峰清楚可辨。</p></div><span class="design-note">AIPraat · 外观设计预览</span></div>
+<label style="display:flex;align-items:center;gap:8px;margin:0 0 14px;color:#626c74;font-size:12px"><input id="difference-demo" type="checkbox" checked style="accent-color:#68727a">差异示意：上层右移 8 ms</label>
+<section class="sheet" aria-labelledby="primary-title">
+ <div class="panel-head"><h2 id="primary-title">上层改色，下层原版</h2><div class="layer-key"><span><i class="original"></i>原版 100%</span><span><i id="top-dot" class="clay"></i><span id="top-key">陶土灰 50%</span></span></div><button type="button" class="menu-button" id="appearance" aria-expanded="false" aria-controls="appearance-menu">外观 ▾</button>
+ <div class="popover" id="appearance-menu" hidden><div class="choice-label">上层配色</div><div class="choices" role="radiogroup" aria-label="上层配色"><button type="button" class="colour" role="radio" aria-checked="false" data-palette="blue"><span class="chip blue"></span>雾蓝灰<span class="tick"></span></button><button type="button" class="colour" role="radio" aria-checked="true" data-palette="clay"><span class="chip clay"></span>陶土灰<span class="tick">✓</span></button></div><label for="opacity" class="range-label">不透明度 <output id="opacity-value" for="opacity">50%</output></label><input id="opacity" type="range" min="20" max="100" value="50" step="1" aria-valuetext="50%"><div class="range-ends"><span>20%</span><span>100%</span></div></div></div>
+ <div class="marks"><span><i class="pulse-symbol"></i>脉冲 · 石墨绿竖线</span><span><i class="pitch-symbol"></i>音高 · 金棕实线</span><span><i class="formant-symbol"></i>共振峰 · 青绿散点</span></div>
+ <canvas id="primary-chart" aria-label="完全对齐的相同语音，上层改色半透明，下层保留原版灰度谱纹、蓝色音高及红色共振峰" role="img"></canvas>
+ <div class="footer"><span id="alignment-label">相同语音，上层右移 8 ms 示意</span><span>左轴：频率　右轴：音高　横轴：时间</span></div>
+</section>
+<div class="pair">
+ <section class="sheet" aria-labelledby="blue-title"><div class="sheet-heading"><span class="chip blue"></span><h2 id="blue-title">雾蓝灰叠加原版</h2></div><p class="panel-caption">上层 50% · 下层 100% · 上层右移 8 ms 示意</p><canvas id="blue-chart" aria-label="雾蓝灰以50%不透明度叠加原版，上层右移8毫秒用于观察标记分离，此位移仅为设计示意" role="img"></canvas></section>
+ <section class="sheet" aria-labelledby="clay-title"><div class="sheet-heading"><span class="chip clay"></span><h2 id="clay-title">陶土灰叠加原版</h2></div><p class="panel-caption">上层 50% · 下层 100% · 上层右移 8 ms 示意</p><canvas id="clay-chart" aria-label="陶土灰以50%不透明度叠加原版，上层右移8毫秒用于观察标记分离，此位移仅为设计示意" role="img"></canvas></section>
+</div>
+<details class="sheet secondary" id="secondary"><summary>次要场景：两种改色窗口叠加</summary><div class="secondary-inner"><p class="panel-caption">下层雾蓝灰 100% · 上层陶土灰 50% · 完全对齐</p><canvas id="secondary-chart" aria-label="两种改色窗口对齐叠加，作为次要比较场景" role="img"></canvas></div></details>
+<p class="preview-caption">原版参考当前源码的颜色与标记样式。图像用于外观评估，展示绘图区的普通透明度合成；不是原生窗口截图。</p>
+<span id="live" class="sr-only" aria-live="polite"></span>
+</main>
+<script>
+const model=__PREVIEW_DATA__;
+const ui={alpha:.5,top:'clay',difference:true};
+const images={};
+const menu=document.getElementById('appearance-menu');
+const trigger=document.getElementById('appearance');
+const slider=document.getElementById('opacity');
+function geometry(w,h){return {l:46,r:w-43,wt:8,wb:74,t:100,b:h-32,w,h};}
+function surface(canvas){const w=canvas.clientWidth,h=canvas.clientHeight,d=devicePixelRatio||1;if(!w||!h)return null;canvas.width=Math.round(w*d);canvas.height=Math.round(h*d);const c=canvas.getContext('2d');c.scale(d,d);return {c,g:geometry(w,h)};}
+function line(c,pts,colour,width){c.beginPath();let connected=false;for(const p of pts){if(!p){connected=false;continue;}if(connected)c.lineTo(...p);else c.moveTo(...p);connected=true;}c.lineWidth=width;c.strokeStyle=colour;c.lineJoin='round';c.lineCap='round';c.stroke();}
+function layer(g,key,shift=0){const canvas=document.createElement('canvas');const d=devicePixelRatio||1;canvas.width=Math.round(g.w*d);canvas.height=Math.round(g.h*d);const c=canvas.getContext('2d');c.scale(d,d);const p=model.palette[key],original=key==='original',pw=g.r-g.l,ph=g.b-g.t;const x=t=>g.l+(t+shift)/model.duration*pw;const y=f=>g.b-f/5000*ph;
+ c.fillStyle='#fff';c.fillRect(0,0,g.w,g.h);
+ c.save();c.beginPath();c.rect(g.l,g.wt,pw,g.wb-g.wt);c.clip();
+ for(const t of model.pulses){const points=[[x(t),g.wt+3],[x(t),g.wb-3]];if(!original)line(c,points,'#fff',3.2);line(c,points,p.pulse,original?2:1.8);}
+ const mid=(g.wt+g.wb)/2,half=(g.wb-g.wt)*.43;
+ c.strokeStyle=p.wave;c.lineWidth=1;c.beginPath();model.wave.forEach((a,i)=>{const xx=x((i+.5)/model.wave.length*model.duration);c.moveTo(xx,mid-a[0]*half);c.lineTo(xx,mid-a[1]*half);});c.stroke();c.restore();
+ c.save();c.beginPath();c.rect(g.l,g.t,pw,ph);c.clip();const b=model.spectrumBounds;c.drawImage(images[key],x(b[0]),y(b[3]),(b[1]-b[0])/model.duration*pw,(b[3]-b[2])/5000*ph);
+ for(const [index,series] of model.formants.entries()){for(const [t,f] of series){if(f<0||f>5000)continue;const even=index%2===1;c.beginPath();c.arc(x(t),y(f),original?(even?2.65:2.2):3.2,0,Math.PI*2);c.fillStyle=original?(even?p.formantEven:p.formant):'#fff';c.fill();if(original){c.lineWidth=1;c.strokeStyle=even?p.formant:p.formantEven;c.stroke();}else{c.beginPath();c.arc(x(t),y(f),2.2,0,Math.PI*2);c.fillStyle=p.formant;c.fill();}}}
+ const pitchPts=model.pitch.map(([t,f])=>f>0?[x(t),g.b-(f-75)/325*ph]:null);line(c,pitchPts,original?p.pitchHalo:'#fff',original?3:5.2);line(c,pitchPts,p.pitch,original?1:2.8);c.restore();
+ return canvas;
+}
+function axes(c,g,key){const p=model.palette[key];c.font='11px "Segoe UI","Microsoft YaHei",sans-serif';c.textBaseline='middle';c.fillStyle='#687078';c.textAlign='right';for(const f of [0,2500,5000])c.fillText(String(f),g.l-8,g.b-f/5000*(g.b-g.t));c.textAlign='left';c.fillText('Hz',5,g.t-11);c.fillStyle=p.pitch;c.fillText('F0 Hz',g.r+5,g.t-11);for(const f of [75,200,400])c.fillText(String(f),g.r+7,g.b-(f-75)/325*(g.b-g.t));c.fillStyle='#687078';c.textAlign='center';for(const t of [0,.1,.2,.3,.4]){const xx=g.l+t/model.duration*(g.r-g.l);c.fillText(t.toFixed(1),xx,g.b+16);}c.textAlign='left';c.fillText('s',g.r+9,g.b+16);line(c,[[g.l,g.b+.5],[g.r,g.b+.5]],'#e5e8ea',1);}
+function composite(id,bottom,top,alpha,shift=0){const s=surface(document.getElementById(id));if(!s)return;const {c,g}=s;c.drawImage(layer(g,bottom),0,0,g.w,g.h);c.globalAlpha=alpha;c.drawImage(layer(g,top,shift),0,0,g.w,g.h);c.globalAlpha=1;axes(c,g,top);}
+function draw(){composite('primary-chart','original',ui.top,ui.alpha,ui.difference ? .008 : 0);for(const key of ['blue','clay'])composite(key+'-chart','original',key,.5,.008);if(document.getElementById('secondary').open)composite('secondary-chart','blue','clay',.5);document.getElementById('top-key').textContent=model.palette[ui.top].name+' '+Math.round(ui.alpha*100)+'%';document.getElementById('top-dot').style.background=model.palette[ui.top].spectrum;document.getElementById('alignment-label').textContent=ui.difference?'相同语音，上层右移 8 ms 示意':'相同数据，完全对齐';document.getElementById('primary-chart').setAttribute('aria-label',(ui.difference?'上层右移8毫秒的设计示意':'完全对齐的相同语音')+'，上层改色半透明，下层保留原版灰度谱纹、蓝色音高及红色共振峰');}
+function close(){menu.hidden=true;trigger.setAttribute('aria-expanded','false');}
+trigger.addEventListener('click',()=>{menu.hidden=!menu.hidden;trigger.setAttribute('aria-expanded',String(!menu.hidden));});
+document.addEventListener('click',event=>{if(!menu.contains(event.target)&&event.target!==trigger)close();});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!menu.hidden){close();trigger.focus();}});
+slider.addEventListener('input',()=>{ui.alpha=Number(slider.value)/100;document.getElementById('opacity-value').value=slider.value+'%';slider.setAttribute('aria-valuetext',slider.value+'%');draw();});
+slider.addEventListener('change',()=>{document.getElementById('live').textContent='上层不透明度 '+slider.value+'%';});
+function choose(button){ui.top=button.dataset.palette;document.querySelectorAll('.colour').forEach(b=>{const selected=b===button;b.setAttribute('aria-checked',String(selected));b.querySelector('.tick').textContent=selected?'✓':'';});draw();}
+document.querySelectorAll('.colour').forEach(button=>{button.addEventListener('click',()=>choose(button));button.addEventListener('keydown',event=>{if(['ArrowLeft','ArrowRight'].includes(event.key)){event.preventDefault();const next=document.querySelector('.colour[data-palette="'+(button.dataset.palette==='blue'?'clay':'blue')+'"]');choose(next);next.focus();}});});
+document.getElementById('secondary').addEventListener('toggle',()=>{if(window.previewReady)draw();});
+document.getElementById('difference-demo').addEventListener('change',event=>{ui.difference=event.target.checked;draw();});
+new ResizeObserver(()=>{if(window.previewReady)draw();}).observe(document.querySelector('main'));
+Promise.all(Object.entries(model.palette).map(([key,p])=>new Promise(resolve=>{const image=new Image();image.onload=()=>{images[key]=image;resolve();};image.src=p.image;}))).then(()=>{window.previewReady=true;draw();});
+</script>
+</html>

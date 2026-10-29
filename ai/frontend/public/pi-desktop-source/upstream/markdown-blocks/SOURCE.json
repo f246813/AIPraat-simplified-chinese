@@ -1,0 +1,26 @@
+{
+  "repository": "https://github.com/vastsa/PI-Desktop",
+  "revision": "9f313c8f855ef6f8311622ad63dd7e6583cef2d7",
+  "files": [
+    {
+      "path": "apps/desktop/src/lib/markdown-blocks.ts",
+      "gitBlob": "59493c7cd2660ea2596cacb870b4a534ea03d23c",
+      "sha256": "ebb98b9497cf7bc067367fb96176d1997c08649be66842f557b1bb9383af288c"
+    },
+    {
+      "path": "apps/desktop/src/components/Markdown.tsx",
+      "gitBlob": "e34ca6550e42b0bb58c2140093aec67430fa92b7",
+      "sha256": "a1739d05dcb822b17962221fce4b8b16d522b0fe09d6fced03e7a003a7889bf1"
+    },
+    {
+      "path": "apps/desktop/src/lib/mermaid.ts",
+      "gitBlob": "7da7e5265f86d441fc12b9f92c71f55affa23cd5",
+      "sha256": "e1b7c6cd8ac3956070a357ed2447b5d4cd9cdb5fee075011ae20d8c9a32f1db2"
+    },
+    {
+      "path": "apps/desktop/src/lib/markdown-blocks.test.mjs",
+      "gitBlob": "4710900b17e4360ddfc5887cf4b3abea1db6c8aa",
+      "sha256": "da857bb209740270b7517f566deacbcfb664e2fbd3ce80b545a1ba2fd96b7a27"
+    }
+  ]
+}

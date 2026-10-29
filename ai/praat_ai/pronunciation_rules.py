@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import asdict, dataclass
+from .measurement_protocol import compatibility, compare_trajectories, valid_samples
 from functools import lru_cache
 
 from ._vendor.panphon import FeatureTable
@@ -118,11 +119,7 @@ def _values(phone: PhoneFeatureTracks, feature: str) -> list[float]:
     track = phone.derived_tracks.get(feature) if feature.endswith("_lobanov_z") else phone.tracks.get(feature)
     if track is None:
         return []
-    # NaN/zero formants mean undefined measurement, not a real 0 Hz value.
-    return [value for value in track.values if math.isfinite(value) and (
-        value > 0 if feature in {"f1", "f2", "f3"} else
-        value >= 0 if feature == "spectral_centroid" else True
-    )]
+    return [value for _, _, value in valid_samples(track)]
 
 
 def _observation(reference, learner, feature, rule_id, reference_value, learner_value, unit, evidence):
@@ -135,7 +132,7 @@ def _observation(reference, learner, feature, rule_id, reference_value, learner_
         phone_index=reference.phone_index, ipa=reference.ipa,
         start=learner.start, end=learner.end, feature=feature,
         score=0.0, severity=0.0, direction=direction,
-        message=f"/{reference.ipa}/ 的 {feature} {observation_kind}：参考 {reference_value:.3f}{unit}，学习者 {learner_value:.3f}{unit}（{direction}；实验性，未判定发音对错）。",
+        message=f"/{reference.ipa}/ 的 {feature} {observation_kind}：参考 {reference_value:.3f}{unit}，学习者 {learner_value:.3f}{unit}（{direction}）。",
         reference_value=reference_value, learner_value=learner_value, unit=unit,
         alignment_confidence=min(reference.alignment_confidence, learner.alignment_confidence),
         issue_type="observation", rule_id=rule_id,
@@ -194,6 +191,31 @@ def evaluate_phone_rules(profile: RuleProfile, references: list[PhoneFeatureTrac
         derived_features = tuple(feature + "_lobanov_z" for feature in features
             if normalization and normalization.get("formants", {}).get(feature, {}).get("status") == "applied")
         for feature in (*features, *derived_features):
+            if feature == "vot":
+                left_measure, right_measure = reference.measurements.get("vot"), learner.measurements.get("vot")
+                if not all(m and m.unit == "ms" and m.value is not None and math.isfinite(m.value)
+                           and m.status in {"validated", "provisional"}
+                           and m.analysis.get("acoustic", {}).get("events")
+                           for m in (left_measure, right_measure)):
+                    reasons = [m.reason for m in (left_measure, right_measure) if m and m.reason]
+                    check(feature, "insufficient_evidence", "；".join(dict.fromkeys(reasons)) or
+                          "当前提取器未提供充分的爆破与起浊地标；未估造 VOT。")
+                    continue
+                status = "validated" if left_measure.status == right_measure.status == "validated" else "provisional"
+                evidence = dict(method="landmark_difference", status=status,
+                    reference_measurement_id=left_measure.analysis.get("measurement_id"),
+                    learner_measurement_id=right_measure.analysis.get("measurement_id"),
+                    reference_landmarks=left_measure.analysis["acoustic"],
+                    learner_landmarks=right_measure.analysis["acoustic"])
+                observation = _observation(reference, learner, feature, f"{profile.language}.stop.vot",
+                    left_measure.value, right_measure.value, "ms", evidence)
+                observation.evaluation_status = status
+                if status == "provisional":
+                    observation.message += " 自动地标及闭塞归属仍为候选，未作发音诊断。"
+                observations.append(observation)
+                check(feature, "observed" if status == "validated" else "provisional",
+                      "" if status == "validated" else "自动地标候选，闭塞归属需复核。")
+                continue
             left, right = _values(reference, feature), _values(learner, feature)
             rule_id = f"{profile.language}.{category}.{feature}"
             if len(left) < 2 or len(right) < 2:
@@ -205,16 +227,13 @@ def evaluate_phone_rules(profile: RuleProfile, references: list[PhoneFeatureTrac
             derived = feature.endswith("_lobanov_z")
             left_track = (reference.derived_tracks if derived else reference.tracks)[feature]
             right_track = (learner.derived_tracks if derived else learner.tracks)[feature]
-            if left_track.unit != right_track.unit:
-                check(feature, "insufficient_evidence", "两段测量单位不一致。")
+            incompatible = compatibility(left_track, right_track)
+            if incompatible:
+                check(feature, "insufficient_evidence", incompatible)
                 continue
-            aligned_left, aligned_right, distance = dtw_align(left, right)
-            left_mean, _ = mean_and_stddev(aligned_left)
-            right_mean, _ = mean_and_stddev(aligned_right)
+            left_mean, right_mean, _, derivation = compare_trajectories(left_track, right_track)
             observations.append(_observation(reference, learner, feature, rule_id, left_mean, right_mean, left_track.unit, dict(
-                method="dtw", aligned_frames=len(aligned_left),
-                reference_valid_frames=len(left), learner_valid_frames=len(right),
-                normalized_distance=distance,
+                **derivation,
                 **(dict(normalization_method=normalization["method"], normalization_version=normalization["version"],
                     reference_calibration_id=normalization["reference_calibration"]["id"],
                     learner_calibration_id=normalization["learner_calibration"]["id"],

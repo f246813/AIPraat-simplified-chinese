@@ -136,7 +136,7 @@ MFA 展开临时语料、词典、命令构建、子进程、TextGrid 解析与�
 
 </details>
 
-**当前范围：** 英语、日语音位判据提供实验性声学观察；可使用手动 IPA、配套 MFA 读音生成或高级请求提供的双方边界。比例定位、低质量区间和缺失测量不支持精确音位结论；通用 DTW 路径的缺测覆盖仍有限制。尚无独立错音识别或经过校准的发音总分。见[判据与限制](docs/PRONUNCIATION.zh-CN.md)、[归一化](docs/NORMALIZATION.zh-CN.md)和[真实材料协议](docs/NORMALIZATION-MATERIALS.zh-CN.md)。
+**当前范围：** 英语、日语音位判据提供实验性声学观察；可使用手动 IPA、配套 MFA 读音生成或高级请求提供的双方边界。比例定位、低质量区间和缺失测量不支持精确音位结论；通用 DTW 路径的缺测覆盖仍有限制。尚无独立错音识别或经过校准的发音总分。见[判据与限制](docs/PRONUNCIATION.zh-CN.md)和[归一化与真实材料](docs/NORMALIZATION.zh-CN.md)。
 
 ## 下载与开始使用
 
@@ -150,6 +150,6 @@ MFA 展开临时语料、词典、命令构建、子进程、TextGrid 解析与�
 
 感谢基座、Praat 上游，以及社区脚本、AI 框架、前端组件、对齐模型与音位特征库的作者。完整用途、复用范围和许可见 **[借物表](CREDITS.zh-CN.md)**；资源包来源见云端仓库的[发音词典与模型参考](https://github.com/f246813/praat-simplified-chinese-ai/blob/modern/%E5%8F%91%E9%9F%B3%E8%AF%8D%E5%85%B8%E4%B8%8E%E6%A8%A1%E5%9E%8B%E5%8F%82%E8%80%83/%E6%9D%A5%E6%BA%90%E5%8F%8A%E7%BD%91%E5%9D%80.md)。
 
-[项目文档](docs/README.md) · [当前实现](docs/CURRENT-IMPLEMENTATION.zh-CN.md) · [前端源码来源](docs/ai-frontend/FRONTEND-SOURCES.md) · [后端接口](ai/docs/adr/README.md) · [维护说明](guide.md) · [验证入口](ai/docs/validation.zh-CN.md) · [单平台构建](HOW_TO_BUILD_ONE.md)
+[项目文档](docs/README.md) · [当前实现](docs/CURRENT-IMPLEMENTATION.zh-CN.md) · [前端源码来源](docs/ai-frontend/FRONTEND-SOURCES.md) · [维护与验证](guide.md) · [单平台构建](HOW_TO_BUILD_ONE.md)
 
 代码许可为 [GPL-3.0-or-later](LICENSE)；文档、图片与第三方资源的许可分别见 [docs/LICENSE.txt](docs/LICENSE.txt)、借物表及各资源目录。

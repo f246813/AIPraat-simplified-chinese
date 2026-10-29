@@ -88,9 +88,11 @@ namespace AIPraat.Setup
     }
     public static class RuntimeDependencies
     {
+        static string installRoot=Environment.GetEnvironmentVariable("PRAAT_AI_INSTALL_ROOT")??AppDomain.CurrentDomain.BaseDirectory;
+        public static string InstallRoot {get{return installRoot;}set{installRoot=Path.GetFullPath(value);}}
         internal static string[] WorkRoots()
         {
-            return new[]{Path.GetTempPath(),Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"ai","runtime"),Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"logs","runtime","work")};
+            return new[]{Path.Combine(InstallRoot,"cache","temp"),Path.GetTempPath()};
         }
         sealed class RuntimeLog : IDisposable
         {
@@ -128,9 +130,9 @@ namespace AIPraat.Setup
         public static string LogStem(string operation)
         {
             return LogStem(operation,new[]{
+                Path.Combine(InstallRoot,"logs","runtime"),
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"AIPraat","logs","runtime"),
-                Path.Combine(Path.GetTempPath(),"AIPraat","logs","runtime"),
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"logs","runtime")
+                Path.Combine(Path.GetTempPath(),"AIPraat","logs","runtime")
             });
         }
         static string LogStem(string operation,string[] folders)
@@ -199,6 +201,12 @@ namespace AIPraat.Setup
             start.UseShellExecute=false;start.CreateNoWindow=true;start.RedirectStandardOutput=start.RedirectStandardError=true;
             start.StandardOutputEncoding=start.StandardErrorEncoding=Encoding.UTF8;
             start.EnvironmentVariables["PYTHONIOENCODING"]="utf-8";
+            // Windows PowerShell must discover its own built-in modules when
+            // this application was launched from PowerShell 7.
+            if(Path.GetFileName(start.FileName).Equals("powershell.exe",StringComparison.OrdinalIgnoreCase))start.EnvironmentVariables.Remove("PSModulePath");
+            start.EnvironmentVariables["PRAAT_AI_INSTALL_ROOT"]=InstallRoot;
+            foreach(var entry in new Dictionary<string,string>{{"HF_HOME","cache/huggingface"},{"TORCH_HOME","cache/torch"},{"NUMBA_CACHE_DIR","cache/numba"}})
+                if(string.IsNullOrEmpty(start.EnvironmentVariables[entry.Key]))start.EnvironmentVariables[entry.Key]=Path.Combine(InstallRoot,entry.Value);
             using(var process=new Process{StartInfo=start}) {
                 // A progress callback that throws on this thread would kill the whole host
                 // process (unhandled exception in an event handler), so progress reporting
@@ -254,7 +262,7 @@ namespace AIPraat.Setup
                     string shell=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),@"WindowsPowerShell\v1.0\powershell.exe");
                     result.ExitCode=Execute(new ProcessStartInfo(shell,"-NoLogo -NoProfile -ExecutionPolicy Bypass -File "+
                         PathValidation.QuoteArgument(Path.Combine(assets.Folder,"ConfigurePython.ps1"))+" -PythonPath "+PathValidation.QuoteArgument(python)+
-                        " -Mode "+(online?"Online":"Local")+" -Device "+plan.device+" -PlanPath "+PathValidation.QuoteArgument(planPath)+
+                        " -InstallRoot "+PathValidation.QuoteArgument(InstallRoot)+" -Mode "+(online?"Online":"Local")+" -Device "+plan.device+" -PlanPath "+PathValidation.QuoteArgument(planPath)+
                         " -ResultPath "+PathValidation.QuoteArgument(workingResult)+(result.LogPath==""?" -NoLog":" -LogPath "+PathValidation.QuoteArgument(result.LogPath))+" -NoPause"),progress,3600000);
                     result.Probe=ReadProbe(workingResult,python,plan.device,result.ExitCode);
                     result.LogPath=result.Probe.Report==null?"":result.Probe.Report.log_path??"";

@@ -101,6 +101,9 @@ def measurement_contract(goal):
         if re.fullmatch(prefix + r'\s*' + target + r'\s*(?:的)?\s*' + quantity, text, re.I):
             return dict(tool=tool, unit=unit)
     from .dialogue_policy import direct_measurement
+    from .vot_request import direct_arguments
+    if direct_arguments(text) is not None:
+        return dict(tool='vot', unit='秒')
     direct = direct_measurement(text)
     # This proves completion after the registered VOT tool ran; it does not
     # create a local keyword-to-tool fast path or invent burst/voicing bounds.
@@ -114,7 +117,7 @@ def measurement_contract(goal):
 def valid_measurement_rows(tool, rows):
     """Known templates can succeed while reporting an undefined statistic."""
     patterns = {'duration':r'(?:总)?时长\s*=\s*(-?\d+(?:\.\d+)?)\s*(?:秒|s\b)',
-                'pitch_statistics':r'平均\s*(-?\d+(?:\.\d+)?)\s*Hz',
+                'pitch_statistics':r'平均(?:基频)?\s*(?:[=：:]\s*)?(-?\d+(?:\.\d+)?)\s*Hz',
                 'intensity_statistics':r'平均\s*(-?\d+(?:\.\d+)?)\s*dB',
                 'vot':r'VOT\s*(?:估计值)?\s*=\s*(-?\d+(?:\.\d+)?)\s*秒'}
     if tool not in patterns:
@@ -163,7 +166,7 @@ def measurement_complete(state, *, calls=None):
                 if supplied != (None, None) and supplied != actual.selection:
                     continue
             row = '\n'.join(evidence.rows)
-            label = {'duration':r'(?:总)?时长\s*=\s*', 'pitch_statistics':r'平均\s*',
+            label = {'duration':r'(?:总)?时长\s*=\s*', 'pitch_statistics':r'平均(?:基频)?\s*(?:[=：:]\s*)?',
                      'intensity_statistics':r'平均\s*', 'vot':r'VOT\s*(?:估计值)?\s*=\s*'}[contract['tool']]
             unit = r'(?:秒|s\b)' if contract['tool'] == 'duration' else contract['unit']
             match = re.search(label + r'(-?\d+(?:\.\d+)?)\s*' + unit, row)
@@ -176,12 +179,23 @@ def measurement_complete(state, *, calls=None):
     return False
 
 
+def _requested_times(args):
+    """返回可解析的绝对请求时刻；auto 与其他 Praat 表达式不冒充对象时间轴上的数值时刻。"""
+    requested = []
+    for item in tools._query_times(args, fallback='0'):
+        try:
+            requested.append(float(item))
+        except (TypeError, ValueError):
+            return []
+    return requested
+
+
 def measurement_scope(tool, args, row):
     """Requested tool scope; editor selection is only a default, never a limit."""
     if tool == 'duration':
         return dict(kind='whole_object')
     if args.get('time', args.get('times')) not in (None, ''):
-        return dict(kind='query_points', requested_times=[float(t) for t in tools._query_times(args, fallback='0')])
+        return dict(kind='query_points', requested_times=_requested_times(args))
     interval = (args.get('from', args.get('start')), args.get('to', args.get('end')))
     if args.get('_whole_object'):
         interval = (None, None)
@@ -217,6 +231,8 @@ def publish_results(state):
                             source=source_text, object=target,
                             evidence_ref=evidence_index, quantities=quantities,
                             range=scope, reason=attempt.get('reason', '')))
+        if attempt.get('acoustic'):
+            results[-1]['acoustic'] = attempt['acoustic']
     state.results = results
     state.measurement_content = '\n'.join(row for e in state.evidence for row in e.rows)
     if state.on_results:
@@ -235,10 +251,23 @@ def finish_locally(state):
     needs_explanation = wants_explanation(state.goal) or state.continuation_mode == 'L2'
     body = str(state.report or '').strip()
     measurement = state.measurement_content or ''
+    acoustic = next((item.get('acoustic') for item in reversed(state.attempts)
+                     if item.get('tool') == 'vot' and item.get('acoustic')), None)
+    if acoustic and not needs_explanation:
+        from .acoustic_events import render_report
+        state.report = render_report(acoustic)
+        state.status = 'complete' if complete else 'partial'
+        state.coverage = [dict(item=item, status=state.status,
+                              explanation='事件、验证状态与派生测量已分别提供') for item in state.deliveries]
+        state.metrics['finish_state'] = state.status
+        state.metrics['route_reason'] = 'validated_acoustic_pipeline'
+        state.can_continue = True
+        return
     raw_reason = state.reason or ('目标解释尚未执行' if complete or state.continuation
                                   else '现有工具结果尚未证明目标所需的量、对象与范围均已完成')
     # 正文只写一句人话；内部原文（阶段代号、守卫规则名）留在 metrics 里备查。
-    gap = delivery_text.user_reason(state.reason)
+    has_measurements = any(e.kind == 'measurement' and valid_measurement_rows(e.tool, e.rows) for e in state.evidence)
+    gap = delivery_text.user_reason(state.reason, has_measurements=has_measurements)
     state.metrics['reason_detail'] = raw_reason
     state.metrics['reason_class'] = delivery_text.classify(state.reason)
     if body and (not measurement or not body.startswith(measurement.strip())):

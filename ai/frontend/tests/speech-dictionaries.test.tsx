@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { SpeechDictionaries, type DictionaryResult } from '../src/SpeechDictionaries';
 import { mfaFixture } from './mfa-fixtures';
@@ -178,6 +178,49 @@ it('opens the same editor from resource pairing entry without changing legacy ac
   fireEvent.click(await screen.findByRole('button',{name:'配置 英语（英式） 配套资源'}));
   expect(screen.getByRole('dialog',{name:'配置配套资源 · 英语（英式）'})).toBeTruthy();
   fireEvent.click(screen.getByRole('button',{name:'取消'})); expect(screen.queryByRole('dialog')).toBeNull(); expect(rpc).toHaveBeenCalledTimes(2);
+});
+
+it('selects a G2P for the chosen preset, discards unsaved selection and persists it on Save', async () => {
+  const selected = {...mfaFixture, presets:mfaFixture.presets.map(p => p.id === 'en-GB' ? {...p,g2p:'g'} : p)};
+  const rpc = vi.fn(async (method: string) => method === 'mfa.save' ? selected : method.startsWith('mfa.') ? mfaFixture : data);
+  render(<SpeechDictionaries rpc={rpc}/>); await screen.findByText('中文.dict');
+  fireEvent.click(screen.getByRole('button',{name:'MFA G2P 模型'}));
+  const choose = await screen.findByRole('button',{name:'选用 English G2P.zip'});
+  expect((choose as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.change(screen.getByRole('combobox',{name:'用于哪个纠音配套'}),{target:{value:'en-GB'}});
+  fireEvent.click(choose);
+  expect(within(screen.getByRole('dialog')).queryByRole('combobox',{name:'G2P 模型'})).toBeNull();
+  fireEvent.click(screen.getByRole('button',{name:'关闭资源配置'}));
+  expect(rpc.mock.calls.some(([m]) => m === 'mfa.save')).toBe(false);
+  fireEvent.click(choose); fireEvent.click(screen.getByRole('button',{name:'保存配套'}));
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  expect(rpc).toHaveBeenCalledWith('mfa.save',expect.objectContaining({preset:expect.objectContaining({id:'en-GB',g2p:'g'})}));
+  expect(screen.getByText('当前选用')).toBeTruthy(); expect((choose as HTMLButtonElement).disabled).toBe(true);
+});
+
+it('creates another language pairing without a language-specific frontend branch', async () => {
+  let current = structuredClone(mfaFixture);
+  const rpc = vi.fn(async (method: string, params?: Record<string, unknown>) => {
+    if (method === 'mfa.save') {const preset = params!.preset as typeof current.presets[number]; current = {...current,presets:[...current.presets.filter(p => p.id !== preset.id),preset]}; return current;}
+    return method === 'mfa.list' ? current : data;
+  });
+  render(<SpeechDictionaries rpc={rpc}/>); await screen.findByText('中文.dict');
+  fireEvent.click(screen.getByRole('button',{name:'纠音资源配套'}));
+  fireEvent.click(await screen.findByRole('button',{name:'新建语言配套'}));
+  fireEvent.change(screen.getByRole('textbox',{name:'配套名称'}),{target:{value:'德语'} });
+  fireEvent.change(screen.getByRole('textbox',{name:'语言代码'}),{target:{value:'de'} });
+  expect(within(screen.getByRole('dialog')).queryByRole('combobox',{name:'G2P 模型'})).toBeNull();
+  fireEvent.click(screen.getByRole('button',{name:'保存配套'}));
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  expect(rpc).toHaveBeenCalledWith('mfa.save',expect.objectContaining({preset:expect.objectContaining({id:expect.stringMatching(/^custom-[a-f0-9]{32}$/),name:'德语',language:'de',rule_id:null,g2p:''})}));
+  expect(screen.getByRole('heading',{name:'德语'})).toBeTruthy();
+  const custom = current.presets.find(p => p.name === '德语')!;
+  fireEvent.click(screen.getByRole('button',{name:'MFA G2P 模型'}));
+  fireEvent.change(await screen.findByRole('combobox',{name:'用于哪个纠音配套'}),{target:{value:custom.id}});
+  fireEvent.click(screen.getByRole('button',{name:'选用 English G2P.zip'}));
+  fireEvent.click(screen.getByRole('button',{name:'保存配套'}));
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  expect(rpc).toHaveBeenLastCalledWith('mfa.save',expect.objectContaining({preset:expect.objectContaining({id:custom.id,language:'de',g2p:'g'})}));
 });
 
 it.each(['dictionaries','acoustic_models'])('warns about exact referenced preset names before legacy %s deletion', async category => {

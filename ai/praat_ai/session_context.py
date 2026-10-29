@@ -10,7 +10,7 @@ import hashlib
 import json
 from dataclasses import dataclass, field
 from pydantic_ai.messages import (ModelMessagesTypeAdapter, ModelRequest, ModelResponse,
-                                  SystemPromptPart, TextPart, UserPromptPart)
+                                  SystemPromptPart, TextPart, ToolCallPart, UserPromptPart)
 
 
 def native_history(history):
@@ -28,6 +28,31 @@ def native_history(history):
     return result
 
 
+#: 交付记录里的一句明确说明：它是应用写的，不是用户新指令，也不是测量证据。
+DELIVERY_NOTE = ('应用交付记录：此前草稿不是最终交付，以下 assistant 消息是实际交付正文；'
+                 '非新用户指令、非测量证据。')
+
+#: :func:`native_history` 会跳过这些状态：它们不是「已经交付的正式回合」。
+NON_FORMAL_STATUS = frozenset({'running', 'cancelled', 'interrupted', 'failed', 'partial'})
+
+
+def formal_delivery(history):
+    """``history`` 末项若是正式 assistant 回合，返回它的正文；否则返回空串。
+
+    判定与 :func:`native_history` 保持一致：只有会被适配成 ModelResponse 的那一条
+    才算正式交付，取消/partial/失败/未完成的半截回答一律不算。
+    """
+
+    if not history:
+        return ''
+    last = history[-1]
+    if not isinstance(last, dict) or last.get('role') != 'assistant':
+        return ''
+    if last.get('status') in NON_FORMAL_STATUS:
+        return ''
+    return str(last.get('content') or '')
+
+
 @dataclass
 class PhaseContext:
     messages: list = field(default_factory=list)
@@ -41,7 +66,36 @@ class PhaseContext:
     archives: list = field(default_factory=list)
     calibration_start: int = 0
 
+    def record_delivery(self, text):
+        """把「用户实际看到的正文」追加进上下文；只在必要时追加，返回是否追加。
+
+        修的是历史交付：模型最后一条消息是草稿（被前缀拼接、守卫遮蔽或恢复稿替换），
+        而 history 里记的是另一份正文。这里只**追加**一条交付记录（应用说明 +
+        assistant 正文），既有消息一个字都不动——旧请求的 prefix、缓存前缀和工具事务
+        原样保留。末尾不是完整的纯文本回复（pending ModelRequest、含工具调用/工具返回、
+        空消息）、交付正文为空、或已经记过同样正文时什么都不做。
+        """
+
+        delivered = str(text or '')
+        if not delivered.strip() or not self.messages:
+            return False
+        last = self.messages[-1]
+        if not isinstance(last, ModelResponse):
+            return False
+        parts = list(last.parts)
+        texts = [part for part in parts if isinstance(part, TextPart)]
+        if not texts or any(isinstance(part, ToolCallPart) for part in parts) or len(texts) != len(parts):
+            # 不是「完整的纯文本回复」：工具事务可能还没结束，不能在这里补话说。
+            return False
+        if ''.join(str(part.content) for part in texts).strip() == delivered.strip():
+            return False
+        self.messages.append(ModelRequest(parts=[UserPromptPart(DELIVERY_NOTE)]))
+        self.messages.append(ModelResponse(parts=[TextPart(delivered)]))
+        return True
+
     def mark_formal(self, history):
+        # 先核对交付：正式回合的正文可能和 messages 末尾的草稿不同，先补上再标基线。
+        self.record_delivery(formal_delivery(history))
         self.formal_count = len(history)
         self.formal_hash = self._formal_hash(history)
 
@@ -55,6 +109,8 @@ class PhaseContext:
             if not self.messages:
                 self.messages = native_history(history)
         elif self._formal_hash(history[:self.formal_count]) == self.formal_hash:
+            # 旧前缀已经锁定：先修它末条的交付，再接新尾部——旧已锁错的历史在这里自愈。
+            self.record_delivery(formal_delivery(history[:self.formal_count]))
             self.messages.extend(native_history(history[self.formal_count:]))
         else:
             self.messages = native_history(history)

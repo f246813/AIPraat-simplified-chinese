@@ -6,7 +6,7 @@ import tempfile
 from contextlib import contextmanager
 from pathlib import Path
 
-from .mfa_g2p import english_words
+from .mfa_g2p import transcript_words
 from .phone_labels import map_sequence
 
 
@@ -33,7 +33,7 @@ def validate_selection(request) -> None:
         raise ValueError('目标读音与语言或音位判据不一致。')
     if not request.selected_readings:
         raise ValueError('MFA G2P 任务没有已选读音。')
-    sequence = english_words(request.transcript)
+    sequence = transcript_words(request.transcript)
     if sequence != [item.get('word') for item in request.selected_readings]:
         raise ValueError('参考文本与本次已选词序不一致。')
     ipa, raw, seen = [], [], {}
@@ -74,6 +74,7 @@ def task_alignment(request, alignment):
 
 
 def explanation_payload(payload: dict) -> dict:
-    """Keep local resource paths/metadata out of the pre-existing Qwen request."""
-    return {key: value for key, value in payload.items()
-            if key not in {'mfa_snapshot', 'selected_readings', 'generation_source'}}
+    """Local resource paths stay private; full acoustic curves stay in attachments."""
+    from .measurement_protocol import explanation_summary
+    return explanation_summary({key: value for key, value in payload.items()
+            if key not in {'mfa_snapshot', 'selected_readings', 'generation_source'}})

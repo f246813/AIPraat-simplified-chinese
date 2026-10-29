@@ -105,7 +105,7 @@ def main(argv=None):
             import webview
             args.data_dir.mkdir(parents=True, exist_ok=True)
             application = ModernApplication(args.data_dir, args.config, shared_runtime / 'conversations.sqlite3',
-                                            allow_cloud=args.allow_cloud, configured_cloud=True)
+                                            allow_cloud=args.allow_cloud, configured_cloud=True, report_runtime=shared_runtime)
             window, server = create_window(application)
             from .desktop_launch import connected_record
             window._js_api._on_connected = lambda: connected_record(type(application.executor).__name__)

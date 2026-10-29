@@ -59,7 +59,8 @@ it('keeps body search results mounted while reading position and draft change',a
     await act(async()=>{await vi.advanceTimersByTimeAsync(1000);});
     expect(document.querySelector('.session-row')).toBe(row);
     expect(rpc.mock.calls.filter(([method])=>method==='sessions.search')).toHaveLength(1);
-    expect(store.getSnapshot().sessions.find(s=>s.id==='demo-1')?.scroll).toBe(160);
+    expect(store.getView('demo-1').scroll).toBe(160);
+    expect(store.getView('demo-1').draft).toBe('尚未发送的内容');
   } finally {store.stop();}
 });
 

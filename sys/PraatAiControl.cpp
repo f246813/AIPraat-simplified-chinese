@@ -194,10 +194,11 @@ namespace {
 			}
 		}
 		#if defined (_WIN32)
-			if (conststring32 local = Melder_getenv (U"LOCALAPPDATA")) {
-				const auto managed = std::filesystem::u8path (Melder_peek32to8 (local)) / "AIPraat" / "ffmpeg" / "ffmpeg.exe";
-				if (std::filesystem::is_regular_file (managed)) return Melder_8to32_e (managed.u8string ().c_str ());
-			}
+			auto root = projectDirectoryPath ().parent_path ();
+			if (conststring32 overrideRoot = Melder_getenv (U"PRAAT_AI_INSTALL_ROOT"))
+				if (overrideRoot [0]) root = std::filesystem::u8path (Melder_peek32to8 (overrideRoot));
+			const auto managed = root / "tools" / "ffmpeg" / "ffmpeg.exe";
+			if (std::filesystem::is_regular_file (managed)) return Melder_8to32_e (managed.u8string ().c_str ());
 		#endif
 		return Melder_dup (U"ffmpeg");
 	}

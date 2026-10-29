@@ -54,6 +54,7 @@ class Evidence:
     rows: list[str]
     source: str
     kind: str = 'measurement'
+    acoustic: dict[str, Any] = field(default_factory=dict)
 
     @property
     def signature(self) -> str:
@@ -161,13 +162,16 @@ class AnalysisState:
         return state
 
     def fallback_report(self) -> str:
+        from . import delivery_text
         rows = [f'原始目标：{self.goal}', '本轮仅交付阶段记录，目标分析尚未完成。']
         if self.evidence:
             rows.append('已取得的证据：')
             rows.extend(f'- {e.tool}（来源：{e.source}）：' + '；'.join(e.rows) for e in self.evidence)
-        rows.append('缺口与影响：' + (self.reason or '模型未返回可验证的目标解释')
-                    + '。现有记录不能据此确定录音的具体发音缺陷。')
-        rows.append('可继续：沿用这些证据补充目标解释；精确数值需要相应测量，听感需要实际音频输入。')
+        self.metrics.setdefault('reason_detail', self.reason)
+        reason = delivery_text.user_reason(self.reason, has_measurements=bool(self.evidence))
+        rows.append('缺口与影响：' + reason
+                    + '现有记录不能据此确定录音的具体发音缺陷。')
+        rows.append('可继续：补充目标解释；精确数值需要相应测量，听感需要实际音频输入。')
         self.coverage = [{'item':item, 'status':'partial' if self.evidence else 'missing',
                           'explanation':'模型报告未完成，已保存现有证据与诊断'} for item in self.deliveries]
         return '\n\n'.join(rows)

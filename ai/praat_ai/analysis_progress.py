@@ -1,19 +1,4 @@
-"""分析阶段的进度小窗 + 「停止」按钮。
-
-对话窗口里点「应用预设 / API 配置」用的是 :class:`progress_popup.MiniProgress`；而纠音**分析**
-这一步此前只有标准输出里的进度，从提交到出报告之间既没有可视反馈，也不能中止。这里复用同一套
-设计语言（卡片 + 圆角进度条 + 百分比 + 主题，见 guide.md §8.1），只多一个「停止」按钮：
-
-- 分析跑在 worker 线程，进度回调经 ``root.after`` 回主线程刷新（Tk 不是线程安全的）；
-- 点「停止」置位 ``cancel``；``run_tutor`` 已把取消贯穿到分析/对齐层（阶段 2/4），
-  测量已经完成时它仍会写出报告、只是不再生成 AI 解释——所以这里只如实回报「已取消」，
-  不谎称「什么也没做」；
-- 关窗键在分析窗里等同点「停止」（没传 ``on_stop`` 的小窗仍是「不给中途关闭」）；
-- 拿不到 Tk（没有 tkinter / 没有显示 / ``--no-gui``）时**退回同步执行**，行为与没有这一层时一致。
-
-Praat 菜单那一档（``control.run_analysis``）走的是 Praat 自带进度窗（``PRAAT_PROGRESS``），
-窗口属于 Praat，那里没有停止按钮，见 guide.md §8.1 的说明。
-"""
+"""分析进度与停止入口。worker 线程执行分析，进度经 root.after 回主线程。停止或关窗置位取消事件；已完成测量按调用方策略保留。无 Tk 或禁用 GUI 时同步执行。Praat 菜单使用原生进度窗。"""
 
 from __future__ import annotations
 
@@ -54,11 +39,7 @@ def run_with_stop(
     enabled: bool = True,
     open_window: Callable[..., tuple[Any, Any]] | None = None,
 ) -> tuple[Any, bool]:
-    """在「简约小窗 + 停止按钮」里跑 ``work(cancel, report)``，返回 ``(outputs, cancelled)``。
-
-    ``enabled=False``（``--no-gui``）或拿不到 GUI 时不建窗口，直接同步执行，``report`` 传 None：
-    这样命令行/无人值守的行为与以前逐字节一致。
-    """
+    """运行 work(cancel, report)，返回 (outputs, cancelled)。禁用 GUI 或无法创建窗口时同步执行，report 为 None。"""
 
     cancel = threading.Event()
     if not enabled:

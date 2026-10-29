@@ -1,0 +1,40 @@
+<html><head><meta name="robots" content="index,follow"><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sound: To TextGrid (speech activity, Silero)...</title>
+<style>
+   td { padding-left: 5pt; padding-right: 5pt; }
+   th { padding-left: 5pt; padding-right: 5pt; }
+   code { white-space: pre-wrap; }
+   dd { white-space: pre-wrap; }
+</style>
+</head><body bgcolor="#FFFFFF">
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor="#CCCC00"><table border=4 cellpadding=9><tr><td align=middle bgcolor="#000000"><font face="Palatino,Times" size=6 color="#999900"><b>
+Sound: To TextGrid (speech activity, Silero)...
+</b></font></table></table>
+<p>A command that creates a <a href="TextGrid.html">TextGrid</a> with one interval tier from every selected <a href="Sound.html">Sound</a> object. The interval tier contains non-speech and speech intervals with boundaries determined by the Silero VAD model (for the algorithm and settings, see <a href="speech_activity_detection_with_Silero_VAD.html">speech activity detection with Silero VAD</a>). The labels of the intervals are specified by the settings <b>Non-speech interval label</b> and <b>Speech interval label</b>.</p>
+<h2>Settings</h2>
+<dl>
+<dt><b>Speech probability threshold (0-1)</b> (standard value: 0.5)
+<dd>see <a href="speech_activity_detection_with_Silero_VAD.html">speech activity detection with Silero VAD</a>.</dd>
+<dt><b>Min. gap between speech segments (s)</b> (standard value: 0.1)
+<dd>see <a href="speech_activity_detection_with_Silero_VAD.html">speech activity detection with Silero VAD</a>.</dd>
+<dt><b>Min. speech segment (s)</b> (standard value: 0.25)
+<dd>see <a href="speech_activity_detection_with_Silero_VAD.html">speech activity detection with Silero VAD</a>.</dd>
+<dt><b>Padding around speech segments (s)</b> (standard value: 0.0)
+<dd>see <a href="speech_activity_detection_with_Silero_VAD.html">speech activity detection with Silero VAD</a>.</dd>
+<dt><b>Non-speech interval label</b> (standard value: &#8220;&#8221;)
+<dd>the label assigned to intervals classified as non-speech in the resulting TextGrid.</dd>
+<dt><b>Speech interval label</b> (standard value: &#8220;speech&#8221;)
+<dd>the label assigned to intervals classified as speech in the resulting TextGrid.</dd>
+</dl>
+<h3>Links to this page</h3>
+<ul>
+<li><a href="Sound__To_TextGrid__speech_activity____.html">Sound: To TextGrid (speech activity)...</a>
+<li><a href="What_s_new_.html">What's new?</a>
+</ul>
+<hr>
+<address>
+	<p>© Anastasia Shchupak 2026-06-01</p>
+</address>
+</body>
+</html>

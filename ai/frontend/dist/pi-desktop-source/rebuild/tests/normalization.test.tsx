@@ -10,18 +10,18 @@ const chooseRules = async () => {await screen.findByRole('combobox', {name: '目
 beforeEach(() => {vi.stubGlobal('matchMedia', () => ({matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn()}));});
 afterEach(() => {cleanup(); vi.unstubAllGlobals();});
 
-it('defaults to raw and excludes normalization entirely from legacy submissions', async () => {
+it('defaults to raw and keeps normalization disabled in legacy submissions with explicit measurement settings', async () => {
   const rpc = vi.fn(async (method: string, _params: Record<string, unknown>) => method === 'tutor.bootstrap' ? bootstrap : {accepted: true});
   render(<PronunciationForm rpc={rpc}/>);
   await chooseRules();
   expect((screen.getByRole('checkbox', {name: /Lobanov/}) as HTMLInputElement).checked).toBe(false);
-  expect(screen.getByText('已关闭：仅原始 Hz 观察。')).toBeTruthy();
+  expect(screen.getByText('已关闭：仅原始 Hz 观察')).toBeTruthy();
   fireEvent.click(screen.getByRole('radio', {name: /声学对比/}));
   fireEvent.change(screen.getByRole('textbox', {name: /目标音位/}), {target: {value: 'a'}});
   fireEvent.click(screen.getByRole('button', {name: '开始分析'}));
   await waitFor(() => expect(rpc).toHaveBeenCalledWith('tutor.submit', expect.anything()));
   const payload = rpc.mock.calls.find(([method]) => method === 'tutor.submit')?.[1] as Record<string, unknown>;
-  expect(payload).not.toHaveProperty('normalization');
+  expect(payload.normalization).toMatchObject({version: 'normalization-v1', formants: false, confirmed: false});
 });
 
 it('imports both slots, previews F1/F2 only after confirmation and submits host receipts, not client fitted parameters', async () => {
@@ -34,7 +34,7 @@ it('imports both slots, previews F1/F2 only after confirmation and submits host 
   fireEvent.click(importButton('学习者校准'));
   await screen.findByText('learner · independent.wav');
   fireEvent.click(screen.getByRole('checkbox', {name: /确认双方校准/}));
-  expect(screen.getByText(/F1：预计应用 z 比较；F2：预计应用 z 比较；F3：证据不足/)).toBeTruthy();
+  expect(screen.getByText(/F1：使用 z 值比较；F2：使用 z 值比较；F3：证据不足/)).toBeTruthy();
   fireEvent.change(screen.getByRole('textbox', {name: /目标音位/}), {target: {value: 'a'}});
   fireEvent.click(screen.getByRole('button', {name: '开始分析'}));
   await waitFor(() => expect(rpc).toHaveBeenCalledWith('tutor.submit', expect.objectContaining({normalization: {version: 'normalization-v1', formants: true, confirmed: true, reference_calibration_id: 'reference', learner_calibration_id: 'learner'}})));
@@ -79,4 +79,18 @@ it('refuses formant normalization up front when praat-parselmouth is missing', a
   expect(screen.getAllByText(/共振峰校准与 F1\/F2 观察当前不可用：/).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/praat-parselmouth/).length).toBeGreaterThan(0);
   expect(rpc.mock.calls.some(([method]) => method.includes('install'))).toBe(false);
+});
+
+it('submits independent Burg parameters in the actual legacy form without enabling normalization', async () => {
+  const rpc = vi.fn(async (method: string, _params: Record<string, unknown>) => method === 'tutor.bootstrap' ? bootstrap : {accepted: true});
+  render(<PronunciationForm rpc={rpc}/>);
+  await screen.findByRole('combobox', {name: '目标语言与读音'});
+  fireEvent.click(screen.getByText('高级设置'));
+  fireEvent.change(screen.getByRole('spinbutton', {name: '标准音共振峰上限（Hz）'}), {target: {value: '5000'}});
+  expect((screen.getByRole('spinbutton', {name: '学习者共振峰上限（Hz）'}) as HTMLInputElement).value).toBe('5500');
+  fireEvent.change(screen.getByRole('textbox', {name: /目标音位/}), {target: {value: 'a'}});
+  fireEvent.click(screen.getByRole('button', {name: '开始分析'}));
+  await waitFor(() => expect(rpc).toHaveBeenCalledWith('tutor.submit', expect.objectContaining({normalization: expect.objectContaining({
+    formants: false, measurement_settings: expect.objectContaining({reference: expect.objectContaining({maximum_formant_hz: '5000'})}),
+  })})));
 });

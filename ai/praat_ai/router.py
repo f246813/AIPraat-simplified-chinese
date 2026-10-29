@@ -1,15 +1,6 @@
-"""一轮一次的结构化分类：走对话/概念，还是完整分析。
+"""结构化意图分类辅助函数。
 
-方案见 ``ai/docs/backend-workflow-redesign.zh-CN.md`` 第 6 节。原则三条：
-
-1. **默认走完整分析**：拿不准就分析，永不因为"看起来像闲聊"而跳过测量；
-2. **正则只是提示**：它给不出答案（``None``）时才问模型；它给得出答案且模型开关关闭时，
-   行为与旧版完全一致，可随时回滚；
-3. **模型调用失败一律回落**：解析失败、超时、没有 runtime 都当 ``analyze``。
-
-调用方（``modern_execution``）每轮只调一次，结果放 ``state.router_dialogue``，
-``cloud_agent.entry_mode`` 与对话分派共用同一个判断。
-"""
+正则、可选模型分类与失败回落使用共同的意图枚举；实际调用由执行入口决定。"""
 from __future__ import annotations
 
 import json
@@ -136,7 +127,7 @@ def classify(config, goal: str, *, context_text: str = '', runtime=None, cancel=
             small.api.force_deep_thinking = False
             small.api.plan_max_tokens = min(getattr(small.api, 'plan_max_tokens', 320) or 320, 320)
             options = dict(runtime=runtime) if runtime is not None else {}
-            raw = text_request(small, messages, cancel=cancel, phase='router', **options)
+            raw = text_request(small, messages, cancel=cancel, phase='router', state=state, **options)
         intent, confidence, needs_audio = _parse(raw)
     except Exception as error:                       # noqa: BLE001 - 路由失败必须回落
         fallback = RouterIntent(intent='analyze', dialogue=hint, source='fallback')

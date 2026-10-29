@@ -12,6 +12,7 @@ import unicodedata
 from pathlib import Path
 
 from .phone_labels import map_sequence
+from .paths import dependency_environment
 
 
 def launcher_command(launcher: dict) -> list[str]:
@@ -51,7 +52,7 @@ def run_command(command: list[str], cancel: threading.Event | None = None,
     cancel = cancel or threading.Event()
     if cancel.is_set():
         raise ValueError('已取消音位生成。')
-    environment = {**os.environ, 'PYTHONUTF8': '1', 'PYTHONIOENCODING': 'utf-8'}
+    environment = {**dependency_environment(), 'PYTHONUTF8': '1', 'PYTHONIOENCODING': 'utf-8'}
     options = dict(stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
                    encoding='utf-8', errors='replace', cwd=cwd, env=environment)
     if os.name == 'nt':
@@ -110,30 +111,48 @@ def check_launcher(launcher: dict, cancel: threading.Event | None = None) -> dic
     return dict(version=version, help_order=order, status='MFA G2P 接口检查通过（尚未验证模型）')
 
 
-def english_words(text: str) -> list[str]:
+def transcript_words(text: str) -> list[str]:
     if not isinstance(text, str) or not text.strip() or len(text) > 2000:
         raise ValueError('请输入参考文本（最多 2000 个字符）。')
     normalized = unicodedata.normalize('NFKC', text).replace('’', "'").lower()
-    # Deliberately reject numbers, abbreviations and unknown graphemes rather than erase them.
-    if re.search(r"[^a-z\s'.,!?;:\-\"()]", normalized):
-        raise ValueError('首版仅支持英语文字和常见标点；数字、缩写或特殊字符请写出完整读法。')
-    if re.search(r'(?<=[a-z])\.(?=[a-z])', normalized):
-        raise ValueError('请将缩写写成完整读法后生成音位。')
-    words = re.findall(r"[a-z]+(?:'[a-z]+)*", normalized)
+    words, current = [], []
+    for index, character in enumerate(normalized):
+        category = unicodedata.category(character)
+        apostrophe = (character == "'" and bool(current) and index + 1 < len(normalized)
+                      and unicodedata.category(normalized[index + 1])[0] in 'LM')
+        if category[0] in 'LMN' or apostrophe:
+            current.append(character)
+        elif character.isspace() or category[0] == 'P' and character not in '@#%&/\\_':
+            if current:
+                words.append(''.join(current))
+                current = []
+        else:
+            raise ValueError('参考文本包含不支持的符号：' + character)
+    if current:
+        words.append(''.join(current))
     if not words or len(words) > 200:
-        raise ValueError('参考文本需含英语单词，且不超过 200 个词。')
+        raise ValueError('参考文本需包含可读文本，且不超过 200 个输入单元。')
     return words
 
 
+def validate_graphemes(words, metadata):
+    graphemes = metadata.get('graphemes')
+    if not isinstance(graphemes, (list, set, tuple)) or not graphemes:
+        return
+    supported = set(''.join(unicodedata.normalize('NFKC', str(g)).lower() for g in graphemes))
+    missing = sorted(set(''.join(words)) - supported)
+    if missing:
+        raise ValueError('所选 G2P 模型不支持这些输入字素：' + ' '.join(missing) + '。请使用该模型要求的书写形式或更换模型。')
+
+
 def generate(snapshot: dict, transcript: str, cancel: threading.Event) -> dict:
-    from .mfa_resources import parse_dictionary, read_model_metadata, _phones
+    from .mfa_resources import parse_dictionary, dictionary_pronunciations, read_model_metadata, _phones
     preset = snapshot['preset']
-    if preset['language'] != 'en':
-        raise ValueError('首版 MFA G2P 自动生成仅支持英语；其他语言请使用手动 IPA。')
     if not preset.get('status', {}).get('can_generate'):
         raise ValueError('G2P 资源尚未就绪：' + '；'.join(preset.get('status', {}).get('issues', [])))
-    sequence = english_words(transcript)
+    sequence = transcript_words(transcript)
     unique = list(dict.fromkeys(sequence))
+    validate_graphemes(unique, read_model_metadata(snapshot['paths']['g2p']))
     capability = check_launcher(snapshot['launcher'], cancel)
     with tempfile.TemporaryDirectory(prefix='praat_g2p_') as directory:
         root = Path(directory)
@@ -142,22 +161,23 @@ def generate(snapshot: dict, transcript: str, cancel: threading.Event) -> dict:
         words_file.write_text('\n'.join(unique) + '\n', encoding='utf-8')
         model = snapshot['paths']['g2p']
         args = [str(words_file), model] if capability['help_order'] == 'input-first' else [model, str(words_file)]
-        command = launcher_command(snapshot['launcher']) + ['g2p', *args, str(result_file), '--num_pronunciations', '3']
+        command = launcher_command(snapshot['launcher']) + ['g2p', *args, str(result_file),
+            '--temporary_directory', str(root / 'mfa-work'), '--num_pronunciations', '3']
         run_command(command, cancel, 180, root)
         if not result_file.is_file():
             raise ValueError('MFA G2P 没有输出读音文件。')
         generated = parse_dictionary(result_file)
-        missing = [word for word in unique if not generated.get(word)]
+        missing = [word for word in unique if not generated.get(word.casefold())]
         if missing:
             raise ValueError('MFA G2P 未生成这些词的读音：' + '、'.join(missing))
         dictionary = snapshot['paths'].get('dictionary', '')
-        known = parse_dictionary(Path(dictionary)) if dictionary and Path(dictionary).is_file() else {}
+        known = dictionary_pronunciations(Path(dictionary), unique) if dictionary and Path(dictionary).is_file() else {}
         acoustic_path = snapshot['paths'].get('acoustic', '')
         acoustic_phones = _phones(read_model_metadata(acoustic_path)) if acoustic_path else None
         words = []
         for word in unique:
             candidates, seen = [], set()
-            for readings, source in ((generated[word], 'MFA G2P'), (known.get(word, []), '配套词典')):
+            for readings, source in ((generated[word.casefold()], 'MFA G2P'), (known.get(word.casefold(), []), '配套词典')):
                 for raw in readings:
                     key = tuple(raw)
                     if key in seen:

@@ -35,7 +35,9 @@ def wire_fingerprint(payload):
 async def observe_request(request):
     timing = current_request.get()
     if timing is not None:
-        timing['wire'] = wire_fingerprint(json.loads(request.content))
+        payload = json.loads(request.content)
+        timing['wire'] = wire_fingerprint(payload)
+        timing['requested_output_tokens'] = payload.get('max_completion_tokens', payload.get('max_tokens'))
 
 
 def observe_usage(raw):

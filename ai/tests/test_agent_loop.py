@@ -110,7 +110,7 @@ class SecondRoundTests(unittest.TestCase):
         execute = Recorder([(True, ["基频（0.500 秒处）= 220.000 Hz"], "")])
         outcome = run(client, execute)
 
-        self.assertEqual(outcome.reply, "0.5 秒处基频 220 Hz。")
+        self.assertEqual(outcome.reply, "## 分析结论\n\n0.5 秒处基频 220 Hz。")
         self.assertEqual(outcome.results, ["基频（0.500 秒处）= 220.000 Hz"])
         self.assertTrue(outcome.used_tools)
         # 第二轮请求里带着 tool 结果（role=tool + tool_call_id），模型才看得到数值。
@@ -438,7 +438,7 @@ class JsonPlannerTests(unittest.TestCase):
         execute = Recorder([(True, ["基频（0.500 秒处）= 220.000 Hz"], "")])
         outcome = run(client, execute, native=False)
 
-        self.assertEqual(outcome.reply, "0.5 秒处是 220 Hz。")
+        self.assertEqual(outcome.reply, "## 分析结论\n\n0.5 秒处是 220 Hz。")
         self.assertEqual(len(execute.scripts), 1)
         # 第二轮把「上一步执行结果」写进了历史。
         self.assertTrue(len(client.json_history) >= 2)
@@ -496,7 +496,7 @@ class TextToolCallTests(unittest.TestCase):
         outcome = run(client, execute)
 
         self.assertEqual(len(execute.scripts), 1)
-        self.assertEqual(outcome.reply, "0.5 秒处是 220 Hz。")
+        self.assertEqual(outcome.reply, "## 分析结论\n\n0.5 秒处是 220 Hz。")
         self.assertNotIn("<tool_call>", outcome.reply)
         # 回灌给模型的 assistant 消息里带上了这次调用（id 是补的），tool 结果才对得上。
         second = client.seen_messages[1]

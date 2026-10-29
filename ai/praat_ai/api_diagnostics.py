@@ -157,7 +157,7 @@ def audio_hint(base_url, model, enabled, result=None, diagnostic=None):
     lines.append(f'模型预设：{support}（{basis}）')
     status = (result or {}).get('status')
     if status == 'verified':
-        text = '基础音频验证通过；不代表精确测量或细微发音判断准确'
+        text = '基础音频验证通过'
     elif status == 'unsupported':
         text = '接口明确不支持音频输入'
     elif status == 'unverified':

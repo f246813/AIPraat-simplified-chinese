@@ -57,5 +57,13 @@ autoTextEditor TextEditor_create (
 
 void TextEditor_showOpen (TextEditor me);
 
+/*
+	Save the text, asking for a file name if this editor has none yet (same route as
+	File --> Save). Used when the program is asked to save everything and quit.
+	@return false if text is left unsaved, i.e. if the user cancelled the question for
+	a file name or the file could not be written; true if nothing unsaved is left.
+*/
+bool TextEditor_saveOrAskSaveAs (TextEditor me);
+
 /* End of file TextEditor.h */
 #endif

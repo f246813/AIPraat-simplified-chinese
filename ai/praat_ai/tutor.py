@@ -27,6 +27,7 @@ from .forced_alignment import AlignmentCancelled
 from .ui import show_tutor_form
 from .vram import detect_gpu, select_runtime_profile
 from .mfa_task import task_alignment, explanation_payload
+from .paths import installation_root
 
 
 @dataclass(slots=True)
@@ -35,6 +36,7 @@ class TutorOutputs:
     textgrid_path: Path
     overlay_path: Path | None
     result: AnalysisResult
+    request_payload: dict[str, Any] | None = None
 
 
 
@@ -59,16 +61,7 @@ def guard_explanation(
     request_payload: dict[str, Any] | None = None,
     caveat: bool = True,
 ) -> tuple[str, str]:
-    """AI 解释交付前走与云端报告同一份证据守卫，并附结论等级说明。
-
-    设计文档点名的缺口：解释直接调用文字接口交付，云端报告已有的数值核对在这里完全
-    不生效——本机与云端 provider 都一样。这里把解释当「模型对本次测量的主张」核对：
-
-    - 数值核对不上本次实测 → 遮蔽并标记（``rejected_masked``），不原样交付；
-    - ``check_statuses`` 说明对比不完整时 → 附上与 JSON 同一套状态的结论等级说明，
-      解释不能给出无条件结论；
-    - 状态原样返回给调用方写进交付物（``AnalysisResult.explanation_status``）。
-    """
+    """按本次测量核对可选模型解释，返回正文与 explanation_status。无法核对的数字遮蔽并标记，对比不完整时保留对应结论等级，视觉失败保留原因。"""
 
     context_text, reference_object, learner_object = _explanation_context(request_payload)
     state = explanation_evidence(
@@ -78,6 +71,17 @@ def guard_explanation(
         learner_object=learner_object,
     )
     guarded, status = report_guards.guard_delivered_text(state, str(text or ""))
+    provisional = any(measure.status == 'provisional' for phone in [*result.reference_phones, *result.learner_phones]
+                      if (measure := phone.measurements.get('vot')) is not None)
+    if provisional:
+        sentences = re.split(r'(?<=[。！？\n])', guarded)
+        for index, sentence in enumerate(sentences):
+            if (re.search(r'VOT|起浊|预浊|释放地标', sentence, re.I)
+                    and re.search(r'已确认|已验证|确认了|证实|证明|发音错误', sentence)
+                    and not re.search(r'未|不|无法|不能|尚|待', sentence)):
+                sentences[index] = 'VOT 地标仍为自动候选，不能据此确认地标归属或发音错误。'
+                status = 'rejected_masked'
+        guarded = ''.join(sentences)
     note = conclusion_caveat(result) if caveat else ""
     if note and note not in str(result.explanation or "") and note not in guarded:
         guarded = (guarded.strip() + "\n\n" + note).strip()
@@ -128,6 +132,7 @@ def request_from_dict(payload: dict[str, Any]) -> AnalysisRequest:
         selected_readings=payload.get('selected_readings', []),
         generation_source=str(payload.get('generation_source', '')),
         normalization=deepcopy(payload.get('normalization')),
+        sources=deepcopy(payload.get('sources') or {}),
     )
 
 
@@ -156,6 +161,7 @@ def _resolve_request(
     learner = bridge.resolve_sound(request.learner_object)
     request.reference_object = str(reference.file)
     request.learner_object = str(learner.file)
+    request.sources = dict(reference=reference.to_dict(), learner=learner.to_dict())
     payload["resolved_reference"] = reference.to_dict()
     payload["resolved_learner"] = learner.to_dict()
     return request, payload
@@ -207,6 +213,7 @@ def run_tutor(
         learner = bridge.resolve_sound(request.learner_object)
         request.reference_object = str(reference.file)
         request.learner_object = str(learner.file)
+        request.sources = dict(reference=reference.to_dict(), learner=learner.to_dict())
         request_payload = request.to_dict()
         request_payload["resolved_reference"] = reference.to_dict()
         request_payload["resolved_learner"] = learner.to_dict()
@@ -242,7 +249,7 @@ def run_tutor(
         output_dir.mkdir(parents=True, exist_ok=True)
         prefix = re.sub(r"[^\w.-]+", "_", request.output_prefix).strip("._") or "ai"
         reports_root = Path(
-            os.getenv("PRAAT_AI_REPORT_DIR") or Path.home() / "Praat AI Reports"
+            os.getenv("PRAAT_AI_REPORT_DIR") or installation_root() / "reports"
         ).expanduser().resolve()
         if reports_root.is_relative_to(output_dir):
             raise ValueError(
@@ -317,6 +324,7 @@ def run_tutor(
             textgrid_path=textgrid_path,
             overlay_path=overlay_path if rendered else None,
             result=result,
+            request_payload=request_payload,
         )
     finally:
         if server_started and profile.unload_after_sec == 0:
@@ -352,8 +360,6 @@ def run_from_praat(
         if request is None:
             return 0
     try:
-        # 阶段 3：分析这一段给一个「简约小窗 + 停止按钮」（沿用 progress_popup 的设计语言）。
-        # 取消不是失败：run_tutor 在测量完成前中止就不写报告，测量完成后取消只停掉 AI 解释。
         outputs, cancelled = run_with_stop(
             lambda cancel, report: run_tutor(
                 config_path=config_path,
@@ -372,9 +378,18 @@ def run_from_praat(
     except ValueError as error:
         print(f"无法开始 AI 纠音：{error}", file=sys.stderr)
         return 1
+    if interactive:
+        try:
+            from .tutor_report import queue_report
+            import start_ai_chat
+            queue_report(outputs)
+            if start_ai_chat.main() == 0:
+                return 0
+            print('报告已保存，AI 工作台未能打开。')
+        except Exception as error:
+            print(f'报告已保存，显示失败：{error}', file=sys.stderr)
     if outputs.result.profile_snapshot:
         print(f"音位声学对比完成，生成 {len(outputs.result.observations)} 项观察（实验性）。")
-        print("未执行独立音素识别；观察不代表发音对错。")
     else:
         print(f"旧式声学对比完成，发现 {len(outputs.result.errors)} 个偏差。")
     print(

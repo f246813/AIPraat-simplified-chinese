@@ -380,8 +380,6 @@ class EnsureStartedTests(unittest.TestCase):
     def test_start_command_enables_the_model_chat_template(self) -> None:
         """``--jinja`` 不能丢：对话前端要靠模型的工具调用模板回灌 role=tool 结果。
 
-        没有它时 llama.cpp 用内置模板，小模型在多轮里会跑偏（实测「阅读当前对象的
-        信息」被做成频谱图还连着多做几步，见 ai/docs/adr/ADR-004）。
         """
 
         manager = self.build_manager(profile_vision=False)

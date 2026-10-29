@@ -5,6 +5,7 @@ import os
 import io
 from pathlib import Path
 import tempfile
+import types
 import unittest
 from unittest.mock import patch
 
@@ -115,9 +116,17 @@ class DesktopLaunchTests(unittest.TestCase):
         old.assert_called_once_with([])
 
     def test_missing_python_dependencies_fail_before_spawn(self):
-        with patch.object(launch.importlib.util, 'find_spec', return_value=None):
+        with patch.dict(launch.sys.modules, {name: None for name in ('webview', 'clr', 'pydantic_ai', 'pydantic_graph')}), \
+                patch.object(launch.importlib.util, 'find_spec', return_value=None):
             with self.assertRaisesRegex(RuntimeError, 'webview, clr'):
                 launch.check_desktop_dependencies(self.root)
+
+    def test_loaded_pythonnet_without_spec_is_available_after_tutor_window(self):
+        (self.root/'index.html').write_text('frontend', encoding='utf8')
+        with patch.dict(launch.sys.modules, {'clr': types.ModuleType('clr')}), \
+                patch.object(launch.importlib.util, 'find_spec', return_value=object()) as lookup:
+            launch.check_desktop_dependencies(self.root)
+        self.assertNotIn(('clr',), [call.args for call in lookup.call_args_list])
 
     def test_missing_assets_fail_before_spawn(self):
         with patch.object(launch.importlib.util, 'find_spec', return_value=object()):

@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string] $OutputDirectory = 'D:\models',
+    [string] $OutputDirectory = (Join-Path $(if($env:PRAAT_AI_INSTALL_ROOT){$env:PRAAT_AI_INSTALL_ROOT}else{Split-Path -Parent $PSScriptRoot}) 'models/Qwen3.5'),
     [ValidateSet ('Q4_K_M', 'Q4_K_S', 'Q5_K_M', 'Q8_0')]
     [string] $Quantization = 'Q4_K_M'
 )

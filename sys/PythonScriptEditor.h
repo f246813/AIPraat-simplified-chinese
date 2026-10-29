@@ -8,6 +8,8 @@
 #include "TextEditor.h"
 
 Thing_define (PythonScriptEditor, TextEditor) {
+	void v9_destroy () noexcept
+		override;
 	void v_nameChanged ()
 		override;
 	bool v_scriptable ()
@@ -26,5 +28,9 @@ void PythonScriptEditor_init (PythonScriptEditor me,
 autoPythonScriptEditor PythonScriptEditor_createFromText (
 	conststring32 initialText
 );
+
+bool PythonScriptEditors_dirty ();   // are there any modified and unsaved Python scripts? Ask before quitting the program.
+
+extern CollectionOf <structPythonScriptEditor> theReferencesToAllOpenPythonScriptEditors;
 
 #endif

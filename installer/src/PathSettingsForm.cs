@@ -35,8 +35,8 @@ namespace AIPraat.Setup
             layout.RowStyles.Add(new RowStyle(SizeType.Absolute,88));layout.RowStyles.Add(new RowStyle(SizeType.Percent,100));layout.RowStyles.Add(new RowStyle(SizeType.Absolute,76));Controls.Add(layout);
             var header=new Panel{Dock=DockStyle.Fill,Margin=Padding.Empty};layout.Controls.Add(header,0,0);SetupTheme.Divider(header);
             header.Controls.Add(new Label{Text="路径配置",Location=new Point(24,16),Size=new Size(340,32),Font=new Font(Font.FontFamily,16.5f,FontStyle.Bold)});
-            header.Controls.Add(new Label{Text="设置程序位置，查看环境检测结果。",Location=new Point(24,52),Size=new Size(420,24),Font=SetupTheme.Small,ForeColor=SetupTheme.Muted});
-            dependencies=new DependencyPanel(false,AppDomain.CurrentDomain.BaseDirectory);layout.Controls.Add(dependencies,0,1);
+            header.Controls.Add(new Label{Text="设置程序位置，查看环境检测结果",Location=new Point(24,52),Size=new Size(420,24),Font=SetupTheme.Small,ForeColor=SetupTheme.Muted});
+            dependencies=new DependencyPanel(false,RuntimeDependencies.InstallRoot);layout.Controls.Add(dependencies,0,1);
             dependencies.Margin=Padding.Empty;var actions=dependencies.DiscoveryActions;actions.Location=new Point(612,24);actions.Anchor=AnchorStyles.Top|AnchorStyles.Right;header.Controls.Add(actions);
             dependencies.Fill(settings.PythonPath,settings.FfmpegPath,settings.LlamaServerPath,settings.ModelPath,settings.MmprojPath,settings.AlignmentPaths,settings.RuntimeDevice);
             dependencies.Changed+=(s,e)=>RefreshValidation();

@@ -658,6 +658,17 @@ void GuiDrawingArea_setMouseCallback (GuiDrawingArea me, GuiDrawingArea_MouseCal
 void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, GuiDrawingArea_ResizeCallback callback, Thing boss);
 void GuiDrawingArea_setZoomCallback (GuiDrawingArea me, GuiDrawingArea_ZoomCallback callback, Thing boss);
 
+#if motif
+	/*
+		Redraw the whole drawing area into a new 32-bit bitmap of the size of the drawing area, by
+		running the same expose callback that paints the screen. The screen context is put back
+		afterwards and the window itself is not touched, so the bitmap is complete and fully opaque
+		even when the window is composed semi-transparent. Returns null when nothing could be drawn;
+		the caller deletes the bitmap. `out_width` and `out_height` receive its size in pixels.
+	*/
+	HBITMAP GuiDrawingArea_renderToBitmap (GuiDrawingArea me, int *out_width, int *out_height);
+#endif
+
 /********** GuiFileSelect **********/
 
 autoStringSet GuiFileSelect_getInfileNames (GuiWindow optionalParent, conststring32 title, bool allowMultipleFiles);
@@ -764,6 +775,7 @@ void GuiList_setSelectionChangedCallback (GuiList me, GuiList_SelectionChangedCa
 void GuiList_setDoubleClickCallback (GuiList me, GuiList_DoubleClickCallback callback, Thing boss);
 void GuiList_setScrollCallback (GuiList me, GuiList_ScrollCallback callback, Thing boss);
 void GuiList_setContextMenuCallback (GuiList me, GuiList_ContextMenuCallback callback, Thing boss);
+void GuiList_enableRightDragSelection (GuiList me);
 
 /********** GuiMenu **********/
 
@@ -782,6 +794,12 @@ Thing_define (GuiMenu, GuiThing) {
 		GuiObject d_xmMenuTitle;   // in case the menu is in a menu bar
 		GuiObject d_xmMenuBar;   // in case the menu is in a form
 	#endif
+	/*
+		A menu-bar entry can open a panel of its own instead of a dropdown list; see
+		GuiMenu_createBarButtonInWindow. The callback takes the boss that was passed in there.
+	*/
+	void (* d_barButtonCallback) (void * /* boss */);
+	void *d_barButtonBoss;
 
 	void v_show ()
 		override;
@@ -794,6 +812,13 @@ Thing_define (GuiMenu, GuiThing) {
 GuiMenu GuiMenu_createInWindow (GuiWindow window, conststring32 title, uint32 flags);
 GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, conststring32 title, uint32 flags);
 GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bottom, conststring32 title, uint32 flags);
+
+/* A menu-bar entry that opens a panel of its own instead of a dropdown list. */
+typedef void (*GuiMenu_BarButtonCallback) (void * /* boss */);
+GuiMenu GuiMenu_createBarButtonInWindow (GuiWindow window, conststring32 title, uint32 flags,
+		GuiMenu_BarButtonCallback callback, void *boss);
+bool GuiMenu_getRectOnScreen (GuiMenu me, int *left, int *top, int *width, int *height);
+	/* Screen rectangle of the place this menu occupies in its window's menu bar; `false` if unknown. */
 
 void GuiMenu_empty (GuiMenu me);
 void GuiMenu_setTitle (GuiMenu me, conststring32 title /* cattable */);
@@ -1190,9 +1215,29 @@ Thing_define (GuiWindow, GuiShell) {
 
 /* GuiWindow creation flags: */
 #define GuiWindow_FULLSCREEN  1
+#define GuiWindow_TRANSLUCENT_SHELL  2
+	/*
+		The top-level shell is created with a window class that supports
+		whole-window translucency (see GuiWindow_setOpacity).
+		Inheritors have to decide this before the shell exists, because the class of an
+		existing window cannot be changed and translucency is not compatible with the
+		class style that lets a window keep its own device context.
+	*/
 GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidth, int minimumHeight,
 	conststring32 title /* cattable */, GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss, uint32 flags);
 	// returns a Form widget that has a new Shell parent.
+
+bool GuiWindow_setOpacity (GuiWindow me, integer percent);
+	/*
+		Purpose: make the whole window, with all its contents, translucent.
+		`percent` is the opacity: 100 is fully opaque, 20 is the most translucent value
+		that this project uses; the window remains interactive and keeps its position and size.
+		Return value: `true` if the window now has exactly this opacity, `false` if the window
+		was not created with GuiWindow_TRANSLUCENT_SHELL or if the system refused the request;
+		in that case the previous opacity is still in effect and GuiWindow_getOpacity tells you which.
+	*/
+integer GuiWindow_getOpacity (GuiWindow me);
+	/* The opacity (percent) that is actually in effect; 100 if this window cannot be made translucent. */
 
 void GuiWindow_addMenuBar (GuiWindow me);
 bool GuiWindow_setDirty (GuiWindow me, bool dirty);

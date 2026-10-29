@@ -1,8 +1,9 @@
-﻿param([string]$Python = '')
+﻿param([string]$Python = '',[string]$FFmpeg = '')
 $ErrorActionPreference='Stop'
 $projectRoot=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 . (Join-Path $PSScriptRoot 'TestEnvironment.ps1')
 $Python=Resolve-TestPython -ProjectDirectory $projectRoot -Python $Python
+$FFmpeg=Resolve-TestFFmpeg -ProjectDirectory $projectRoot -FFmpeg $FFmpeg
 $verification=Join-Path $projectRoot 'installer\verification'
 $output=Join-Path $projectRoot 'test-records\installer'
 New-Item -ItemType Directory -Path $output -Force | Out-Null
@@ -19,7 +20,7 @@ if($LASTEXITCODE -ne 0){throw 'Contract test compilation failed.'}
 $missingEnvironment=Join-Path $verification 'python_without_deps'
 & $Python -m venv --without-pip $missingEnvironment
 if($LASTEXITCODE -ne 0){throw 'Missing-dependency fixture creation failed.'}
-& $contracts $Python (Join-Path $missingEnvironment 'Scripts\python.exe') *> (Join-Path $output 'installer-contracts.log')
+& $contracts $Python (Join-Path $missingEnvironment 'Scripts\python.exe') $FFmpeg *> (Join-Path $output 'installer-contracts.log')
 $contractExit=$LASTEXITCODE
 $uiHost=Join-Path $verification 'UiHost.exe'
 $zip=Join-Path $projectRoot 'installer\build\payload.zip'

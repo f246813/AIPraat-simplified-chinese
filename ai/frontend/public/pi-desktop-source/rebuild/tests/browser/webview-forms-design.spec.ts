@@ -39,7 +39,7 @@ test('settings retain all categories, native switch interaction and square lock 
     await expect(text).toHaveCSS('box-shadow','none');
     await expect(page.locator('.settings-main')).toHaveCSS('background-color','rgba(255, 255, 255, 0.95)');
     await expect(page.locator('.main-surface')).toHaveCSS('background-color','rgba(0, 0, 0, 0)');
-    for (const category of ['模型','上下文与输出','采样与思考','工作流程','Praat 工具与音频','外观与交互','会话与存储','已归档会话']) {
+    for (const category of ['模型','上下文与输出','工作流程','Praat 工具与音频','外观与交互','会话与存储','已归档会话']) {
       await nav.getByRole('button',{name:category,exact:true}).click();
       if (category==='工作流程') await switchSize(page.getByRole('checkbox',{name:'L0 专用工具执行',exact:true}));
       await page.locator('.settings-main').evaluate(node => node.scrollTop=0);
@@ -95,14 +95,13 @@ test('resource navigation and MFA pairing share white cards and usable small mod
     await page.getByRole('button',{name:'配置 英语（美式） 配套资源'}).click();
     const dialog=page.getByRole('dialog',{name:'配置配套资源 · 英语（美式）'});
     await expect(dialog).toBeVisible();
-    const confirmation=dialog.getByRole('checkbox',{name:/我确认/});
-    await switchSize(confirmation); await confirmation.focus(); await page.keyboard.press('Space');
+    await expect(dialog.getByRole('checkbox',{name:/我确认/})).toHaveCount(0);
+    const defaultPreset=dialog.getByRole('checkbox',{name:/默认预设/});
+    await switchSize(defaultPreset); await defaultPreset.focus(); await page.keyboard.press('Space');
     await capture(page,`mfa-editor-${width}`);
     await dialog.getByRole('textbox',{name:'Conda 环境名'}).fill('draft-not-saved');
-    await dialog.getByRole('button',{name:'取消',exact:true}).click();
-    await expect(dialog.getByRole('button',{name:'丢弃并关闭'})).toBeVisible();
-    await capture(page,`mfa-discard-${width}`);
-    await dialog.getByRole('button',{name:'丢弃并关闭'}).click();
+    await dialog.getByRole('button',{name:'关闭资源配置'}).click();
+    await expect(dialog).toHaveCount(0);
   }
 });
 

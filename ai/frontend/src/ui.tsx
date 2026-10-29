@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
+export const hintText = (text: string) => text.replace(/[。.](?=\s*(?:\n|$))/g, '').replace(/。/g, '；');
 export function IconButton({label, children, ...props}: ButtonHTMLAttributes<HTMLButtonElement> & {label: string}) { return <button type="button" className="icon-button" title={label} aria-label={label} {...props}>{children}</button>; }
 export function Modal({title, children, onClose}: {title: string; children: ReactNode; onClose: () => void}) {
   const ref = useRef<HTMLDialogElement>(null);

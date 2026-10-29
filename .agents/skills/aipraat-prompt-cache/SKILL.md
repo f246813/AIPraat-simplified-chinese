@@ -3,7 +3,7 @@ name: aipraat-prompt-cache
 description: Audit AIPraat cloud prompt prefixes and cache usage when changing message history, skills, compaction, phase schemas or cloud runtime lifecycle.
 ---
 
-Use the current context and cache interface reference in ai/docs/adr/ADR-008-context-token-budget.md. This is a development skill; AIPraat never loads this directory at runtime.
+Use the current context and cache interface reference in docs/CURRENT-IMPLEMENTATION.zh-CN.md. This is a development skill; AIPraat never loads this directory at runtime.
 
 1. Inspect cloud_agent, session_context, cloud_metrics and the existing phase regressions before editing. Reuse Pydantic AI's public message_history, ModelMessagesTypeAdapter and RequestUsage extraction, and the existing CloudRuntime/SSE adapter. Keep Python and the pinned SDK.
 2. Check the **final HTTP payload**, after SDK/provider translation. Base system, output schema and ordered tool declarations must stay constant within a phase/configuration. Goals, material metadata, selected skill bodies and new evidence append at the tail. Task guidance uses labelled user parts; inserting a new system part can be merged into the leading system by the provider.

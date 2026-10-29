@@ -107,19 +107,3 @@
   .pron-main { padding:14px 12px; }
   .pron-intro { margin-bottom:10px; }
 }
-
-/* 运行环境（Praat / ffmpeg / wav2vec2）：必需项红点挡提交，可选项黄点只降级。 */
-.pron-env { margin-top:14px; border-top:1px solid var(--border); padding-top:12px; font-size:12px; }
-.pron-env-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
-.pron-env-head strong { font-size:12px; }
-.pron-env-head button { font-size:11px; padding:2px 8px; }
-.pron-env ul { list-style:none; margin:0; padding:0; display:grid; gap:6px; }
-.pron-env li { display:grid; grid-template-columns:auto auto minmax(0, 1fr); gap:6px; align-items:baseline; }
-.pron-env-dot { width:8px; height:8px; border-radius:50%; background:var(--muted); align-self:center; }
-.pron-env li.ok .pron-env-dot { background:#2e9e5b; }
-.pron-env li.warn .pron-env-dot { background:#c98a14; }
-.pron-env li.bad .pron-env-dot { background:#c94343; }
-.pron-env-detail { color:var(--muted); word-break:break-all; }
-.pron-env-hint { grid-column:1 / -1; color:var(--muted); }
-.pron-env-message { margin-top:6px; color:var(--muted); }
-.pron-env-blocked .pron-env-message { color:#c94343; }

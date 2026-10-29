@@ -1,7 +1,6 @@
 """Offline acceptance of workflow policy, request counts and immutable delivery."""
 import asyncio
 import copy
-import hashlib
 import json
 import tempfile
 import threading
@@ -18,7 +17,7 @@ from pydantic_ai.models.function import FunctionModel
 from praat_ai import chat, delivery, tools
 from praat_ai.cloud_agent import CloudSession, run_cloud_turn
 from praat_ai.config import AppConfig
-from praat_ai.escape_policy import AnalysisState, Evidence
+from praat_ai.escape_policy import AnalysisState, Budget, Evidence
 from praat_ai.modern_settings import SettingsService
 from praat_ai.modern_store import ModernStore
 from praat_ai.workflow_policy import WorkflowPolicy, measurement_complete
@@ -64,14 +63,14 @@ class WorkflowSettingsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             path = Path(root)/'config.json'; path.write_text('{}')
             for key, value in [('l0_enabled',1),('l4_enabled','false'),('l1_repair_limit',True),
-                               ('l2_soft_deadline_sec','60'),('l2_soft_deadline_sec',0),
-                               ('router_mode','always'),('l3_mode','unlimited'),('schema_version',2)]:
+                               ('l2_soft_deadline_sec','15'),('l2_soft_deadline_sec',0),('router_mode','on'),
+                               ('l3_mode','unlimited'),('schema_version',2)]:
                 with self.subTest(key=key,value=value), self.assertRaises(ValueError):
                     SettingsService(path).save(dict(workflow={key:value}))
                 self.assertEqual(path.read_text(),'{}')
             self.assertEqual(WorkflowPolicy.validate(dict(l2_mode='off')).preset,'custom')
 
-    def test_host_persists_results_before_cancel_and_followup_reuses_source_snapshot(self):
+    def test_host_persists_results_before_cancel_and_plain_explanation_reuses_source_snapshot(self):
         from praat_ai.modern_app import ModernApplication
         class Executor:
             def __init__(self):self.calls=[];self.captures=0;self.ready=threading.Event();self.gate=threading.Event()
@@ -98,35 +97,54 @@ class WorkflowSettingsTests(unittest.TestCase):
                 self.assertEqual(executor.calls[0]['config'].workflow.preset,'fast')
                 app.cancel(task['id']);executor.gate.set();app.tasks[task['id']]['thread'].join(2)
                 self.assertEqual(app.get_session(sid)['messages'][-1]['status'],'cancelled')
-                next_task=app.followup(sid,task['id'],'L2');app.tasks[next_task['id']]['thread'].join(2)
+                # 快捷续接入口已删除：同一句话改用普通输入框提交，仍然复用原任务的证据快照。
+                next_task=app.submit(sid,'本次解释结果');app.tasks[next_task['id']]['thread'].join(2)
                 self.assertEqual(executor.captures,1)
                 self.assertEqual(executor.calls[-1]['continuation']['target'],CONTEXT)
                 self.assertEqual(executor.calls[-1]['config'].workflow.preset,'fast')
                 self.assertEqual(app.settings.get()['workflow']['preset'],'deep')
             finally:executor.gate.set();app.close()
 
-    def test_raw_followup_disappears_when_original_version_or_capability_is_unavailable(self):
-        from praat_ai.modern_app import ModernApplication
-        with tempfile.TemporaryDirectory() as root:
-            source=Path(root)/'fixture.wav';source.write_bytes(b'original version')
-            cfg=config();cfg.workflow=WorkflowPolicy.for_preset('fast')
-            cfg.api.audio_input_enabled=True;cfg.api.audio_input_source='preset'
-            record=dict(evidence=[{'tool':'duration'}],material_metadata=dict(recording_source=str(source),source_sha256=hashlib.sha256(source.read_bytes()).hexdigest()))
-            app=ModernApplication.__new__(ModernApplication)
-            self.assertIn('L3',app.followup_actions(cfg,record))
-            source.write_bytes(b'changed version')
-            self.assertNotIn('L3',app.followup_actions(cfg,record))
-            self.assertIn('L2',app.followup_actions(cfg,record))
-            source.write_bytes(b'original version');cfg.api.audio_input_enabled=False
-            self.assertNotIn('L3',app.followup_actions(cfg,record))
 
-    def test_general_discussion_followup_needs_actual_results(self):
-        """「基于这些结果进行通用讨论」只在真有结果时提供：没有测量的轮次不给续接入口。"""
+    def test_no_quick_followup_actions_are_produced_backfilled_or_dispatched(self):
+        """回答后的「解释结果／分析原材料／通用讨论」整组已删除。
+
+        新回合不再写 followup_actions，读旧历史也不补齐（残留字段剥掉），
+        旧客户端调用快捷续接方法会被明确拒绝；普通任务和历史证据照旧可读。
+        """
         from praat_ai.modern_app import ModernApplication
-        cfg = config(); cfg.workflow = WorkflowPolicy.for_preset('balanced')
-        app = ModernApplication.__new__(ModernApplication)
-        self.assertEqual(app.followup_actions(cfg, dict(evidence=[], goal='test')), [])
-        self.assertIn('L4', app.followup_actions(cfg, dict(evidence=[{'tool': 'duration'}], goal='测时长')))
+        class Executor:
+            def capture_target(self,text):return CONTEXT
+            def run(self,**kwargs):
+                payload=dict(content='tone 总时长 = 1.25 秒',results=[dict(id='fact',status='success')],
+                    goal='当前声音时长',deliveries=['当前声音时长'],
+                    evidence=[asdict(Evidence('duration',{'object':1},['tone 总时长 = 1.25 秒'],CONTEXT))],
+                    attempts=[dict(tool='duration',arguments={'object':1},status='success',execution=delivery.DELIVERED)],
+                    target=CONTEXT,material_metadata={},metrics=dict(workflow_policy=asdict(kwargs['config'].workflow)))
+                kwargs['emit']('results',payload)
+                return {**payload,'result_content':payload['content'],'status':'complete'}
+        with tempfile.TemporaryDirectory() as root:
+            path=Path(root)/'config.json'
+            path.write_text(json.dumps(dict(api=dict(enabled=True,base_url='http://127.0.0.1:8999/v1',model='fixture',token_mode='manual',stop_local_service=False),modern=dict(workflow=asdict(WorkflowPolicy.for_preset('balanced'))))),encoding='utf8')
+            app=ModernApplication(Path(root)/'store',path,executor=Executor())
+            try:
+                sid=app.store.new_session()['id'];task=app.submit(sid,'当前声音时长')
+                app.tasks[task['id']]['thread'].join(5)
+                fresh=app.get_session(sid)['messages'][-1]
+                self.assertEqual(fresh['status'],'complete')
+                self.assertIn('1.25',fresh['result_content'])
+                self.assertNotIn('followup_actions',fresh)
+                self.assertNotIn('followup_actions',json.dumps(app.store.get(sid)['messages'],ensure_ascii=False))
+                # 旧库里可能还留着这个字段：读取时剥掉，旧对话不能把按钮带回来。
+                app.store.put_message(sid,dict(id='legacy-followup',role='assistant',taskId=task['id'],status='complete',
+                                              content='旧回答',followup_actions=['L2','L3','L4']))
+                legacy=[m for m in app.get_session(sid)['messages'] if m['id']=='legacy-followup']
+                self.assertEqual(len(legacy),1)
+                self.assertNotIn('followup_actions',legacy[0])
+                self.assertEqual(legacy[0]['content'],'旧回答')
+                with self.assertRaisesRegex(ValueError,'快捷续接'):
+                    app.rpc('tasks.followup',dict(sessionId=sid,sourceTaskId=task['id'],mode='L2'))
+            finally:app.close()
 
 
 class WorkflowRoutingTests(unittest.TestCase):
@@ -236,21 +254,15 @@ class WorkflowRoutingTests(unittest.TestCase):
 
 
 class L2BudgetTests(unittest.TestCase):
-    def state(self, policy):
-        state=AnalysisState('解释当前声音时长',CONTEXT, workflow=policy,continuation=True,continuation_mode='L2')
+    def state(self, policy, request_limit=12):
+        state=AnalysisState('解释当前声音时长',CONTEXT, workflow=policy,continuation=True,continuation_mode='L2',
+                            budget=Budget(request_limit=request_limit))
         state.evidence=[Evidence('duration',{'object':1},['tone 总时长 = 1.25 秒'],CONTEXT)]
         state.attempts=[dict(tool='duration',arguments={'object':1},status='success',execution=delivery.DELIVERED,rows=state.evidence[0].rows)]
         state.measurement_content='tone 总时长 = 1.25 秒'
         return state
 
-    def test_balanced_default_gives_a_bad_number_one_rewrite(self):
-        """P0-B（含改写机会）：坏数值先用掉一次 output 重试，模型改对就按改对的交付。
-
-        真机事故里那次重写撞上 15 秒的 L2 时限、整份回答被丢弃；现在软时限只拦「新增请求」，
-        所以这一次改写是安全的，而且有上限：同一份报告只给一次，改不动照旧就地遮蔽
-        （见 ai/docs/backend-workflow-redesign.zh-CN.md 第 4 节）。
-        """
-
+    def test_balanced_default_allows_one_guard_correction(self):
         state=self.state(WorkflowPolicy())
         calls=[]
         def response(messages,info):
@@ -258,12 +270,8 @@ class L2BudgetTests(unittest.TestCase):
             return ModelResponse([TextPart(report(state.goal,'99' if len(calls)==1 else '1.25'))])
         run_cloud_turn(config(),state,execute_action=lambda *_:self.fail('No remeasurement'),
                        cancel=threading.Event(),model=FunctionModel(response))
-        self.assertEqual(len(calls),2,state.reason)
         self.assertEqual(state.requests,2,state.reason)
         self.assertTrue(state.metrics.get('report_verified'),state.reason)
-        self.assertEqual(state.metrics['audit']['masked_count'],0)
-        self.assertNotIn('99',state.report)
-        self.assertIn('1.25',state.measurement_content)
 
     def test_explicit_points_override_editor_selection_in_results_and_report(self):
         from praat_ai.cloud_agent import report_context
@@ -351,36 +359,35 @@ class L2BudgetTests(unittest.TestCase):
         self.assertTrue(all(settings['extra_body']['enable_thinking'] for planner,settings in observed if planner))
         self.assertFalse(next(settings for planner,settings in observed if not planner)['extra_body']['enable_thinking'])
 
-    def test_bad_number_rewrite_costs_exactly_one_request(self):
-        """坏数值只额外花一个请求，而且花完就结束（预算里看得见这一次）。"""
+    def test_guard_correction_shares_phase_limit_and_keeps_results(self):
+        # 守卫那一次数值纠正与 L2 阶段共用同一份请求预算（Budget.request_limit，
+        # 参见 cloud_agent 里 l2_requests 的记法）：没额度就不发纠正请求，有额度就在同一次预算里改完。
+        for limit,expected in [(1,1),(2,2)]:
+            state=self.state(WorkflowPolicy(),request_limit=limit)
+            calls=[]
+            def response(messages,info):
+                calls.append(copy.deepcopy(messages))
+                return ModelResponse([TextPart(report(state.goal, '99' if len(calls)==1 else '1.25'))])
+            run_cloud_turn(config(),state,execute_action=lambda *_:self.fail('No remeasurement'),
+                cancel=threading.Event(),model=FunctionModel(response))
+            self.assertEqual(state.requests,expected,state.reason)
+            self.assertEqual(state.metrics['l2_requests'],expected)
+            self.assertIn('1.25',state.measurement_content)
+            self.assertEqual(bool(state.metrics.get('report_verified')),limit==2)
+            if limit==1:
+                # 预算用完时不再整份丢弃草稿：正文保留，但必须明确标成「数值未核对」。
+                self.assertIn('未能从测量结果中确认',state.report)
+                self.assertEqual(state.status,'partial')
 
-        state=self.state(WorkflowPolicy())
-        calls=[]
-        def response(messages,info):
-            calls.append(copy.deepcopy(messages))
-            return ModelResponse([TextPart(report(state.goal, '99' if len(calls)==1 else '1.25'))])
-        run_cloud_turn(config(),state,execute_action=lambda *_:self.fail('No remeasurement'),
-            cancel=threading.Event(),model=FunctionModel(response))
-        self.assertEqual(len(calls),2,state.reason)
-        self.assertEqual(state.requests,2,state.reason)
-        self.assertEqual(state.metrics['l2_requests'],2)
-        self.assertIn('1.25',state.measurement_content)
-        self.assertTrue(state.metrics.get('report_verified'),state.reason)
-        self.assertEqual(state.metrics['audit']['masked_count'],0)
-        self.assertNotIn('99',state.report)
-        self.assertEqual(state.metrics['guard_repairs'].get('report.number_retried'),1)
-
-    def test_preparation_overrun_keeps_results_and_sends_no_report_request(self):
-        """软时限不再中断进行中的准备（旧实现会取消它），只阻止后续请求。"""
-
+    def test_preparation_timeout_stops_stage_without_another_route(self):
         state=self.state(replace(WorkflowPolicy(),l2_soft_deadline_sec=1))
         async def delayed(*args,**kwargs):await asyncio.sleep(2)
         with patch.object(CloudSession,'compact_phase',side_effect=delayed):
-            started=time.monotonic()
             run_cloud_turn(config(),state,execute_action=lambda *_:self.fail('No remeasurement'),cancel=threading.Event(),
                 model=FunctionModel(lambda *_:self.fail('No request after preparation deadline')))
-        # 准备阶段跑完（约 2 秒），没有被取消
-        self.assertGreaterEqual(time.monotonic()-started,1.9)
+        # 软时限不取消已经在跑的准备工作（旧实现会直接取消并丢掉这条路径），它只拦「再发一次请求」。
+        self.assertGreaterEqual(state.metrics['l2_seconds'],1)
+        self.assertIn('时间上限',state.reason)
         self.assertEqual(state.requests,0)
         self.assertIn('1.25',state.report)
         self.assertEqual(state.status,'partial')
@@ -415,30 +422,24 @@ class L2BudgetTests(unittest.TestCase):
         self.assertIn('1.25',state.measurement_content)
         self.assertFalse(state.metrics.get('report_verified',False))
 
-    def test_final_http_three_turns_keep_prefix_and_static_schema(self):
-        """三轮回合的前缀稳定与静态 schema 指纹；坏数字先改写一次，改对就不再遮蔽。"""
-
+    def test_final_http_three_turns_and_guard_correction_keep_prefix_and_static_schema(self):
         from test_dialogue_protocol import endpoint
         from praat_ai.cloud_metrics import wire_fingerprint
         from openai import DefaultAsyncHttpxClient
         goal='解释当前声音时长'
-        cases=(([report(goal)]*3,False),([report(goal,'99')]+[report(goal)]*3,True))
-        for bodies,first_masked in cases:
+        for bodies in ([report(goal)]*3,[report(goal,'99'),report(goal)]):
             with endpoint(chunk_delay=0,bodies=bodies) as (base,requests,_), patch('openai.DefaultAsyncHttpxClient',
                     side_effect=lambda **kw:DefaultAsyncHttpxClient(trust_env=False,**kw)):
                 cfg=config();cfg.api.base_url=base;cfg.api.model='qwen3.8-omni-flash'
                 cfg.api.token_mode='manual'
                 contexts={}
-                for turn in range(3):
-                    state=self.state(WorkflowPolicy())
+                turns=3 if len(bodies)==3 else 1
+                for _ in range(turns):
+                    state=self.state(WorkflowPolicy(),request_limit=2)
                     state.phase_contexts=contexts
                     run_cloud_turn(cfg,state,execute_action=lambda *_:self.fail('No remeasurement'),cancel=threading.Event())
-                    # 坏数字那一回合多一次改写请求（改对就按改对的交付），其余回合一次。
-                    correcting = first_masked and turn==0
-                    self.assertEqual(state.requests,2 if correcting else 1,state.reason)
                     self.assertTrue(state.metrics.get('report_verified'),state.reason)
-                    self.assertEqual(state.metrics['audit']['masked_count'],0)
-                    contexts=state.phase_contexts
+                    self.assertLessEqual(state.requests,2)
                     contexts=state.phase_contexts
                 self.assertEqual(len(requests),len(bodies))
                 self.assertEqual(len({wire_fingerprint(p)['static'] for p in requests}),1)

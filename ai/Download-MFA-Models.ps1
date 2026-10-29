@@ -1,11 +1,12 @@
 [CmdletBinding()]
 param(
-    [string] $MiniforgeRoot = "$HOME\miniforge3",
+    [string] $MiniforgeRoot = (Join-Path $(if($env:PRAAT_AI_INSTALL_ROOT){$env:PRAAT_AI_INSTALL_ROOT}else{Split-Path -Parent $PSScriptRoot}) 'tools/miniforge3'),
     [string] $EnvironmentName = 'aligner',
     [string[]] $Models = @('english_us_arpa', 'mandarin_mfa')
 )
 
 $ErrorActionPreference = 'Stop'
+if(-not $env:MFA_ROOT_DIR){$env:MFA_ROOT_DIR=Join-Path $(if($env:PRAAT_AI_INSTALL_ROOT){$env:PRAAT_AI_INSTALL_ROOT}else{Split-Path -Parent $PSScriptRoot}) 'models/mfa'}
 $conda = Join-Path $MiniforgeRoot 'condabin\conda.bat'
 if (-not (Test-Path -LiteralPath $conda -PathType Leaf)) {
     throw "Miniforge conda not found: $conda"

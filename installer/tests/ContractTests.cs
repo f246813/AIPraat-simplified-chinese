@@ -12,6 +12,7 @@ using AIPraat.Setup;
 public static class ContractTests
 {
     static string readyPython;
+    static string readyFfmpeg;
     static int passed, failed;
     static void Assert(bool ok, string detail) { if (!ok) throw new Exception(detail); }
     static void Case(string name, Action test)
@@ -24,7 +25,7 @@ public static class ContractTests
         return new InstallRequest { InstallDirectory = Path.Combine(root, "AIPraat 中文 目录"),
             ProfileDirectory = Path.Combine(root, "profile"), ProgramsDirectory = Path.Combine(root, "programs"),
             DesktopDirectory = Path.Combine(root, "desktop"), CreateDesktopShortcut = false,
-            ConfigurePrerequisites=true, PythonPath=readyPython, RuntimeDevice="cpu" };
+            ConfigurePrerequisites=true, PythonPath=readyPython, FfmpegPath=readyFfmpeg, RuntimeDevice="cpu" };
     }
     static MemoryStream Payload(Dictionary<string,string> files)
     {
@@ -46,6 +47,7 @@ public static class ContractTests
     public static int Main(string[] args)
     {
         readyPython=args[0];
+        readyFfmpeg=args.Length>2?args[2]:FfmpegDependencies.Resolve("");
         string root = Path.Combine(Path.GetTempPath(), "AIPraat-contract-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
         Case("default_exact_C_drive_folder", () => Assert(PathValidation.DefaultDirectory == @"C:\AIPraat", "wrong default"));

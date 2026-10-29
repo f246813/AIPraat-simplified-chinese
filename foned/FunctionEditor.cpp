@@ -23,7 +23,9 @@
 #include "FunctionArea.h"
 #include <algorithm>
 #include <exception>
+#include <string>
 #include <unordered_map>
+#include <vector>
 #include "PraatAiControl.h"
 
 Thing_implement_pureVirtual (FunctionEditor, Editor, 0);
@@ -54,6 +56,135 @@ namespace {
 	const MelderColour modernMarkerCyan = MelderColour (0.01, 0.52, 0.78); // #0284C7 Clean Sky Cyan
 	const MelderColour modernGridCyan   = MelderColour (0.75, 0.83, 0.90); // #CBD5E1 Light subtle grid
 #if motif
+	void copyPronunciationScreenshot (FunctionEditor me, bool includePrompt = false);
+
+	struct CopiedToastImage {
+		int width, height;
+		std::vector<uint32_t> pixels;   // Premultiplied BGRA for UpdateLayeredWindow.
+	};
+
+	CopiedToastImage renderCopiedToast (UINT dpi) {
+		_GuiWin_ensureGdiplus ();
+		const float scale = dpi / 96.0f;
+		// Leave one transparent physical pixel outside every edge so antialiasing is never clipped.
+		CopiedToastImage image { MulDiv (120, dpi, 96) + 2, MulDiv (44, dpi, 96) + 2, {} };
+		image.pixels.resize ((size_t) image.width * image.height, 0);
+		auto backgroundPixel = [] (unsigned alpha) -> uint32_t {
+			return (alpha << 24) | ((35 * alpha + 127) / 255 << 16) |
+				((42 * alpha + 127) / 255 << 8) | ((52 * alpha + 127) / 255);
+		};
+		for (int y = 1; y < image.height - 1; y ++)
+			std::fill_n (image.pixels.data() + y * image.width + 1, image.width - 2, backgroundPixel (226));
+		// Integrate subpixel coverage once, then mirror it to give all four corners identical edges.
+		const float radius = 12.0f * scale;
+		constexpr int samples = 16;
+		for (int y = 1; y <= (int) std::ceil (radius); y ++) {
+			for (int x = 1; x <= (int) std::ceil (radius); x ++) {
+				unsigned covered = 0;
+				for (int sy = 0; sy < samples; sy ++) {
+					for (int sx = 0; sx < samples; sx ++) {
+						const float dx = std::max (0.0f, radius - (x - 1 + (sx + 0.5f) / samples));
+						const float dy = std::max (0.0f, radius - (y - 1 + (sy + 0.5f) / samples));
+						covered += dx * dx + dy * dy <= radius * radius;
+					}
+				}
+				const uint32_t pixel = backgroundPixel ((226 * covered + samples * samples / 2) / (samples * samples));
+				for (int row : { y, image.height - 1 - y })
+					for (int column : { x, image.width - 1 - x })
+						image.pixels [(size_t) row * image.width + column] = pixel;
+			}
+		}
+		Gdiplus::Bitmap bitmap (image.width, image.height, image.width * 4,
+			PixelFormat32bppPARGB, (BYTE *) image.pixels.data());
+		Gdiplus::Graphics graphics (& bitmap);
+		graphics.SetSmoothingMode (Gdiplus::SmoothingModeAntiAlias);
+		graphics.SetPixelOffsetMode (Gdiplus::PixelOffsetModeHalf);
+		graphics.SetTextRenderingHint (Gdiplus::TextRenderingHintAntiAliasGridFit);
+		const float right = (float) image.width - 1, bottom = (float) image.height - 1;
+		Gdiplus::Font font (L"Segoe UI", 16.0f * scale, Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
+		Gdiplus::SolidBrush text (Gdiplus::Color (226, 255, 255, 255));
+		Gdiplus::StringFormat format;
+		format.SetAlignment (Gdiplus::StringAlignmentCenter);
+		format.SetLineAlignment (Gdiplus::StringAlignmentCenter);
+		graphics.DrawString (L"已复制", -1, & font,
+			Gdiplus::RectF (1.0f, 1.0f, right - 1.0f, bottom - 1.0f), & format, & text);
+		graphics.Flush (Gdiplus::FlushIntentionSync);
+		return image;
+	}
+
+	LRESULT CALLBACK copiedToastWindowProc (HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
+		if (message == WM_PAINT) {
+			ValidateRect (window, nullptr);   // The layered window retains its ARGB surface.
+			return 0;
+		}
+		if (message == WM_TIMER) {
+			DestroyWindow (window);
+			return 0;
+		}
+		if (message == WM_NCHITTEST)
+			return HTTRANSPARENT;
+		return DefWindowProcW (window, message, wParam, lParam);
+	}
+
+	HWND showCopiedToast (HWND drawingWindow) {
+		static const ATOM windowClass = [] {
+			WNDCLASSW definition {};
+			definition.lpfnWndProc = copiedToastWindowProc;
+			definition.hInstance = GetModuleHandleW (nullptr);
+			definition.lpszClassName = L"PraatPronunciationCopiedToast";
+			return RegisterClassW (& definition);
+		} ();
+		if (! windowClass)
+			return nullptr;
+		const UINT windowDpi = GetDpiForWindow (drawingWindow);
+		const UINT dpi = windowDpi ? windowDpi : 96;
+		const CopiedToastImage image = renderCopiedToast (dpi);
+		RECT bounds;
+		GetWindowRect (drawingWindow, & bounds);
+		POINT position { (bounds.left + bounds.right - image.width) / 2,
+			bounds.bottom - image.height - MulDiv (24, dpi, 96) };
+		HWND toast = CreateWindowExW (
+			WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT,
+			MAKEINTATOM (windowClass), L"已复制", WS_POPUP,
+			position.x, position.y, image.width, image.height,
+			GetAncestor (drawingWindow, GA_ROOT), nullptr, GetModuleHandleW (nullptr), nullptr);
+		if (! toast)
+			return nullptr;
+		HDC screen = GetDC (nullptr), surface = CreateCompatibleDC (screen);
+		BITMAPINFO info {};
+		info.bmiHeader.biSize = sizeof (BITMAPINFOHEADER);
+		info.bmiHeader.biWidth = image.width;
+		info.bmiHeader.biHeight = -image.height;
+		info.bmiHeader.biPlanes = 1;
+		info.bmiHeader.biBitCount = 32;
+		void *pixels = nullptr;
+		HBITMAP bitmap = CreateDIBSection (screen, & info, DIB_RGB_COLORS, & pixels, nullptr, 0);
+		bool rendered = false;
+		if (surface && bitmap) {
+			HGDIOBJ previous = SelectObject (surface, bitmap);
+			memcpy (pixels, image.pixels.data(), image.pixels.size() * sizeof (uint32_t));
+			POINT origin {};
+			SIZE size { image.width, image.height };
+			BLENDFUNCTION blend { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+			rendered = UpdateLayeredWindow (toast, screen, & position, & size, surface, & origin, 0, & blend, ULW_ALPHA);
+			SelectObject (surface, previous);
+		}
+		if (bitmap) DeleteObject (bitmap);
+		if (surface) DeleteDC (surface);
+		ReleaseDC (nullptr, screen);
+		if (! rendered) {
+			DestroyWindow (toast);
+			return nullptr;
+		}
+		ShowWindow (toast, SW_SHOWNOACTIVATE);
+		UpdateWindow (toast);
+		if (! SetTimer (toast, 1, 400, nullptr)) {
+			DestroyWindow (toast);
+			return nullptr;
+		}
+		return toast;
+	}
+
 	void updateAiToolbarStatus (FunctionEditor me) {
 		PraatAiControl_refreshStatus();
 		autoMelderString modelLine, statusLine;
@@ -108,6 +239,88 @@ namespace {
 				praat_translate (U"AI 前端操作失败"), U"（", actionName, U"）：未知的内部错误。"
 			);
 		}
+	}
+
+	struct PendingScreenshot {
+		FunctionEditor editor;
+		bool includePrompt;
+	};
+	std::unordered_map<UINT_PTR, PendingScreenshot> pendingScreenshotEditors;
+
+	void cancelPendingScreenshot (FunctionEditor me) {
+		for (auto pending = pendingScreenshotEditors.begin(); pending != pendingScreenshotEditors.end();) {
+			if (pending -> second.editor == me) {
+				KillTimer (nullptr, pending -> first);
+				pending = pendingScreenshotEditors.erase (pending);
+			} else {
+				++ pending;
+			}
+		}
+	}
+
+	void CALLBACK aiScreenshotTimerCallback (HWND, UINT, UINT_PTR timer, DWORD) {
+		KillTimer (nullptr, timer);
+		const auto pending = pendingScreenshotEditors.find (timer);
+		if (pending == pendingScreenshotEditors.end())
+			return;
+		FunctionEditor me = pending -> second.editor;
+		const bool includePrompt = pending -> second.includePrompt;
+		pendingScreenshotEditors.erase (pending);
+		runAiMenuAction (U"复制发音截图", [me, includePrompt] {
+			copyPronunciationScreenshot (me, includePrompt);
+			showCopiedToast (((GraphicsScreen) me -> graphics.get()) -> d_winWindow);
+		});
+	}
+
+	void queuePronunciationScreenshot (FunctionEditor me, bool includePrompt) {
+		runAiMenuAction (U"复制发音截图", [me, includePrompt] {
+			cancelPendingScreenshot (me);
+			// Return to the menu loop before capturing, allowing menu and previous toast to disappear.
+			const UINT_PTR timer = SetTimer (nullptr, 0, 500, aiScreenshotTimerCallback);
+			if (! timer)
+				Melder_throw (U"无法启动延迟截图，请重试。");
+			pendingScreenshotEditors [timer] = { me, includePrompt };
+		});
+	}
+
+	static void aiCopyPronunciationCallback (Thing boss, GuiMenuItemEvent /* event */) {
+		queuePronunciationScreenshot (reinterpret_cast <FunctionEditor> (boss), false);
+	}
+
+	static void aiCopyScreenshotAndQuestionCallback (Thing boss, GuiMenuItemEvent /* event */) {
+		queuePronunciationScreenshot (reinterpret_cast <FunctionEditor> (boss), true);
+	}
+
+	static void aiCopyQuestionCallback (Thing boss, GuiMenuItemEvent /* event */) {
+		FunctionEditor me = reinterpret_cast <FunctionEditor> (boss);
+		runAiMenuAction (U"复制提问文字", [me] {
+			cancelPendingScreenshot (me);
+			autoMelderString prompt;
+			conststring32 name = me -> data() && me -> data() -> name ? me -> data() -> name.get() : U"未命名";
+			MelderString_copy (& prompt, U"这是发音", name, U"，帮我看看是否标准");
+			autostring8 text = Melder_32to8 (prompt.string);
+			const int length = MultiByteToWideChar (CP_UTF8, 0, text.get(), -1, nullptr, 0);
+			HGLOBAL memory = GlobalAlloc (GMEM_MOVEABLE, length * sizeof (wchar_t));
+			wchar_t *buffer = memory ? (wchar_t *) GlobalLock (memory) : nullptr;
+			if (! buffer) {
+				if (memory) GlobalFree (memory);
+				Melder_throw (U"无法分配剪贴板内存。");
+			}
+			MultiByteToWideChar (CP_UTF8, 0, text.get(), -1, buffer, length);
+			GlobalUnlock (memory);
+			const HWND window = ((GraphicsScreen) me -> graphics.get()) -> d_winWindow;
+			if (! OpenClipboard (window)) {
+				GlobalFree (memory);
+				Melder_throw (U"剪贴板正被其他程序占用，请重试。");
+			}
+			const bool copied = EmptyClipboard() && SetClipboardData (CF_UNICODETEXT, memory);
+			CloseClipboard ();
+			if (! copied) {
+				GlobalFree (memory);
+				Melder_throw (U"复制提问文字失败，请重试。");
+			}
+			showCopiedToast (window);
+		});
 	}
 
 	static void aiAlignmentAutoCallback (Thing boss, GuiMenuItemEvent /* event */) {
@@ -236,6 +449,12 @@ namespace {
 		GuiMenu_addItem (
 			me -> aiFrontendMenu, U"Run AI tutor", 0, aiRunCallback, me
 		);
+		GuiMenu_addSeparator (me -> aiFrontendMenu);
+		GuiMenu_addItem (
+			me -> aiFrontendMenu, U"复制发音截图", 0, aiCopyPronunciationCallback, me
+		);
+		GuiMenu_addItem (me -> aiFrontendMenu, U"复制提问文字", 0, aiCopyQuestionCallback, me);
+		GuiMenu_addItem (me -> aiFrontendMenu, U"复制截图和提问（图文）", 0, aiCopyScreenshotAndQuestionCallback, me);
 		updateAiToolbarStatus (me);
 		// A Windows timer also runs in menu loops; Xt intervals here were seconds, not ms.
 		me -> aiStatusTimer = SetTimer (nullptr, 0, 2000, aiStatusTimerCallback);
@@ -244,6 +463,7 @@ namespace {
 	}
 
 	void destroyAiToolbar (FunctionEditor me) {
+		cancelPendingScreenshot (me);
 		if (me -> aiStatusTimer) {
 			KillTimer (nullptr, me -> aiStatusTimer);
 			aiStatusEditors.erase (me -> aiStatusTimer);
@@ -255,6 +475,122 @@ namespace {
 	void createAiMenus (FunctionEditor /* me */) { }
 	void destroyAiToolbar (FunctionEditor /* me */) { }
 	#endif
+}
+
+void FunctionEditor_appearanceSetPalette (FunctionEditor me, kEditorAppearancePalette palette) {
+	if (my appearancePalette == palette)
+		return;
+	my appearancePalette = palette;
+	/*
+		Only the colours change, so this is a drawing update: the spectrogram, pitch, formant and pulse
+		caches of the analysis areas stay valid and nothing is recomputed.
+	*/
+	FunctionEditor_redraw (me);
+}
+
+void FunctionEditor_appearanceExitOverride (FunctionEditor me) {
+	if (! EditorAppearancePalette_isOverride (my appearancePalette))
+		return;
+	my appearancePalette = kEditorAppearancePalette::ORIGINAL;
+	if (my appearancePanel) {
+		const EditorAppearancePanel_state state { my appearancePalette, my appearanceOpacityPercent };
+		EditorAppearancePanel_setState (my appearancePanel, & state);
+	}
+}
+
+void FunctionEditor_appearanceSetOpacity (FunctionEditor me, integer percent, bool commit) {
+	Melder_clip <integer> (20, & percent, 100);
+	const integer previously = GuiWindow_getOpacity (my windowForm);
+	if (GuiWindow_setOpacity (my windowForm, percent)) {
+		my appearanceOpacityPercent = GuiWindow_getOpacity (my windowForm);
+		return;
+	}
+	/*
+		The system refused the request, so the window keeps the value it had. That value is what the
+		panel shows; a percentage that is not in effect is never displayed.
+	*/
+	GuiWindow_setOpacity (my windowForm, previously);
+	my appearanceOpacityPercent = GuiWindow_getOpacity (my windowForm);
+	if (my appearancePanel) {
+		const EditorAppearancePanel_state state { my appearancePalette, my appearanceOpacityPercent };
+		EditorAppearancePanel_setState (my appearancePanel, & state);
+	}
+	if (commit)
+		Melder_flushError (U"无法把本窗口的不透明度设为 ", percent, U"%；当前不透明度是 ",
+				my appearanceOpacityPercent, U"%。");
+}
+
+namespace {
+	void appearancePanelChangePalette (void *boss, kEditorAppearancePalette palette) {
+		FunctionEditor_appearanceSetPalette (static_cast <FunctionEditor> (boss), palette);
+	}
+	void appearancePanelPreviewOpacity (void *boss, integer percent) {
+		FunctionEditor_appearanceSetOpacity (static_cast <FunctionEditor> (boss), percent, false);
+	}
+	void appearancePanelCommitOpacity (void *boss, integer percent) {
+		FunctionEditor_appearanceSetOpacity (static_cast <FunctionEditor> (boss), percent, true);
+	}
+
+	void *appearanceOwnerWindow (FunctionEditor me) {
+		/*
+			The top-level window that owns the panel: the panel is destroyed with it, and its monitor
+			decides the DPI of the layout and the work area that the panel has to stay inside.
+		*/
+		#if gdi
+			const GraphicsScreen graphics = (GraphicsScreen) my graphics.get();
+			return GetAncestor (graphics -> d_winWindow, GA_ROOT);
+		#else
+			return nullptr;
+		#endif
+	}
+
+	void appearanceEntryClicked (void *boss) {
+		FunctionEditor me = static_cast <FunctionEditor> (boss);
+		if (! my appearancePanel)
+			return;
+		if (EditorAppearancePanel_isShowing (my appearancePanel)) {
+			EditorAppearancePanel_dismiss (my appearancePanel);
+			return;
+		}
+		if (EditorAppearancePanel_steppedAsideForAClick (my appearancePanel)) {
+			/*
+				This command is the second half of the click that already closed the panel by taking
+				its keyboard away. Opening it again would leave the entry unable to close the panel.
+			*/
+			return;
+		}
+		int left, top, width, height;
+		if (! GuiMenu_getRectOnScreen (my appearanceMenu, & left, & top, & width, & height)) {
+			Melder_flushError (U"无法确定「外观」菜单项的位置。");
+			return;
+		}
+		const EditorAppearancePanel_state state { my appearancePalette, my appearanceOpacityPercent };
+		if (! EditorAppearancePanel_show (my appearancePanel, appearanceOwnerWindow (me),
+				left, top, width, height, & state))
+			Melder_flushError (U"「外观」面板无法打开。");
+	}
+
+	void createAppearanceMenu (FunctionEditor me) {
+		/*
+			The entry is a menu-bar command of its own: clicking it opens the panel instead of a drop-down
+			list, because the panel has to stay readable while the window it belongs to is drawn at 20 %.
+		*/
+		GuiWindow window = static_cast <GuiWindow> (my windowForm -> d_shell);
+		my appearanceMenu = GuiMenu_createBarButtonInWindow (window, U"外观", 0, appearanceEntryClicked, me);
+		const EditorAppearancePanel_callbacks callbacks { me,
+				appearancePanelChangePalette, appearancePanelPreviewOpacity, appearancePanelCommitOpacity };
+		my appearancePanel = EditorAppearancePanel_create (& callbacks);
+		if (! my appearancePanel)
+			Melder_flushError (U"「外观」面板无法创建；本窗口的配色与不透明度保持原样。\n");
+	}
+
+	void destroyAppearancePanel (FunctionEditor me) {
+		if (my appearancePanel) {
+			/* The panel belongs to this one window, so it goes away with the window. */
+			EditorAppearancePanel_dispose (my appearancePanel);
+			my appearancePanel = nullptr;
+		}
+	}
 }
 
 static bool group_equalDomain (double tmin, double tmax) {
@@ -330,6 +666,7 @@ static void drawBackgroundAndData (FunctionEditor me) {
 	const bool rightFromWindow = ( my endWindow < my tmax );
 	const bool cursorIsVisible = ( my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow );
 	const bool selectionIsNonempty = ( my endSelection > my startSelection );
+	const EditorAppearanceMarking *marking = my appearanceMarking ();
 
 	/*
 		Update selection.
@@ -448,7 +785,7 @@ static void drawBackgroundAndData (FunctionEditor me) {
 		Window background.
 	*/
 	my viewAllAsPixelettes ();
-	Graphics_setColour (my graphics.get(), DataGuiColour_WINDOW_BACKGROUND);
+	Graphics_setColour (my graphics.get(), marking ? marking -> canvas : DataGuiColour_WINDOW_BACKGROUND);
 	Graphics_fillRectangle (my graphics.get(), my _functionViewerLeft, my _selectionViewerRight, my BOTTOM_MARGIN, my height_pxlt);
 	/*
 		The function areas leave a strip of the canvas unpainted above themselves:
@@ -459,7 +796,7 @@ static void drawBackgroundAndData (FunctionEditor me) {
 		with the data-area colour so the panes look flush; the frame around them
 		(left/right margins, bottom button row) keeps the window colour.
 	*/
-	Graphics_setColour (my graphics.get(), DataGuiColour_AREA_BACKGROUND);
+	Graphics_setColour (my graphics.get(), marking ? marking -> canvas : DataGuiColour_AREA_BACKGROUND);
 	Graphics_fillRectangle (my graphics.get(), my dataLeft_pxlt(), my dataRight_pxlt(),
 			my dataBottom_pxlt(), my height_pxlt);
 	Graphics_setColour (my graphics.get(), Melder_BLACK);
@@ -613,9 +950,9 @@ static void drawBackgroundAndData (FunctionEditor me) {
 	my viewTallDataAsWorldByPixelettes ();
 
 	/*
-		Red marker text.
+		Marker text: the cursor time and the two selection-boundary times.
 	*/
-	Graphics_setColour (my graphics.get(), modernMarkerRed);
+	Graphics_setColour (my graphics.get(), marking ? marking -> coordinateText : modernMarkerRed);
 	if (cursorIsVisible) {
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_BOTTOM);
 		Graphics_text (my graphics.get(), my startSelection, my height_pxlt - (my TOP_MARGIN + my space*0.9) - verticalCorrection * 7,
@@ -642,10 +979,10 @@ static void drawBackgroundAndData (FunctionEditor me) {
 	my v_drawLegends ();
 
 	/*
-		Red dotted marker lines.
+		Dotted marker lines: the cursor and the two selection boundaries.
 	*/
 	my viewDataAsWorldByFraction ();
-	Graphics_setColour (my graphics.get(), modernMarkerRed);
+	Graphics_setColour (my graphics.get(), marking ? marking -> cursor : modernMarkerRed);
 	Graphics_setLineType (my graphics.get(), Graphics_DOTTED);
 	if (cursorIsVisible)
 		Graphics_line (my graphics.get(), my startSelection, 0.0, my startSelection, 1.0);
@@ -657,9 +994,221 @@ static void drawBackgroundAndData (FunctionEditor me) {
 	Graphics_setLineType (my graphics.get(), Graphics_DRAWN);
 }
 
+#if motif
+namespace {
+	void copyPronunciationScreenshot (FunctionEditor me, bool includePrompt) {
+		if (! my graphics || ! my enableUpdates)
+			Melder_throw (U"当前窗口还没有可截取的图像。");
+		const int canvasWidth = GuiControl_getWidth (my drawingArea);
+		const int canvasHeight = GuiControl_getHeight (my drawingArea);
+		if (canvasWidth <= 0 || canvasHeight <= 0)
+			Melder_throw (U"请先展开编辑窗口再截取图像。");
+
+		GraphicsScreen graphics = (GraphicsScreen) my graphics.get();
+		const HWND drawingWindow = graphics -> d_winWindow;
+		if (! IsWindowVisible (drawingWindow) || IsIconic (GetAncestor (drawingWindow, GA_ROOT)))
+			Melder_throw (U"请先展开编辑窗口再截取图像。");
+
+		/*
+			Redraw the editor off the screen instead of taking the picture from it: the copy then has
+			the colours of this window on a white ground and is completely opaque, whatever the
+			transparency of the window itself is, and nothing of another window or the desktop can
+			slip into it.
+		*/
+		int drawnWidth = 0, drawnHeight = 0;
+		HBITMAP fullBitmap = GuiDrawingArea_renderToBitmap (my drawingArea, & drawnWidth, & drawnHeight);
+		if (! fullBitmap)
+			Melder_throw (U"无法在后台绘制当前画面。");
+
+		// Include the legends, axis labels and time rows, excluding the selection viewer.
+		const int width = std::min (drawnWidth, (int) std::lround (
+			my _functionViewerRight * drawnWidth / my width_pxlt));
+		const int top = std::max (0, (int) std::floor (
+			(my height_pxlt - my dataTop_pxlt() - my TOP_LEGEND_MARGIN) * drawnHeight / my height_pxlt));
+		const int height = drawnHeight - top;
+		if (width <= 0 || height <= 0) {
+			DeleteObject (fullBitmap);
+			Melder_throw (U"当前绘图区太小，无法截取图像。");
+		}
+		struct Resources {
+			HDC full = nullptr, cropped = nullptr;
+			HBITMAP fullBitmap = nullptr, croppedBitmap = nullptr;
+			HGDIOBJ fullPrevious = nullptr, croppedPrevious = nullptr;
+			IStream *stream = nullptr;
+			HGLOBAL data [5] {};
+			bool clipboardOpen = false;
+			~Resources () {
+				if (clipboardOpen) CloseClipboard ();
+				for (HGLOBAL memory : data) if (memory) GlobalFree (memory);
+				if (stream) stream -> Release ();
+				if (croppedPrevious) SelectObject (cropped, croppedPrevious);
+				if (croppedBitmap) DeleteObject (croppedBitmap);
+				if (cropped) DeleteDC (cropped);
+				if (fullPrevious) SelectObject (full, fullPrevious);
+				if (fullBitmap) DeleteObject (fullBitmap);
+				if (full) DeleteDC (full);
+			}
+		} resources;
+		resources.fullBitmap = fullBitmap;
+		resources.full = CreateCompatibleDC (nullptr);
+		BITMAPINFO bitmapInfo {};
+		bitmapInfo.bmiHeader.biSize = sizeof (BITMAPINFOHEADER);
+		bitmapInfo.bmiHeader.biWidth = width;
+		bitmapInfo.bmiHeader.biHeight = height;
+		bitmapInfo.bmiHeader.biPlanes = 1;
+		bitmapInfo.bmiHeader.biBitCount = 32;
+		bitmapInfo.bmiHeader.biCompression = BI_RGB;
+		void *pixels = nullptr;
+		if (resources.full)
+			resources.croppedBitmap = CreateDIBSection (resources.full, & bitmapInfo, DIB_RGB_COLORS, & pixels, nullptr, 0);
+		resources.cropped = resources.croppedBitmap ? CreateCompatibleDC (resources.full) : nullptr;
+		if (! resources.full || ! resources.cropped || ! resources.croppedBitmap)
+			Melder_throw (U"无法创建截图。");
+		resources.fullPrevious = SelectObject (resources.full, resources.fullBitmap);
+		resources.croppedPrevious = SelectObject (resources.cropped, resources.croppedBitmap);
+		if (! BitBlt (resources.cropped, 0, 0, width, height, resources.full, 0, top, SRCCOPY))
+			Melder_throw (U"无法截取绘图区。");
+		GdiFlush ();
+		// The offscreen image is BGRX; set alpha explicitly so image readers cannot treat it as transparent.
+		for (size_t i = 0; i < (size_t) width * height; i ++)
+			((uint32_t *) pixels) [i] |= 0xff000000;
+
+		// Encode in memory; no screenshot files or user recordings are written to disk.
+		_GuiWin_ensureGdiplus ();
+		if (FAILED (CreateStreamOnHGlobal (nullptr, TRUE, & resources.stream)))
+			Melder_throw (U"无法创建截图数据流。");
+		UINT encoderCount = 0, encoderSize = 0;
+		Gdiplus::GetImageEncodersSize (& encoderCount, & encoderSize);
+		std::vector<unsigned char> encoders (encoderSize);
+		if (! encoderSize || Gdiplus::GetImageEncoders (encoderCount, encoderSize,
+			(Gdiplus::ImageCodecInfo *) encoders.data()) != Gdiplus::Ok)
+			Melder_throw (U"无法加载 PNG 编码器。");
+		bool encoded = false;
+		{
+			Gdiplus::Bitmap bitmap (resources.croppedBitmap, nullptr);
+			auto codecs = (Gdiplus::ImageCodecInfo *) encoders.data();
+			for (UINT i = 0; i < encoderCount; i ++) {
+				if (wcscmp (codecs [i].MimeType, L"image/png") == 0) {
+					encoded = bitmap.Save (resources.stream, & codecs [i].Clsid, nullptr) == Gdiplus::Ok;
+					break;
+				}
+			}
+		}
+		if (! encoded)
+			Melder_throw (U"截图 PNG 编码失败。");
+		STATSTG streamInfo {};
+		HGLOBAL pngMemory = nullptr;
+		if (FAILED (resources.stream -> Stat (& streamInfo, STATFLAG_NONAME)) ||
+			FAILED (GetHGlobalFromStream (resources.stream, & pngMemory)))
+			Melder_throw (U"无法读取截图 PNG 数据。");
+		const size_t pngSize = (size_t) streamInfo.cbSize.QuadPart;
+		const char *pngBytes = (const char *) GlobalLock (pngMemory);
+		if (! pngBytes)
+			Melder_throw (U"无法读取截图 PNG 数据。");
+		std::string png;
+		try { png.assign (pngBytes, pngSize); }
+		catch (...) { GlobalUnlock (pngMemory); throw; }
+		GlobalUnlock (pngMemory);
+
+		autoMelderString prompt;
+		conststring32 name = my data() && my data() -> name ? my data() -> name.get() : U"未命名";
+		MelderString_copy (& prompt, U"这是发音", name, U"，帮我看看是否标准");
+		autostring8 prompt8 = Melder_32to8 (prompt.string);
+		std::string escaped;
+		for (const char *p = prompt8.get(); *p; ++ p) {
+			switch (*p) {
+				case '&': escaped += "&amp;"; break;
+				case '<': escaped += "&lt;"; break;
+				case '>': escaped += "&gt;"; break;
+				case '"': escaped += "&quot;"; break;
+				default: escaped += *p;
+			}
+		}
+		static const char alphabet [] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+		std::string base64;
+		base64.reserve ((png.size() + 2) / 3 * 4);
+		for (size_t i = 0; i < png.size(); i += 3) {
+			const unsigned value = (unsigned char) png [i] << 16 |
+				(i + 1 < png.size() ? (unsigned char) png [i + 1] << 8 : 0) |
+				(i + 2 < png.size() ? (unsigned char) png [i + 2] : 0);
+			base64 += alphabet [(value >> 18) & 63];
+			base64 += alphabet [(value >> 12) & 63];
+			base64 += i + 1 < png.size() ? alphabet [(value >> 6) & 63] : '=';
+			base64 += i + 2 < png.size() ? alphabet [value & 63] : '=';
+		}
+		const std::string prefix = "<html><head><meta charset=\"utf-8\"></head><body><!--StartFragment-->";
+		const std::string fragment = "<p>" + escaped + "</p><img alt=\"发音语谱图\" src=\"data:image/png;base64," + base64 + "\">";
+		const std::string html = prefix + fragment + "<!--EndFragment--></body></html>";
+		const char *headerFormat = "Version:1.0\r\nStartHTML:%010u\r\nEndHTML:%010u\r\nStartFragment:%010u\r\nEndFragment:%010u\r\n";
+		char header [160];
+		const unsigned headerSize = snprintf (header, sizeof header, headerFormat, 0u, 0u, 0u, 0u);
+		snprintf (header, sizeof header, headerFormat, headerSize, (unsigned) (headerSize + html.size()),
+			(unsigned) (headerSize + prefix.size()), (unsigned) (headerSize + prefix.size() + fragment.size()));
+		const std::string clipboardHtml = std::string (header) + html;
+
+		auto allocate = [&resources] (int slot, size_t size) -> void * {
+			resources.data [slot] = GlobalAlloc (GMEM_MOVEABLE, size);
+			void *memory = resources.data [slot] ? GlobalLock (resources.data [slot]) : nullptr;
+			if (! memory) Melder_throw (U"无法分配剪贴板内存。");
+			return memory;
+		};
+		const int textLength = MultiByteToWideChar (CP_UTF8, 0, prompt8.get(), -1, nullptr, 0);
+		MultiByteToWideChar (CP_UTF8, 0, prompt8.get(), -1, (wchar_t *) allocate (0, textLength * sizeof (wchar_t)), textLength);
+		GlobalUnlock (resources.data [0]);
+		const size_t pixelSize = (size_t) width * height * 4;
+		char *dib = (char *) allocate (1, sizeof (BITMAPINFOHEADER) + pixelSize);
+		memcpy (dib, & bitmapInfo.bmiHeader, sizeof (BITMAPINFOHEADER));
+		memcpy (dib + sizeof (BITMAPINFOHEADER), pixels, pixelSize);
+		GlobalUnlock (resources.data [1]);
+		memcpy (allocate (2, png.size()), png.data(), png.size());
+		GlobalUnlock (resources.data [2]);
+		memcpy (allocate (3, clipboardHtml.size() + 1), clipboardHtml.c_str(), clipboardHtml.size() + 1);
+		GlobalUnlock (resources.data [3]);
+		BITMAPV5HEADER v5 {};
+		v5.bV5Size = sizeof v5;
+		v5.bV5Width = width;
+		v5.bV5Height = height;
+		v5.bV5Planes = 1;
+		v5.bV5BitCount = 32;
+		v5.bV5Compression = BI_BITFIELDS;
+		v5.bV5RedMask = 0x00ff0000;
+		v5.bV5GreenMask = 0x0000ff00;
+		v5.bV5BlueMask = 0x000000ff;
+		v5.bV5AlphaMask = 0xff000000;
+		v5.bV5CSType = LCS_sRGB;
+		v5.bV5Intent = LCS_GM_IMAGES;
+		char *dibV5 = (char *) allocate (4, sizeof v5 + pixelSize);
+		memcpy (dibV5, & v5, sizeof v5);
+		memcpy (dibV5 + sizeof v5, pixels, pixelSize);
+		GlobalUnlock (resources.data [4]);
+		const UINT formats [] = { CF_UNICODETEXT, CF_DIB, RegisterClipboardFormatW (L"PNG"), RegisterClipboardFormatW (L"HTML Format"), CF_DIBV5 };
+		if (! formats [2] || ! formats [3])
+			Melder_throw (U"无法注册剪贴板图文格式。");
+		if (! OpenClipboard (graphics -> d_winWindow))
+			Melder_throw (U"剪贴板正被其他程序占用，请重试。");
+		resources.clipboardOpen = true;
+		if (! EmptyClipboard ())
+			Melder_throw (U"无法更新剪贴板。");
+		// Publish image formats before text for consumers that take the first supported format.
+		for (int i : { 2, 4, 1, 3, 0 }) {
+			if (! includePrompt && (i == 3 || i == 0))
+				continue;
+			if (! SetClipboardData (formats [i], resources.data [i]))
+				Melder_throw (U"复制图文到剪贴板失败，请重试。");
+			resources.data [i] = nullptr;   // Clipboard now owns this allocation.
+		}
+		if (! GetClipboardData (formats [2]) || ! GetClipboardData (CF_DIBV5))
+			Melder_throw (U"截图未能写入剪贴板，请重试。");
+		CloseClipboard ();
+		resources.clipboardOpen = false;
+	}
+}
+#endif
+
 /********** METHODS **********/
 
 void structFunctionEditor :: v9_destroy () noexcept {
+	destroyAppearancePanel (this);
 	destroyAiToolbar (this);
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	if (our group) {   // undangle
@@ -1509,6 +2058,8 @@ void structFunctionEditor :: v_createMenus () {
 	}
 	if (our v_hasAiToolbar())
 		createAiMenus (this);
+	if (our v_hasAppearanceMenu ())
+		createAppearanceMenu (this);
 }
 
 void structFunctionEditor :: v_updateMenuItems () {
@@ -2057,6 +2608,15 @@ void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data)
 		Melder_casual (Thing_messageNameAndAddress (me), U" init");
 	my tmin = function -> xmin;   // set before adding children (see group button)
 	my tmax = function -> xmax;
+	/*
+		Every new window starts in the original style and fully opaque; it does not inherit the
+		appearance of another window. This is set before the shell exists, because the appearance
+		also decides which window class the shell is created with.
+	*/
+	my appearancePalette = kEditorAppearancePalette::ORIGINAL;
+	my appearanceOpacityPercent = 100;
+	my appearancePanel = nullptr;
+	my appearanceMenu = nullptr;
 	Editor_init (me, 0, 0, my classPref_shellWidth(), my classPref_shellHeight(), title, function);
 
 	my startWindow = my tmin;
@@ -2147,7 +2707,8 @@ void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, conststring32 
 	static MelderString text;
 	MelderString_copy (& text, yWC_string, units);
 	double textWidth = Graphics_textWidth (my graphics.get(), text.string) + Graphics_dxMMtoWC (my graphics.get(), 0.5);
-	Graphics_setColour (my graphics.get(), modernMarkerBlue);
+	const EditorAppearanceMarking *marking = my appearanceMarking ();
+	Graphics_setColour (my graphics.get(), marking ? marking -> auxiliaryTick : modernMarkerBlue);
 	Graphics_line (my graphics.get(), my endWindow, yWC, my endWindow + textWidth, yWC);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, verticalAlignment);
 	if (verticalAlignment == Graphics_BOTTOM)
@@ -2161,7 +2722,9 @@ void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, co
 	const bool tooLow = ( Graphics_dyWCtoMM (my graphics.get(), textY - minimum) < 5.0 );
 	if (yWC < minimum || yWC > maximum)
 		return;
-	Graphics_setColour (my graphics.get(), modernMarkerCyan);
+	const EditorAppearanceMarking *marking = my appearanceMarking ();
+	const MelderColour cursorMarkingColour = marking ? marking -> cursor : modernMarkerCyan;
+	Graphics_setColour (my graphics.get(), cursorMarkingColour);
 	Graphics_line (my graphics.get(), 0.99 * my endWindow + 0.01 * my startWindow, yWC, my endWindow, yWC);
 	Graphics_fillCircle_mm (my graphics.get(), 0.5 * (my startSelection + my endSelection), yWC, 1.5);
 	if (tooHigh) {
@@ -2176,20 +2739,22 @@ void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, co
 	MelderString_copy (& text, yWC_string, units);
 	double textWidth = Graphics_textWidth (my graphics.get(), text.string);
 	Graphics_fillCircle_mm (my graphics.get(), my endWindow + textWidth + Graphics_dxMMtoWC (my graphics.get(), 1.5), textY, 1.5);
-	Graphics_setColour (my graphics.get(), modernMarkerRed);
+	Graphics_setColour (my graphics.get(), marking ? marking -> cursor : modernMarkerRed);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 	Graphics_text (my graphics.get(), textX, textY, text.string);
 }
 
 void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units) {
-	Graphics_setColour (my graphics.get(), modernMarkerRed);
+	const EditorAppearanceMarking *marking = my appearanceMarking ();
+	Graphics_setColour (my graphics.get(), marking ? marking -> cursor : modernMarkerRed);
 	Graphics_line (my graphics.get(), my startWindow, yWC, my endWindow, yWC);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);
 	Graphics_text (my graphics.get(), my startWindow, yWC,   yWC_string, units);
 }
 
 void FunctionEditor_drawGridLine (FunctionEditor me, double yWC) {
-	Graphics_setColour (my graphics.get(), modernGridCyan);
+	const EditorAppearanceMarking *marking = my appearanceMarking ();
+	Graphics_setColour (my graphics.get(), marking ? marking -> gridLine : modernGridCyan);
 	Graphics_setLineType (my graphics.get(), Graphics_DOTTED);
 	Graphics_line (my graphics.get(), my startWindow, yWC, my endWindow, yWC);
 	Graphics_setLineType (my graphics.get(), Graphics_DRAWN);

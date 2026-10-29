@@ -66,6 +66,29 @@ class ModernExecutionTests(unittest.TestCase):
         self.stack.enter_context(patch.object(m, 'CloudRuntime', side_effect=self.make_runtime))
         self.model_factory = lambda _: (_ for _ in ()).throw(AssertionError('network forbidden'))
 
+    def test_outer_failure_keeps_internal_exception_out_of_transcript(self):
+        self.cloud.side_effect = RuntimeError('ModelRetry report.number_unmatched Connection error. fixture-path')
+        result = self.run_task(text='分析当前声音的基频变化')
+        self.assertTrue(self.cloud.called)
+        self.assertNotIn('ModelRetry', result['content'])
+        self.assertNotIn('report.number_unmatched', result['content'])
+        self.assertNotIn('fixture-path', result['content'])
+        self.assertIn('尚未取得测量结果', result['content'])
+        self.assertIn('report.number_unmatched', result['metrics']['reason_detail'])
+
+    def test_analysis_does_not_prefix_raw_measurements_already_in_result_panel(self):
+        def respond(config, current, **kwargs):
+            current.report = '这是独立的分析正文。'
+            current.measurement_content = 'RAW-MEASUREMENT-PANEL'
+            current.status = 'complete'
+            current.metrics['report_verified'] = True
+        self.cloud.side_effect = respond
+        result = self.run_task(text='分析当前声音的基频变化')
+        self.assertTrue(self.cloud.called)
+        self.assertEqual(result['content'], '这是独立的分析正文。')
+        self.assertEqual(result['formal_content'], result['content'])
+        self.assertEqual(result['result_content'], 'RAW-MEASUREMENT-PANEL')
+
     def make_runtime(self):
         runtime = CloudRuntime(model_factory=self.model_factory)
         self.runtimes.append(runtime)

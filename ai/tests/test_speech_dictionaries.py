@@ -2,7 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import ANY, Mock, patch
 
 from praat_ai.config import load_config
 from praat_ai.speech_dictionaries import DictionaryService, DictionaryApplication
@@ -219,7 +219,7 @@ class SpeechDictionaryTests(unittest.TestCase):
             self.assertEqual(self.path.read_bytes(), before)
             app.window.create_file_dialog.return_value = [str(second)]
             self.assertEqual(len(app.rpc('wav2vec2_models.choose', {})['models']), 2)
-        app.window.create_file_dialog.assert_called_with(webview.FileDialog.FOLDER)
+            app.window.create_file_dialog.assert_called_with(webview.FileDialog.FOLDER, directory=ANY)
         selected = app.rpc('wav2vec2_models.select', {'path': str(second)})
         self.assertEqual([item['path'] for item in selected['models'] if item['active']], [str(second)])
         loaded = load_config(self.path).alignment.wav2vec2

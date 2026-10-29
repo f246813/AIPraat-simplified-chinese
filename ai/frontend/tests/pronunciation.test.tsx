@@ -126,6 +126,40 @@ it('saved resource changes invalidate generated identity; imported resources alo
   fireEvent.change(within(editor).getByRole('combobox',{name:'音位体系'}),{target:{value:'ipa'}}); fireEvent.click(within(editor).getByRole('button',{name:'保存配套'}));
   await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull()); expect(start().disabled).toBe(true); expect(ipa().value).toContain('h ə');
 });
+it('shows the bound model, allows changing or clearing it, and invalidates generated readings after Save', async () => {
+  const second = {...mfaFixture.resources.g2p[0],id:'g2',name:'Alternative G2P.zip',used_by:[]};
+  const models = {...mfaFixture,resources:{...mfaFixture.resources,g2p:[...mfaFixture.resources.g2p,second]}};
+  const rpc = vi.fn(async (method: string, params?: Record<string, unknown>) => method === 'tutor.bootstrap' ? {...data,mfa:models} : method === 'tutor.generate_phonemes' ? generationFixture : {...models,presets:models.presets.map(p => p.id === 'en-US' ? {...p,g2p:(params!.preset as {g2p:string}).g2p} : p)});
+  render(<PronunciationForm rpc={rpc}/>); await selectUS();
+  expect((screen.getByRole('combobox',{name:'G2P 模型'}) as HTMLSelectElement).value).toBe('g');
+  fireEvent.click(screen.getByRole('button',{name:'自动生成音位'})); await waitFor(() => expect(start().disabled).toBe(false));
+  fireEvent.change(screen.getByRole('combobox',{name:'G2P 模型'}),{target:{value:'g2'}});
+  expect(within(screen.getByRole('dialog')).queryByRole('combobox',{name:'G2P 模型'})).toBeNull();
+  fireEvent.click(within(screen.getByRole('dialog')).getByRole('button',{name:'关闭资源配置'}));
+  expect(start().disabled).toBe(false);
+  fireEvent.change(screen.getByRole('combobox',{name:'G2P 模型'}),{target:{value:'g2'}});
+  fireEvent.click(screen.getByRole('button',{name:'保存配套'})); await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  expect(rpc).toHaveBeenCalledWith('mfa.save',expect.objectContaining({preset:expect.objectContaining({g2p:'g2'})}));
+  expect(start().disabled).toBe(true); expect(ipa().value).toContain('h ə');
+  expect((screen.getByRole('combobox',{name:'G2P 模型'}) as HTMLSelectElement).value).toBe('g2');
+  fireEvent.change(screen.getByRole('combobox',{name:'G2P 模型'}),{target:{value:''}});
+  expect(within(screen.getByRole('dialog')).queryByRole('combobox',{name:'G2P 模型'})).toBeNull();
+  fireEvent.click(screen.getByRole('button',{name:'保存配套'})); await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  expect(rpc).toHaveBeenLastCalledWith('mfa.save',expect.objectContaining({preset:expect.objectContaining({g2p:''})}));
+  expect((screen.getByRole('combobox',{name:'G2P 模型'}) as HTMLSelectElement).value).toBe('');
+});
+it('uses the same generation and submission interaction for a custom language', async () => {
+  const custom = {...mfaFixture.presets[1],id:'custom-'+'a'.repeat(32),name:'测试德语',language:'de',rule_id:null};
+  const mfa = {...mfaFixture,presets:[...mfaFixture.presets,custom]};
+  const generated = {...generationFixture,preset_id:custom.id,transcript:'Straße Straße',words:[{word:'straße',candidates:[{raw:['a'],ipa:['a'],source:'MFA G2P'}]}],sequence:['straße','straße']};
+  const rpc = vi.fn(async (method: string) => method === 'tutor.bootstrap' ? {...data,mfa} : method === 'tutor.generate_phonemes' ? generated : {accepted:true});
+  render(<PronunciationForm rpc={rpc}/>); await screen.findByRole('combobox',{name:'目标语言与读音'});
+  fireEvent.change(screen.getByRole('combobox',{name:'目标语言与读音'}),{target:{value:custom.id}});
+  fireEvent.change(screen.getByRole('textbox',{name:/参考文本/}),{target:{value:'Straße Straße'}});
+  fireEvent.click(screen.getByRole('button',{name:'自动生成音位'})); await waitFor(() => expect(ipa().value).toBe('a a'));
+  fireEvent.click(start());
+  await waitFor(() => expect(rpc).toHaveBeenCalledWith('tutor.submit',expect.objectContaining({preset_id:custom.id,language:'de',choices:{straße:0},generation_id:'generation-1',phonemes:'a a'})));
+});
 it('accepts server-normalized surrounding whitespace without treating the result as stale', async () => {
   const rpc = vi.fn(async (method: string) => method === 'tutor.bootstrap' ? data : generationFixture);
   render(<PronunciationForm rpc={rpc}/>); await selectUS();

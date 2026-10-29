@@ -1,12 +1,4 @@
-"""自绘的圆角控件：把 TW-Elements 的组件形态画在 Tk 的 Canvas 上。
-
-Tk 的 ttk 没有圆角（边框、阴影、主题引擎都动不了），所以卡片、按钮、进度条、
-状态 chip、提示条都是自己画的；消息流仍然用 ``tk.Text``（要能选中复制），
-见 guide.md §8.16。
-
-约定：每个控件的 ``apply_theme(theme)`` 都注册进了 :class:`~praat_ai.ui_theme.Theme`，
-系统深浅色一变就自己重画；控件销毁时自动摘掉，不会留回调。
-"""
+"""自绘的圆角控件：把 TW-Elements 的组件形态画在 Tk 的 Canvas 上。"""
 
 from __future__ import annotations
 
@@ -328,11 +320,7 @@ class Card(_Themed, tk.Frame):
 
 
 class RoundedButton(_Themed, tk.Canvas):
-    """圆角按钮：``filled`` / ``outlined`` / ``text`` 三档，支持 hover/pressed/禁用。
-
-    对外接口故意和 ttk 一致：``configure(state="disabled")``、``cget("state")``、
-    ``cget("text")``——现有代码和回归脚本都靠这几个（见 guide.md §8.16 的清单）。
-    """
+    """圆角按钮：``filled`` / ``outlined`` / ``text`` 三档，支持 hover/pressed/禁用。"""
 
     KINDS = ("filled", "outlined", "text")
 

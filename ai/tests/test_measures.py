@@ -1,4 +1,4 @@
-"""B1：把声学测量参数做成「表」驱动（`ai/praat_ai/measures.tsv`）。
+"""声学测量参数的表驱动约定（`ai/praat_ai/measures.tsv`）。
 
 表里每一行 = 一个参数。加一个参数只要加一行，不用再写一份 Python 模板；
 `verify_chat_templates.py` 会按这张表自动生成真机用例（见本文件最后一个
@@ -13,7 +13,7 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
-from praat_ai import measures, tools
+from praat_ai import measures, pitch_quality, tools
 
 #: ``verify_chat_templates`` 是同事目录里的手工回归脚本（不是包的一部分）。
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -135,7 +135,7 @@ class MeasureRenderingTests(unittest.TestCase):
 
     def test_pitch_parameters_share_one_derivation(self) -> None:
         script = self.render(parameter=["mean_pitch", "minimum_pitch", "sd_pitch"])
-        self.assertEqual(script.count("To Pitch: 0, 75.000000, 600.000000"), 1)
+        self.assertEqual(script.count("To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000"), 1)
         self.assertIn("平均基频", script)
         self.assertIn("最低基频", script)
         self.assertIn("基频标准差", script)
@@ -263,33 +263,83 @@ class MeasureRenderingTests(unittest.TestCase):
         和 ``pitch_statistics`` 同一个问题（2026-09-30 用户报的 598.5 Hz 峰值）：
         ``Get maximum`` 取区间内最高的**那一帧**，自相关在浊音起始常把真实基频
         听成 2–4 倍。实测 ``a.wav`` 裸最大值 496.65 Hz，真实只有 ~121.6 Hz。
+
+        2026-10-19 之后两条路合成一条：``measure`` 的八个基频参数直接取共享质量筛查
+        （praat_ai/pitch_quality.py）算好的 same-batch 变量，参数表里那一行只给插件用。
         """
 
-        for parameter, guard, variable in (
-            ("maximum_pitch", "ceilingValue = median * 1.5", "highest"),
-            ("minimum_pitch", "floorValue = median * 0.5", "lowest"),
-        ):
+        for parameter, variable in (("maximum_pitch", "value = maximum"),
+                                     ("minimum_pitch", "value = minimum")):
             with self.subTest(parameter=parameter):
                 script = self.render(parameter=parameter)
                 self.assertNotIn('value = Get maximum: tmin', script)
                 self.assertNotIn('value = Get minimum: tmin', script)
                 self.assertIn("median = Get quantile: tmin, tmax, 0.5", script)
-                self.assertIn(guard, script)
-                self.assertIn(f"value = {variable}", script)
+                self.assertIn("ceilingValue = median * 1.5", script)
+                self.assertIn("floorValue = median * 0.5", script)
+                self.assertIn(variable, script)
+                # 共享筛查：能量门 + 连续段进了同一条谓词，事实行单独一行。
+                self.assertIn("frameEnergy[pitchFrame] = 1", script)
+                self.assertIn("frameRun[pitchFrame] = 1", script)
+                self.assertIn('appendFileLine', script)
+                self.assertIn(", quality$", script)
 
     def test_mean_pitch_uses_the_same_guarded_frames_as_the_extremes(self) -> None:
         """``mean_pitch`` 也不许用裸 ``Get mean``（2026-10-04）。
 
         裸 ``Get mean`` 会把最高/最低已经剔除的倍频误判帧算进平均，于是同一次测量
-        给出「平均 139.8 Hz、最高 119.2 Hz」。平均必须和极值统计同一批限幅帧。
+        给出「平均 139.8 Hz、最高 119.2 Hz」。平均必须和极值统计同一批限帧。
         """
 
         script = self.render(parameter="mean_pitch")
         self.assertNotIn('value = Get mean: tmin', script)
         self.assertIn("ceilingValue = median * 1.5", script)
         self.assertIn("floorValue = median * 0.5", script)
-        self.assertIn("totalValue = totalValue + f", script)
-        self.assertIn("value = totalValue / countValue", script)
+        self.assertIn("pitchTotal = pitchTotal + frameValue", script)
+        self.assertIn("value = mean", script)
+
+    def test_every_pitch_parameter_is_served_by_the_shared_screening(self) -> None:
+        """八个基频参数都从共享筛查取变量：一次 measure 只算一遍筛查。"""
+
+        names = ", ".join(pitch_quality.MEASURE_VALUES)
+        script = self.render(parameter=names)
+        self.assertEqual(script.count("To Intensity:"), 1, script[:200])
+        self.assertEqual(script.count("To Pitch (filtered autocorrelation): 0, 75.000000, 600.000000"), 1)
+        for variable in ("value = mean", "value = minimum", "value = maximum",
+                         "value = median", "value = usedSd", "value = usedSlope",
+                         "value = usedStart", "value = usedEnd"):
+            with self.subTest(variable=variable):
+                self.assertIn(variable, script)
+        # 质量事实行只写一次。
+        self.assertEqual(script.count(", quality$"), 1)
+
+    def test_the_three_pitch_parameters_share_one_filter_and_frame_centres(self) -> None:
+        """三行基频参数必须同上下限、同帧中心、没有可信帧时不给值（2026-10-19 事故）。
+
+        ``mean_pitch`` / ``minimum_pitch`` / ``maximum_pitch`` 是三段独立脚本。以前
+        「最低」只排倍频、「最高」只排次谐波，两段可以取到互不相交的帧集合，于是
+        0.783–1.175 秒同时报出「最低 555.233、最高 91.239」。现在三行共用
+        ``f >= floorValue and f <= ceilingValue`` 一条谓词、都只用区间内帧中心，没有
+        可信帧时 ``value`` 保持 undefined（不退回任何未过滤的数）。
+        """
+
+        table = measures.load_table()
+        predicates = set()
+        for name in ("mean_pitch", "minimum_pitch", "maximum_pitch"):
+            entry = table.find(name)
+            command = entry.command
+            with self.subTest(parameter=name):
+                conditions = [piece.strip() for piece in command.split(";")
+                              if "f <> undefined" in piece]
+                self.assertEqual(len(conditions), 1, conditions)
+                predicates.add(conditions[0])
+                self.assertIn("f >= floorValue", conditions[0])
+                self.assertIn("f <= ceilingValue", conditions[0])
+                self.assertIn("if firstCenter < tmin", command)
+                self.assertIn("if lastCenter > tmax", command)
+                self.assertIn("value = undefined", command)
+                self.assertNotIn("Get mean: tmin", command)
+        self.assertEqual(len(predicates), 1, predicates)
 
     def test_every_parameter_renders(self) -> None:
         editor_only = {entry.parameter for entry in measures.load_table().entries

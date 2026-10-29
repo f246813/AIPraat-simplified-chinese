@@ -1,13 +1,6 @@
-"""两条 UI 路径共用的执行核心：投递事实、尝试记录、证据账本。
+"""两条界面路径共用的执行事实、尝试记录与证据账本。
 
-背景（见 ``ai/docs/backend-workflow-redesign.zh-CN.md`` 第 7 节）：前端路径
-（``modern_execution``）与 Tk 路径（``chat``）各自实现了"一次工具调用之后要记什么"：
-投递四态怎么判、attempts 里放哪些字段、哪些结果才算证据。两份实现各修各的，
-结果就是"守卫只在新路径生效"这类问题。
-
-这里只抽**与界面无关的事实**，不搬 Praat I/O（那部分仍留在 ``modern_execution``，
-因为它深度依赖进程/锁/结果文件）。两条路径都从这一处取同一套判定。
-"""
+本模块统一投递状态、记录字段及证据判定；Praat I/O、进程锁与结果文件由执行器管理。"""
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
@@ -55,6 +48,8 @@ def attempt_record(step: Any, *, status: str | None = None, execution: str = '',
               'reason': getattr(step, 'observation', '') or '',
               'script': getattr(step, 'script', '') or '',
               'rows': list(getattr(step, 'results', []) or [])}
+    if getattr(step, 'acoustic', None):
+        record['acoustic'] = step.acoustic
     if guard_key:
         record['guard_key'] = guard_key
     if proposal_signature:
@@ -63,23 +58,37 @@ def attempt_record(step: Any, *, status: str | None = None, execution: str = '',
 
 
 def valid_evidence(step: Any, *, mutating: bool, rows_valid: bool | None = None) -> bool:
-    """这次调用的结果算不算证据：操作类只要成功，测量类还要求有有效结果行。"""
+    """判定可用证据；目标指标缺测时仍保留独立有效的事件和测量。"""
 
-    if not getattr(step, 'ok', False) or not getattr(step, 'results', None):
+    if not getattr(step, 'results', None):
         return False
+    acoustic = getattr(step, 'acoustic', {}) or {}
+    partial = acoustic.get('schema') == 'acoustic-analysis-v1' and (
+        any(m.get('value') is not None for m in acoustic.get('measures', [])) or
+        any(e.get('time') is not None and e.get('status') in {'candidate','validated'}
+            for e in acoustic.get('events', [])))
+    if not getattr(step, 'ok', False) and not partial:
+        return False
+    if partial:
+        return True
+    if (getattr(step, 'ok', False) and acoustic.get('schema') == 'acoustic-analysis-v1'
+            and acoustic.get('kind') == 'pitch' and acoustic.get('measures')
+            and all(m.get('value') is None and m.get('reason') for m in acoustic['measures'])):
+        return True  # Missing F0 is an observed outcome with a scope and reason.
     if mutating:
         return True
     return True if rows_valid is None else bool(rows_valid)
 
 
 def evidence_row(step: Any, context_text: str, *, mutating: bool = False) -> Any:
-    """把一次成功调用变成账本里的一条证据（与云端 ``state.evidence`` 同一形状）。"""
+    """把调用中的有效结果变成账本里的一条证据（与云端 ``state.evidence`` 同一形状）。"""
 
     from .escape_policy import Evidence
 
     return Evidence(step.tool, dict(getattr(step, 'arguments', {}) or {}),
                     list(getattr(step, 'results', []) or []), context_text,
-                    'operation' if mutating else 'measurement')
+                    'operation' if mutating else 'measurement',
+                    acoustic=dict(getattr(step, 'acoustic', {}) or {}))
 
 
 
@@ -101,11 +110,7 @@ class LoopSignals:
 
 
 def loop_decision(signals: LoopSignals) -> str:
-    """预算耗尽 → ``BUDGET``；没有新证据或动作重复 → ``STAGNANT``；否则 ``CONTINUE``。
-
-    以前这套判断在 ``chat`` 的本机循环（步数上限、重复动作）与 ``cloud_agent``
-    的图里各写一份，阈值改一处忘一处；现在只有这一处口径。
-    """
+    """预算耗尽返回 BUDGET，没有新证据或动作重复返回 STAGNANT，否则返回 CONTINUE。"""
 
     if signals.request_limit and signals.requests >= signals.request_limit:
         return BUDGET
@@ -129,15 +134,15 @@ def signals_from_state(state: Any, *, produced_evidence: bool = True,
         produced_evidence=produced_evidence,
         duplicate_action=duplicate_action)
 def evidence_from_steps(context_text: str, steps, *, is_mutating=None):
-    """本机（Tk）路径用：把一串成功步骤折成证据列表，去重规则与云端一致。"""
+    """本机（Tk）路径用：把步骤中的有效结果折成证据列表，去重规则与云端一致。"""
 
     from .escape_policy import AnalysisState
 
     state = AnalysisState(goal='', context_text=str(context_text or ''))
     for step in steps or []:
-        if not getattr(step, 'ok', False) or not getattr(step, 'results', None):
-            continue
         mutating = bool(is_mutating(step.tool)) if is_mutating else False
+        if not valid_evidence(step, mutating=mutating):
+            continue
         state.add_evidence(evidence_row(step, state.context_text, mutating=mutating))
     return state
 

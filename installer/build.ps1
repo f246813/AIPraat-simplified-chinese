@@ -21,7 +21,7 @@ $launcher = Join-Path $buildRoot 'AIPraat.exe'
 if ($LASTEXITCODE -ne 0) { throw "Launcher compilation failed: $LASTEXITCODE" }
 # Local desktop QA runs these EXEs before packaging. Files recreated beneath a
 # Low workspace need Medium publication too; ZIP/SHA256 do not preserve MIC.
-# Contract: docs/ai-frontend/windows-integrity-design.md.
+# Contract: docs/CURRENT-IMPLEMENTATION.zh-CN.md.
 & $publishNative -Source $launcher -Destination $launcher -MediumDirectory $mediumDirectory
 $pathSources = @('OutlineButton.cs','FilePathField.cs','DependencyDiscovery.cs','MfaAlignmentProbe.cs','DependencyPanel.cs','RuntimeDependenciesForm.cs','PythonSetup.cs','PythonSetupGuide.cs','PathSettings.cs','PathSettingsForm.cs','PathSettingsProgram.cs') | ForEach-Object { Join-Path $sourceRoot $_ }
 $pathDialog = Join-Path $projectRoot 'AIPraat-paths.exe'

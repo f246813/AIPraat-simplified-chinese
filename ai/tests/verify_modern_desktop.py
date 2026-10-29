@@ -45,6 +45,7 @@ class MockExecutor:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--followups-only', action='store_true', help='只验收旧快捷动作不显示、普通文字追问仍可提交')
     args = parser.parse_args()
     import webview
     # Remove inherited model/config overrides in this test process only.
@@ -69,6 +70,7 @@ def main():
         first = application.store.new_session('会话A')
         second = application.store.new_session('会话B')
         application.store.put_message(first['id'], {'id':'fixture-history','role':'assistant','status':'complete',
+            'taskId':'historical-task', 'followup_actions':['L2','L3','L4'],
             'content':'历史夹具（不是测量）\n\n公式 $x^2$\n\n```python\nprint(1)\n```\n\n```mermaid\ngraph TD; A-->B;\n```'})
         # A visible desktop is required: hidden WebView2 throttles animation frames.
         window, assets = create_window(application)
@@ -109,6 +111,19 @@ def main():
                 click('展开会话侧栏'); session('会话A')
                 wait("!!document.querySelector('.katex') && !!document.querySelector('.hljs') && !!document.querySelector('.diagram svg')")
                 passed('offline-Markdown-code-KaTeX-Mermaid')
+                assert not js("Array.from(document.querySelectorAll('button')).some(e=>['解释结果','分析原材料','通用讨论'].includes(e.textContent.trim()))")
+                passed('old-history-followup-actions-not-rendered')
+                if args.followups_only:
+                    for prompt in ('本次解释结果', '基于这些结果进行通用讨论'):
+                        text(prompt); click('发送消息')
+                        wait("document.body.innerText.includes("+json.dumps('MOCK 完成：'+prompt, ensure_ascii=False)+")")
+                        assert executor.calls[-1]['text'] == prompt
+                    assert not js("Array.from(document.querySelectorAll('button')).some(e=>['解释结果','分析原材料','通用讨论'].includes(e.textContent.trim()))")
+                    passed('plain-typed-followup-submits-without-quick-actions')
+                    assert hashlib.sha256(legacy.read_bytes()).hexdigest() == legacy_hash
+                    passed('legacy-database-byte-preserved')
+                    result['passed'] = True
+                    return
                 text('任务A'); click('发送消息')
                 wait("document.querySelectorAll('.message.user').length===1")
                 session('会话B'); text('任务B'); click('发送消息')
@@ -117,7 +132,7 @@ def main():
                 assert 'MOCK 流式正文：任务A' not in js('document.body.innerText')
                 passed('background-events-stay-in-origin-session')
                 session('会话A'); click('取消当前任务')
-                wait("document.querySelector('.message.assistant:last-child .badge')?.textContent.includes('取消')")
+                wait("document.querySelector('.message.assistant:last-child')?.textContent.includes('已取消')")
                 assert application.tasks[next(t for t,v in application.tasks.items() if v['sessionId']==second['id'])]['cancel'].is_set() is False
                 executor.release.set()
                 session('会话B'); wait("document.body.innerText.includes('MOCK 完成：任务B')")
@@ -126,8 +141,8 @@ def main():
                 wait("!!document.querySelector('[aria-label=设置分类]')")
                 assert js('document.querySelector(".settings-main h1").textContent') == '会话与存储'
                 js('[...document.querySelectorAll(".settings-nav button")].find(e=>e.textContent.trim()==="模型").click()')
-                wait("!!document.querySelector('[aria-label=\"API Key\"]')")
-                assert js("document.querySelector('[aria-label=\"API Key\"]').value") == ''
+                wait("!!document.querySelector('input[type=password]')")
+                assert js("document.querySelector('input[type=password]').value") == ''
                 assert js("document.querySelectorAll('.test-result').length") == 2
                 passed('settings-dashboard-and-credential-redaction')
                 js('[...document.querySelectorAll(".settings-nav button")].find(e=>e.textContent.trim()==="会话与存储").click()')
@@ -154,7 +169,12 @@ def main():
                 wait("!!document.querySelector('[aria-label=展开会话侧栏]')")
                 wait("document.querySelector('.chat-header h1')?.textContent==='新会话'")
                 assert js("document.querySelectorAll('.message').length") == 0
-                assert len(application.store.sessions()) == len(initial_sessions) + 1
+                # Current defaults prune empty sessions on exit: assert identity
+                # and history preservation, not the obsolete total-count formula.
+                reopened = application.store.sessions()
+                assert {first['id'], second['id']}.issubset({s['id'] for s in reopened})
+                assert any(s['id'] not in {old['id'] for old in initial_sessions}
+                           and s['title'] == '新会话' for s in reopened)
                 passed('reopening-selects-another-blank-session')
                 click('展开会话侧栏'); session('会话A')
                 wait("document.body.innerText.includes('MOCK 完成：任务A')")
@@ -165,6 +185,12 @@ def main():
                 assert any('任务A' in str(m.get('content','')) for m in executor.calls[0]['history'])
                 assert executor.calls[0]['target']=='MOCK-original-target:继续C'
                 passed('resumed-turn-uses-history-and-new-bound-target')
+                for prompt in ('本次解释结果', '基于这些结果进行通用讨论'):
+                    text(prompt); click('发送消息')
+                    wait("document.body.innerText.includes("+json.dumps('MOCK 完成：'+prompt, ensure_ascii=False)+")")
+                    assert executor.calls[-1]['text'] == prompt
+                assert not js("Array.from(document.querySelectorAll('button')).some(e=>['解释结果','分析原材料','通用讨论'].includes(e.textContent.trim()))")
+                passed('plain-typed-followup-submits-without-quick-actions')
                 js("Array.from(document.querySelectorAll('.session-select')).find(e=>e.textContent.includes('旧记录夹具')).click()")
                 wait("!!document.querySelector('.readonly-footer')")
                 assert not js("document.querySelector('[aria-label=消息输入]')!==null")

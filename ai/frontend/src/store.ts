@@ -1,6 +1,9 @@
 import { useSyncExternalStore } from 'react';
+import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/with-selector';
 import { activeTask, readOnly, type Attachment, type Bootstrap, type HistorySection, type HistoryGroupAction, type OrganizationSnapshot, type HostEvent, type Message, type ReadingAnchor, type Rpc, type Session, type Settings, type Task } from './types';
-export interface State { boot?: Bootstrap; sessions: Session[]; messages: Record<string, Message[]>; tasks: Record<string, Task>; selected?: string; loading: Record<string, boolean>; submitting: Record<string, boolean>; error?: string; connected: boolean; organizationBusy?: boolean; modelSettingsRequest?: string }
+export interface State { boot?: Bootstrap; sessions: Session[]; messages: Record<string, Message[]>; tasks: Record<string, Task>; selected?: string; loading: Record<string, boolean>; submitting: Record<string, boolean>; error?: string; connected: boolean; organizationBusy?: boolean; modelSettingsRequest?: string; reportRequest?: string }
+/** Authoritative per-session view values, kept out of the reactive `sessions` array. */
+export interface ViewSnapshot { draft?: string; scroll?: number; anchor?: ReadingAnchor | null }
 const organizationMetadata=(session:Session):Partial<Session>=>Object.fromEntries((['pinned','sectionId','sectionPosition','archived','timeGroupDetached','forkedFrom','forkedFromTitle'] as const).filter(key=>key in session).map(key=>[key,session[key]]));
 export function applyEvent(state: State, event: HostEvent): State {
   const {sessionId, taskId, payload} = event;
@@ -50,7 +53,14 @@ export class ChatStore {
   private organizationQueue:Promise<unknown>=Promise.resolve();
   private stopped = true;
   private timer?: ReturnType<typeof setTimeout>;
-  private views = new Map<string, {draft?: string; scroll?: number; anchor?: ReadingAnchor}>();
+  // Per-session view snapshot (draft / scroll / reading anchor). This is the
+  // authoritative restore source and is updated on the hot path WITHOUT touching
+  // the reactive `sessions` array, so typing or scrolling never rebuilds the
+  // sidebar metadata. `views` keeps the latest values (never dropped on flush);
+  // `viewPending` holds only the deltas still owed to the host and is consumed by
+  // `flushView`, so a flush never re-sends an unchanged field.
+  private views = new Map<string, ViewSnapshot>();
+  private viewPending = new Map<string, ViewSnapshot>();
   private viewTimers = new Map<string, ReturnType<typeof setTimeout>>();
   private viewChains = new Map<string, Promise<void>>();
   private drafts = new Set<string>();
@@ -61,7 +71,7 @@ export class ChatStore {
   constructor(readonly rpc: Rpc) {}
   getSnapshot = () => this.state;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
-  private update(next: State) { this.state = next; this.listeners.forEach(l => l()); }
+  private update(next: State) { if (next === this.state) return; this.state = next; for (const listener of [...this.listeners]) listener(); }
   report = (error: unknown) => this.update({...this.state, error: error instanceof Error ? error.message : String(error)});
   clearError = () => this.update({...this.state, error: undefined});
   async initialize({newSession = false} = {}) {
@@ -72,9 +82,11 @@ export class ChatStore {
     // an event reset: the cursor has advanced and terminal events cannot replay.
     const boot=revision!==this.organizationRevision?{...remote,sections:this.state.boot?.sections||remote.sections,sessions:this.state.sessions}:remote;
     const local = new Map(this.state.sessions.map(s => [s.id, s]));
-    // Local unsent drafts never come back from the host bootstrap; keep them.
-    const drafts = this.state.sessions.filter(s => this.isLocalDraft(s.id)).map(s => ({...s, ...this.views.get(s.id)}));
-    this.update({...this.state, boot, connected: true, sessions: sortSessions([...drafts, ...boot.sessions.map(s => ({...s, ...this.views.get(s.id), ...(local.has(s.id) ? {draft: local.get(s.id)!.draft, scroll: local.get(s.id)!.scroll} : {}), ...(revisions.get(s.id) !== this.pinRevisions.get(s.id) ? {pinned: local.get(s.id)?.pinned} : {})}))]), tasks: Object.fromEntries(boot.tasks.map(t => [t.id, t]))});
+    // Seed the view snapshot from host baseline, preserving any live draft/scroll/anchor.
+    for (const s of boot.sessions) if (!this.views.has(s.id)) this.views.set(s.id, {draft: s.draft ?? '', scroll: s.scroll ?? 0, anchor: s.anchor ?? null});
+    // Local unsent drafts never come back from the host bootstrap; keep their rows.
+    const drafts = this.state.sessions.filter(s => this.isLocalDraft(s.id));
+    this.update({...this.state, boot, connected: true, sessions: sortSessions([...drafts, ...boot.sessions.map(s => ({...s, ...(local.has(s.id) && revisions.get(s.id) !== this.pinRevisions.get(s.id) ? {pinned: local.get(s.id)!.pinned} : {})}))]), tasks: Object.fromEntries(boot.tasks.map(t => [t.id, t]))});
     this.syncEmptySessionPolicy();
     if (newSession) {
       await this.create();
@@ -97,11 +109,14 @@ export class ChatStore {
     const job = (async () => {
       try {
         const result = await this.rpc('sessions.get', {sessionId: id});
-        const local = this.state.sessions.find(s => s.id === id);
         const watermark = result.cursor;
+        // Seed the view snapshot from host values for fields we have not touched
+        // live; a draft the user is mid-typing is never clobbered by a reload.
+        const live = this.views.get(id);
+        this.views.set(id, {draft: live?.draft ?? result.session.draft ?? '', scroll: live?.scroll ?? result.session.scroll ?? 0, anchor: live?.anchor !== undefined ? live.anchor : result.session.anchor ?? null});
         if (watermark !== undefined) this.watermarks.set(id, watermark);
         else if (this.running(id) || result.messages.some(m => m.status === 'running')) this.snapshotStreams.add(id);
-        let next = {...this.state, sessions: sortSessions(this.state.sessions.map(s => s.id === id ? {...result.session, ...(organizationRevision!==this.organizationRevision?organizationMetadata(s):{}), ...(pinRevision !== this.pinRevisions.get(id) ? {pinned: s.pinned} : {}), ...(renameRevision!==this.renameRevisions.get(id)?{title:s.title}:{}), draft: local?.draft ?? result.session.draft, scroll: local?.scroll ?? result.session.scroll, anchor: local?.anchor ?? result.session.anchor ?? null} : s)), messages: {...this.state.messages, [id]: result.messages}};
+        let next = {...this.state, sessions: sortSessions(this.state.sessions.map(s => s.id === id ? {...result.session, ...(organizationRevision!==this.organizationRevision?organizationMetadata(s):{}), ...(pinRevision !== this.pinRevisions.get(id) ? {pinned: s.pinned} : {}), ...(renameRevision!==this.renameRevisions.get(id)?{title:s.title}:{})} : s)), messages: {...this.state.messages, [id]: result.messages}};
         // Production snapshots and their event watermark are captured atomically.
         // Only replay later events; old message creation must not erase live text.
         // Legacy fixtures without a watermark retain invalidation-based reconciliation.
@@ -129,7 +144,7 @@ export class ChatStore {
     this.saveEmptySessions = Boolean(prefs.save_empty_sessions);
   }
   private startDraft(sectionId?: string|null, force = false): string {
-    const blank = (s: Session) => this.isLocalDraft(s.id) && !(s.draft || '').trim() && (this.state.messages[s.id]?.length ?? 0) === 0;
+    const blank = (s: Session) => this.isLocalDraft(s.id) && !((this.views.get(s.id)?.draft ?? s.draft) || '').trim() && (this.state.messages[s.id]?.length ?? 0) === 0;
     const current = this.state.sessions.find(s => s.id === this.state.selected);
     const reusable = force ? undefined : current && blank(current) ? current : this.state.sessions.find(blank);
     if (reusable) {
@@ -168,22 +183,37 @@ export class ChatStore {
     const messages = {...this.state.messages};
     const carried = messages[id]; delete messages[id];
     messages[created.id] = carried || [];
-    this.views.delete(id);
-    clearTimeout(this.viewTimers.get(id)); this.viewTimers.delete(id);
+    this.migrateView(id, created.id);
     const attachments = this.attachments.get(id);
     if (attachments) { this.attachments.delete(id); this.attachments.set(created.id, attachments); }
     const submitting = {...this.state.submitting};
     if (submitting[id]) { delete submitting[id]; submitting[created.id] = true; }
-    this.update({...this.state, sessions: sortSessions(this.state.sessions.map(s => s.id === id ? {...created, draft: s.draft, scroll: s.scroll, anchor: s.anchor ?? null} : s)), messages, submitting, selected: this.state.selected === id ? created.id : this.state.selected});
+    this.update({...this.state, sessions: sortSessions(this.state.sessions.map(s => s.id === id ? created : s)), messages, submitting, selected: this.state.selected === id ? created.id : this.state.selected});
     return created.id;
+  }
+  /** Move a session's live view snapshot and any un-flushed patch onto its formal host id. */
+  private migrateView(from: string, to: string) {
+    const snapshot = this.views.get(from);
+    const pending = this.viewPending.get(from);
+    if (snapshot) this.views.set(to, {...this.views.get(to), ...snapshot});
+    if (pending || snapshot) this.viewPending.set(to, {...this.viewPending.get(to), ...snapshot, ...pending});
+    this.views.delete(from); this.viewPending.delete(from);
+    const timer = this.viewTimers.get(from); this.viewTimers.delete(from);
+    if (timer) clearTimeout(timer);
+    if (this.viewPending.get(to)) this.viewTimers.set(to, setTimeout(() => this.flushView(to), 450));
   }
   private async persistDraftIfNeeded(id: string) { return this.isLocalDraft(id) ? this.persistDraft(id) : id; }
   private removeDraft(id: string) {
     this.drafts.delete(id);
-    clearTimeout(this.viewTimers.get(id)); this.viewTimers.delete(id); this.views.delete(id); this.attachments.delete(id);
+    this.clearView(id); this.attachments.delete(id);
     const messages = {...this.state.messages}; delete messages[id];
     const sessions = this.state.sessions.filter(s => s.id !== id);
     this.update({...this.state, messages, sessions, selected: this.state.selected === id ? sessions.find(s => !s.archived)?.id : this.state.selected});
+  }
+  /** Drop every per-session view record for a session that no longer exists. */
+  private clearView(id: string) {
+    clearTimeout(this.viewTimers.get(id));
+    this.viewTimers.delete(id); this.views.delete(id); this.viewPending.delete(id);
   }
   async rename(id: string, title: string) {
     const value = title.trim(); if (!value) throw new Error('请输入会话名称');
@@ -215,9 +245,10 @@ export class ChatStore {
   }
   private applyOrganization(snapshot:OrganizationSnapshot) {
     this.organizationRevision++;
-    const local=new Map(this.state.sessions.map(s=>[s.id,s]));
-    const drafts=this.state.sessions.filter(s=>this.isLocalDraft(s.id)).map(s=>({...s,...this.views.get(s.id)}));
-    this.update({...this.state,boot:this.state.boot?{...this.state.boot,sections:snapshot.sections}:undefined,sessions:sortSessions([...drafts,...snapshot.sessions.map(s=>({...s,...(local.has(s.id)?{draft:local.get(s.id)!.draft,scroll:local.get(s.id)!.scroll,anchor:local.get(s.id)!.anchor}:{}),...this.views.get(s.id)}))])});
+    // Seed the snapshot from any host view fields; live drafts are never clobbered.
+    for (const s of snapshot.sessions) if (!this.views.has(s.id)) this.views.set(s.id, {draft: s.draft ?? '', scroll: s.scroll ?? 0, anchor: s.anchor ?? null});
+    const drafts=this.state.sessions.filter(s=>this.isLocalDraft(s.id));
+    this.update({...this.state,boot:this.state.boot?{...this.state.boot,sections:snapshot.sections}:undefined,sessions:sortSessions([...drafts,...snapshot.sessions])});
   }
   async moveToSection(id:string,sectionId:string|null,beforeSessionId?:string) {
     return this.organize(async()=>{ id=await this.persistDraftIfNeeded(id); this.applyOrganization(await this.rpc('sessions.section',{sessionId:id,sectionId,...(beforeSessionId?{beforeSessionId}:{})})); });
@@ -258,7 +289,7 @@ export class ChatStore {
       const selectedDeleted=action==='delete'&&Boolean(this.state.selected&&ids.has(this.state.selected));
       if(action==='delete') {
         const messages={...this.state.messages};
-        for(const id of ids){clearTimeout(this.viewTimers.get(id));this.views.delete(id);this.attachments.delete(id);delete messages[id];}
+        for(const id of ids){this.clearView(id);this.attachments.delete(id);delete messages[id];}
         this.update({...this.state,messages});
       }
       this.applyOrganization(snapshot);
@@ -276,7 +307,7 @@ export class ChatStore {
     if (!session || this.running(id) || this.state.submitting[id]) throw new Error('会话不存在或正在运行，不能删除');
     await this.rpc('sessions.delete', {sessionId: id});
     this.organizationRevision++;
-    clearTimeout(this.viewTimers.get(id)); this.views.delete(id); this.attachments.delete(id);
+    this.clearView(id); this.attachments.delete(id);
     const messages = {...this.state.messages}; delete messages[id];
     const sessions = this.state.sessions.filter(s => s.id !== id);
     const selectedDeleted=this.state.selected===id;
@@ -285,25 +316,42 @@ export class ChatStore {
     });
   }
   running(id: string) { return Object.values(this.state.tasks).find(t => t.sessionId === id && activeTask(t)); }
-  view(id: string, patch: {draft?: string; scroll?: number; anchor?: ReadingAnchor}) {
+  /**
+   * Live view values for a session: the latest draft / scroll / anchor. Reads the
+   * snapshot rather than the reactive session array, so the composer and reading
+   * position restore correctly without those fields driving sidebar renders.
+   */
+  getView(id: string): ViewSnapshot { return this.views.get(id) ?? {}; }
+  /**
+   * Hot path. Merges into the per-session snapshot and queues a debounced host
+   * flush; it never rebuilds `state.sessions`, so keystrokes and scroll updates do
+   * not re-render the sidebar or the current body. A read-only legacy row keeps the
+   * scroll in memory only and is never sent to the host.
+   */
+  view(id: string, patch: ViewSnapshot) {
     const session = this.state.sessions.find(s => s.id === id);
     if (!session) return;
     if (readOnly(session)) {
-      if (patch.scroll !== undefined) this.update({...this.state, sessions: this.state.sessions.map(s => s.id === id ? {...s, scroll: patch.scroll!} : s)});
-      return; // Legacy database stays read-only, including viewing metadata.
+      // Legacy database stays read-only, including viewing metadata: only the
+      // transient scroll position is kept in memory, never a draft or host write.
+      if (patch.scroll !== undefined) this.views.set(id, {...this.views.get(id), scroll: patch.scroll});
+      return;
     }
     this.views.set(id, {...this.views.get(id), ...patch});
-    this.update({...this.state, sessions: this.state.sessions.map(s => s.id === id ? {...s, ...patch} : s)});
-    if (this.isLocalDraft(id)) return; // local placeholder: keep the draft in memory only
+    if (this.isLocalDraft(id)) return; // local placeholder: keep the draft in memory only, no host row yet
+    this.viewPending.set(id, {...this.viewPending.get(id), ...patch});
     clearTimeout(this.viewTimers.get(id));
     this.viewTimers.set(id, setTimeout(() => this.flushView(id), 450));
   }
   flushView(id: string) {
     clearTimeout(this.viewTimers.get(id));
-    const patch = this.views.get(id); if (!patch) return;
-    if (this.isLocalDraft(id)) return; // no host row to persist into yet
-    this.views.delete(id);
-    const chain = (this.viewChains.get(id) || Promise.resolve()).then(async () => { await this.rpc('sessions.view', {sessionId: id, ...patch}); }).catch(this.report);
+    const patch = this.viewPending.get(id);
+    if (!patch) return; // nothing owed: the snapshot stays for restore, no redundant write
+    if (this.isLocalDraft(id)) return; // no host row to persist into yet; pending carries over on migrate
+    this.viewPending.delete(id);
+    const {anchor, ...rest} = patch; // a null anchor means "top of history", never a host write
+    const payload: {sessionId: string; draft?: string; scroll?: number; anchor?: ReadingAnchor} = {sessionId: id, ...rest, ...(anchor ? {anchor} : {})};
+    const chain = (this.viewChains.get(id) || Promise.resolve()).then(async () => { await this.rpc('sessions.view', payload); }).catch(this.report);
     this.viewChains.set(id, chain);
     return chain;
   }
@@ -339,10 +387,18 @@ export class ChatStore {
     return result;
   }
   start() { if (!this.stopped) return; this.stopped = false; void this.poll(); }
-  stop() { this.stopped = true; clearTimeout(this.timer); for (const id of this.views.keys()) this.flushView(id); }
+  stop() { this.stopped = true; clearTimeout(this.timer); for (const id of [...this.viewPending.keys()]) this.flushView(id); }
   async pollOnce() {
     const result = await this.rpc('events.poll', {after: this.cursor});
     if (result.navigation?.category === '模型') this.update({...this.state, modelSettingsRequest: result.navigation.id});
+    if (result.navigation?.category === '报告') {
+      if (result.navigation.error) this.report(result.navigation.error);
+      else if (result.navigation.sessionId) {
+        await this.initialize();
+        await this.select(result.navigation.sessionId);
+        this.update({...this.state, reportRequest: result.navigation.id});
+      }
+    }
     if (result.reset) {
       this.cursor = result.cursor; this.journal = []; this.watermarks.clear(); this.snapshotStreams.clear();
       await this.initialize();
@@ -364,7 +420,11 @@ export class ChatStore {
     }
     this.cursor = result.cursor;
     this.journal = this.journal.slice(-2000);
-    this.update({...state, connected: true});
+    // An empty batch, or one where every event was deduplicated or filtered by the
+    // watermark, leaves `state` === the current snapshot. Advance the cursor but do
+    // not notify business state. A reconnect (connected false -> true) is a real
+    // change and must still notify.
+    if (state !== this.state || !this.state.connected) this.update({...state, connected: true});
     for (const id of new Set([...dirtyStreams, ...finished])) if (this.state.messages[id] && this.state.sessions.some(s => s.id === id)) {
       await this.load(id);
       if (finished.has(id) && !this.running(id)) this.snapshotStreams.delete(id);
@@ -376,3 +436,26 @@ export class ChatStore {
   }
 }
 export const useChatState = (store: ChatStore) => useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
+
+/**
+ * Subscribe to only the fields a component actually consumes. The store keeps
+ * unchanged branches reference-stable (shallow copies preserve sibling arrays and
+ * objects), so a background session's text increment does not re-render the
+ * current body or the sidebar. Selectors that build a fresh object or array pass
+ * `shallowEqual`; selectors returning primitives or stable references use the
+ * default `Object.is`.
+ */
+export function useChatSelector<T>(store: ChatStore, selector: (state: State) => T, equals: (a: T, b: T) => boolean = Object.is): T {
+  return useSyncExternalStoreWithSelector(store.subscribe, store.getSnapshot, store.getSnapshot, selector, equals);
+}
+
+/** One-level shallow compare so a projection that allocates a new object does not
+ * re-render when its consumed fields are unchanged. No deep walk, no serialization. */
+export function shallowEqual<T>(a: T, b: T): boolean {
+  if (Object.is(a, b)) return true;
+  if (typeof a !== 'object' || a === null || typeof b !== 'object' || b === null) return false;
+  const ak = Object.keys(a as object), bk = Object.keys(b as object);
+  if (ak.length !== bk.length) return false;
+  for (const key of ak) if (!Object.is((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key])) return false;
+  return true;
+}

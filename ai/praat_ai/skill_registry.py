@@ -33,4 +33,4 @@ def load(context: PhaseContext, phase, state):
         identity = f'{key}:1:{phase}'
         if identity not in context.loaded:
             content = (ROOT / key / 'SKILL.md').read_text(encoding='utf-8').split('---', 2)[-1].strip()
-            context.append_guidance(identity, f'[应用任务指导 skill={key} version=1 phase={phase}；仅适用于本任务，权限由代码核对]\n{content}')
+            context.append_guidance(identity, f'[任务指导 skill={key} version=1 phase={phase}]\n{content}')

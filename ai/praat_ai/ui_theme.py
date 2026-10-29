@@ -1,16 +1,4 @@
-"""界面主题：对齐 TW-Elements（Tailwind + MDB，MIT）的设计令牌 + 跟随系统深浅色。
-
-只借**设计语言**（色板 / 间距 / 圆角 / 字号 / 状态色），不复制它的代码——它是给
-网页用的 Tailwind 组件库，我们的界面是 Python + Tkinter（见 guide.md §8.16）。
-
-三件事：
-
-- :data:`LIGHT` / :data:`DARK`：两套令牌，键集合必须一致（有单测守着）；
-- :func:`system_is_dark`：读 Windows 的 ``AppsUseLightTheme``（0 = 深色）；
-  非 Windows / 键缺失 / 读失败一律按浅色——宁可亮着，别把界面弄成看不清；
-- :class:`Theme` / :class:`ThemeWatcher`：当前令牌 + 缩放；系统换主题时通知所有
-  注册过的控件重刷颜色（窗口开着也会跟着变）。
-"""
+"""界面主题：对齐 TW-Elements（Tailwind + MDB，MIT）的设计令牌 + 跟随系统深浅色。"""
 
 from __future__ import annotations
 

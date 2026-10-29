@@ -30,7 +30,7 @@ namespace AIPraat.Setup
         }
         public void SetStatus(string text,bool ready,bool actionable)
         {Status.Text=text;Status.ForeColor=ready?SetupTheme.Success:SetupTheme.Muted;tips.SetToolTip(Status,text);if(Process!=null)Process.Visible=actionable;}
-        public void SetFeedback(string text){if(feedback.Text==text)return;feedback.Text=text??"";PerformLayout();}
+        public void SetFeedback(string text){text=SetupTheme.Hint(text);if(feedback.Text==text)return;feedback.Text=text;PerformLayout();}
         protected override void OnLayout(LayoutEventArgs e)
         {
             base.OnLayout(e);int left=SetupTheme.Px(158),button=SetupTheme.Px(112),gap=SetupTheme.Px(12);
@@ -64,7 +64,7 @@ namespace AIPraat.Setup
         readonly LinkLabel alignmentDetails=new LinkLabel{Text="查看对齐环境明细…",Name="AlignmentDetails",Height=32,Visible=false};
         readonly bool installMode;
         string programDirectory;
-        public string SearchDirectory {set{programDirectory=value;}}
+        public string SearchDirectory {set{programDirectory=value;RuntimeDependencies.InstallRoot=value;}}
         public Control DiscoveryActions {get{return toolbar;}}
         readonly List<DependencyCandidate> packages=new List<DependencyCandidate>();
         RuntimeInstallPlan localPlan=new RuntimeInstallPlan();
@@ -90,7 +90,7 @@ namespace AIPraat.Setup
         public bool Ready {get;private set;}
         public DependencyPanel(bool installMode,string programDirectory)
         {
-            this.installMode=installMode;this.programDirectory=programDirectory;Device="cpu";Name="DependencyPanel";Dock=DockStyle.Fill;AutoScroll=true;BackColor=Color.White;Font=SetupTheme.Body;ForeColor=SetupTheme.Text;
+            this.installMode=installMode;SearchDirectory=programDirectory;Device="cpu";Name="DependencyPanel";Dock=DockStyle.Fill;AutoScroll=true;BackColor=Color.White;Font=SetupTheme.Body;ForeColor=SetupTheme.Text;
             Padding=new Padding(24,16,24,16);Controls.Add(layout);
             toolbar.Name="DependencyDiscoveryActions";toolbar.Size=new Size(264,40);toolbar.WrapContents=false;toolbar.Margin=Padding.Empty;
             var automatic=new OutlineButton{Text="自动查找",Name="FindDependencies",Width=100,Height=36,Margin=new Padding(0,0,8,0)};
@@ -108,7 +108,7 @@ namespace AIPraat.Setup
             AddRow(layout,"ffmpeg","FFmpeg","FfmpegPath",0);
             if(installMode){AddFold("可选分析工具",tools,"OptionalTools");AddRow(tools,"llama","llama.cpp","LlamaServerPath",0);AddRow(tools,"mfa","MFA","MfaExecutablePath",0);AddAlignmentEntry(tools);AddFold("本地模型与资源 · 可选",resources,"ModelResources");AddRow(resources,"model","语言模型","ModelPath",0);AddRow(resources,"mmproj","视觉投影","MmprojPath",0);AddRow(resources,"wav","wav2vec2 模型","Wav2Vec2ModelPath",0);}
             else {AddFold("可选工具与资源",tools,"OptionalTools");AddRow(tools,"llama","llama.cpp","LlamaServerPath",0);AddRow(tools,"mfa","MFA","MfaExecutablePath",0);AddAlignmentEntry(tools);AddRow(tools,"mmproj","视觉投影","MmprojPath",0);}
-            var hint=new Label{Text=installMode?"模型可留空，安装后通过前端资源管理添加；配套关系需明确选择。":"视觉投影与语言模型的配套关系在模型菜单中确认。",Font=SetupTheme.Small,ForeColor=SetupTheme.Muted,AutoSize=true,MaximumSize=new Size(650,0),Padding=new Padding(158,8,0,8)};
+            var hint=new Label{Text=installMode?"模型可在安装后通过资源管理添加":"视觉投影与语言模型的配套关系在模型菜单中确认",Font=SetupTheme.Small,ForeColor=SetupTheme.Muted,AutoSize=true,MaximumSize=new Size(650,0),Padding=new Padding(158,8,0,8)};
             SetupTheme.AddRow(installMode?resources:tools,hint);
             summary.Name="DependencySummary";summary.Font=SetupTheme.Small;summary.Height=44;summary.ForeColor=SetupTheme.Muted;AddBlock(summary);summary.Visible=false;
             discoveryResults.Font=SetupTheme.Small;discoveryResults.LinkColor=SetupTheme.Primary;AddBlock(discoveryResults);discoveryResults.LinkClicked+=(s,e)=>ShowDiscoveryResults();
@@ -186,7 +186,7 @@ namespace AIPraat.Setup
                 var result=await Task.Run(()=>DependencyDiscovery.ProbeProgram(kind,ResolveCommand(kind,path)));
                 if(IsDisposed||generation!=versions[kind])return;
                 if(result!=null)verified[kind]=result;
-                rows[kind].SetStatus(result!=null?ShortVersion(result.Version):path==""?"未配置":"未验证可用",result!=null,false);details[kind]=result==null?"可选工具未配置或版本检测未通过。":result.Description;
+                rows[kind].SetStatus(result!=null?ShortVersion(result.Version):path==""?"未配置":"未验证可用",result!=null,false);details[kind]=result==null?"可选工具未配置或版本检测未通过":result.Description;
             } else if(kind=="mfa") {
                 var result=await Task.Run(()=>DependencyDiscovery.ProbeProgram(kind,ResolveCommand(kind,path)));
                 if(IsDisposed||generation!=versions[kind])return;
@@ -201,7 +201,7 @@ namespace AIPraat.Setup
                 if(IsDisposed||generation!=versions[kind])return;
                 if(result==null) {
                     rows[kind].SetStatus(path==""?"未配置":"未验证可用",false,false);
-                    details[kind]=path==""?"可选工具未配置：填写 MFA 程序或 conda 环境后可检测对齐环境。":"MFA 版本检测未通过，无法继续检测对齐环境。";
+                    details[kind]=path==""?"可选工具未配置：填写 MFA 程序或 conda 环境后可检测对齐环境":"MFA 版本检测未通过，无法继续检测对齐环境";
                 } else {
                     rows[kind].SetStatus(alignmentReport.ready?"对齐环境可用":"对齐环境不完整",alignmentReport.ready,false);
                     details[kind]=alignmentReport.Describe();
@@ -233,7 +233,7 @@ namespace AIPraat.Setup
             
             runtimeStatus.Text=pythonProbe==null?"正在检测运行库…":pythonProbe.Valid?"运行库已就绪 · "+count+"/"+RuntimeDependencies.Items().Length+" · "+Device.ToUpperInvariant():pythonProbe.Report==null?"检测未完成":"运行库未就绪 · "+count+"/"+RuntimeDependencies.Items().Length;
             runtimeStatus.ForeColor=pythonProbe!=null&&pythonProbe.Valid?SetupTheme.Success:SetupTheme.Muted;
-            runtimeNote.Text=pythonProbe==null?"等待所选 Python 环境的实际检测结果。":pythonProbe.Valid?"全部必需运行库检测通过。"+(pythonProbe.Report!=null&&pythonProbe.Report.log_path==""?" 日志未保存，不影响检测。":""):pythonProbe.Message;
+            runtimeNote.Text=pythonProbe==null?"等待所选 Python 环境的实际检测结果":pythonProbe.Valid?"全部必需运行库检测通过"+(pythonProbe.Report!=null&&pythonProbe.Report.log_path==""?" 日志未保存，不影响检测":""):SetupTheme.Hint(pythonProbe.Message);
             runtimeNote.ForeColor=pythonProbe!=null&&!pythonProbe.Valid?SetupTheme.Error:SetupTheme.Muted;
             runtimeDetails.Enabled=verified.ContainsKey("python")&&!busy;retryRuntime.Visible=pythonProbe!=null&&!pythonProbe.Valid&&verified.ContainsKey("python")&&!busy;
             LayoutRuntime();
@@ -241,8 +241,8 @@ namespace AIPraat.Setup
             var optional=new InstallRequest{LlamaServerPath=LlamaPath,ModelPath=installMode?ModelPath:"",MmprojPath=MmprojPath,AlignmentPaths=Alignment,OriginalAlignmentPaths=originalAlignment};
             string error=PathValidation.OptionalPathsError(optional);
             Ready=!busy&&pythonProbe!=null&&pythonProbe.Valid&&ffmpegProbe!=null&&ffmpegProbe.Ready&&error==null;
-            ValidationMessage=error??(pythonProbe==null?"正在检测所选 Python 环境…":!pythonProbe.Valid?"请先完成运行库检测。":ffmpegProbe==null?"正在检测 FFmpeg…":!ffmpegProbe.Ready?"请配置 FFmpeg 后继续。":"必需环境已就绪。");
-            summary.Text=ValidationMessage;summary.ForeColor=Ready?SetupTheme.Success:SetupTheme.Muted;
+            ValidationMessage=error??(pythonProbe==null?"正在检测所选 Python 环境…":!pythonProbe.Valid?"请先完成运行库检测":ffmpegProbe==null?"正在检测 FFmpeg…":!ffmpegProbe.Ready?"请配置 FFmpeg 后继续":"必需环境已就绪");
+            summary.Text=SetupTheme.Hint(ValidationMessage);summary.ForeColor=Ready?SetupTheme.Success:SetupTheme.Muted;
             summary.Visible=busy;
             string feedbackKind=null;
             if(error!=null)foreach(var match in new[]{new[]{"llama","llama"},new[]{"model","前端模型"},new[]{"mmproj","视觉投影"},new[]{"mfa","MFA"},new[]{"wav","wav2vec2"}})if(rows.ContainsKey(match[0])&&error.IndexOf(match[1],StringComparison.OrdinalIgnoreCase)>=0){feedbackKind=match[0];break;}
@@ -285,8 +285,8 @@ namespace AIPraat.Setup
                 if(folder!=null)localPlan.dependency_folder=folder;
                 localPlan.dependency_folders=packages.Where(x=>x.Path.EndsWith(".whl",StringComparison.OrdinalIgnoreCase)).Select(x=>Path.GetDirectoryName(x.Path)).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
                 details["查找结果"]=string.Join("\r\n",found.Candidates.Select(x=>(x.Package?"安装包已找到（待安装）：":"已识别：")+x.Version+" · "+x.Path).Concat(found.Notes));
-                if(found.Candidates.Count==0)details["查找结果"]="未找到可用程序或安装包；自动查找不扫描整盘。";
-                summary.Visible=true;summary.Text=details["查找结果"];
+                if(found.Candidates.Count==0)details["查找结果"]="未找到可用程序或安装包，请选择所在文件夹";
+                summary.Visible=true;summary.Text=SetupTheme.Hint(details["查找结果"]);
             } catch(Exception error){details["查找结果"]="识别失败："+error.Message;}
             finally {if(!IsDisposed){SetBusy(false);StartChecks();}}
         }
@@ -313,7 +313,7 @@ namespace AIPraat.Setup
             using(var form=new Form{Text="MFA 对齐环境明细",ClientSize=new Size(900,560),StartPosition=FormStartPosition.CenterParent,Font=Font,BackColor=Color.White}) {
                 var list=new TextBox{Multiline=true,ReadOnly=true,ScrollBars=ScrollBars.Vertical,Dock=DockStyle.Fill,Text=alignmentReport.Describe()};
                 var launcher=new Panel{Dock=DockStyle.Bottom,Height=SetupTheme.Px(132),Padding=new Padding(12,8,12,8)};
-                var hint=new Label{Text="直接调用 Scripts\\mfa.exe 不会激活环境（缺 libsndfile/fstcompile）。填写 conda 与环境名后点“重新检测”；在路径界面点保存后写入配置。",
+                var hint=new Label{Text="填写 Conda 路径与环境名，点击“重新检测”；检测后保存路径配置",
                     Font=SetupTheme.Small,ForeColor=SetupTheme.Muted,Dock=DockStyle.Top,Height=SetupTheme.Px(40)};
                 var condaLabel=new Label{Text="conda 可执行文件",Font=SetupTheme.Small,AutoSize=true,Location=new Point(12,SetupTheme.Px(46))};
                 var conda=new TextBox{Text=MfaCondaExecutable,Name="MfaCondaExecutablePath",Width=SetupTheme.Px(360),Location=new Point(SetupTheme.Px(140),SetupTheme.Px(42))};
@@ -354,7 +354,7 @@ namespace AIPraat.Setup
             using(var dialog=new Form{Text="安装 Python 环境",Width=640,Height=190,StartPosition=FormStartPosition.CenterParent,Font=Font}) {
                 var existing=new Button{Text="选择已有环境中的 python.exe",Dock=DockStyle.Top,Height=40};
                 var install=new Button{Text="运行已找到的 Python 安装包…",Dock=DockStyle.Top,Height=40};
-                dialog.Controls.Add(new Label{Text="安装包尚未就绪。安装结束后将重新识别并检测 Python 环境。",Dock=DockStyle.Top,Height=45});dialog.Controls.Add(install);dialog.Controls.Add(existing);
+                dialog.Controls.Add(new Label{Text="安装包尚未就绪；安装结束后将重新识别并检测 Python 环境",Dock=DockStyle.Top,Height=45});dialog.Controls.Add(install);dialog.Controls.Add(existing);
                 DependencyCandidate chosen=null;existing.Click+=(s,e)=>{dialog.DialogResult=DialogResult.Cancel;Browse("python");};
                 install.Click+=(s,e)=>{chosen=Choose("Python 安装包",installers);if(chosen!=null)dialog.DialogResult=DialogResult.OK;};
                 if(dialog.ShowDialog(FindForm())!=DialogResult.OK||chosen==null)return;
@@ -371,12 +371,12 @@ namespace AIPraat.Setup
             if(busy)return;
             using(var form=new Form{Text="安装 FFmpeg 音频解码",Width=640,Height=220,StartPosition=FormStartPosition.CenterParent,Font=Font}) {
                 var online=new Button{Text="联网一键安装",Dock=DockStyle.Top,Height=40};var offline=new Button{Text="使用已找到的 ZIP 安装包…",Dock=DockStyle.Top,Height=40,Enabled=packages.Any(x=>x.Kind=="ffmpeg")};
-                form.Controls.Add(new Label{Text="安装包需安装并实际解码检测通过，才能标记就绪。",Dock=DockStyle.Top,Height=50});form.Controls.Add(offline);form.Controls.Add(online);
+                form.Controls.Add(new Label{Text="选择本地安装包，或联网安装 FFmpeg",Dock=DockStyle.Top,Height=50});form.Controls.Add(offline);form.Controls.Add(online);
                 string archive="",checksum="";bool selected=false;
                 online.Click+=(s,e)=>{selected=true;form.DialogResult=DialogResult.OK;};
                 offline.Click+=(s,e)=>{var chosen=Choose("FFmpeg ZIP",packages.Where(x=>x.Kind=="ffmpeg").ToArray());if(chosen==null)return;archive=chosen.Path;
                     using(var hash=new Form{Text="填写发布方 SHA-256",Width=640,Height=155,StartPosition=FormStartPosition.CenterParent,Font=Font}){var input=new TextBox{Dock=DockStyle.Top};var ok=new Button{Text="校验并安装",Dock=DockStyle.Bottom,DialogResult=DialogResult.OK};hash.Controls.Add(input);hash.Controls.Add(ok);if(hash.ShowDialog(form)!=DialogResult.OK)return;checksum=input.Text.Trim();}
-                    if(!System.Text.RegularExpressions.Regex.IsMatch(checksum,"^[0-9a-fA-F]{64}$")){MessageBox.Show(form,"需要发布方提供的 64 位 SHA-256。");return;}selected=true;form.DialogResult=DialogResult.OK;
+                    if(!System.Text.RegularExpressions.Regex.IsMatch(checksum,"^[0-9a-fA-F]{64}$")){MessageBox.Show(form,"需要发布方提供的 64 位 SHA-256");return;}selected=true;form.DialogResult=DialogResult.OK;
                 };
                 if(form.ShowDialog(FindForm())!=DialogResult.OK||!selected)return;SetBusy(true);
                 var progress=new Progress<string>(line=>{if(!IsDisposed)summary.Text=line;});

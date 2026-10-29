@@ -2,7 +2,7 @@
 
 import tkinter as tk
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from praat_ai import chat
 
@@ -13,6 +13,11 @@ class ProcessFoldTests(unittest.TestCase):
         probe = patch.object(chat, 'running_model_info', return_value={})
         probe.start()
         self.addCleanup(probe.stop)
+        # 假线程必须自报「已结束」：``close()`` 里用 ``worker.is_alive()`` 决定是立刻销毁
+        # 窗口还是排 ``after(100, _destroy_when_idle)`` 再等；MagicMock 的返回值恒真，
+        # 会让 root 永远等不到销毁，每个用例泄漏一个活解释器。
+        self.fake_thread = MagicMock()
+        self.fake_thread.is_alive.return_value = False
         try:
             self.window = chat.ChatWindow()
         except tk.TclError as error:
@@ -27,7 +32,7 @@ class ProcessFoldTests(unittest.TestCase):
     def submit(self, started_at=100.0) -> None:
         self.window.entry.insert("1.0", "查询基频")
         # 避免连接真实模型；保留 submit 和消息队列的 UI 路径。
-        with patch.object(chat.threading, "Thread"), patch.object(
+        with patch.object(chat.threading, "Thread", return_value=self.fake_thread), patch.object(
             chat.time, "monotonic", return_value=started_at
         ):
             self.window.submit()
@@ -369,6 +374,13 @@ class ProcessFoldTests(unittest.TestCase):
         self.right_click("已完成，用时0分3秒")
         self.assertFalse(self.collapsed(tag))
 
+
+
+def tearDownModule():
+    # Tk 解释器必须在主线程回收：否则后端线程的下一次 GC 会析构它，触发 Tcl_AsyncDelete。
+    import gc
+
+    gc.collect()
 
 if __name__ == "__main__":
     unittest.main()

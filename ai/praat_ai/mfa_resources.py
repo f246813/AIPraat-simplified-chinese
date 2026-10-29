@@ -22,6 +22,7 @@ from typing import Any
 
 from .config import pronunciation_presets
 from .service_lock import service_transition_lock
+from .paths import installation_root
 
 KINDS = ('g2p', 'dictionary', 'acoustic')
 IDENTITY_FIELDS = ('id', 'name', 'language', 'variant', 'rule_id')
@@ -69,12 +70,21 @@ def parse_dictionary(path) -> dict[str, list[list[str]]]:
 
 @lru_cache(maxsize=4)
 def _parse_dictionary(path, size, mtime, ctime) -> dict[str, list[list[str]]]:
+    result = {}
+    for word, phones in _dictionary_rows(path):
+        candidates = result.setdefault(word, [])
+        if phones not in candidates:
+            candidates.append(phones)
+    return result
+
+
+def _dictionary_rows(path):
     """Read UTF-8/BOM MFA dictionaries, including 1--4 probability columns.
 
     Numeric columns are only legal between the word and first phone. Invalid
     rows fail loudly instead of treating a probability as a phone or dropping it.
     """
-    result = {}
+    checked_phones, found = set(), False
     with Path(path).open(encoding='utf-8-sig') as handle:
         for number, line in enumerate(handle, 1):
             line = line.strip()
@@ -87,16 +97,43 @@ def _parse_dictionary(path, size, mtime, ctime) -> dict[str, list[list[str]]]:
             probabilities = []
             while phones and _NUMBER.fullmatch(phones[0]):
                 probabilities.append(float(phones.pop(0)))
-            if (len(probabilities) > 4 or any(not math.isfinite(p) or p < 0 for p in probabilities)
-                    or (probabilities and probabilities[0] > 1) or not phones
-                    or any(_NUMBER.fullmatch(p) or p.casefold() in {'nan', 'inf', '+inf', '-inf'}
-                           or any(ord(c) < 32 for c in p) for p in phones)):
+            invalid = len(probabilities) > 4 or any(not math.isfinite(p) or p < 0 for p in probabilities)
+            invalid = invalid or (bool(probabilities) and probabilities[0] > 1) or not phones
+            for phone in phones:
+                if phone not in checked_phones:
+                    invalid = invalid or bool(_NUMBER.fullmatch(phone)) or phone.casefold() in {'nan', 'inf', '+inf', '-inf'} or any(ord(c) < 32 for c in phone)
+                    checked_phones.add(phone)
+            if invalid:
                 raise ValueError(f'词典第 {number} 行的概率或音位格式无效')
-            candidates = result.setdefault(word.casefold(), [])
+            found = True
+            yield word.casefold(), phones
+    if not found:
+        raise ValueError('词典没有可用的读音')
+
+
+def dictionary_inventory(path):
+    """Page checks retain only unique labels, never the complete lexicon."""
+    candidate = Path(path).resolve()
+    stat = candidate.stat()
+    return _dictionary_inventory(str(candidate), stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns, stat.st_ino)
+
+
+@lru_cache(maxsize=16)
+def _dictionary_inventory(path, size, mtime, ctime, inode):
+    phones = set()
+    for _word, labels in _dictionary_rows(path):
+        phones.update(labels)
+    return frozenset(phones)
+
+
+def dictionary_pronunciations(path, words):
+    """Read requested entries without allocating/copying a full dictionary."""
+    requested, result = {word.casefold() for word in words}, {}
+    for word, phones in _dictionary_rows(path):
+        if word in requested:
+            candidates = result.setdefault(word, [])
             if phones not in candidates:
                 candidates.append(phones)
-    if not result:
-        raise ValueError('词典没有可用的读音')
     return result
 
 
@@ -238,12 +275,26 @@ def validate_preset(value, *, enforce_identity=True) -> Preset:
         raise ValueError('读音预设必须是对象')
     builtin = next((p for p in pronunciation_presets() if p['id'] == value.get('id')), None)
     if builtin is None:
-        raise ValueError('未知的语言读音预设 ID')
-    if enforce_identity:
+        if not isinstance(value.get('id'), str) or not re.fullmatch(r'custom-[a-f0-9]{32}', value['id']):
+            raise ValueError('未知的语言读音预设 ID')
+        for key in ('name', 'language', 'variant'):
+            item = value.get(key, '')
+            if (not isinstance(item, str) or len(item) > 120 or any(ord(c) < 32 for c in item)
+                    or key != 'variant' and not item.strip()):
+                raise ValueError('请填写有效的配套名称和语言代码')
+        if not re.fullmatch(r'[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*', value['language'].strip()):
+            raise ValueError('语言代码格式无效，例如 cmn、en、ja、de-DE')
+        if value.get('rule_id') is not None:
+            raise ValueError('自定义语言配套使用声学对比；音位判据需独立准备')
+        result = {key: value.get(key, None if key == 'rule_id' else '') for key in IDENTITY_FIELDS}
+        result.update(name=result['name'].strip(), language=result['language'].strip(), variant=result['variant'].strip())
+    elif enforce_identity:
         for key in IDENTITY_FIELDS:
             if key in value and value[key] != builtin[key]:
                 raise ValueError('语言读音预设的标识、名称与规则不可改写')
-    result = deepcopy(builtin)
+        result = deepcopy(builtin)
+    else:
+        result = deepcopy(builtin)
     for key in KINDS:
         item = value.get(key, '')
         if not isinstance(item, str):
@@ -261,7 +312,7 @@ def validate_preset(value, *, enforce_identity=True) -> Preset:
     from .phone_labels import validate_ipa
     for ipa in mapping.values():
         validate_ipa(ipa)
-    result.update(phone_set=phone_set, phone_map=dict(mapping), confirmed=value.get('confirmed') is True)
+    result.update(phone_set=phone_set, phone_map=dict(mapping))
     return result
 
 
@@ -275,8 +326,16 @@ class MfaResourceService:
     @staticmethod
     def _presets(raw):
         stored = raw.get('pronunciation', {}).get('presets', [])
-        return [validate_preset(next((p for p in stored if isinstance(p, dict) and p.get('id') == b['id']), b),
-                                enforce_identity=False) for b in pronunciation_presets()]
+        builtins = pronunciation_presets()
+        result = [validate_preset(next((p for p in stored if isinstance(p, dict) and p.get('id') == b['id']), b),
+                                  enforce_identity=False) for b in builtins]
+        seen = {p['id'] for p in result}
+        for entry in stored:
+            if (isinstance(entry, dict) and isinstance(entry.get('id'), str)
+                    and entry['id'].startswith('custom-') and entry['id'] not in seen):
+                result.append(validate_preset(entry))
+                seen.add(entry['id'])
+        return result
 
     @staticmethod
     def _launcher(raw):
@@ -328,8 +387,7 @@ class MfaResourceService:
             metadata = {}
             if kind == 'dictionary':
                 try:
-                    pronunciations = parse_dictionary(resource['path'])
-                    inventories[kind] = {p for candidates in pronunciations.values() for phones in candidates for p in phones}
+                    inventories[kind] = dictionary_inventory(resource['path'])
                     verified[kind] = True
                 except (OSError, UnicodeError, ValueError) as error:
                     conflicts.append('词典格式无效：' + str(error))
@@ -372,22 +430,19 @@ class MfaResourceService:
                 issues.append(kind + ' 缺少或无效 IPA 映射：' + ', '.join(invalid))
         if not mapping_ready:
             issues.append('音位体系或 IPA 映射未就绪')
-        if not preset['confirmed']:
-            issues.append('请明确确认资源属于所选目标读音（用户声明）')
         launcher_ready = launcher_exists(launcher)
         if not launcher_ready:
             issues.append('MFA 启动程序未找到或 Conda 配置不完整')
         if conflicts:
             compatibility = '冲突'
         elif mapping_ready and all(verified.get(k) for k in KINDS):
-            compatibility = '静态检查通过（用户声明）' if preset['confirmed'] else '静态检查通过（读音待声明）'
+            compatibility = '静态检查通过'
         else:
             compatibility = '未验证'
         g2p = next((r for r in resources['g2p'] if r['id'] == preset['g2p']), None)
         return dict(**states, compatibility=compatibility, issues=issues + conflicts,
                     mapping_ready=mapping_ready,
-                    can_generate=bool(g2p and g2p['exists'] and mapping_ready and preset['confirmed']
-                                      and launcher_ready and not conflicts))
+                    can_generate=bool(g2p and g2p['exists'] and mapping_ready and launcher_ready and not conflicts))
 
     def _result(self, raw):
         resources, launcher = self.catalog(raw), self._launcher(raw)
@@ -458,8 +513,7 @@ class MfaResourceService:
             resources={kind: (dict(id=chosen[kind]['id'], name=chosen[kind]['name'], path=chosen[kind]['path'],
                                    exists=chosen[kind]['exists']) if chosen[kind] else None) for kind in KINDS},
             status=status, blocking=blocking,
-            notes=['本检测会启动 MFA/conda 与一个子进程 Python，但不会安装、下载或修改任何配置。',
-                   '环境可用只说明这套 MFA 能跑对齐，不代表资源与目标口音匹配，也不替代一次真实双音频验证。'])
+            notes=['检测项目：MFA 启动、Python 依赖与资源兼容性'])
 
     def resolve(self, preset_id):
         raw = self._read()
@@ -540,11 +594,11 @@ class MfaResourceService:
         preset, launcher = validate_preset(preset), validate_launcher(launcher)
         def update(raw):
             catalog = self.catalog(raw)
-            existing = next(p for p in self._presets(raw) if p['id'] == preset['id'])
+            existing = next((p for p in self._presets(raw) if p['id'] == preset['id']), None)
             for kind in KINDS:
                 # Retain a dangling reference in an otherwise partial save, but
                 # never accept a new unregistered path/ID from the frontend.
-                if (preset[kind] and preset[kind] != existing[kind]
+                if (preset[kind] and (existing is None or preset[kind] != existing[kind])
                         and not any(r['id'] == preset[kind] for r in catalog[kind])):
                     raise ValueError('资源尚未登记：' + kind)
             status = self._check(preset, launcher, catalog)
@@ -606,7 +660,9 @@ class MfaResourceService:
                 raise ValueError('未知的资源类型')
             pattern = ('MFA 发音词典 (*.dict;*.txt;*.lex;*.lexicon;*.tsv)' if kind == 'dictionary'
                        else 'MFA 模型 (*.zip)')
+            initial = installation_root() / 'models' / 'mfa' / 'pretrained_models' / kind
             paths = window.create_file_dialog(webview.FileDialog.OPEN, allow_multiple=True,
+                                              directory=str(initial if initial.is_dir() else installation_root()),
                                               file_types=(pattern, '所有文件 (*.*)')) or []
             return self.add(kind, paths)
         raise ValueError('未知的 MFA 资源操作')

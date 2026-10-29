@@ -4,7 +4,7 @@
 // is preserved in third_party/pi-desktop/upstream/sidebar/Sidebar.tsx.
 import {useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent} from 'react';
 import {AudioLines, ChevronDown, LoaderCircle, PanelLeftClose, PanelLeftOpen, Search, Settings, SquarePen, Trash2, X} from 'lucide-react';
-import {ChatStore, useChatState} from '../../store';
+import {ChatStore, shallowEqual, useChatSelector} from '../../store';
 import {activeTask, type Session, type RetainedTimeGroup} from '../../types';
 import {IconButton} from '../../ui';
 import {SessionRow} from '../../SessionRow';
@@ -29,7 +29,9 @@ export function SessionSidebar({store, expanded, onToggle, width, maxWidth, onPr
   onPreviewWidth:(width:number)=>void; onCommitWidth:(width:number)=>void;
   onTasks:()=>void; onSettings:()=>void; onRename:(session:Session)=>void; onDelete:(session:Session)=>void;
 }) {
-  const state=useChatState(store);
+  // Consume the fields the list renders; message text is read imperatively in the
+  // newSession handler, so a growing reply never re-renders the whole sidebar.
+  const state = useChatSelector(store, s => ({sessions: s.sessions, selected: s.selected, boot: s.boot, tasks: s.tasks, submitting: s.submitting}), shallowEqual);
   const archived=false;
   const [query,setQuery]=useState('');
   const [searchOpen,setSearchOpen]=useState(false);
@@ -51,8 +53,8 @@ export function SessionSidebar({store, expanded, onToggle, width, maxWidth, onPr
   const newSession=()=>{
     const selected=state.selected;
     const current=selected?state.sessions.find(s=>s.id===selected):undefined;
-    const messages=selected?state.messages[selected]:undefined;
-    const blank=Boolean(current&&!current.readOnly&&messages!==undefined&&messages.length===0&&!(current.draft||'').trim());
+    const messages=selected?store.getSnapshot().messages[selected]:undefined;
+    const blank=Boolean(current&&!current.readOnly&&messages!==undefined&&messages.length===0&&!((store.getView(current.id).draft ?? current.draft) || '').trim());
     if(blank){document.querySelector<HTMLElement>('.tiptap[contenteditable=true]')?.focus();return;}
     create(null);
   };

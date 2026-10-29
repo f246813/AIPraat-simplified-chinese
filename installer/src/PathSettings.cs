@@ -22,6 +22,7 @@ namespace AIPraat.Setup
         public PathSettings(string aiDirectory,string configPath,string profileDirectory,string currentPython)
         {
             this.aiDirectory=Path.GetFullPath(aiDirectory); this.configPath=Path.GetFullPath(configPath);
+            RuntimeDependencies.InstallRoot=Path.GetDirectoryName(this.aiDirectory);
             this.profileDirectory=Path.GetFullPath(profileDirectory);
             installSettings=Path.Combine(Path.GetDirectoryName(this.aiDirectory),"install-settings.json");
             var config=ReadObject(this.configPath,Configuration.DefaultJson); var server=Configuration.Object(config,"server");

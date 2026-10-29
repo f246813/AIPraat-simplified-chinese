@@ -125,6 +125,13 @@ class ToolGuards:
 
     def normalize(self, name, arguments, *, source=None):
         args = dict(arguments)
+        if name == 'vot':
+            from .vot_request import validate_manual_landmarks
+            state = self.session.state
+            try:
+                validate_manual_landmarks(args, state.goal + '\n' + state.direction)
+            except ValueError as error:
+                raise tools.ToolError(str(error)) from error
         # These are application-owned scope flags, never model assertions.
         args.pop('_whole_object', None)
         properties = self.validators[name].schema.get('properties', {})

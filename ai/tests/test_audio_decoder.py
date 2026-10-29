@@ -14,7 +14,7 @@ class AudioDecoderTests(unittest.TestCase):
             root = Path(raw)
             config = root/'ai_config.json'
             (root/'anki_config.json').write_text(json.dumps({'ffmpeg': 'legacy.exe'}))
-            with patch.dict(os.environ, {'PRAAT_AI_CONFIG_PATH': str(config), 'PRAAT_AI_FFMPEG': '', 'LOCALAPPDATA': raw}), patch('shutil.which', return_value='path.exe'):
+            with patch.dict(os.environ, {'PRAAT_AI_INSTALL_ROOT': raw, 'PRAAT_AI_CONFIG_PATH': str(config), 'PRAAT_AI_FFMPEG': '', 'LOCALAPPDATA': raw}), patch('shutil.which', return_value='path.exe'):
                 self.assertEqual(resolve_ffmpeg(), 'legacy.exe')
                 self.assertEqual(load_config(config).to_dict()['audio']['ffmpeg'], 'legacy.exe')
                 config.write_text(json.dumps({'audio': {'ffmpeg': 'shared.exe'}}))

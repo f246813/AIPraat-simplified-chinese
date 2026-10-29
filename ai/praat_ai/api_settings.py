@@ -386,7 +386,7 @@ class ApiSettingsDialog:
         def field_label(parent, text: str, *, muted: bool = False, role: str = "body"):
             return tk.Label(
                 parent,
-                text=text,
+                text=text.rstrip('。.').replace('。', '；') if muted or role == 'small' else text,
                 anchor="w",
                 background=theme.color("surface"),
                 foreground=theme.color("textMuted" if muted else "text"),

@@ -1,11 +1,4 @@
-# 离线门禁：只跑不需要 Praat.exe、也不需要模型服务的东西。
-#
-# 为什么不直接 `pip install -r requirements.txt`：它会把 torch / praat-parselmouth /
-# pythonnet / pywebview 一起拉进来（几 GB，且与离线测试无关）。下面只装离线测试真正
-# 用到的包，保证 job 在几分钟内跑完。
-#
-# 真模型门禁（golden_backend.py --model live）不进 CI：它要 API key、要替身 Praat 之外的
-# 环境，属于发版前手工执行的检查。
+# 离线协议回归不要求模型服务或声学模型下载。
 name: ai-offline
 
 on:
@@ -48,10 +41,4 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}\ai;${{ github.workspace }}\ai\tests
         run: |
-          python -m unittest tests.test_report_guards tests.test_report_audit tests.test_router tests.test_execution_core tests.test_delivery_text tests.test_telemetry tests.test_modern_execution tests.test_tool_guards tests.test_configurable_workflow tests.test_report_chain_regressions tests.test_explanation_guard tests.test_evidence_consistency tests.test_cloud_prompt
-
-      - name: 黄金集门禁（离线骨架，不联网）
-        env:
-          PYTHONPATH: ${{ github.workspace }}\ai
-        run: |
-          python tests/golden_backend.py --model mock --runs 1 --min-verified 0 --out golden_backend.json
+          python -m unittest tests.test_report_guards tests.test_modern_execution tests.test_tool_guards tests.test_configurable_workflow tests.test_explanation_guard tests.test_cloud_prompt

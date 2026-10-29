@@ -51,7 +51,7 @@ test('shared resource pairing editor supports persistent import, discard, launch
     (window as any).resourceCalls = [];
     (window as any).pywebview = {api:{rpc:async (method:string,params:any) => {
       (window as any).resourceCalls.push({method,params});
-      if (method === 'mfa.choose') {mfa.resources[params.kind as 'g2p'].push({id:'new-g',name:'新增本地 G2P.zip',path:'C:/资源/新增本地 G2P.zip',exists:true,used_by:[]}); return mfa;}
+      if (method === 'mfa.choose') {const dictionary = params.kind === 'dictionary'; const name = dictionary ? '新增本地词典.dict' : '新增本地 G2P.zip'; mfa.resources[params.kind as 'g2p' | 'dictionary'].push({id:dictionary ? 'new-d' : 'new-g',name,path:`C:/资源/${name}`,exists:true,used_by:[]}); return mfa;}
       if (method === 'mfa.check') return status;
       if (method === 'mfa.choose_launcher') return {path:'C:/中文路径/conda.exe'};
       if (method === 'mfa.check_launcher') return {version:'3.3',help_order:'INPUT MODEL OUTPUT',status:'ok'};
@@ -64,25 +64,34 @@ test('shared resource pairing editor supports persistent import, discard, launch
     await page.setViewportSize({width,height:850}); await page.emulateMedia({colorScheme:'dark',reducedMotion:'reduce'}); await page.goto('/?window=dictionaries');
     await page.getByRole('button',{name:'纠音资源配套',exact:true}).click(); await page.getByRole('button',{name:'配置 英语（英式） 配套资源'}).click();
     let editor = page.getByRole('dialog',{name:'配置配套资源 · 英语（英式）'}); await expect(editor).toBeVisible();
-    await editor.getByRole('button',{name:'添加本地G2P模型'}).click(); await expect(editor.getByRole('combobox',{name:'G2P 模型'})).toHaveValue('');
-    await editor.getByRole('combobox',{name:'G2P 模型'}).selectOption('new-g'); await editor.getByRole('button',{name:'取消',exact:true}).click();
-    await expect(editor.getByText(/已导入资源仍保留/)).toBeVisible(); await editor.getByRole('button',{name:'丢弃并关闭'}).click();
-    await page.getByRole('button',{name:'MFA G2P 模型',exact:true}).click(); await expect(page.getByText('新增本地 G2P.zip',{exact:true})).toBeVisible();
+    await expect(editor.getByRole('combobox',{name:'G2P 模型'})).toHaveCount(0);
+    await expect(editor.getByRole('button',{name:'添加本地G2P模型'})).toHaveCount(0);
+    await editor.getByRole('button',{name:'添加本地词典'}).click(); await expect(editor.getByRole('combobox',{name:'MFA 发音词典'})).toHaveValue('');
+    await editor.getByRole('combobox',{name:'MFA 发音词典'}).selectOption('new-d'); await editor.getByRole('button',{name:'取消',exact:true}).click();
+    await expect(editor).toHaveCount(0);
+    await page.getByRole('button',{name:'MFA G2P 模型',exact:true}).click();
+    await page.getByRole('button',{name:'添加 MFA G2P 模型'}).click(); await expect(page.getByText('新增本地 G2P.zip',{exact:true})).toBeVisible();
     await page.screenshot({path:screenshot(`g2p-library-dark-${width}.png`)}); expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.getByRole('button',{name:'移除 English G2P.zip 登记'}).click(); await expect(page.getByText(/受影响预设：英语（美式）/)).toBeVisible(); await page.getByRole('button',{name:'取消',exact:true}).click();
-    await page.getByRole('button',{name:'纠音资源配套',exact:true}).click(); await page.getByRole('button',{name:'配置 英语（英式） 配套资源'}).click();
+    await page.getByRole('combobox',{name:'用于哪个纠音配套'}).selectOption('en-GB');
+    await page.getByRole('button',{name:'选用 新增本地 G2P.zip'}).click();
     editor = page.getByRole('dialog',{name:'配置配套资源 · 英语（英式）'});
-    await editor.getByRole('combobox',{name:'G2P 模型'}).selectOption('new-g'); await editor.getByRole('combobox',{name:'MFA 发音词典'}).selectOption('d'); await editor.getByRole('combobox',{name:'MFA 声学模型'}).selectOption('a');
-    await editor.getByRole('checkbox',{name:/我确认/}).check();
+    await editor.getByRole('combobox',{name:'MFA 发音词典'}).selectOption('new-d'); await editor.getByRole('combobox',{name:'MFA 声学模型'}).selectOption('a');
+    await expect(editor.getByRole('checkbox',{name:/我确认/})).toHaveCount(0);
+    const launcherCheck = (await editor.getByRole('button',{name:'检查 MFA'}).boundingBox())!;
+    const environmentCheck = (await editor.getByRole('button',{name:'检测对齐环境'}).boundingBox())!;
+    expect(environmentCheck.x - launcherCheck.x - launcherCheck.width).toBeGreaterThanOrEqual(12);
     await editor.getByRole('button',{name:'选择Conda路径'}).click(); await expect(editor.getByRole('textbox',{name:'Conda 可执行文件路径'})).toHaveValue('C:/中文路径/conda.exe');
     await editor.getByRole('textbox',{name:'MFA 可执行文件路径'}).fill(''); await editor.getByRole('textbox',{name:'Conda 环境名'}).fill('mfa');
     await editor.getByRole('button',{name:'检查 MFA'}).click(); await expect(editor.getByText(/版本：3.3/)).toBeVisible();
-    await editor.getByRole('button',{name:'检查兼容性'}).click(); await expect(editor.getByText(/静态检查不等于真实/)).toBeVisible();
+    await editor.getByRole('button',{name:'检查兼容性'}).click(); await expect(editor.getByText(/资源兼容性检查完成/)).toBeVisible();
     await page.screenshot({path:screenshot(`mfa-editor-checked-dark-${width}.png`)});
     await editor.getByRole('button',{name:'保存配套'}).click(); await expect(editor).toHaveCount(0);
-    await page.getByRole('button',{name:'配置 英语（英式） 配套资源'}).click(); await expect(editor.getByRole('combobox',{name:'G2P 模型'})).toHaveValue('new-g'); await editor.getByRole('button',{name:'取消',exact:true}).click();
+    await page.getByRole('button',{name:'纠音资源配套',exact:true}).click();
+    await page.getByRole('button',{name:'配置 英语（英式） 配套资源'}).click(); await expect(editor.getByRole('combobox',{name:'G2P 模型'})).toHaveCount(0); await expect(editor.getByRole('combobox',{name:'MFA 发音词典'})).toHaveValue('new-d'); await editor.getByRole('button',{name:'取消',exact:true}).click();
     const calls = await page.evaluate(() => (window as any).resourceCalls);
     expect(calls.some((c:any) => /^(dictionaries|acoustic_models)\.(select|choose)/.test(c.method))).toBe(false);
     expect(calls.filter((c:any) => c.method === 'mfa.save')).toHaveLength(1);
+    expect(calls.find((c:any) => c.method === 'mfa.save').params.preset.g2p).toBe('new-g');
   }
 });

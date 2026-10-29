@@ -75,7 +75,7 @@ namespace AIPraat.Setup
         {
             var result=new DependencySearchResult();
             var directories=new List<string>{programDirectory,AppDomain.CurrentDomain.BaseDirectory,FfmpegDependencies.InstallDirectory};
-            foreach(string relative in new[]{"python","python/Scripts",".venv/Scripts","ai/venv/Scripts","tools","llama.cpp"})directories.Add(System.IO.Path.Combine(programDirectory,relative));
+            foreach(string relative in new[]{"python","python/Scripts",".venv/Scripts","ai/venv/Scripts","tools","tools/ffmpeg","tools/miniforge3/envs/aligner/Scripts","llama.cpp"})directories.Add(System.IO.Path.Combine(programDirectory,relative));
             directories.AddRange((Environment.GetEnvironmentVariable("PATH")??"").Split(System.IO.Path.PathSeparator).Where(x=>!string.IsNullOrWhiteSpace(x)).Select(x=>x.Trim('"')));
             foreach(string kind in new[]{"python","ffmpeg","llama","mfa"}) {
                 string current;configured.TryGetValue(kind,out current);

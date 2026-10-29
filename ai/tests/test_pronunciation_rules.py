@@ -38,7 +38,9 @@ def track_phone(ipa, index=1, start=0.0, end=0.2, source="provided", confidence=
         "high_frequency_ratio": ([0.4, 0.5], "ratio"), "zcr": ([0.2, 0.3], "ratio"),
     }
     return PhoneFeatureTracks(index, ipa, start, end,
-        {name: FeatureTrack(name, [start, end], samples, unit) for name, (samples, unit) in values.items()},
+        {name: FeatureTrack(name, [start, end], samples, unit,
+            analysis=dict(protocol="acoustic-extraction-v1", algorithm="one-sided-fft-squared-magnitude-v1")
+                     if name == "high_frequency_ratio" else {}) for name, (samples, unit) in values.items()},
         confidence, source)
 
 
@@ -95,10 +97,17 @@ class PhoneRuleTests(unittest.TestCase):
 
     def test_valid_vot_measurements_are_compared_only_for_stops(self):
         left, right = track_phone("t"), track_phone("t")
-        left.tracks["vot"] = FeatureTrack("vot", [0.0, 0.2], [30.0, 30.0], "ms")
-        right.tracks["vot"] = FeatureTrack("vot", [0.0, 0.2], [70.0, 70.0], "ms")
+        from praat_ai.acoustic_events import analyse_vot
+        from praat_ai.models import ScalarMeasurement
+        for target, onset in ((left, .08), (right, .12)):
+            acoustic = analyse_vot(dict(scope_start=0., scope_end=.2, source_start=0., source_end=.2,
+                burst=.05, post_start=onset), dict(burst=.05, voicing=onset), {})
+            target.measurements["vot"] = ScalarMeasurement("vot_ms", acoustic.measures[0].value, "ms", "validated",
+                analysis=dict(acoustic=acoustic.to_dict()))
         observations, _ = evaluate_phone_rules(PROFILES[0], [left], [right])
-        self.assertEqual([(item.feature, item.reference_value, item.learner_value) for item in observations], [("vot", 30.0, 70.0)])
+        self.assertEqual([item.feature for item in observations], ["vot"])
+        self.assertAlmostEqual(observations[0].reference_value, 30.0)
+        self.assertAlmostEqual(observations[0].learner_value, 70.0)
 
     def test_devoiced_japanese_vowel_does_not_become_deletion(self):
         left, right = track_phone("i̥"), track_phone("i̥")
@@ -122,6 +131,8 @@ class PhoneRuleTests(unittest.TestCase):
         left, right = track_phone("s"), track_phone("s")
         left.tracks["spectral_centroid"].values = [0.0, 0.0, math.nan, -1.0]
         right.tracks["spectral_centroid"].values = [0.0, 1e-9, math.inf, -1.0]
+        for target in (left, right):
+            target.tracks["spectral_centroid"].times = [0., .05, .1, .15]
         observations, _ = evaluate_phone_rules(PROFILES[0], [left], [right])
         centroid = next(item for item in observations if item.feature == "spectral_centroid")
         self.assertEqual(centroid.reference_value, 0.0)
@@ -492,7 +503,7 @@ class RuleIntegrationTests(unittest.TestCase):
             self.assertEqual(call(grid, "Get number of tiers"), 4)
             self.assertEqual(call(grid, "Get label of interval", 1, 1), "aː")
             self.assertIn("未执行独立音素识别", call(grid, "Get label of interval", 2, 1))
-            self.assertIn("实验性", call(grid, "Get label of interval", 3, 1))
+            self.assertIn("部分可评估", call(grid, "Get label of interval", 3, 1))
             self.assertGreater(call(grid, "Get number of points", 4), 0)
             self.assertGreater((root / "report.png").stat().st_size, 0)
 
@@ -520,7 +531,7 @@ class RuleIntegrationTests(unittest.TestCase):
         self.assertEqual(messages[1][0], messages[2][0])
         for payload in messages:
             self.assertIn("independent_phone_recognition", payload[-1]["content"])
-            self.assertIn("观察不等于发音错误", payload[-1]["content"])
+            self.assertIn("按各音位的测量、判据状态和缺测原因解释差异", payload[-1]["content"])
 
     def test_qwen_vision_gets_observations_and_status_instead_of_empty_errors(self):
         client = QwenClient(QwenConfig())
@@ -533,7 +544,7 @@ class RuleIntegrationTests(unittest.TestCase):
         content = chat.call_args.args[0][-1]["content"][1]["text"]
         self.assertIn("observations", content)
         self.assertIn("not_evaluated", content)
-        self.assertIn("不能判定发音对错", content)
+        self.assertIn("保留未评估状态和具体缺测原因", content)
 
 
 if __name__ == "__main__":

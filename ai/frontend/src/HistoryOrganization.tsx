@@ -1,7 +1,7 @@
 // Local renderer for the open Codex thread-section contract; see codex-source/NOTICE.md.
 import {useState,type MouseEvent,type KeyboardEvent,type DragEvent} from 'react';
 import {Archive,ArchiveRestore,ChevronDown,Folder,FolderPlus,MoreHorizontal,Pencil,Plus,Trash2} from 'lucide-react';
-import {ChatStore,useChatState} from './store';
+import {ChatStore,shallowEqual,useChatSelector} from './store';
 import {readOnly,type HistorySection,type Session,type HistoryGroupAction,type RetainedTimeGroup} from './types';
 import {ContextMenu,type ContextMenuState} from './pi/ContextMenu';
 import {Modal} from './ui';
@@ -16,7 +16,10 @@ const PINNED='01984de2-8f74-7c91-a3b2-5c5e937cf318';
 export const ordinarySection:HistorySection={id:'',name:'会话',appearance:null,builtin:true};
 
 export function useHistoryOrganization(store:ChatStore,archived:boolean,onCreate:(section:string|null)=>void){
-  const state=useChatState(store);
+  // The organization controller only needs the session list, the busy flag and the
+  // per-session submit map; keeping message text out of this subscription stops it
+  // from re-rendering the Sidebar host on every streaming delta.
+  const state=useChatSelector(store, s => ({sessions: s.sessions, organizationBusy: s.organizationBusy, submitting: s.submitting, boot: s.boot}), shallowEqual);
   const [moving,setMoving]=useState<{session:Session;anchor:Anchor;back:()=>void}>();
   const [menu,setMenu]=useState<{section:HistorySection;anchor:Anchor}>();
   const [editing,setEditing]=useState<Editing>();
@@ -60,7 +63,7 @@ export function useHistoryOrganization(store:ChatStore,archived:boolean,onCreate
       <ContextMenu state={menuState} onClose={()=>setMenu(undefined)}/><ContextMenu state={movingState} onClose={()=>setMoving(undefined)}/>
       <ContextMenu state={groupMenuState} onClose={()=>setGroupMenu(undefined)}/>
       {groupConfirm&&<Modal title={groupActionLabels[groupConfirm.action]} onClose={()=>{if(!busy)setGroupConfirm(undefined);}}>
-        <p>{groupConfirm.action==='detach'?`仅删除“${groupConfirm.name}”分区？其中 ${groupConfirm.sessionIds.length} 个会话会保留，并直接显示在上一级。`:groupConfirm.action==='clear'?`删除“${groupConfirm.name}”中的全部 ${groupConfirm.sessionIds.length} 个会话？删除后无法在本应用中恢复。分区会保留，清空后显示“暂无会话”。`:groupConfirm.action==='delete'?`删除“${groupConfirm.name}”及其中 ${groupConfirm.sessionIds.length} 个会话？删除后无法在本应用中恢复。`:`归档“${groupConfirm.name}”中的全部 ${groupConfirm.sessionIds.length} 个会话？可从“设置 → 已归档会话”恢复。`}</p>
+        <p>{groupConfirm.action==='detach'?`仅删除“${groupConfirm.name}”分区？其中 ${groupConfirm.sessionIds.length} 个会话会保留，并直接显示在上一级`:groupConfirm.action==='clear'?`删除“${groupConfirm.name}”中的全部 ${groupConfirm.sessionIds.length} 个会话？删除后无法在本应用中恢复；分区会保留，清空后显示“暂无会话”`:groupConfirm.action==='delete'?`删除“${groupConfirm.name}”及其中 ${groupConfirm.sessionIds.length} 个会话？删除后无法在本应用中恢复`:`归档“${groupConfirm.name}”中的全部 ${groupConfirm.sessionIds.length} 个会话？可从“设置 → 已归档会话”恢复`}</p>
         {error&&<p role="alert">{error}</p>}<div className="actions"><button disabled={busy} onClick={()=>setGroupConfirm(undefined)}>取消</button><button aria-label={`确认${groupActionLabels[groupConfirm.action]}`} className={groupConfirm.action==='delete'||groupConfirm.action==='clear'?'danger':'primary'} disabled={busy||state.organizationBusy} onClick={()=>void action(()=>manageGroup(groupConfirm),()=>setGroupConfirm(undefined))}>{busy?'处理中…':'确认'}</button></div>
       </Modal>}
       {editing&&<Modal title={editing.section?'编辑分区':'新建分区'} onClose={()=>{if(!busy)setEditing(undefined);}}>
@@ -68,7 +71,7 @@ export function useHistoryOrganization(store:ChatStore,archived:boolean,onCreate
         <div className="section-appearance-fields"><label className="field"><span>分区图标</span><input aria-label="分区图标" placeholder="例如 🎵" value={icon} maxLength={16} onChange={e=>setIcon(e.target.value)}/></label><label className="field"><span>分区颜色</span><select aria-label="分区颜色" value={color} onChange={e=>setColor(e.target.value)}><option value="">默认</option>{[['#26715f','绿色'],['#3869b6','蓝色'],['#9257af','紫色'],['#b65d31','橙色']].map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label></div>
         {error&&<p role="alert">{error}</p>}<div className="actions"><button disabled={busy} onClick={()=>setEditing(undefined)}>取消</button><button className="primary" aria-label="保存分区" disabled={busy||!name.trim()} onClick={()=>void action(async()=>{const appearance={icon:icon||null,color:color||null};if(editing.section)await store.updateSection(editing.section.id,name,appearance);else{const section=await store.createSection(name,appearance);if(editing.session)await store.moveToSection(editing.session.id,section.id);}},()=>setEditing(undefined))}>{busy?'保存中…':'保存分区'}</button></div>
       </Modal>}
-      {confirm&&<Modal title={confirm.kind==='remove'?'移除分区':confirm.kind==='restore'?'恢复分区会话':'归档分区'} onClose={()=>{if(!busy)setConfirm(undefined);}}><p>{confirm.kind==='remove'?`移除“${confirm.section.name}”后，其中的会话会回到普通历史，聊天记录会保留。`:`${confirm.kind==='restore'?'恢复':'归档'}“${confirm.section.name}”中的 ${members(confirm.section,confirm.kind==='restore').length} 个会话？${confirm.kind==='restore'?'':'归档后可从“设置 → 已归档会话”恢复。'}`}</p>{error&&<p role="alert">{error}</p>}<div className="actions"><button disabled={busy} onClick={()=>setConfirm(undefined)}>取消</button><button aria-label={confirm.kind==='remove'?'确认移除分区':confirm.kind==='restore'?'确认恢复分区':'确认归档分区'} disabled={busy} className={confirm.kind==='remove'?'danger':'primary'} onClick={()=>void action(()=>confirm.kind==='remove'?store.removeSection(confirm.section.id):store.archiveSection(confirm.section.id||null,confirm.kind==='archive'),()=>setConfirm(undefined))}>确认</button></div></Modal>}
+      {confirm&&<Modal title={confirm.kind==='remove'?'移除分区':confirm.kind==='restore'?'恢复分区会话':'归档分区'} onClose={()=>{if(!busy)setConfirm(undefined);}}><p>{confirm.kind==='remove'?`移除“${confirm.section.name}”后，其中的会话会回到普通历史，聊天记录会保留`:`${confirm.kind==='restore'?'恢复':'归档'}“${confirm.section.name}”中的 ${members(confirm.section,confirm.kind==='restore').length} 个会话？${confirm.kind==='restore'?'':'归档后可从“设置 → 已归档会话”恢复'}`}</p>{error&&<p role="alert">{error}</p>}<div className="actions"><button disabled={busy} onClick={()=>setConfirm(undefined)}>取消</button><button aria-label={confirm.kind==='remove'?'确认移除分区':confirm.kind==='restore'?'确认恢复分区':'确认归档分区'} disabled={busy} className={confirm.kind==='remove'?'danger':'primary'} onClick={()=>void action(()=>confirm.kind==='remove'?store.removeSection(confirm.section.id):store.archiveSection(confirm.section.id||null,confirm.kind==='archive'),()=>setConfirm(undefined))}>确认</button></div></Modal>}
     </>
   };
 }

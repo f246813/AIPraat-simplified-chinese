@@ -1,4 +1,4 @@
-"""把声学测量参数表打包成一个 Praat 原生插件（B2）。
+"""把声学测量参数表打包成一个 Praat 原生插件。
 
 出处：chengafni/praat 的插件都是 ``plugin_*/setup.praat`` + 若干 ``.praat``
 脚本，装在 Praat 的 preferences 目录里就会被 Praat 自己的启动流程扫到
@@ -320,7 +320,7 @@ def install(
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="生成/安装 Praat 插件（B2）")
+    parser = argparse.ArgumentParser(description="生成/安装 Praat 插件")
     parser.add_argument("--check", action="store_true", help="只检查生成物是否和参数表一致")
     parser.add_argument("--install", action="store_true", help="装到 Praat 的 preferences 目录")
     parser.add_argument("--project", type=Path, help="项目目录（对话窗口用，默认仓库根）")

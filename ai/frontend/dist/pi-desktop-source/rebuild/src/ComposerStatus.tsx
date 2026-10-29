@@ -1,8 +1,9 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import type { ThreadComposerRuntime } from '@assistant-ui/react';
 import { Bot, Check, ChevronDown, Search, Settings2, X } from 'lucide-react';
-import { ChatStore, useChatState } from './store';
+import { ChatStore, shallowEqual, useChatSelector } from './store';
 import { knownModel, type Bootstrap, type Config, type ContextStatus, type Session } from './types';
+import { hintText } from './ui';
 
 type Scope = 'api' | 'local';
 const strengths = [['auto', '自动'], ['off', '关闭'], ['low', '低'], ['medium', '中'], ['high', '高']] as const;
@@ -42,7 +43,9 @@ function usePopoverPosition(trigger: RefObject<HTMLButtonElement | null>, popup:
 }
 
 export function ComposerStatus({store, session, composer, onSettings}: {store: ChatStore; session: Session; composer: ThreadComposerRuntime; onSettings: () => void}) {
-  const state = useChatState(store); const boot = state.boot!;
+  // This session's messages drive the next-turn estimate, so they stay subscribed;
+  // background sessions and the sidebar never feed this projection.
+  const state = useChatSelector(store, s => ({boot: s.boot, messages: s.messages[session.id], submitting: s.submitting[session.id], connected: s.connected}), shallowEqual); const boot = state.boot!;
   const activeScope: Scope = boot.settings.api.enabled ? 'api' : 'local';
   const config = boot.settings[activeScope]; const strength = thinkingStrength(config, activeScope);
   const [scope, setScope] = useState<Scope>(activeScope); const [query, setQuery] = useState('');
@@ -54,7 +57,7 @@ export function ComposerStatus({store, session, composer, onSettings}: {store: C
   const contextPopup = useRef<HTMLDivElement>(null); const modelPopup = useRef<HTMLDivElement>(null); const search = useRef<HTMLInputElement>(null);
   const contextTrigger = useRef<HTMLButtonElement>(null); const modelTrigger = useRef<HTMLButtonElement>(null);
   usePopoverPosition(contextTrigger, contextPopup, contextOpen); usePopoverPosition(modelTrigger, modelPopup, modelOpen);
-  const messages = state.messages[session.id] || [];
+  const messages = state.messages || [];
   // Running text is intentionally excluded by the host's next-turn context policy.
   const historyRevision = messages.map(m => `${m.id}:${m.status}:${m.status === 'running' ? 0 : m.content.length}`).join('|');
   useEffect(() => {
@@ -84,7 +87,7 @@ export function ComposerStatus({store, session, composer, onSettings}: {store: C
   useEffect(() => { setScope(activeScope); }, [activeScope]);
   const percent = context?.percent;
   const percentLabel = percent == null ? context || contextError ? '—' : '…' : `${Math.round(percent)}%`;
-  const disabled = saving || Boolean(state.submitting[session.id]) || !state.connected;
+  const disabled = saving || Boolean(state.submitting) || !state.connected;
   const options = modelOptions(boot, scope).filter(model => model.toLowerCase().includes(query.trim().toLowerCase()));
   const canChoose = Boolean(boot.settings[scope].base_url) && !(scope === 'local' && boot.settings.api.locked);
   async function save(patch: Parameters<ChatStore['save']>[0]) {
@@ -103,7 +106,7 @@ export function ComposerStatus({store, session, composer, onSettings}: {store: C
       <header><strong>上下文用量</strong><span className="popover-tag">估算</span><button type="button" className="popover-close" aria-label="关闭上下文详情" onClick={() => contextPopup.current?.hidePopover()}><X size={15}/></button></header>
       <div className="context-summary"><strong>{percentLabel}</strong><span>{number(context?.inputTokens)} / {number(context?.contextWindow)} tokens</span></div>
       <div className="context-meter"><span style={{width: `${percent == null ? 0 : Math.min(100, Math.max(0, percent))}%`}}/></div>
-      {context ? <><dl className="context-values"><div><dt>输入上下文</dt><dd>{number(context.inputTokens)}</dd></div><div><dt>其中指令与工具定义</dt><dd>{number(context.overheadTokens)}</dd></div><div><dt>上下文窗口</dt><dd>{number(context.contextWindow)}</dd></div><div><dt>{context.tokenMode === 'provider' ? '压缩预留（非输出上限）' : '输出预留'}</dt><dd>{number(context.reservedTokens)}</dd></div><div><dt>可用余量</dt><dd className={(context.availableTokens ?? 0) < 0 ? 'budget-overflow' : ''}>{number(context.availableTokens)}</dd></div></dl><p className="popover-footnote">{({auto:'自动预算',manual:'手动预算',provider:'服务商决定'} as Record<string,string>)[context.tokenMode]} · {context.windowSource === 'metadata' ? '官方模型元数据' : context.windowSource === 'configured' ? '当前配置窗口' : '窗口未知'}</p>{context.reason && <p className="popover-error">{context.reason}</p>}<p className="popover-footnote">按当前摘要、已完成历史、专业证据、草稿与文本附件估算，非服务商精确用量。不含{context.exclusions.join('、')}。</p></> : <p className={contextError ? 'popover-error' : 'popover-footnote'} role={contextError ? 'alert' : 'status'}>{contextError || '正在读取宿主预算…'}</p>}
+      {context ? <><dl className="context-values"><div><dt>输入上下文</dt><dd>{number(context.inputTokens)}</dd></div><div><dt>其中指令与工具定义</dt><dd>{number(context.overheadTokens)}</dd></div><div><dt>上下文窗口</dt><dd>{number(context.contextWindow)}</dd></div><div><dt>{context.tokenMode === 'provider' ? '压缩预留（非输出上限）' : '输出预留'}</dt><dd>{number(context.reservedTokens)}</dd></div><div><dt>可用余量</dt><dd className={(context.availableTokens ?? 0) < 0 ? 'budget-overflow' : ''}>{number(context.availableTokens)}</dd></div></dl><p className="popover-footnote">{({auto:'自动预算',manual:'手动预算',provider:'服务商决定'} as Record<string,string>)[context.tokenMode]} · {context.windowSource === 'metadata' ? '官方模型元数据' : context.windowSource === 'configured' ? '当前配置窗口' : '窗口未知'}</p>{context.reason && <p className="popover-error">{hintText(context.reason)}</p>}<p className="popover-footnote">估算范围：当前摘要、历史消息、专业证据、草稿与文本附件；未计入{context.exclusions.join('、')}</p></> : <p className={contextError ? 'popover-error' : 'popover-footnote'} role={contextError ? 'alert' : 'status'}>{contextError || '正在读取宿主预算…'}</p>}
       <button type="button" className="popover-settings" onClick={openSettings}><Settings2 size={14}/>上下文与模型设置</button>
     </div>
     <div ref={modelPopup} id={modelId} popover="auto" className="composer-popover model-popover" role="dialog" aria-label="模型与推理强度" onToggle={e => {
@@ -113,9 +116,9 @@ export function ComposerStatus({store, session, composer, onSettings}: {store: C
       <header><strong>切换模型</strong><button type="button" className="popover-close" aria-label="关闭模型选择" onClick={() => modelPopup.current?.hidePopover()}><X size={15}/></button></header>
       <label className="model-search"><Search size={15}/><input ref={search} aria-label="搜索或输入模型名" placeholder="搜索或输入模型名…" value={query} onChange={e => setQuery(e.target.value)}/></label>
       <div className="model-scopes" role="group" aria-label="模型配置范围"><button type="button" aria-pressed={scope === 'api'} onClick={() => setScope('api')}>API</button><button type="button" aria-pressed={scope === 'local'} onClick={() => setScope('local')}>本地</button></div>
-      <div className="quick-model-list" role="listbox" aria-label="可选模型">{options.map(model => <button type="button" role="option" key={model} aria-selected={scope === activeScope && model === config.model} disabled={disabled || !canChoose} onClick={() => void save(quickModelPatch(scope, model))}><Bot size={16}/><span>{model}<small>{scope === 'local' ? '已配置本地端点' : String(boot.settings.api.label || '已配置 API 端点')}{knownModel(boot.models, {...boot.settings[scope], model}) ? ' · 已适配窗口' : ''}</small></span>{scope === activeScope && model === config.model && <Check size={15}/>}</button>)}{query.trim() && !options.includes(query.trim()) && <button type="button" role="option" aria-selected={false} disabled={disabled || !canChoose} onClick={() => void save(quickModelPatch(scope, query.trim()))}><Bot size={16}/><span>{query.trim()}<small>使用自定义模型名 · 不更换端点</small></span></button>}{!options.length && !query.trim() && <p className="popover-footnote">尚未配置模型，可输入模型名或打开完整设置。</p>}</div>
-      {!canChoose && <p className="popover-error">{scope === 'local' && boot.settings.api.locked ? 'API 已锁定，请先在设置中解除锁定。' : '请先在设置中配置此范围的 API 地址。'}</p>}
-      <section className="quick-thinking"><h3>推理强度 <small>当前模型 · {activeScope === 'api' ? 'API' : '本地'}</small></h3><div role="group" aria-label="推理强度">{strengths.map(([value, label]) => <button type="button" key={value} aria-pressed={strength === value} disabled={disabled} title={value} onClick={() => void save(quickStrengthPatch(activeScope, value))}>{label}</button>)}</div><p className="popover-footnote">{activeScope === 'local' ? '本地 low / medium / high 均表示开启思考；没有细分强度。' : '具体支持由当前模型决定；不会在切换时发出验证请求。'}</p></section>
+      <div className="quick-model-list" role="listbox" aria-label="可选模型">{options.map(model => <button type="button" role="option" key={model} aria-selected={scope === activeScope && model === config.model} disabled={disabled || !canChoose} onClick={() => void save(quickModelPatch(scope, model))}><Bot size={16}/><span>{model}<small>{scope === 'local' ? '已配置本地端点' : String(boot.settings.api.label || '已配置 API 端点')}{knownModel(boot.models, {...boot.settings[scope], model}) ? ' · 已适配窗口' : ''}</small></span>{scope === activeScope && model === config.model && <Check size={15}/>}</button>)}{query.trim() && !options.includes(query.trim()) && <button type="button" role="option" aria-selected={false} disabled={disabled || !canChoose} onClick={() => void save(quickModelPatch(scope, query.trim()))}><Bot size={16}/><span>{query.trim()}<small>使用自定义模型名 · 不更换端点</small></span></button>}{!options.length && !query.trim() && <p className="popover-footnote">尚未配置模型，可输入模型名或打开完整设置</p>}</div>
+      {!canChoose && <p className="popover-error">{scope === 'local' && boot.settings.api.locked ? 'API 已锁定，请先在设置中解除锁定' : '请先在设置中配置此范围的 API 地址'}</p>}
+      <section className="quick-thinking"><h3>推理强度 <small>当前模型 · {activeScope === 'api' ? 'API' : '本地'}</small></h3><div role="group" aria-label="推理强度">{strengths.map(([value, label]) => <button type="button" key={value} aria-pressed={strength === value} disabled={disabled} title={value} onClick={() => void save(quickStrengthPatch(activeScope, value))}>{label}</button>)}</div><p className="popover-footnote">{activeScope === 'local' ? '本地 low / medium / high 均表示开启思考；没有细分强度' : '设置当前模型的推理强度'}</p></section>
       {saveError && <p className="popover-error" role="alert">{saveError}</p>}<footer><span role="status">{saving ? '保存中…' : '仅用于后续任务 · 运行中任务不变'}</span><button type="button" className="popover-settings" onClick={openSettings}><Settings2 size={14}/>设置</button></footer>
     </div>
   </div>;

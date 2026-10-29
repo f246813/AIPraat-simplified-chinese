@@ -1,4 +1,4 @@
-"""tools 包的一个分片；行为与原 tools.py 完全一致。"""
+"""确定性工具共享的上下文、对象解析、参数与范围处理。"""
 from __future__ import annotations
 
 import json
@@ -8,7 +8,7 @@ import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
-from .. import external_script, measures
+from .. import external_script, measures, pitch_quality
 
 
 class ToolError(ValueError):
@@ -350,11 +350,7 @@ def _range_argument(
 
 
 def _range_pair(arguments: Mapping[str, Any]) -> tuple[Any, Any]:
-    """范围端点 ``(起点, 终点)``，支持 from/start 与 to/end/finish，并检查顺序。
-
-    顺序以前只在 Praat 脚本里 ``exitScript``，等于白跑一次投递；所有用范围的地方
-    都在这里统一拒绝（2026-10-07）。
-    """
+    """解析 from/start 与 to/end/finish 范围端点并检查顺序，返回 (起点, 终点)。"""
 
     start = _range_argument(arguments, RANGE_START_KEYS)
     end = _range_argument(arguments, RANGE_END_KEYS)
@@ -377,12 +373,7 @@ def _pitch_band(arguments: Mapping[str, Any], *, floor_default: float = 75.0,
 
 
 def _named_target(context: "ToolContext", arguments: Mapping[str, Any], action: str) -> "ObjectRow":
-    """破坏性操作（删除/重命名）要一个**明确**的目标。
-
-    ``ToolContext.default_object`` 在没有选中对象时会退回对象列表的最后一行；对
-    ``duration`` 这类只读工具只是不精确，对删除/重命名就是误删（2026-10-07 实测：
-    什么都没选中时 ``remove_object`` 渲染出 ``selectObject: 3`` 删掉一个 Intensity）。
-    """
+    """为删除或重命名解析明确对象，不使用无选择状态下的默认对象回退。"""
 
     requested = arguments.get("object")
     if requested in (None, ""):
@@ -392,21 +383,100 @@ def _named_target(context: "ToolContext", arguments: Mapping[str, Any], action: 
     return context.resolve_object(requested)
 
 
+#: 点查询按区间长度取点的间距：每 50 ms 一个时刻（20 个/秒）。
+POINT_SPACING_SECONDS = 0.05
+#: 再短的区间也给到 8 个时刻：一次问几个时刻的老习惯照旧。
+MIN_POINTS = 8
+#: 再长的区间也封顶 64 个时刻：再多就不是答案，是数据点清单了。
+MAX_POINTS = 64
+#: ``time="auto"`` 但说不清区间长度（整个对象、又没有 from/to）时取多少点。
+UNKNOWN_SPAN_POINTS = 16
+#: ``time`` 写这些词就是「按区间长度均匀取点」，而不是某一时刻。
+AUTOMATIC_TIME_WORDS = frozenset({"auto", "自动", "均匀", "均匀取点"})
+
+
+def _query_seconds_range(
+    arguments: Mapping[str, Any], row: ObjectRow | None = None
+) -> tuple[float, float] | None:
+    """这句话实际要看的区间（秒）：圈选优先，其次 ``from``/``to``；说不清就 ``None``。
+
+    点查询的时刻数按这个长度定——长区间多取几个，短区区别硬塞 8 个进去。
+    """
+
+    selection = _selection_range(arguments, row)
+    if selection is not None:
+        return (float(selection[0]), float(selection[1]))
+    start, end = _range_pair(arguments)
+    if start in (None, "") or end in (None, ""):
+        return None
+    try:
+        low = _number({"from": start}, "from", 0.0, 0.0, 36000.0)
+        high = _number({"to": end}, "to", 0.0, 0.0, 36000.0)
+    except ToolError:
+        return None
+    if high <= low:
+        return None
+    return (low, high)
+
+
+def _query_point_count(
+    arguments: Mapping[str, Any], row: ObjectRow | None = None
+) -> int:
+    """按区间长度确定查询点数：每 50 ms 一个，限制为 8–64 点。"""
+
+    span = _query_seconds_range(arguments, row)
+    if span is None:
+        # 整个对象又不知道时长：把上限放开，别用 8 当事实上的答案长度。
+        return MAX_POINTS
+    count = int(round((span[1] - span[0]) / POINT_SPACING_SECONDS)) + 1
+    return max(MIN_POINTS, min(MAX_POINTS, count))
+
+
+def _auto_time_expressions(
+    arguments: Mapping[str, Any],
+    row: ObjectRow | None,
+    *,
+    fallback: str,
+    maximum: int,
+) -> list[str]:
+    """``time="auto"``：在区间里按密度均匀取点，返回 Praat 时间表达式。
+
+    知道区间（圈选或 ``from``/``to``）就把时刻算成数字；只知道「整个对象」时用
+    ``duration`` 表达式——每个点查询模板都先写了 ``duration = Get total duration``。
+    """
+
+    count = max(MIN_POINTS, min(MAX_POINTS, maximum))
+    if count < 2:
+        return [fallback]
+    span = _query_seconds_range(arguments, row)
+    if span is None:
+        count = min(UNKNOWN_SPAN_POINTS, MAX_POINTS)
+        if count < 2:
+            return [fallback]
+        return [f"timeOrigin + duration * {index / (count - 1):.6f}" for index in range(count)]
+    low, high = span
+    if high <= low:
+        return [fallback]
+    step = (high - low) / (count - 1)
+    return [f"{low + index * step:.6f}" for index in range(count)]
+
+
 def _query_times(
     arguments: Mapping[str, Any],
     *,
     fallback: str,
-    maximum: int = 8,
+    maximum: int | None = None,
+    row: ObjectRow | None = None,
 ) -> list[str]:
-    """``time`` 可以是数字、列表或 "0.25,0.75" 这类文本，返回 Praat 时间表达式。
+    """将数字、列表、逗号字符串或 auto 转为 Praat 时间表达式。默认点数上限由区间长度决定；maximum 可显式指定上限。"""
 
-    用户常一次问多个时刻（「0.25 秒和 0.75 秒的基频」），所以这里统一成列表，
-    由模板逐个时刻写一行结果。
-    """
-
+    if maximum is None:
+        maximum = _query_point_count(arguments, row)
     raw = arguments.get("time", arguments.get("times", None))
     if raw is None or raw == "":
         return [fallback]
+    if not isinstance(raw, (list, tuple)) and str(raw).strip().lower() in AUTOMATIC_TIME_WORDS:
+        return _auto_time_expressions(arguments, row, fallback=fallback, maximum=maximum)
     items = raw if isinstance(raw, (list, tuple)) else re.split(r"[,，、;；\s]+", str(raw))
     values: list[str] = []
     for item in items:
@@ -415,32 +485,30 @@ def _query_times(
         try:
             number = _number({"value": item}, "value", 0.0, 0.0, 36000.0)
         except ToolError as error:
-            raise ToolError(f"时间只能是 0–36000 之间的秒数，收到：{item!r}") from error
+            raise ToolError(
+                f"时间只能是 0–36000 之间的秒数，或写 \"auto\" 按区间均匀取点，收到：{item!r}"
+            ) from error
         values.append(f"{number:.6f}")
     if not values:
         return [fallback]
     if len(values) > maximum:
-        raise ToolError(f"一次最多查询 {maximum} 个时刻（收到 {len(values)} 个）；"
-                        "请减少时刻，或拆成多次调用。")
+        raise ToolError(
+            f"一次最多查询 {maximum} 个时刻（上限按区间长度自适应，收到 {len(values)} 个）；"
+            "请减少时刻，或把 time 写成 \"auto\" 让工具在区间里均匀取点。"
+        )
     return values
 
 
 def _clamp_time_lines(suffix_variable: str = "note$") -> list[str]:
-    """把 ``time`` 夹进对象时长，并说明是否被截断。
-
-    时间超出对象范围时 Praat 不会报错，而是返回 ``--undefined--``；
-    这里先夹到有效区间，再让模板把 ``--undefined--`` 换成中文说明。
-    """
+    """检查绝对时间域，保留请求时刻并将范围外查询标记为缺测。"""
 
     return [
         f'{suffix_variable} = ""',
-        "if time < 0",
-        "    time = 0",
-        f'    {suffix_variable} = "（已按对象时长截断）"',
-        "endif",
-        "if time > duration",
-        "    time = duration",
-        f'    {suffix_variable} = "（已按对象时长截断）"',
+        "domainStart = Get start time",
+        "domainEnd = Get end time",
+        "queryOutside = time < domainStart or time > domainEnd",
+        "if queryOutside",
+        f'    {suffix_variable} = "（请求时刻超出对象时间域，未改用其他时刻）"',
         "endif",
     ]
 
@@ -449,11 +517,13 @@ def _clamp_range_lines() -> list[str]:
     """把 ``tmin`` / ``tmax`` 夹进对象时长（Praat 的 from/to/end 是保留字）。"""
 
     return [
-        "if tmin < 0",
-        "    tmin = 0",
+        "domainStart = Get start time",
+        "domainEnd = Get end time",
+        "if tmin < domainStart",
+        "    tmin = domainStart",
         "endif",
-        "if tmax > duration",
-        "    tmax = duration",
+        "if tmax > domainEnd",
+        "    tmax = domainEnd",
         "endif",
         "if tmin > tmax",
         '    exitScript: "查询范围无效或超出对象时长，请在对象内重新指定起止时间。"',
@@ -537,9 +607,11 @@ def _formant_lines(
     formatns = _formant_numbers(arguments)
     unit = _unit_literal(arguments, "hertz")
     unit_text = _unit_display(arguments, "hertz")
-    times = _query_times(arguments, fallback=_default_time_expression(row, arguments))
+    times = _query_times(
+        arguments, fallback=_default_time_expression(row, arguments), row=row
+    )
     temporary = row.class_name != "Formant"
-    lines = [f"selectObject: {row.id}", "duration = Get total duration"]
+    lines = [f"selectObject: {row.id}", "duration = Get total duration", "timeOrigin = Get start time"]
     if temporary:
         lines.extend(
             [
@@ -552,6 +624,7 @@ def _formant_lines(
         lines.extend(_clamp_time_lines())
         for formant in formatns:
             lines.append(f'value = {command}: {formant}, time, {unit}, "linear"')
+            lines.extend(["if queryOutside", "    value = undefined", "endif"])
             if with_bandwidth:
                 # 「F1 的频率和带宽」一次问完：带宽缺失时只省略带宽那半句。
                 lines.append(
@@ -612,77 +685,111 @@ def _formant_lines(
     return lines
 
 
-def _pitch_extreme_lines() -> list[str]:
-    """遍历基频帧取得最高、最低值与峰值时刻。实现按中位数的 1.5 倍限制候选最大值，并报告原始超限值；该启发式可能排除真实高基频，不能保证所有倍频误判均被识别。"""
+def _pitch_extreme_lines(
+    *, sound: str | None = None, floor: float = 75.0, ceiling: float = 600.0,
+    source_note: str = "",
+) -> list[str]:
+    """在同一可信帧集合中计算均值、最低、最高与峰值时刻。集合同时满足上下限、相对能量和连续段条件；帧中心位于请求范围内，无可信帧时保持 undefined。"""
 
-    return [
-        'median = Get quantile: tmin, tmax, 0.5, "Hertz"',
-        "minimum = undefined",
-        "maximum = undefined",
-        "maxtime = undefined",
-        "mean = undefined",
-        "pitchLimit$ = \"\"",
-        "if median <> undefined",
-        # 注意两点：① Get frame number from time 返回的是**小数**（0.25 秒 → 31.5），
-        # 而 Get value in frame 要整数，必须 round；② Praat **不允许把命令嵌在公式里**
-        # （``round (Get frame number from time: tmin)`` 会报 Unknown symbol），
-        # 所以先取值再取整。整段分析时两端恰好落在整数帧上，圈选（0.25–0.5 秒）
-        # 就会直接报「should be a whole number」。
-        "    firstFrameTime = Get frame number from time: tmin",
-        "    lastFrameTime = Get frame number from time: tmax",
-        "    firstFrame = round (firstFrameTime)",
-        "    lastFrame = round (lastFrameTime)",
-        "    if firstFrame < 1",
-        "        firstFrame = 1",
-        "    endif",
-        "    if lastFrame > nFrames",
-        "        lastFrame = nFrames",
-        "    endif",
-        "    if lastFrame < 1",
-        "        lastFrame = 1",
-        "    endif",
-        # 上限：中位数的 1.5 倍；下限：中位数的一半（次谐波误判）。
-        "    ceilingValue = median * 1.5",
-        "    floorValue = median * 0.5",
-        "    highest = 0",
-        "    lowest = 0",
-        # 平均值与最高/最低统计使用同一批过滤后的基频帧。
-        "    pitchTotal = 0",
-        "    pitchCount = 0",
-        "    for pitchFrame from firstFrame to lastFrame",
-        '        frameValue = Get value in frame: pitchFrame, "Hertz"',
-        "        if frameValue <> undefined and frameValue <= ceilingValue and frameValue > highest",
-        "            highest = frameValue",
-        "            maxtime = Get time from frame number: pitchFrame",
-        "        endif",
-        "        if frameValue <> undefined and frameValue >= floorValue",
-        "            if lowest = 0 or frameValue < lowest",
-        "                lowest = frameValue",
-        "            endif",
-        "        endif",
-        "        if frameValue <> undefined and frameValue <= ceilingValue and frameValue >= floorValue",
-        "            pitchTotal = pitchTotal + frameValue",
-        "            pitchCount = pitchCount + 1",
-        "        endif",
-        "    endfor",
-        "    if highest > 0",
-        "        maximum = highest",
-        "    endif",
-        "    if lowest > 0",
-        "        minimum = lowest",
-        "    endif",
-        "    if pitchCount > 0",
-        "        mean = pitchTotal / pitchCount",
-        "    endif",
-        "endif",
-        'rawMaximum = Get maximum: tmin, tmax, "Hertz", "Parabolic"',
-        "if rawMaximum <> undefined and median <> undefined and rawMaximum > median * 1.5",
-        '    pitchLimit$ = "（该区间有一帧被自相关误判成 " + fixed$ (rawMaximum, 1)'
-        ' + " Hz，约为中位数 " + fixed$ (median, 1) + " Hz 的 "'
-        ' + fixed$ (rawMaximum / median, 1) + " 倍，已按倍频误判剔除；'
-        '平均、最低、最高都只统计剔除后的帧）"',
-        "endif",
-    ]
+    lines = pitch_quality.screen_lines(sound=sound, floor=floor, ceiling=ceiling,
+                                       source_note=source_note)
+    lines.extend(
+        [
+            # 已有 Pitch 对象时没有原始 Sound，能量门做不了：退回 Praat 的原始分位数
+            # 定带（事实行会写「未核验」）。有 Sound 时用能量门之后的候选中位数。
+            'median = Get quantile: tmin, tmax, 0.5, "Hertz"',
+            "if qualityMedian <> undefined",
+            "    median = qualityMedian",
+            "endif",
+            "minimum = undefined",
+            "maximum = undefined",
+            "maxtime = undefined",
+            "mean = undefined",
+            # pitchCount 在 median 取不到时也要有定义：下面的 pitchLimit$ 判断要用到它。
+            "pitchCount = 0",
+            'pitchLimit$ = ""',
+            "if median <> undefined",
+            # 注意两点：① Get frame number from time 返回的是**小数**（0.25 秒 → 31.5），
+            # 而 Get value in frame 要整数，必须 round；② Praat **不允许把命令嵌在公式里**
+            # （``round (Get frame number from time: tmin)`` 会报 Unknown symbol），
+            # 所以先取值再取整。整段分析时两端恰好落在整数帧上，圈选（0.25–0.5 秒）
+            # 就会直接报「should be a whole number」。
+            "    firstFrameTime = Get frame number from time: tmin",
+            "    lastFrameTime = Get frame number from time: tmax",
+            "    firstFrame = round (firstFrameTime)",
+            "    lastFrame = round (lastFrameTime)",
+            "    if firstFrame < 1",
+            "        firstFrame = 1",
+            "    endif",
+            "    if lastFrame > nFrames",
+            "        lastFrame = nFrames",
+            "    endif",
+            "    if lastFrame < 1",
+            "        lastFrame = 1",
+            "    endif",
+            # 取整只是「最近的帧」，帧中心可能落在区间外（误差最多 ±dx/2，约 5 ms），
+            # 所以再按帧中心回退一步：只用帧中心在 [tmin, tmax] 内的帧。
+            "    firstCenter = Get time from frame number: firstFrame",
+            "    lastCenter = Get time from frame number: lastFrame",
+            "    if firstCenter < tmin",
+            "        firstFrame = firstFrame + 1",
+            "    endif",
+            "    if lastCenter > tmax",
+            "        lastFrame = lastFrame - 1",
+            "    endif",
+            # 上下限来自 pitch_quality 的同一组常量：上界放宽到 3 倍，真实的升降不会被当倍频删掉。
+            f"    ceilingValue = median * {pitch_quality.BAND_HIGH:.6f}",
+            f"    floorValue = median * {pitch_quality.BAND_LOW:.6f}",
+            "    highest = 0",
+            "    lowest = 0",
+            "    pitchTotal = 0",
+            # 唯一的过滤集合：平均、最低、最高都在这个 if 里更新，三者必然同源。
+            "    for pitchFrame from firstFrame to lastFrame",
+            '        frameValue = Get value in frame: pitchFrame, "Hertz"',
+            "        if frameValue <> undefined and frameEnergy[pitchFrame] = 1"
+            " and frameRun[pitchFrame] = 1 and frameValue >= floorValue"
+            " and frameValue <= ceilingValue",
+            "            pitchTotal = pitchTotal + frameValue",
+            "            pitchCount = pitchCount + 1",
+            "            if frameValue > highest",
+            "                highest = frameValue",
+            "                maxtime = Get time from frame number: pitchFrame",
+            "            endif",
+            "            if lowest = 0 or frameValue < lowest",
+            "                lowest = frameValue",
+            "            endif",
+            "        endif",
+            "    endfor",
+            "    if pitchCount > 0",
+            "        mean = pitchTotal / pitchCount",
+            "        maximum = highest",
+            "        minimum = lowest",
+            "    endif",
+            "endif",
+            # 没有一个可信帧时绝不报极值、也不报均值；调用方的这一行就此说明「没有可信统计」。
+            # 这段放在 median 块外：median 取不到（窄窗口/清音）时 pitchCount 仍是 0，
+            # 同样要说清没有可信统计。
+            "if pitchCount = 0",
+            '    pitchLimit$ = "（该区间没有通过质量筛查的基频帧：要连续、过相对能量门、'
+            '且落在中位数的 0.5–1.5 倍之间；不输出平均/最低/最高，'
+            '避免把底噪、倍频或次谐波误判当成已测值）"',
+            # 中位数属于同一批可信帧：没有可信帧时它也不给（否则 measure 的
+            # median_pitch 会报出一个别的参数已经拒绝的数）。
+            "    median = undefined",
+            "endif",
+            'rawMaximum = Get maximum: tmin, tmax, "Hertz", "Parabolic"',
+            # 只有真的存在可信帧（pitchCount > 0）时，才谈得上「剔除后重新统计」。
+            "if pitchCount > 0 and median <> undefined and rawMaximum <> undefined"
+            f" and rawMaximum > median * {pitch_quality.BAND_HIGH:.6f}",
+            '    pitchLimit$ = "（该区间有 " + fixed$ (bandExcluded, 0) + " 帧落在中位带外，最高 "'
+            ' + fixed$ (rawMaximum, 1) + " Hz（约为中位数 " + fixed$ (median, 1)'
+            ' + " Hz 的 " + fixed$ (rawMaximum / median, 1) + " 倍）：可能是倍频/次谐波误判，'
+            '也可能是真实的另一个音高层次，已排除在这组统计之外；'
+            '平均、最低、最高都只统计这同一批过滤后的帧）"',
+            "endif",
+        ]
+    )
+    return lines
 
 
 def _point_query_lines(
@@ -694,17 +801,29 @@ def _point_query_lines(
     unit_text: str,
     undefined_message: str,
     row: ObjectRow | None = None,
+    value_lines: Sequence[str] | None = None,
 ) -> list[str]:
-    """按 ``time``（可以是多个时刻）写若干行「某时刻 = 数值」的结果。"""
+    """按 ``time``（可以是多个时刻）写若干行「某时刻 = 数值」的结果。
 
-    lines: list[str] = []
-    fallback = "duration / 2" if row is None else _default_time_expression(row, arguments)
-    for expression in _query_times(arguments, fallback=fallback):
+    ``value_lines`` 给了就用它给 ``value`` 赋值（基频点查询要把「这一帧有没有通过
+    质量筛查」判断插在取值之前），否则照旧写 ``value = <命令>``。
+    """
+
+    lines: list[str] = ["timeOrigin = Get start time"]
+    fallback = "timeOrigin + duration / 2" if row is None else _default_time_expression(row, arguments)
+    for expression in _query_times(arguments, fallback=fallback, row=row):
         lines.append(f"time = {expression}")
         lines.extend(_clamp_time_lines())
+        if value_lines is None:
+            value_lines_here = [f"value = {command}"]
+        else:
+            value_lines_here = list(value_lines)
+        lines.extend(value_lines_here)
+        lines.extend(["if queryOutside", "    value = undefined", "endif"])
+        if label == "基频":
+            lines.append(_write_result(context, [quote("@aipraat-query-v1"), "tab$", "fixed$ (time, 9)", "tab$", "fixed$ (value, 9)"]))
         lines.extend(
             [
-                f"value = {command}",
                 "if value = undefined",
                 _write_result(
                     context,
@@ -772,7 +891,8 @@ def _range_lines(
     """
 
     selection = _selection_range(arguments, row)
-    lines = ["tmin = 0", "tmax = duration"]
+    lines = ["domainStart = Get start time", "domainEnd = Get end time",
+             "tmin = domainStart", "tmax = domainEnd"]
     if selection is not None:
         lines.append(f"tmin = {selection[0]:.6f}")
         lines.append(f"tmax = {selection[1]:.6f}")
@@ -798,7 +918,7 @@ def _default_time_expression(row: ObjectRow, arguments: Mapping[str, Any] | None
 
     selection = None if (arguments or {}).get('_whole_object') else row.selection
     if selection is None:
-        return "duration / 2"
+        return "timeOrigin + duration / 2"
     return f"{(selection[0] + selection[1]) / 2:.6f}"
 
 
@@ -1019,15 +1139,18 @@ def _seconds_arg(description: str) -> dict[str, Any]:
     return {"type": "number", "description": description}
 
 
-def _times_arg(description: str, maximum: int = 8) -> dict[str, Any]:
-    """可以一次给多个时刻的 ``time``：数字或 ``"0.25,0.75"`` 这样的文本。
+def _times_arg(description: str, maximum: int | None = None) -> dict[str, Any]:
+    """time 支持数字、逗号列表或 auto；点数上限由当前区间长度决定，规则同时写入 schema。"""
 
-    上限写进 schema 描述里：真机实测里模型一次点了 9 个时刻被拒，白花一个请求——
-    与其让它撞墙后重试，不如把「一次最多几个」直接摆在参数说明里。
-    """
-
-    return {"type": ["number", "string"],
-            "description": f"{description}；一次最多 {maximum} 个时刻，要更多请拆成多次调用"}
+    if maximum is None:
+        rule = (
+            f"时刻数按区间长度自适应（每 {POINT_SPACING_SECONDS * 1000:.0f} ms 一个，"
+            f"最少 {MIN_POINTS} 个、最多 {MAX_POINTS} 个）；也可以写 \"auto\" "
+            "让工具在区间里均匀取点"
+        )
+    else:
+        rule = f"一次最多 {maximum} 个时刻，要更多请拆成多次调用"
+    return {"type": ["number", "string"], "description": f"{description}；{rule}"}
 
 
 def _number_arg(description: str) -> dict[str, Any]:

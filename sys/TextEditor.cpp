@@ -363,6 +363,14 @@ static void menu_cb_save (TextEditor me, EDITOR_ARGS) {
 	}
 }
 
+bool TextEditor_saveOrAskSaveAs (TextEditor me) {
+	if (! my dirty)
+		return true;   // nothing to save
+	menu_cb_save (me, Editor_getMenuCommand (me, U"File",
+		my v_fileBased () ? U"Save" : U"Save as..."), nullptr, 0, nullptr, nullptr, nullptr);
+	return ! my dirty;   // false if the user cancelled the question for a file name, or if writing failed
+}
+
 static void gui_button_cb_saveAndClose (TextEditor me, GuiButtonEvent /* event */) {
 	GuiThing_hide (my dirtyCloseDialog);
 	if (MelderFile_isNull (& my file)) {

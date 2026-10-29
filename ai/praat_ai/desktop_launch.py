@@ -34,7 +34,7 @@ def write_record(path, values):
     # Desktop writers inherit Praat's process integrity. A copied Low-labelled
     # EXE cannot write a Medium status.json even when its DACL grants Modify.
     # Repair final EXE publication, rather than changing runtime/IPC ACLs here.
-    # See docs/ai-frontend/windows-integrity-design.md (final file + process gate).
+    # See docs/CURRENT-IMPLEMENTATION.zh-CN.md (final file + process gate).
     path = Path(path)
     content = json.dumps(values, ensure_ascii=False, indent=2)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -104,7 +104,7 @@ def report_failure(error, *, runtime=None, config_path=None):
 
 def check_desktop_dependencies(assets=None):
     missing = [name for name in ('webview', 'clr', 'pydantic_ai', 'pydantic_graph')
-               if importlib.util.find_spec(name) is None]
+               if sys.modules.get(name) is None and importlib.util.find_spec(name) is None]
     if missing:
         raise RuntimeError('当前 Python 缺少依赖：' + ', '.join(missing))
     assets = Path(assets or Path(__file__).resolve().parents[1] / 'frontend' / 'dist')

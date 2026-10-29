@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import inspect
 import math
+import os
 import re
 import shutil
 import threading
@@ -194,6 +195,8 @@ class MfaAligner(AlignmentBackend):
             str(dictionary_path),
             self.config.acoustic_model,
             str(output_dir),
+            "--temporary_directory",
+            str(corpus_dir.parent / "mfa-work"),
             "--output_format",
             "long_textgrid",
             "--single_speaker",
@@ -242,8 +245,8 @@ class MfaAligner(AlignmentBackend):
             raise AlignmentError("MFA is not configured or not installed.")
 
         if self.raw_labels:
-            from .mfa_g2p import english_words
-            transcript = ' '.join(english_words(transcript))
+            from .mfa_g2p import transcript_words
+            transcript = ' '.join(transcript_words(transcript))
         with tempfile.TemporaryDirectory(prefix="praat_mfa_") as directory:
             root = Path(directory)
             corpus = root / "corpus"
@@ -396,14 +399,22 @@ class Wav2Vec2Aligner(AlignmentBackend):
     def _load(self) -> None:
         if self._processor is not None and self._model is not None:
             return
+        from .paths import dependency_environment
+        environment = dependency_environment()
+        for name in ('HF_HOME', 'TORCH_HOME', 'NUMBA_CACHE_DIR'):
+            if not os.environ.get(name):
+                os.environ[name] = environment[name]
+        cache = (os.getenv('HF_HUB_CACHE') or os.getenv('HUGGINGFACE_HUB_CACHE')
+                 or str(Path(environment['HF_HOME']) / 'hub'))
         import torch
         from transformers import AutoModelForCTC, AutoProcessor
 
         self._processor = AutoProcessor.from_pretrained(
             self.config.model,
             do_phonemize=self.config.do_phonemize,
+            cache_dir=cache,
         )
-        self._model = AutoModelForCTC.from_pretrained(self.config.model)
+        self._model = AutoModelForCTC.from_pretrained(self.config.model, cache_dir=cache)
         self._model.eval()
         self._model.to(self.config.device)
         self._torch = torch

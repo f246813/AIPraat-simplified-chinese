@@ -13,7 +13,7 @@ namespace AIPraat.Setup
     }
     public static class FfmpegDependencies
     {
-        public static string InstallDirectory {get{return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"AIPraat","ffmpeg");}}
+        public static string InstallDirectory {get{return Path.Combine(RuntimeDependencies.InstallRoot,"tools","ffmpeg");}}
         public static string Resolve(string configured)
         {
             configured=PathValidation.Clean(configured);
@@ -72,10 +72,11 @@ namespace AIPraat.Setup
         }
         public static FfmpegProbe Install(Action<string> progress,string archivePath="",string expectedSha256="")
         {
-            string folder=Path.Combine(Path.GetTempPath(),"aipraat-ffmpeg-install-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(folder);
+            string folder=Path.Combine(RuntimeDependencies.InstallRoot,"cache","temp","aipraat-ffmpeg-install-"+Guid.NewGuid().ToString("N"));
             string log="";
             try {
-                string logs=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"AIPraat","logs","ffmpeg");
+                Directory.CreateDirectory(folder);
+                string logs=Path.Combine(RuntimeDependencies.InstallRoot,"logs","ffmpeg");
                 Directory.CreateDirectory(logs);log=Path.Combine(logs,"install-"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss-fff")+"Z-"+Guid.NewGuid().ToString("N").Substring(0,8)+".log");
                 string script=Path.Combine(folder,"Install-FFmpeg.ps1");
                 File.WriteAllText(script,RuntimeDependencies.Resource("Install-FFmpeg.ps1"),new UTF8Encoding(true));

@@ -43,16 +43,3 @@ export function selectContents(element: HTMLElement | null) {
 
 /** Copy through the same payload rule the menu item used, so tests can assert it without a clipboard. */
 export const messageCopyPayload = (trigger: HTMLElement | null, text: string) => copyPayload(selectionInside(trigger), text);
-
-/**
- * "Back to latest" must re-enter the runtime's follow mode, not just scroll once: this is
- * the app's own control for that, and it stays mounted (hidden by CSS while already at the
- * bottom), so the menu reuses it instead of duplicating the follow bookkeeping. The control
- * lives beside the scroller rather than inside it, so it is found from the scroller up.
- */
-export function returnToLatest(viewport: HTMLElement | null) {
-  const control = viewport?.closest('.thread')?.querySelector<HTMLButtonElement>('.jump-button');
-  if (control && !control.disabled) { control.click(); return; }
-  // Instant: a smooth animation started from a click that also unmounts the menu is cancelled.
-  viewport?.scrollTo({top: viewport.scrollHeight, behavior: 'auto'});
-}

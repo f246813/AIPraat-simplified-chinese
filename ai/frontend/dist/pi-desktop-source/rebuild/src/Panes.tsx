@@ -5,7 +5,7 @@
  * the adopted bounds and for why persistence goes through the host settings.
  */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent, type RefObject } from 'react';
-import { ChatStore, useChatState } from './store';
+import { ChatStore, useChatSelector } from './store';
 import {
   clampConversationWidth, clampSidebarWidth, conversationWidthFromDrag, resizeKeyIntent, resizeStep,
   sidebarPointerResize, sidebarResetWidth, sidebarWidthBudget,
@@ -17,8 +17,11 @@ type BandGesture = {pointerId: number; side: 'left' | 'right'; startWidth: numbe
 
 /** WebView2 runs in private mode and loses localStorage on close: host settings are the only durable store. */
 export function useStoredWidth(store: ChatStore, key: 'sidebar_width' | 'conversation_width', normalize: (value: unknown) => number) {
-  const state = useChatState(store);
-  const stored = normalize((state.boot?.settings.preferences as Record<string, unknown> | undefined)?.[key]);
+  // Subscribe to the single persisted preference this hook consumes; a primitive
+  // selector means unrelated state (message streaming, other sessions) never
+  // re-renders the App or Chat host.
+  const pref = useChatSelector(store, state => (state.boot?.settings.preferences as Record<string, unknown> | undefined)?.[key]);
+  const stored = normalize(pref);
   // A live gesture owns the width until the page reloads; the host value is the floor truth.
   const [override, setOverride] = useState<number>();
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);

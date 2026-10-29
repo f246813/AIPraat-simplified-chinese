@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@assistant-ui/react": "0.15.23",
+    "@radix-ui/react-dropdown-menu": "2.1.24",
+    "@tanstack/react-virtual": "3.14.22",
     "@tiptap/core": "3.31.4",
     "@tiptap/pm": "3.31.4",
     "@tiptap/react": "3.6.6",
@@ -25,6 +27,7 @@
     "highlight.js": "11.11.1",
     "katex": "0.16.22",
     "lucide-react": "0.468.0",
+    "mdast-util-from-markdown": "2.0.3",
     "mermaid": "11.12.0",
     "prosemirror-markdown": "1.13.2",
     "react": "19.1.1",
@@ -35,7 +38,9 @@
     "rehype-sanitize": "6.0.0",
     "remark-gfm": "4.0.1",
     "remark-math": "6.0.0",
-    "@radix-ui/react-dropdown-menu": "2.1.24"
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.0",
+    "use-sync-external-store": "^1.7.0"
   },
   "devDependencies": {
     "@playwright/test": "1.56.1",
@@ -43,6 +48,7 @@
     "@types/node": "22.15.30",
     "@types/react": "19.1.16",
     "@types/react-dom": "19.1.9",
+    "@types/use-sync-external-store": "^0.0.6",
     "@vitejs/plugin-react": "4.7.0",
     "jsdom": "26.1.0",
     "typescript": "5.9.3",

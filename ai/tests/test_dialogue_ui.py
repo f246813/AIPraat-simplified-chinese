@@ -65,4 +65,10 @@ class StreamUiTests(unittest.TestCase):
         self.assertTrue(window.transcript.tk.getboolean(window.transcript.tag_cget(block.body_tag,'elide')))
 
 
+def tearDownModule():
+    # Tk 解释器必须在主线程回收：否则后端线程的下一次 GC 会析构它，触发 Tcl_AsyncDelete。
+    import gc
+
+    gc.collect()
+
 if __name__=='__main__': unittest.main()

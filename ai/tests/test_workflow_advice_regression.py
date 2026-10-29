@@ -82,7 +82,8 @@ class AdviceRegressionTests(unittest.TestCase):
                 self.assertEqual(result['attempts'], [])
                 self.assertEqual(result['metrics']['requests'], 1)
                 self.assertEqual(set(result['metrics']['phases']), {'dialogue'})
-                self.assertTrue(any(kind == 'delta' and answer in p['text'] for kind, p in events))
+                displayed = ''.join(p['text'] for kind, p in events if kind == 'delta')
+                self.assertIn(answer, displayed)
             finally:
                 executor.close(); runtime.close()
 

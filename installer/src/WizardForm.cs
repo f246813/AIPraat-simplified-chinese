@@ -73,7 +73,7 @@ namespace AIPraat.Setup
         void BuildDirectoryPage()
         {
             var page=pages[0];var title=LabelAt(page,"安装位置",24,20,810,28);title.Font=new Font(Font,FontStyle.Bold);
-            LabelAt(page,"选择 AIPraat 的安装文件夹，也可以直接输入完整路径。",24,56,810,28).ForeColor=SetupTheme.Muted;
+            LabelAt(page,"选择 AIPraat 的安装文件夹，也可以直接输入完整路径",24,56,810,28).ForeColor=SetupTheme.Muted;
             LabelAt(page,"安装目录",24,100,800,24);
             directory.SetBounds(24,132,716,40);directory.AutoSize=false;directory.Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right;directory.Name="InstallDirectory";directory.AccessibleName="安装目录";page.Controls.Add(directory);
             var browse=new OutlineButton{Text="浏览…",Name="BrowseInstallDirectory",Location=new Point(752,132),Size=new Size(112,40),Anchor=AnchorStyles.Top|AnchorStyles.Right};page.Controls.Add(browse);
@@ -82,8 +82,8 @@ namespace AIPraat.Setup
             desktop.Text="创建桌面快捷方式";desktop.Location=new Point(24,246);desktop.Size=new Size(400,28);desktop.Name="CreateDesktopShortcut";page.Controls.Add(desktop);
             var info=new Panel{Location=new Point(24,298),Size=new Size(840,190),Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right};page.Controls.Add(info);info.Paint+=(s,e)=>{using(var pen=new Pen(SetupTheme.Line))e.Graphics.DrawLine(pen,0,0,info.Width,0);};
             LabelAt(info,"安装包内容",0,20,800,28).Font=new Font(Font,FontStyle.Bold);
-            LabelAt(info,"包含 Praat 和 AI 前端程序。\nPython 环境需要另行准备；语言模型和语音模型可以安装后添加。",0,60,810,58);
-            var platform=LabelAt(info,"适用 Windows 10/11 64 位，处理器需支持 x64-v3（含 AVX2）指令集。",0,134,810,42);platform.Font=SetupTheme.Small;platform.ForeColor=SetupTheme.Muted;
+            LabelAt(info,"包含 Praat 和 AI 前端程序\nPython 环境需要另行准备；语言模型和语音模型可以安装后添加",0,60,810,58);
+            var platform=LabelAt(info,"适用 Windows 10/11 64 位，处理器需支持 x64-v3（含 AVX2）指令集",0,134,810,42);platform.Font=SetupTheme.Small;platform.ForeColor=SetupTheme.Muted;
         }
         void BuildPrerequisitePage()
         {
@@ -105,7 +105,7 @@ namespace AIPraat.Setup
         void UpdateProgressPresentation()
         {
             bar.ProgressColor=failure?SetupTheme.Error:finished?SetupTheme.Success:SetupTheme.Primary;bar.Invalidate();percent.Text=bar.Value+"%";
-            completionDescription.Text=finished?"请从桌面或开始菜单的 AIPraat 快捷方式启动。":failure?"安装遇到问题，可以调整选项或重试。":"正在安装所选程序，并保存路径和快捷方式。";
+            completionDescription.Text=finished?"请从桌面或开始菜单的 AIPraat 快捷方式启动":failure?"安装遇到问题，可以调整选项或重试":"正在安装所选程序，并保存路径和快捷方式";
             errorPanel.Visible=failure;snapshot.Text=failure?"安装目录："+request.InstallDirectory:"安装目录："+request.InstallDirectory+"\nPython 环境："+request.PythonPath+"\nFFmpeg："+request.FfmpegPath+"\n桌面快捷方式："+(request.CreateDesktopShortcut?"创建 AIPraat 快捷方式":"使用开始菜单的 AIPraat 快捷方式");
             int phase=bar.Value>=95?3:bar.Value>=90?2:bar.Value>=48||(latest!=null&&latest.Message.StartsWith("正在安装："))?1:0;
             for(int i=0;i<4;i++){bool passed=finished||i<phase;phaseStates[i].Text=passed?"已完成":i==phase?(failure?"未完成":"进行中"):"待执行";phaseStates[i].ForeColor=passed?SetupTheme.Success:i==phase?(failure?SetupTheme.Error:SetupTheme.Primary):SetupTheme.Muted;}
@@ -144,7 +144,7 @@ namespace AIPraat.Setup
         {
             step=value;
             dependencies.DiscoveryActions.Visible=step==1;
-            subtitle.Text=step==0?"选择安装位置，然后检查运行环境。":step==1?"确认必需环境已就绪，按需配置本地工具和模型。":finished?"基础设置已完成，请从 AIPraat 快捷方式启动。":"查看当前任务和安装进度。";
+            subtitle.Text=step==0?"选择安装位置，然后检查运行环境":step==1?"确认必需环境已就绪，按需配置本地工具和模型":finished?"基础设置已完成，请从 AIPraat 快捷方式启动":"查看当前任务和安装进度";
             for(int i=0;i<3;i++) {
                 pages[i].Visible=i==step;steps[i].Current=i==step&&!finished;steps[i].Complete=i<step||finished;steps[i].AccessibleDescription=i==step?"当前步骤":i<step||finished?"已完成":"待完成";steps[i].Invalidate();
             }
@@ -171,14 +171,14 @@ namespace AIPraat.Setup
             if(step==0) {
                 string error=PathValidation.InstallDirectoryError(directory.Text);
                 next.Enabled=error==null;
-                directoryNote.ForeColor=error==null?SetupTheme.Muted:SetupTheme.Error;prerequisiteNote.Text=error==null?"安装时创建或复用此目录":"请填写完整的安装目录。";prerequisiteNote.ForeColor=error==null?SetupTheme.Muted:SetupTheme.Error;
-                directoryNote.Text=error ?? (Directory.Exists(PathValidation.Clean(directory.Text))?"该文件夹已存在，将直接复用。":"安装时将创建此文件夹。");
+                directoryNote.ForeColor=error==null?SetupTheme.Muted:SetupTheme.Error;prerequisiteNote.Text=error==null?"安装时创建或复用此目录":"请填写完整的安装目录";prerequisiteNote.ForeColor=error==null?SetupTheme.Muted:SetupTheme.Error;
+                directoryNote.Text=SetupTheme.Hint(error ?? (Directory.Exists(PathValidation.Clean(directory.Text))?"该文件夹已存在，将直接复用":"安装时将创建此文件夹"));
                 return;
             }
             if(step==1) {
-                next.Enabled=dependencies.Ready;prerequisiteNote.Text=dependencies.Ready?"必需环境已就绪，可以开始安装。":dependencies.ValidationMessage;prerequisiteNote.ForeColor=dependencies.Ready?SetupTheme.Success:SetupTheme.Muted;return;
+                next.Enabled=dependencies.Ready;prerequisiteNote.Text=dependencies.Ready?"必需环境已就绪，可以开始安装":SetupTheme.Hint(dependencies.ValidationMessage);prerequisiteNote.ForeColor=dependencies.Ready?SetupTheme.Success:SetupTheme.Muted;return;
             }
-            next.Enabled=finished || failure;prerequisiteNote.Text=finished?"安装已完成。":failure?"请处理安装错误后重试。":"正在安装，请等待完成。";prerequisiteNote.ForeColor=finished?SetupTheme.Success:failure?SetupTheme.Error:SetupTheme.Muted;
+            next.Enabled=finished || failure;prerequisiteNote.Text=finished?"安装已完成":failure?"请处理安装错误后重试":"正在安装，请等待完成";prerequisiteNote.ForeColor=finished?SetupTheme.Success:failure?SetupTheme.Error:SetupTheme.Muted;
         }
         void Next()
         {
@@ -207,11 +207,11 @@ namespace AIPraat.Setup
                 });
                 ApplyProgress();bar.Value=100;finished=true;
                 completionText.Text="安装已完成";
-                progressText.Text="程序、配置和启动快捷方式已就绪。";
+                progressText.Text="程序、配置和启动快捷方式已就绪";
             } catch(Exception e) {
                 failure=true;requireElevation=e is UnauthorizedAccessException;
                 completionText.Text="安装未完成";
-                installationError.Text=e.Message+(requireElevation?"\n此位置需要写入权限。可返回选择其他目录，或以管理员权限重试。":"\n请处理上述问题后重试，或返回修改安装选项。");ApplyProgress();
+                installationError.Text=e.Message+(requireElevation?"\n此位置需要写入权限；可返回选择其他目录，或以管理员权限重试":"\n请处理上述问题后重试，或返回修改安装选项");ApplyProgress();
             } finally {
                 installing=false;progressTimer.Stop();ShowStep(2);
             }
@@ -230,7 +230,7 @@ namespace AIPraat.Setup
                 Close();
             } catch(System.ComponentModel.Win32Exception) {
                 if(File.Exists(path))File.Delete(path);
-                progressText.Text="管理员权限未获批准。可返回选择可写入的文件夹。";
+                progressText.Text="管理员权限未获批准；可返回选择可写入的文件夹";
             } catch(Exception e) { progressText.Text=e.Message; }
         }
     }

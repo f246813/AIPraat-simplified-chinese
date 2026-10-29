@@ -10,6 +10,7 @@ from pathlib import Path
 from .config import default_config_path
 from .service_lock import service_transition_lock
 from .mfa_resources import MfaResourceService
+from .paths import installation_root
 
 
 def path_key(value):
@@ -170,11 +171,15 @@ class DictionaryApplication:
                 return service.select(params['path'])
             if action == 'choose':
                 import webview
+                initial = installation_root() / 'models'
+                if service.section_key == 'mfa':
+                    initial = initial / 'mfa' / 'pretrained_models' / ('dictionary' if service.active_key == 'dictionary_path' else 'acoustic')
+                initial = initial if initial.is_dir() else installation_root()
                 if service.directory:
-                    paths = self.window.create_file_dialog(webview.FileDialog.FOLDER) or []
+                    paths = self.window.create_file_dialog(webview.FileDialog.FOLDER, directory=str(initial)) or []
                 else:
                     paths = self.window.create_file_dialog(webview.FileDialog.OPEN, allow_multiple=True,
-                        file_types=(service.file_filter, '所有文件 (*.*)')) or []
+                        directory=str(initial), file_types=(service.file_filter, '所有文件 (*.*)')) or []
                 return service.add(paths)
             raise ValueError('未知的词典与模型管理操作')
 

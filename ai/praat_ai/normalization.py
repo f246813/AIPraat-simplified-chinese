@@ -29,9 +29,39 @@ MEASUREMENT_SETTINGS = {
     "extractor": "praat-parselmouth-burg", "time_step_sec": 0.01,
     "max_number_of_formants": 5.0, "maximum_formant_hz": 5500.0,
     "window_length_sec": 0.025, "pre_emphasis_from_hz": 50.0,
-    "sampling": "basic-rms-frame-centers-v1",
+    "sampling": "burg-observation-centres-v2",
 }
 FORMANTS = ("f1", "f2", "f3")
+
+
+def resolve_measurement_settings(options: dict | None, role: str) -> dict:
+    """Resolve each speaker's explicit Burg preset, without demographic inference."""
+    if role not in {"reference", "learner"}:
+        raise ValueError("未知说话人角色。")
+    supplied = (options or {}).get("measurement_settings", {})
+    if not isinstance(supplied, dict) or supplied.keys() - {"reference", "learner"}:
+        raise ValueError("测量设置必须按 reference/learner 保存。")
+    selected = supplied.get(role, {})
+    if not isinstance(selected, dict) or selected.keys() - MEASUREMENT_SETTINGS.keys():
+        raise ValueError("未知 Burg 测量参数。")
+    result = {**MEASUREMENT_SETTINGS, **selected}
+    for key in ("extractor", "sampling"):
+        if result[key] != MEASUREMENT_SETTINGS[key]:
+            raise ValueError("共振峰算法或采样协议不支持。")
+    for key, low, high in (("maximum_formant_hz", 1000., 20000.), ("max_number_of_formants", 3., 10.),
+                           ("time_step_sec", .001, .1), ("window_length_sec", .005, .1),
+                           ("pre_emphasis_from_hz", 0., 2000.)):
+        value = result[key]
+        if isinstance(value, bool):
+            raise ValueError("Burg 参数必须为有限数字。")
+        try:
+            value = float(value)
+        except (ValueError, TypeError):
+            raise ValueError("Burg 参数必须为有限数字。") from None
+        if not math.isfinite(value) or not low <= value <= high:
+            raise ValueError(f"{key} 必须在 {low}–{high} 之间。")
+        result[key] = value
+    return result
 
 
 def audio_identity(sound) -> str:
@@ -104,9 +134,8 @@ def fit_formant_calibration(phones: list[PhoneFeatureTracks], *, speaker_label: 
     return result
 
 
-def import_formant_calibration(wav_path, textgrid_path, *, speaker_label, language,
-                               profile_id, reading_id="") -> dict:
-    """Trusted host entry: WAV + a unique IPA phone IntervalTier (long/short TG)."""
+def load_formant_material(wav_path, textgrid_path):
+    """Read a user-supplied independent WAV and unique IPA IntervalTier."""
     try:
         import parselmouth
         from parselmouth.praat import call
@@ -116,7 +145,7 @@ def import_formant_calibration(wav_path, textgrid_path, *, speaker_label, langua
         raise ValueError(
             detail or "共振峰校准需要 praat-parselmouth，请通过现有“配置运行库…”入口检查。"
         ) from exc
-    from .audio import extract_phone_tracks, read_wav
+    from .audio import read_wav
 
     wav, grid_path = Path(wav_path), Path(textgrid_path)
     if wav.suffix.lower() != ".wav" or grid_path.suffix.lower() != ".textgrid":
@@ -141,12 +170,21 @@ def import_formant_calibration(wav_path, textgrid_path, *, speaker_label, langua
         if label:
             phones.append(PhoneSpec(ipa=label, reference_start=start, reference_end=end,
                                     alignment_source="calibration_textgrid", phone_index=i))
-    tracks = extract_phone_tracks(wav, phones, learner=False)
+    material = dict(wav_name=wav.name, textgrid_name=grid_path.name, audio_identity=audio_identity(sound),
+        wav_sha256=hashlib.sha256(wav.read_bytes()).hexdigest(),
+        textgrid_sha256=hashlib.sha256(grid_path.read_bytes()).hexdigest(),
+        annotation_source='user_supplied_ipa_textgrid')
+    return sound, phones, material
+
+
+def import_formant_calibration(wav_path, textgrid_path, *, speaker_label, language,
+                               profile_id, reading_id="", measurement_settings=None) -> dict:
+    from .audio import extract_phone_tracks
+    _, phones, material = load_formant_material(wav_path, textgrid_path)
+    settings = resolve_measurement_settings({'measurement_settings': {'reference': measurement_settings or {}}}, 'reference')
+    tracks = extract_phone_tracks(wav_path, phones, learner=False, formant_settings=settings)
     return fit_formant_calibration(tracks, speaker_label=speaker_label, language=language,
-        profile_id=profile_id, reading_id=reading_id, material=dict(
-            wav_name=wav.name, textgrid_name=grid_path.name, audio_identity=audio_identity(sound),
-            wav_sha256=hashlib.sha256(wav.read_bytes()).hexdigest(),
-            textgrid_sha256=hashlib.sha256(grid_path.read_bytes()).hexdigest()))
+        profile_id=profile_id, reading_id=reading_id, measurement_settings=settings, material=material)
 
 
 def transform_formants(phones: list[PhoneFeatureTracks], calibration: dict,
@@ -164,10 +202,13 @@ def transform_formants(phones: list[PhoneFeatureTracks], calibration: dict,
             name = feature + "_lobanov_z"
             phone.derived_tracks[name] = FeatureTrack(name, list(track.times),
                 transform_lobanov(values, parameters["mu_hz"], parameters["sigma_hz"]).tolist(),
-                unit="z", minimum_tolerance=0.0)
+                unit="z", minimum_tolerance=0.0, analysis=dict(protocol=PROTOCOL,
+                    algorithm=METHOD, calibration_id=calibration['id'],
+                    input_measurement_ids=[track.analysis.get('measurement_id')],
+                    formula="(raw_hz - calibration_mu_hz) / calibration_sigma_hz"))
 
 
-def _calibration_reason(calibration, language, profile_id, reading_id, target_ids):
+def _calibration_reason(calibration, language, profile_id, reading_id, target_ids, expected_settings=None):
     if not isinstance(calibration, dict):
         return "未导入该说话人的独立校准。"
     if (calibration.get("version") != VERSION or calibration.get("method") != METHOD
@@ -178,7 +219,7 @@ def _calibration_reason(calibration, language, profile_id, reading_id, target_id
     if (calibration.get("language") != language or calibration.get("profile_id") != profile_id
             or calibration.get("reading_id") != (reading_id or profile_id)):
         return "校准语言或读音预设不匹配，请重新导入。"
-    if calibration.get("measurement_settings") != MEASUREMENT_SETTINGS:
+    if calibration.get("measurement_settings") != (expected_settings or MEASUREMENT_SETTINGS):
         return "校准测量设置不匹配，请重新提取。"
     if not calibration.get("speaker_label"):
         return "缺少校准说话人标签。"
@@ -209,6 +250,8 @@ def apply_formant_normalization(options: dict | None, references, learners, *, l
                   learner_calibration=options.get("learner_calibration"), formants={},
                   pitch=_state("disabled", "相对音高未启用。"),
                   loudness=_state("disabled", "响度归一化未启用。"))
+    result['measurement_settings'] = {role: resolve_measurement_settings(options, role) for role in ('reference', 'learner')}
+    result['formant_selections'] = deepcopy(options.get('formant_selections', {}))
     reason, status = "", "insufficient_evidence"
     if not profile_id:
         status, reason = "not_applicable", "旧式统一阈值路径仅使用原始测量。"
@@ -226,7 +269,8 @@ def apply_formant_normalization(options: dict | None, references, learners, *, l
             if reason:
                 break
             calibration = result[role + "_calibration"]
-            problem = _calibration_reason(calibration, language, profile_id, reading_id, target_ids)
+            problem = _calibration_reason(calibration, language, profile_id, reading_id, target_ids,
+                                          result['measurement_settings'][role])
             if not problem:
                 formants = calibration.get("formants")
                 state = formants.get(feature, {}) if isinstance(formants, dict) else {}

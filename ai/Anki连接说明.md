@@ -1,10 +1,12 @@
 # Anki 一键查看语图
 
-重启更新后的 Praat，在对象窗口“打开 → Anki 连接…”打开设置；声音编辑器的“前端”菜单也有同一入口。
+启动 Praat，在对象窗口“打开 → Anki 连接…”打开设置；声音编辑器的“前端”菜单也有同一入口。
 
 1. 选择“新增查看语图按钮”“复用原放大镜”或“保留两个入口”。
 2. 点击“导出 Anki 插件”，在桌面 Anki 的“工具 → 插件 → 从文件安装”中安装 `.ankiaddon`，重启 Anki。
 3. 打开带本地音频的卡片，点击入口。多段音频先选择；程序打开对应 SoundEditor，开启语图，并复用已经打开的相同音频。
+
+“查看语图 · AIPraat”按钮默认悬浮在卡片左侧居中位置。鼠标左键按住按钮并移动即可立即拖动，无须等待长按计时；原地长按约 350 毫秒也可进入拖动状态。按钮随鼠标移动，松手放置；短按打开语图。拖动或长按松手不会打开音频。本次卡片窗口内翻面、切换卡片保留位置，窗口缩小时按钮保持在可见范围内。
 
 插件自动读取当前 Anki 配置档的 `collection.media`，无需手动复制声音文件。默认收集当前卡片正反面的 `[sound:...]` 文件；如只想打开单词发音，把“卡片音频字段”设为该笔记的单词音频字段名。TTS 标签没有对应的本地文件。
 
@@ -21,15 +23,15 @@ const AIPRAAT_MAGNIFIER = ".Search, .search a, .dict-link, #dict-link";
 
 保存后重新显示卡片即可生效。`button` 使用新按钮，`magnifier` 复用放大镜，`both` 同时提供两者。自定义卡组只需修改下一行的 CSS 选择器。
 
-已核实 JLPT 卡组的放大镜使用大写 `.Search`，默认选择器已包含它。它原来的点击脚本按平台选择 MOJi / GoldenDict 等词典；Windows 分支的 URL 只有单词。你提供的 `goldendict://xn--88j6e391o` 对应“接する”，不包含声音文件或时间。
+JLPT 卡组的放大镜使用大写 `.Search`，默认选择器包含它。词典链接通常只携带单词，不包含声音文件或时间。
 
 因此这里复用的是放大镜的点击入口，后台通过 Anki 的卡片对象取得真实音频。移动端的卡组模板和词典设置继续按原来的方式工作。安装本插件无需接管系统的 `goldendict` 协议。
 
 ## M4A 和临时 WAV
 
-Windows 的普通“打开文件”和 Anki 入口都支持原生读取 M4A：使用系统 Media Foundation 解码为浮点 PCM，直接创建 Praat Sound，保持解码器输出的采样率和声道；不启动外部转码程序，不生成中间 WAV。AAC M4A 已用实际文件验证。M4A 是容器，其他编码是否支持取决于 Windows 提供的解码器。
+Windows 的普通“打开文件”和 Anki 入口都支持原生读取 M4A：使用系统 Media Foundation 解码为浮点 PCM，直接创建 Praat Sound，保持解码器输出的采样率和声道；不启动外部转码程序，不生成中间 WAV。M4A 是容器，其他编码是否支持取决于 Windows 提供的解码器。
 
-普通打开、拖放、脚本 `Read from file` 和 Anki 入口共用“原生读取 → 明确失败后转临时 WAV → 原生再读入”。备用路线需要 `ffmpeg.exe`，在“前端 → 路径配置”的 Python 区域下方选择、检测或一键安装，统一存入 `ai/ai_config.json` 的 `audio.ffmpeg`。留空时先查找 `%LOCALAPPDATA%\AIPraat\ffmpeg\ffmpeg.exe`，再查找 PATH；尚未保存共享设置时兼容旧 Anki FFmpeg 路径。转换选择第一条音频流，使用 24 位 PCM WAV，不指定重采样或声道混合；成功和失败均清理临时目录，Anki 保留原文件作为对象关联路径。原音频不会被修改。
+普通打开、拖放、脚本 `Read from file` 和 Anki 入口共用“原生读取 → 明确失败后转临时 WAV → 原生再读入”。备用路线需要 `ffmpeg.exe`，在“前端 → 路径配置”的 Python 区域下方选择、检测或一键安装，统一存入 `ai/ai_config.json` 的 `audio.ffmpeg`。留空时先查找 安装目录的 `tools\ffmpeg\ffmpeg.exe`，再查找 PATH；尚未保存共享设置时兼容旧 Anki FFmpeg 路径。转换选择第一条音频流，使用 24 位 PCM WAV，不指定重采样或声道混合；成功和失败均清理临时目录，Anki 保留原文件作为对象关联路径。原音频不会被修改。
 
 Anki 后台只投递一次读取命令，备用转换由 Praat 执行；超时不会触发重复投递。OGG Vorbis/Opus 优先使用 Praat 自带解码器，不要求先转 WAV。
 
@@ -47,4 +49,4 @@ Open Anki audio: "音频路径", 0.2, 0.8, "结果文件路径", "原音频路�
 
 源码依据：[Anki 声音标签接口](https://github.com/ankitects/anki/blob/main/pylib/anki/sound.py)、[JLPT 放大镜模板](https://github.com/5mdld/anki-jlpt-decks/blob/main/deck-source/templates/eggrolls-JLPT10k-v3.5-%E6%97%A5-%E4%B8%AD-front.html)、[Microsoft 音频解码教程](https://learn.microsoft.com/en-us/windows/win32/medfound/tutorial--decoding-audio)。
 
-构建：`installer/verification/build-anki-m4a.ps1`。原生验证：`installer/verification/verify-anki-m4a.py`；后台测试：`ai/tests/test_anki_bridge.py`；界面和放大镜测试：`ai/frontend/tests/browser/anki-integration.spec.ts`。本机未安装 Anki，插件接口已对照官方源码并做模拟测试，实际牌组仍需在 Anki 中验证。
+构建：`installer/verification/build-anki-m4a.ps1`。原生验证：`installer/verification/verify-anki-m4a.py`；后台测试：`ai/tests/test_anki_bridge.py`；界面和放大镜测试：`ai/frontend/tests/browser/anki-integration.spec.ts`；卡片入口、长按拖动与翻面测试：`ai/frontend/tests/browser/anki-addon.spec.ts`（在 `ai/frontend` 运行 `npx playwright test tests/browser/anki-addon.spec.ts`，可用 `AIPRAAT_TEST_PYTHON` 指定项目 Python）。设置 `AIPRAAT_ANKI_REVIEWER_JS` 为本机 Anki 的 `reviewer.js` 路径时，按钮用例通过该脚本的 `_updateQA` 执行真实卡片加载流程。浏览器验证不替代 Anki Qt 窗口中的实体鼠标检查。

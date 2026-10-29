@@ -13,10 +13,30 @@ class FeatureTrack:
     unit: str = ""
     weight: float = 1.0
     minimum_tolerance: float = 0.05
+    analysis: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
+        if not self.analysis:
+            payload.pop('analysis')
         payload["values"] = [value if math.isfinite(value) else None for value in self.values]
+        return payload
+
+
+@dataclass(slots=True)
+class ScalarMeasurement:
+    """A landmark-derived value, not a sampled trajectory."""
+    name: str
+    value: float | None
+    unit: str
+    status: str
+    reason: str = ""
+    analysis: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        if self.value is not None and not math.isfinite(self.value):
+            payload["value"] = None
         return payload
 
 
@@ -46,6 +66,7 @@ class PhoneFeatureTracks:
     alignment_confidence: float = 1.0
     alignment_source: str = ""
     derived_tracks: dict[str, FeatureTrack] = field(default_factory=dict)
+    measurements: dict[str, ScalarMeasurement] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -56,6 +77,8 @@ class PhoneFeatureTracks:
             "tracks": {name: track.to_dict() for name, track in self.tracks.items()},
             **({"derived_tracks": {name: track.to_dict() for name, track in self.derived_tracks.items()}}
                if self.derived_tracks else {}),
+            **({"measurements": {name: item.to_dict() for name, item in self.measurements.items()}}
+               if self.measurements else {}),
             "alignment_confidence": self.alignment_confidence,
             "alignment_source": self.alignment_source,
         }
@@ -102,6 +125,7 @@ class AnalysisRequest:
     selected_readings: list[dict[str, Any]] = field(default_factory=list)
     generation_source: str = ""
     normalization: dict[str, Any] | None = None
+    sources: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -138,6 +162,8 @@ class AnalysisResult:
     selected_readings: list[dict[str, Any]] = field(default_factory=list)
     generation_source: str = ""
     normalization: dict[str, Any] | None = None
+    measurement_protocol: str = "acoustic-measurement-v2"
+    sources: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -161,6 +187,8 @@ class AnalysisResult:
             "check_statuses": self.check_statuses,
             "explanation_status": self.explanation_status,
             **({"normalization": self.normalization} if self.normalization is not None else {}),
+            "measurement_protocol": self.measurement_protocol,
+            "sources": self.sources,
             **(dict(mfa_snapshot=self.mfa_snapshot, selected_readings=self.selected_readings,
                     generation_source=self.generation_source) if self.mfa_snapshot else {}),
         }
